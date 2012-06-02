@@ -238,7 +238,7 @@
 	NSArray *cr = [s childRelationships];
 	if ([cr count] > 0) {
 		NSString *sectionTitle = [NSString stringWithFormat:@"Relationships to %@", [sobject name]];
-		NSAttributedString *boldTitle = [[NSAttributedString alloc] initWithString:sectionTitle attributes:[NSDictionary dictionaryWithObject:[NSFont boldSystemFontOfSize:11] forKey:NSFontAttributeName]];
+		NSAttributedString *boldTitle = [[[NSAttributedString alloc] initWithString:sectionTitle attributes:[NSDictionary dictionaryWithObject:[NSFont boldSystemFontOfSize:11] forKey:NSFontAttributeName]] autorelease];
 		[t addObject:boldTitle]; 
 		for (ZKChildRelationship *r in cr) {
 			[t addObject:[NSString stringWithFormat:@"%@.%@", [r childSObject], [r field]]];

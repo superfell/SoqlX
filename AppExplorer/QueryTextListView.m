@@ -208,7 +208,7 @@ static const CGFloat MARGIN = 5.0;
 	QueryTextListViewItem *i = [[QueryTextListViewItem alloc] initWithFrame:b attributes:textAttributes];
 	[i setText:text];
 	[self addSubview:i];
-	return i;
+	return [i autorelease];
 }
 
 -(void)setInitialItems:(NSArray *)texts {

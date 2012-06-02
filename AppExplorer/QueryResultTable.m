@@ -190,6 +190,7 @@
 		if ([colName hasSuffix:@"Id"])
 			[col setWidth:165];
 		[table addTableColumn:col];
+        [col release];
 	}
 	return cols;
 }

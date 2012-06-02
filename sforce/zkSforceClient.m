@@ -199,7 +199,7 @@ static const int SAVE_BATCH_SIZE = 25;
 	if(!sessionId) return;
 	[self checkSession];
 	
-	ZKEnvelope * env = [[ZKPartnerEnvelope alloc] initWithSessionHeader:sessionId clientId:clientId];
+	ZKEnvelope * env = [[[ZKPartnerEnvelope alloc] initWithSessionHeader:sessionId clientId:clientId] autorelease];
 	[env startElement:@"setPassword"];
 	[env addElement:@"userId" elemValue:userId];
 	[env addElement:@"password" elemValue:newPassword];

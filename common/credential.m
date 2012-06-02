@@ -137,8 +137,8 @@
 	NSString *pwd = nil;
 	if (noErr == SecKeychainItemCopyContent(keychainItem, NULL, &al, &length, &data)) {
 		pwd = [[[NSString alloc] initWithBytes:data length:length encoding:NSUTF8StringEncoding] autorelease];
+        SecKeychainItemFreeContent(&al, data);
 	}
-	SecKeychainItemFreeContent(&al, data);
 	return pwd;
 }
 
