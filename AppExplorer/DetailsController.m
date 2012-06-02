@@ -1,4 +1,4 @@
-// Copyright (c) 2007 Simon Fell
+// Copyright (c) 2007-2012 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -24,8 +24,11 @@
 
 @implementation DetailsController
 
-+(void)initialize {
-	[self setKeys:[NSArray arrayWithObject:@"dataSource"] triggerChangeNotificationsForDependentKey:@"title"];
++(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
+    NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
+    if ([key isEqualToString:@"title"])
+        return [paths setByAddingObject:@"dataSource"];
+    return paths;
 }
 
 -(void)awakeFromNib {

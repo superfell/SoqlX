@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2008 Simon Fell
+// Copyright (c) 2006-2012 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -28,10 +28,13 @@
 
 static NSString * login_lastUsernameKey = @"login_lastUserName";
 
-+ (void)initialize {
-	[self setKeys:[NSArray arrayWithObject:@"server"]   triggerChangeNotificationsForDependentKey:@"credentials"];
-	[self setKeys:[NSArray arrayWithObject:@"server"]   triggerChangeNotificationsForDependentKey:@"canDeleteServer"];
-	[self setKeys:[NSArray arrayWithObject:@"username"] triggerChangeNotificationsForDependentKey:@"password"];
++(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
+    NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
+    if ([key isEqualToString:@"password"]) 
+        return [paths setByAddingObject:@"username"];
+    if ([key isEqualToString:@"credentials"] || [key isEqualToString:@"canDeleteServer"])
+        return [paths setByAddingObject:@"server"];
+    return paths;
 }
 
 - (id)init {

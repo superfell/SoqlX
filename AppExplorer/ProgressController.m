@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Simon Fell
+// Copyright (c) 2009,2012 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -25,8 +25,11 @@
 
 @synthesize progressLabel, progressValue;
 
-+(void)initialize {
-	[self setKeys:[NSArray arrayWithObject:@"progressValue"] triggerChangeNotificationsForDependentKey:@"progressAnimate"];
++(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
+    NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
+    if ([key isEqualToString:@"progressAnimate"]) 
+        return [paths setByAddingObject:@"progressValue"];
+    return paths;
 }
 
 -(NSWindow *)progressWindow {

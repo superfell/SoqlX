@@ -75,8 +75,13 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[defaults setObject:defaultServers forKey:@"systems"];
 	[defaults setObject:prod forKey:@"system"];
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
-	
-	[self setKeys:[NSArray arrayWithObjects:@"currentResults", @"rowsLoadedStatusText", nil] triggerChangeNotificationsForDependentKey:@"canQueryMore"];
+}
+
++(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
+    NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
+    if ([key isEqualToString:@"canQueryMore"])
+        return [paths setByAddingObjectsFromArray:[NSArray arrayWithObjects:@"currentResults", @"rowsLoadedStatusText", nil]];
+    return paths;
 }
 
 -(void)resetApiVersionOverrideIfAppVersionChanged {
