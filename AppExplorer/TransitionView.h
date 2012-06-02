@@ -22,7 +22,7 @@
 #import <Cocoa/Cocoa.h>
 #import <QuartzCore/CIFilter.h>
 
-@interface TransitionView : NSView {
+@interface TransitionView : NSView<NSAnimationDelegate> {
 	NSAnimation	 	*animation;
 	CIFilter	 	*transitionFilter;
 }

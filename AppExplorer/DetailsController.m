@@ -50,7 +50,7 @@
 	return [detailsTable dataSource];
 }
 
--(void)setDataSource:(NSObject *)aValue {
+-(void)setDataSource:(NSObject<NSTableViewDataSource> *)aValue {
 	NSObject *oldDataSource = [self dataSource];
 	[detailsTable setDataSource:aValue];
 	[aValue retain];

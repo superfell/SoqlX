@@ -24,6 +24,7 @@
 #import "zkQueryResult.h"
 #import "zkSforceClient.h"
 #import "EditableQueryResultWrapper.h"
+#import "zkQueryResult_NSTableView.h"
 
 @implementation ResultsSaver
 
@@ -189,7 +190,7 @@
 	[super dealloc];
 }
 
--(void)write:(uint8_t *)data maxLength:(uint)len {
+-(void)write:(const uint8_t *)data maxLength:(uint)len {
 	if (len < (capacity - [buffer length])) {
 		[buffer appendBytes:data length:len];
 	} else if (len < capacity) {

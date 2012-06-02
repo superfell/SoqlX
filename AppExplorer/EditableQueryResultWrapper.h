@@ -32,7 +32,7 @@ NSArray  *ALL_APP_COLUMN_IDENTIFIERS;
 -(void) dataChangedOnObject:(ZKSObject *)sobject field:(NSString *)fieldName value:(id)value;
 @end
 
-@interface EditableQueryResultWrapper : NSObject {
+@interface EditableQueryResultWrapper : NSObject<NSTableViewDataSource, NSTableViewDelegate> {
 	NSObject<EditableQueryResultWrapperDelegate>	*delegate;
 	ZKQueryResult	*result;
 	BOOL			editable;

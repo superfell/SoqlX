@@ -37,7 +37,7 @@
 @class QueryListController;
 @class ApexController;
 
-@interface Explorer : NSObject<EditableQueryResultWrapperDelegate>
+@interface Explorer : NSObject<EditableQueryResultWrapperDelegate, NSTabViewDelegate>
 {
 	// old world order, needs modernizing
     IBOutlet NSOutlineView			*describeList;

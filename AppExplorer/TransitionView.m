@@ -29,7 +29,7 @@
 @implementation TransitionViewAnimation
 - (void)setCurrentProgress:(NSAnimationProgress)progress {
     [super setCurrentProgress:progress];
-    [[self delegate] display];
+    [(NSView *)[self delegate] display];
 }
 @end
 

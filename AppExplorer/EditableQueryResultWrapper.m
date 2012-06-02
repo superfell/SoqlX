@@ -1,4 +1,4 @@
-// Copyright (c) 2007 Simon Fell
+// Copyright (c) 2007-2012 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -21,6 +21,7 @@
 
 #import "EditableQueryResultWrapper.h"
 #import "QueryResultCell.h"
+#import "zkQueryResult_NSTableView.h"
 
 NSString *DELETE_COLUMN_IDENTIFIER = @"row__delete";
 NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";

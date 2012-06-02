@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Simon Fell
+// Copyright (c) 2006-2012 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -25,7 +25,7 @@
 @class ZKDescribeSObject;
 @class ZKDescribeField;
 
-@interface DescribeListDataSource : NSObject {
+@interface DescribeListDataSource : NSObject<NSOutlineViewDataSource, NSOutlineViewDelegate> {
 	NSArray					*types;
 	NSDictionary			*descGlobalSobjects;
 	ZKSforceClient			*sforce;
@@ -65,7 +65,7 @@
 @end;
 
 
-@interface SObjectDataSource : NSObject {
+@interface SObjectDataSource : NSObject<NSTableViewDataSource> {
 	ZKDescribeSObject	*sobject;
 	NSArray				*titles;
 }
@@ -77,7 +77,7 @@
 
 @end;
 
-@interface SObjectFieldDataSource : NSObject {
+@interface SObjectFieldDataSource : NSObject<NSTableViewDataSource> {
 	ZKDescribeField		*field;
 	NSArray				*titles;
 }
