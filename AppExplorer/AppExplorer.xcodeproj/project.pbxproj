@@ -19,8 +19,6 @@
 		F428A2D30F677BC3007BD862 /* BlueView.m in Sources */ = {isa = PBXBuildFile; fileRef = F428A2D20F677BC3007BD862 /* BlueView.m */; };
 		F441679111FE8B2B0068AF1B /* zkQueryResult_NSTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = F441679011FE8B2B0068AF1B /* zkQueryResult_NSTableView.m */; };
 		F441679411FE8B370068AF1B /* zkParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F441679311FE8B370068AF1B /* zkParser.m */; };
-		F448D32F0AE3523B0052D180 /* minus-8.png in Resources */ = {isa = PBXBuildFile; fileRef = F448D32D0AE3523B0052D180 /* minus-8.png */; };
-		F448D3300AE3523B0052D180 /* plus-8.png in Resources */ = {isa = PBXBuildFile; fileRef = F448D32E0AE3523B0052D180 /* plus-8.png */; };
 		F44FC9DD0E1EB5D600B5F70C /* querySavePanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = F44FC9DC0E1EB5D600B5F70C /* querySavePanel.xib */; };
 		F44FC9E10E1EB69D00B5F70C /* ResultsSaver.m in Sources */ = {isa = PBXBuildFile; fileRef = F44FC9E00E1EB69D00B5F70C /* ResultsSaver.m */; };
 		F454D14E12677FBD00DC16D9 /* zkRunTestResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F454D14012677FBD00DC16D9 /* zkRunTestResult.m */; };
@@ -132,8 +130,6 @@
 		F441679211FE8B370068AF1B /* zkParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zkParser.h; path = ../sforce/zkParser.h; sourceTree = SOURCE_ROOT; };
 		F441679311FE8B370068AF1B /* zkParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = zkParser.m; path = ../sforce/zkParser.m; sourceTree = SOURCE_ROOT; };
 		F44167E611FE8F100068AF1B /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
-		F448D32D0AE3523B0052D180 /* minus-8.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "minus-8.png"; sourceTree = "<group>"; };
-		F448D32E0AE3523B0052D180 /* plus-8.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "plus-8.png"; sourceTree = "<group>"; };
 		F44FC9DC0E1EB5D600B5F70C /* querySavePanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = querySavePanel.xib; sourceTree = "<group>"; };
 		F44FC9DF0E1EB69D00B5F70C /* ResultsSaver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResultsSaver.h; sourceTree = "<group>"; };
 		F44FC9E00E1EB69D00B5F70C /* ResultsSaver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResultsSaver.m; sourceTree = "<group>"; };
@@ -380,8 +376,6 @@
 				F4B8DFE70B61EB8900DDD00A /* report.css */,
 				F4FDA6D60B3916CA00A541E5 /* ReportDocument.nib */,
 				F4F249A50B0D92800027987B /* restrictedshine.tiff */,
-				F448D32D0AE3523B0052D180 /* minus-8.png */,
-				F448D32E0AE3523B0052D180 /* plus-8.png */,
 				F40444D30ACA4B870060C0F2 /* Credits.html */,
 				F413C7250AACB9B4000A8CDC /* sf.icns */,
 				8D1107310486CEB800E47090 /* Info.plist */,
@@ -595,8 +589,6 @@
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				F413C7260AACB9B4000A8CDC /* sf.icns in Resources */,
 				F40444D40ACA4B870060C0F2 /* Credits.html in Resources */,
-				F448D32F0AE3523B0052D180 /* minus-8.png in Resources */,
-				F448D3300AE3523B0052D180 /* plus-8.png in Resources */,
 				F4F249A60B0D92800027987B /* restrictedshine.tiff in Resources */,
 				F4FDA6D70B3916CA00A541E5 /* ReportDocument.nib in Resources */,
 				F4B8DFE80B61EB8900DDD00A /* report.css in Resources */,
