@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2008 Simon Fell
+// Copyright (c) 2006-2012 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -35,7 +35,7 @@
 	SecProtocolType protocol = [url SecProtocolType];
 	
 	NSMutableArray *results = [NSMutableArray array];
-	SecKeychainAttribute att[] = { {kSecServerItemAttr, [server length], (void *)[server UTF8String] }, 
+	SecKeychainAttribute att[] = { {kSecServerItemAttr, (UInt32)[server length], (void *)[server UTF8String] }, 
 								   {kSecProtocolItemAttr, sizeof(SecProtocolType), &protocol } }; 
 	SecKeychainAttributeList attList = { 2, att };
 	SecKeychainItemRef itemRef;
@@ -48,12 +48,11 @@
 			SecKeychainAttributeList al = { 1, a };
 			OSStatus s2 = SecKeychainItemCopyContent(itemRef, NULL, &al, 0, NULL);
 			if (noErr == s2) {
-				NSString *un = [[[NSString alloc] initWithBytes:a[0].data length:a[0].length encoding:NSUTF8StringEncoding] autorelease];
-				if ([un rangeOfString:@"@"].location != NSNotFound)
-					[results addObject:[Credential forServer:protocolAndServer username:un keychainItem:itemRef]];
+                NSString *un = [[[NSString alloc] initWithBytes:a[0].data length:a[0].length encoding:NSUTF8StringEncoding] autorelease];
+				[results addObject:[Credential forServer:protocolAndServer username:un keychainItem:itemRef]];
 				SecKeychainItemFreeContent(&al, NULL);
 			} else {
-				NSLog(@"SecKeychainItemCopyAttributesAndData error %d", s2);
+				NSLog(@"SecKeychainItemCopyAttributesAndData error %ld", s2);
 				// no need to release itemRef in the normal caseas the Credential object will own it
 				CFRelease(itemRef);
 			}
@@ -61,7 +60,7 @@
 		}
 		CFRelease(searchRef);
 	} else {
-		NSLog(@"SecKeychainSearchCreateFromAttributes returned error %d", status);
+		NSLog(@"SecKeychainSearchCreateFromAttributes returned error %ld", status);
 	}
 	return results;
 }
@@ -84,19 +83,20 @@
 	SecKeychainItemRef itemRef;
 	OSStatus status = SecKeychainAddInternetPassword (
 								NULL,
-								[server cStringLength], [server cString],
+                                (UInt32)[server lengthOfBytesUsingEncoding:NSUTF8StringEncoding], 
+                                [server UTF8String],
 								0, NULL,
-								[un lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
-								[un cStringUsingEncoding:NSUTF8StringEncoding],
+								(UInt32)[un lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
+								[un UTF8String],
 								0, NULL,
 								0,
 								[url SecProtocolType],
 								kSecAuthenticationTypeDefault,
-								[pwd lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
-								[pwd cStringUsingEncoding:NSUTF8StringEncoding],
+								(UInt32)[pwd lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
+								[pwd UTF8String],
 								&itemRef);
 	if (status != noErr) {
-		NSLog(@"SecKeychainAddInternetPassword returned error %d", status);
+		NSLog(@"SecKeychainAddInternetPassword returned error %ld", status);
 		return nil;
 	}
 	return [Credential forServer:protocolAndServer username:un keychainItem:itemRef];						
@@ -135,11 +135,8 @@
 	UInt32 length = 0;
 	void *data = 0;
 	NSString *pwd = nil;
-	OSStatus stat= SecKeychainItemCopyContent(keychainItem, NULL, &al, &length, &data);
-	if (noErr == stat) {
-		pwd = [NSString stringWithCString:data length:length];
-	} else {
-		NSLog(@"Unable to get password from keyChain, err %d %@", stat, [(NSString *)SecCopyErrorMessageString(stat, NULL) autorelease]);
+	if (noErr == SecKeychainItemCopyContent(keychainItem, NULL, &al, &length, &data)) {
+		pwd = [[[NSString alloc] initWithBytes:data length:length encoding:NSUTF8StringEncoding] autorelease];
 	}
 	SecKeychainItemFreeContent(&al, data);
 	return pwd;
@@ -163,7 +160,7 @@ BOOL checkAccessToAcl(SecACLRef acl, NSData *thisAppHash) {
 			NSData *aData;
 			SecTrustedApplicationRef a;
 			NSEnumerator *e = [apps objectEnumerator];
-			while (a = (SecTrustedApplicationRef)[e nextObject]) {
+			while ((a = (SecTrustedApplicationRef)[e nextObject])) {
 				SecTrustedApplicationCopyData(a, (CFDataRef *)&aData);
 				if ([aData isEqualToData:thisAppHash]) res = YES;
 				CFRelease(aData);
@@ -173,7 +170,7 @@ BOOL checkAccessToAcl(SecACLRef acl, NSData *thisAppHash) {
 		}
 		CFRelease(desc);
 	} else {
-		NSLog(@"SecACLCopySimpleContents failed with error %d", err);
+		NSLog(@"SecACLCopySimpleContents failed with error %ld", err);
 	}
 	return res;
 }
@@ -182,7 +179,7 @@ BOOL checkAccessToAcl(SecACLRef acl, NSData *thisAppHash) {
 	SecTrustedApplicationRef app;
 	OSStatus err = SecTrustedApplicationCreateFromPath(NULL, &app);
 	if (noErr != err) {
-		NSLog(@"SecTrustedApplicationCreateFromPath failed with error %d", err);
+		NSLog(@"SecTrustedApplicationCreateFromPath failed with error %ld", err);
 		return NO;
 	}
 	NSData *thisAppHash;
@@ -197,21 +194,21 @@ BOOL checkAccessToAcl(SecACLRef acl, NSData *thisAppHash) {
 			if (noErr == err) {
 				SecACLRef acl;
 				NSEnumerator *e = [acls objectEnumerator];
-				while (acl = (SecACLRef)[e nextObject]) {
+				while ((acl = (SecACLRef)[e nextObject])) {
 					res = checkAccessToAcl(acl, thisAppHash);
 					if (res) break;
 				}
 				CFRelease(acls);
 			} else {
-				NSLog(@"SecAccessCopySelectedACLList failed with error %d", err);
+				NSLog(@"SecAccessCopySelectedACLList failed with error %ld", err);
 			}
 			CFRelease(access);
 		} else {
-			NSLog(@"SecKeychainItemCopyAccess failed with error %d", err);
+			NSLog(@"SecKeychainItemCopyAccess failed with error %ld", err);
 		}
 		CFRelease(thisAppHash);
 	} else {
-		NSLog(@"SecTrustedApplicationCopyData failed with error %d", err);
+		NSLog(@"SecTrustedApplicationCopyData failed with error %ld", err);
 	}
 	CFRelease(app);
 	return res;
@@ -220,15 +217,15 @@ BOOL checkAccessToAcl(SecACLRef acl, NSData *thisAppHash) {
 - (OSStatus)setKeychainAttribute:(SecItemAttr)attribute newValue:(NSString *)val newPassword:(NSString *)password {
 	// Set up attribute vector (each attribute consists of {tag, length, pointer}):
 	SecKeychainAttribute attrs[] = {
-			{ attribute, [val lengthOfBytesUsingEncoding:NSUTF8StringEncoding], (char *)[val cStringUsingEncoding:NSUTF8StringEncoding] } };
+			{ attribute, (UInt32)[val lengthOfBytesUsingEncoding:NSUTF8StringEncoding], (char *)[val UTF8String] } };
 	const SecKeychainAttributeList attributes = { sizeof(attrs) / sizeof(attrs[0]),  attrs };
 	OSStatus status = SecKeychainItemModifyAttributesAndData (
 									keychainItem,   // the item reference
 									&attributes,    // no change to attributes
-									[password lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
-									[password cStringUsingEncoding:NSUTF8StringEncoding] );
+									(UInt32)[password lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
+									[password UTF8String] );
 	if (status != noErr) 
-		NSLog(@"SecKeychainItemModifyAttributesAndData returned %d", status);
+		NSLog(@"SecKeychainItemModifyAttributesAndData returned %ld", status);
 	return status;
 }
 
@@ -238,7 +235,7 @@ BOOL checkAccessToAcl(SecACLRef acl, NSData *thisAppHash) {
 	SecProtocolType protocol = [url SecProtocolType];
 	
 	// Set up attribute vector (each attribute consists of {tag, length, pointer}):
-	SecKeychainAttribute attrs[] = { {kSecServerItemAttr, [host length], (void *)[host UTF8String] }, 
+	SecKeychainAttribute attrs[] = { {kSecServerItemAttr, (UInt32)[host lengthOfBytesUsingEncoding:NSUTF8StringEncoding], (char *)[host UTF8String] }, 
 							  	     {kSecProtocolItemAttr, sizeof(SecProtocolType), &protocol } };
 								
 	const SecKeychainAttributeList attributes = { sizeof(attrs) / sizeof(attrs[0]),  attrs };
@@ -276,7 +273,7 @@ BOOL checkAccessToAcl(SecACLRef acl, NSData *thisAppHash) {
 	SecKeychainAttributeList al = { 1, a };
 	NSString *comment = nil;
 	if (noErr == SecKeychainItemCopyContent(keychainItem, NULL, &al, nil, nil)) {
-		comment = [NSString stringWithCString:a[0].data length:a[0].length];
+        comment = [[[NSString alloc] initWithBytes:a[0].data length:a[0].length encoding:NSUTF8StringEncoding] autorelease];
 	}
 	SecKeychainItemFreeContent(&al, nil);
 	return comment;
