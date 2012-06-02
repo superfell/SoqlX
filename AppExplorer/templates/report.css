@@ -1,0 +1,52 @@
+body {
+	font-family: "Lucida Grande", serif;
+	color: black;
+	background-color: white;
+	margin: 15pt;
+	font-size:0.8em;
+}
+h1 {
+	font-weight: bold ;
+	font-size: 1.8em ;
+}
+hr {
+	color:gray;
+	width: 100%;
+	height: 0px;
+	border-top:2px solid gray;
+}
+img {
+	text-align:center;
+}
+table {
+	text-align:center;
+	width: 96%;
+	border: 1px solid gray;
+	padding:0pt;
+	margin:0pt;
+}
+th {
+	background-color: gray;
+	color: white;
+	font-weight: bold;
+	text-align: center;
+	padding: 2pt;
+	font-size: 0.9em;
+}
+tr {
+	padding: 0pt;
+	margin: 0pt;
+}
+td {
+	vertical-align:top;
+	font-size: 0.9em;
+	text-align: left;
+	padding:2pt;
+	border: 1px solid gray;
+}
+td.properties {
+	font-size:0.8em;
+}
+td.indent {
+	width:40px;
+}
