@@ -159,7 +159,7 @@ static const int SAVE_BATCH_SIZE = 25;
 
 	userInfo = [[lr userInfo] retain];
 	[env release];
-	return lr;
+	return [lr autorelease];
 }
 
 - (BOOL)loggedIn {
