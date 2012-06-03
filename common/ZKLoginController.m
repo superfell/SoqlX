@@ -41,7 +41,7 @@ static NSString * login_lastUsernameKey = @"login_lastUserName";
 	self = [super init];
 	server = [[[NSUserDefaults standardUserDefaults] objectForKey:@"server"] copy];
 	[self setUsername:[[NSUserDefaults standardUserDefaults] objectForKey:login_lastUsernameKey]];
-	preferedApiVersion = 24;
+	preferedApiVersion = 25;
 	return self;
 }
 

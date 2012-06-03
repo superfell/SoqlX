@@ -297,12 +297,12 @@
 	field = [f retain];
 	titles = [[NSArray arrayWithObjects:@"Name", @"Label", @"Type", @"Custom", @"Help Text",
 					@"Length", @"Digits", @"Scale", @"Precision", @"Byte Length",
-					@"Createable", @"Updatable", @"Default On Create", @"Calculated", @"AutoNumber",  
+					@"Createable", @"Updatable", @"Cascade Delete", @"Default On Create", @"Calculated", @"AutoNumber",  
 					@"Unique", @"Case Sensitive", @"Name Pointing", @"Sortable", @"Groupable",
 					@"External Id", @"ID Lookup", @"Filterable", @"HTML Formatted", @"Name Field", @"Nillable", 
 					@"Name Pointing", @"Reference To", @"Relationship Name", 
 					@"Dependent Picklist", @"Controller Name", @"Restricted Picklist", 
-					@"Value Formula", @"Default Formula", @"Relationship Order (CJOs)", @"Write Requires Read on Master (CJOs)", nil] retain];
+					@"Value Formula", @"Default Formula", @"Relationship Order (CJOs)", @"Write Requires Read on Master (CJOs)", @"Display Location in Decimal", nil] retain];
 	return self;
 }
 
@@ -327,12 +327,12 @@
 
 	SEL selectors[] = { @selector(name), @selector(label), @selector(type), @selector(custom), @selector(inlineHelpText),
 						@selector(length), @selector(digits), @selector(scale), @selector(precision), @selector(byteLength),			
-						@selector(createable), @selector(updateable), @selector(defaultOnCreate), @selector(calculated), @selector(autoNumber),
+						@selector(createable), @selector(updateable), @selector(cascadeDelete), @selector(defaultOnCreate), @selector(calculated), @selector(autoNumber),
 						@selector(unique), @selector(caseSensitive), @selector(namePointing), @selector(sortable), @selector(groupable),
 						@selector(externalId), @selector(idLookup), @selector(filterable), @selector(htmlFormatted), @selector(nameField), @selector(nillable),
 						@selector(namePointing), @selector(referenceTo), @selector(relationshipName), 
 						@selector(dependentPicklist), @selector(controllerName), @selector(restrictedPicklist),
-						@selector(calculatedFormula), @selector(defaultValueFormula), @selector(relationshipOrder), @selector(writeRequiresMasterRead) };
+						@selector(calculatedFormula), @selector(defaultValueFormula), @selector(relationshipOrder), @selector(writeRequiresMasterRead), @selector(displayLocationInDecimal) };
 	
 	if (field == nil) return @"";
 	id f = [field performSelector:selectors[rowIdx]];

@@ -176,5 +176,11 @@
 - (BOOL)groupable {
 	return [self boolean:@"groupable"];
 }
+- (BOOL)cascadeDelete {
+    return [self boolean:@"cascadeDelete"];
+}
+- (BOOL)displayLocationInDecimal {
+    return [self boolean:@"displayLocationInDecimal"];
+}
 
 @end

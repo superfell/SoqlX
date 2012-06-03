@@ -113,5 +113,8 @@
 - (NSString *)inlineHelpText;
 // Api v18.0
 - (BOOL)groupable;
+// Api v25.0
+- (BOOL)cascadeDelete;
+- (BOOL)displayLocationInDecimal;
 
 @end
