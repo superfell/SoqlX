@@ -179,6 +179,22 @@ static const int SAVE_BATCH_SIZE = 25;
 	return endpointUrl;
 }
 
+- (NSString *)serverHostAbbriviation {
+    NSURL *u = [NSURL URLWithString:endpointUrl];
+    NSString *host = [u host];
+    NSString *hostLower = [host lowercaseString];
+    NSArray *suffixes = [NSArray arrayWithObjects:@".salesforce.com", @".force.com", nil];
+    for (NSString *suffix in suffixes) {
+        if ([hostLower hasSuffix:suffix]) {
+            // remove the expected suffix from the host name.
+            host = [host substringToIndex:[host length] - [suffix length]];
+            // remove the trailing -api if there is one.
+            return [[host lowercaseString] hasSuffix:@"-api"] ? [host substringToIndex:[host length] - 4] : host;
+        }
+    }
+    return host;
+}
+
 - (NSString *)sessionId {
 	[self checkSession];
 	return sessionId;

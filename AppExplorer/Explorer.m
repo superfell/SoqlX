@@ -249,6 +249,7 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 - (IBAction)postLogin:(id)sender {
 	NSString *msg = [NSString stringWithFormat:@"Welcome %@ (instance:%@)", [[sforce currentUserInfo] fullName], [[NSURL URLWithString:[sforce serverUrl]] host]];
 	[self setStatusText:msg];
+    [myWindow setTitle:[NSString stringWithFormat:@"SoqlX : %@ (%@ on %@)", [[sforce currentUserInfo] fullName], [[sforce currentUserInfo] userName], [sforce serverHostAbbriviation]]];
 	
 	NSArray * types = [sforce describeGlobal];
 	[descDataSource release];
