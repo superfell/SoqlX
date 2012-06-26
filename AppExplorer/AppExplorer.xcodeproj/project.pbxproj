@@ -21,13 +21,6 @@
 		F441679411FE8B370068AF1B /* zkParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F441679311FE8B370068AF1B /* zkParser.m */; };
 		F44FC9DD0E1EB5D600B5F70C /* querySavePanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = F44FC9DC0E1EB5D600B5F70C /* querySavePanel.xib */; };
 		F44FC9E10E1EB69D00B5F70C /* ResultsSaver.m in Sources */ = {isa = PBXBuildFile; fileRef = F44FC9E00E1EB69D00B5F70C /* ResultsSaver.m */; };
-		F454D14E12677FBD00DC16D9 /* zkRunTestResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F454D14012677FBD00DC16D9 /* zkRunTestResult.m */; };
-		F454D14F12677FBD00DC16D9 /* ZKRunTestFailure.m in Sources */ = {isa = PBXBuildFile; fileRef = F454D14212677FBD00DC16D9 /* ZKRunTestFailure.m */; };
-		F454D15012677FBD00DC16D9 /* zkExecuteAnonResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F454D14412677FBD00DC16D9 /* zkExecuteAnonResult.m */; };
-		F454D15112677FBD00DC16D9 /* ZKCompileResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F454D14612677FBD00DC16D9 /* ZKCompileResult.m */; };
-		F454D15212677FBD00DC16D9 /* ZKCodeLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = F454D14812677FBD00DC16D9 /* ZKCodeLocation.m */; };
-		F454D15312677FBD00DC16D9 /* ZKCodeCoverageResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F454D14A12677FBD00DC16D9 /* ZKCodeCoverageResult.m */; };
-		F454D15412677FBD00DC16D9 /* zkApexClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F454D14C12677FBD00DC16D9 /* zkApexClient.m */; };
 		F454D163126785EA00DC16D9 /* ApexController.m in Sources */ = {isa = PBXBuildFile; fileRef = F454D162126785EA00DC16D9 /* ApexController.m */; };
 		F454D2E01267E0AF00DC16D9 /* redLight.png in Resources */ = {isa = PBXBuildFile; fileRef = F454D2DE1267E0AF00DC16D9 /* redLight.png */; };
 		F454D2E11267E0AF00DC16D9 /* greenLight.png in Resources */ = {isa = PBXBuildFile; fileRef = F454D2DF1267E0AF00DC16D9 /* greenLight.png */; };
@@ -45,6 +38,13 @@
 		F49741F00D554DB500DD77F4 /* QueryListController.m in Sources */ = {isa = PBXBuildFile; fileRef = F49741EF0D554DB500DD77F4 /* QueryListController.m */; };
 		F4A279900B6464A700782399 /* ZKRecordTypeInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A2798E0B6464A700782399 /* ZKRecordTypeInfo.m */; };
 		F4A62E2F0D31AC6300D7EACA /* NSView_additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A62E2E0D31AC6300D7EACA /* NSView_additions.m */; };
+		F4AC556715996D8500F5CA45 /* zkApexClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F4AC555A15996D8500F5CA45 /* zkApexClient.m */; };
+		F4AC556815996D8500F5CA45 /* ZKCodeCoverageResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4AC555C15996D8500F5CA45 /* ZKCodeCoverageResult.m */; };
+		F4AC556915996D8500F5CA45 /* ZKCodeLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = F4AC555E15996D8500F5CA45 /* ZKCodeLocation.m */; };
+		F4AC556A15996D8500F5CA45 /* ZKCompileResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4AC556015996D8500F5CA45 /* ZKCompileResult.m */; };
+		F4AC556B15996D8500F5CA45 /* zkExecuteAnonResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4AC556215996D8500F5CA45 /* zkExecuteAnonResult.m */; };
+		F4AC556C15996D8500F5CA45 /* ZKRunTestFailure.m in Sources */ = {isa = PBXBuildFile; fileRef = F4AC556415996D8500F5CA45 /* ZKRunTestFailure.m */; };
+		F4AC556D15996D8500F5CA45 /* zkRunTestResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4AC556615996D8500F5CA45 /* zkRunTestResult.m */; };
 		F4B461FF0F79EB850099C434 /* FieldResizer.m in Sources */ = {isa = PBXBuildFile; fileRef = F4B461FE0F79EB850099C434 /* FieldResizer.m */; };
 		F4B8DFB50B61DA5F00DDD00A /* ZKPicklistEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = F4B8DFB30B61DA5F00DDD00A /* ZKPicklistEntry.m */; };
 		F4B8DFE80B61EB8900DDD00A /* report.css in Resources */ = {isa = PBXBuildFile; fileRef = F4B8DFE70B61EB8900DDD00A /* report.css */; };
@@ -133,20 +133,6 @@
 		F44FC9DC0E1EB5D600B5F70C /* querySavePanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = querySavePanel.xib; sourceTree = "<group>"; };
 		F44FC9DF0E1EB69D00B5F70C /* ResultsSaver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResultsSaver.h; sourceTree = "<group>"; };
 		F44FC9E00E1EB69D00B5F70C /* ResultsSaver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResultsSaver.m; sourceTree = "<group>"; };
-		F454D14012677FBD00DC16D9 /* zkRunTestResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = zkRunTestResult.m; path = ../sforce/zkRunTestResult.m; sourceTree = SOURCE_ROOT; };
-		F454D14112677FBD00DC16D9 /* zkRunTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zkRunTestResult.h; path = ../sforce/zkRunTestResult.h; sourceTree = SOURCE_ROOT; };
-		F454D14212677FBD00DC16D9 /* ZKRunTestFailure.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKRunTestFailure.m; path = ../sforce/ZKRunTestFailure.m; sourceTree = SOURCE_ROOT; };
-		F454D14312677FBD00DC16D9 /* ZKRunTestFailure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKRunTestFailure.h; path = ../sforce/ZKRunTestFailure.h; sourceTree = SOURCE_ROOT; };
-		F454D14412677FBD00DC16D9 /* zkExecuteAnonResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = zkExecuteAnonResult.m; path = ../sforce/zkExecuteAnonResult.m; sourceTree = SOURCE_ROOT; };
-		F454D14512677FBD00DC16D9 /* zkExecuteAnonResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zkExecuteAnonResult.h; path = ../sforce/zkExecuteAnonResult.h; sourceTree = SOURCE_ROOT; };
-		F454D14612677FBD00DC16D9 /* ZKCompileResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKCompileResult.m; path = ../sforce/ZKCompileResult.m; sourceTree = SOURCE_ROOT; };
-		F454D14712677FBD00DC16D9 /* ZKCompileResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKCompileResult.h; path = ../sforce/ZKCompileResult.h; sourceTree = SOURCE_ROOT; };
-		F454D14812677FBD00DC16D9 /* ZKCodeLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKCodeLocation.m; path = ../sforce/ZKCodeLocation.m; sourceTree = SOURCE_ROOT; };
-		F454D14912677FBD00DC16D9 /* ZKCodeLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKCodeLocation.h; path = ../sforce/ZKCodeLocation.h; sourceTree = SOURCE_ROOT; };
-		F454D14A12677FBD00DC16D9 /* ZKCodeCoverageResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKCodeCoverageResult.m; path = ../sforce/ZKCodeCoverageResult.m; sourceTree = SOURCE_ROOT; };
-		F454D14B12677FBD00DC16D9 /* ZKCodeCoverageResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKCodeCoverageResult.h; path = ../sforce/ZKCodeCoverageResult.h; sourceTree = SOURCE_ROOT; };
-		F454D14C12677FBD00DC16D9 /* zkApexClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = zkApexClient.m; path = ../sforce/zkApexClient.m; sourceTree = SOURCE_ROOT; };
-		F454D14D12677FBD00DC16D9 /* zkApexClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zkApexClient.h; path = ../sforce/zkApexClient.h; sourceTree = SOURCE_ROOT; };
 		F454D161126785EA00DC16D9 /* ApexController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApexController.h; sourceTree = "<group>"; };
 		F454D162126785EA00DC16D9 /* ApexController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApexController.m; sourceTree = "<group>"; };
 		F454D2DE1267E0AF00DC16D9 /* redLight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = redLight.png; sourceTree = "<group>"; };
@@ -178,6 +164,20 @@
 		F4A2798E0B6464A700782399 /* ZKRecordTypeInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKRecordTypeInfo.m; path = ../sforce/ZKRecordTypeInfo.m; sourceTree = SOURCE_ROOT; };
 		F4A62E2D0D31AC6300D7EACA /* NSView_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSView_additions.h; sourceTree = "<group>"; };
 		F4A62E2E0D31AC6300D7EACA /* NSView_additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSView_additions.m; sourceTree = "<group>"; };
+		F4AC555915996D8500F5CA45 /* zkApexClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zkApexClient.h; path = ../apexforce/zkApexClient.h; sourceTree = "<group>"; };
+		F4AC555A15996D8500F5CA45 /* zkApexClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = zkApexClient.m; path = ../apexforce/zkApexClient.m; sourceTree = "<group>"; };
+		F4AC555B15996D8500F5CA45 /* ZKCodeCoverageResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKCodeCoverageResult.h; path = ../apexforce/ZKCodeCoverageResult.h; sourceTree = "<group>"; };
+		F4AC555C15996D8500F5CA45 /* ZKCodeCoverageResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKCodeCoverageResult.m; path = ../apexforce/ZKCodeCoverageResult.m; sourceTree = "<group>"; };
+		F4AC555D15996D8500F5CA45 /* ZKCodeLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKCodeLocation.h; path = ../apexforce/ZKCodeLocation.h; sourceTree = "<group>"; };
+		F4AC555E15996D8500F5CA45 /* ZKCodeLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKCodeLocation.m; path = ../apexforce/ZKCodeLocation.m; sourceTree = "<group>"; };
+		F4AC555F15996D8500F5CA45 /* ZKCompileResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKCompileResult.h; path = ../apexforce/ZKCompileResult.h; sourceTree = "<group>"; };
+		F4AC556015996D8500F5CA45 /* ZKCompileResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKCompileResult.m; path = ../apexforce/ZKCompileResult.m; sourceTree = "<group>"; };
+		F4AC556115996D8500F5CA45 /* zkExecuteAnonResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zkExecuteAnonResult.h; path = ../apexforce/zkExecuteAnonResult.h; sourceTree = "<group>"; };
+		F4AC556215996D8500F5CA45 /* zkExecuteAnonResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = zkExecuteAnonResult.m; path = ../apexforce/zkExecuteAnonResult.m; sourceTree = "<group>"; };
+		F4AC556315996D8500F5CA45 /* ZKRunTestFailure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKRunTestFailure.h; path = ../apexforce/ZKRunTestFailure.h; sourceTree = "<group>"; };
+		F4AC556415996D8500F5CA45 /* ZKRunTestFailure.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKRunTestFailure.m; path = ../apexforce/ZKRunTestFailure.m; sourceTree = "<group>"; };
+		F4AC556515996D8500F5CA45 /* zkRunTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zkRunTestResult.h; path = ../apexforce/zkRunTestResult.h; sourceTree = "<group>"; };
+		F4AC556615996D8500F5CA45 /* zkRunTestResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = zkRunTestResult.m; path = ../apexforce/zkRunTestResult.m; sourceTree = "<group>"; };
 		F4B461FD0F79EB850099C434 /* FieldResizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FieldResizer.h; sourceTree = "<group>"; };
 		F4B461FE0F79EB850099C434 /* FieldResizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FieldResizer.m; sourceTree = "<group>"; };
 		F4B8DFB20B61DA5F00DDD00A /* ZKPicklistEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKPicklistEntry.h; path = ../sforce/ZKPicklistEntry.h; sourceTree = SOURCE_ROOT; };
@@ -424,20 +424,20 @@
 		F454D13E12677F9500DC16D9 /* sforce apex */ = {
 			isa = PBXGroup;
 			children = (
-				F454D14012677FBD00DC16D9 /* zkRunTestResult.m */,
-				F454D14112677FBD00DC16D9 /* zkRunTestResult.h */,
-				F454D14212677FBD00DC16D9 /* ZKRunTestFailure.m */,
-				F454D14312677FBD00DC16D9 /* ZKRunTestFailure.h */,
-				F454D14412677FBD00DC16D9 /* zkExecuteAnonResult.m */,
-				F454D14512677FBD00DC16D9 /* zkExecuteAnonResult.h */,
-				F454D14612677FBD00DC16D9 /* ZKCompileResult.m */,
-				F454D14712677FBD00DC16D9 /* ZKCompileResult.h */,
-				F454D14812677FBD00DC16D9 /* ZKCodeLocation.m */,
-				F454D14912677FBD00DC16D9 /* ZKCodeLocation.h */,
-				F454D14A12677FBD00DC16D9 /* ZKCodeCoverageResult.m */,
-				F454D14B12677FBD00DC16D9 /* ZKCodeCoverageResult.h */,
-				F454D14C12677FBD00DC16D9 /* zkApexClient.m */,
-				F454D14D12677FBD00DC16D9 /* zkApexClient.h */,
+				F4AC555915996D8500F5CA45 /* zkApexClient.h */,
+				F4AC555A15996D8500F5CA45 /* zkApexClient.m */,
+				F4AC555B15996D8500F5CA45 /* ZKCodeCoverageResult.h */,
+				F4AC555C15996D8500F5CA45 /* ZKCodeCoverageResult.m */,
+				F4AC555D15996D8500F5CA45 /* ZKCodeLocation.h */,
+				F4AC555E15996D8500F5CA45 /* ZKCodeLocation.m */,
+				F4AC555F15996D8500F5CA45 /* ZKCompileResult.h */,
+				F4AC556015996D8500F5CA45 /* ZKCompileResult.m */,
+				F4AC556115996D8500F5CA45 /* zkExecuteAnonResult.h */,
+				F4AC556215996D8500F5CA45 /* zkExecuteAnonResult.m */,
+				F4AC556315996D8500F5CA45 /* ZKRunTestFailure.h */,
+				F4AC556415996D8500F5CA45 /* ZKRunTestFailure.m */,
+				F4AC556515996D8500F5CA45 /* zkRunTestResult.h */,
+				F4AC556615996D8500F5CA45 /* zkRunTestResult.m */,
 			);
 			name = "sforce apex";
 			sourceTree = "<group>";
@@ -678,14 +678,14 @@
 				F465EECF111E302400D52624 /* zkLoginResult.m in Sources */,
 				F441679111FE8B2B0068AF1B /* zkQueryResult_NSTableView.m in Sources */,
 				F441679411FE8B370068AF1B /* zkParser.m in Sources */,
-				F454D14E12677FBD00DC16D9 /* zkRunTestResult.m in Sources */,
-				F454D14F12677FBD00DC16D9 /* ZKRunTestFailure.m in Sources */,
-				F454D15012677FBD00DC16D9 /* zkExecuteAnonResult.m in Sources */,
-				F454D15112677FBD00DC16D9 /* ZKCompileResult.m in Sources */,
-				F454D15212677FBD00DC16D9 /* ZKCodeLocation.m in Sources */,
-				F454D15312677FBD00DC16D9 /* ZKCodeCoverageResult.m in Sources */,
-				F454D15412677FBD00DC16D9 /* zkApexClient.m in Sources */,
 				F454D163126785EA00DC16D9 /* ApexController.m in Sources */,
+				F4AC556715996D8500F5CA45 /* zkApexClient.m in Sources */,
+				F4AC556815996D8500F5CA45 /* ZKCodeCoverageResult.m in Sources */,
+				F4AC556915996D8500F5CA45 /* ZKCodeLocation.m in Sources */,
+				F4AC556A15996D8500F5CA45 /* ZKCompileResult.m in Sources */,
+				F4AC556B15996D8500F5CA45 /* zkExecuteAnonResult.m in Sources */,
+				F4AC556C15996D8500F5CA45 /* ZKRunTestFailure.m in Sources */,
+				F4AC556D15996D8500F5CA45 /* zkRunTestResult.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
