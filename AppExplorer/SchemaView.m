@@ -24,8 +24,8 @@
 #import "DataSources.h"
 #import "Explorer.h"
 #import "WeightedSObject.h"
-#import "../sforce/zkChildRelationship.h"
-#import "../sforce/zkDescribeSObject.h"
+#import "zkChildRelationship.h"
+#import "zkDescribeSObject.h"
 #import "RRGlossCausticShader.h"
 
 @interface SchemaView (Private)

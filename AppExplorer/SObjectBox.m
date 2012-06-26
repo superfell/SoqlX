@@ -21,7 +21,7 @@
 
 #import "SObjectBox.h"
 #import "SchemaView.h"
-#import "../sforce/zkDescribeSObject.h"
+#import "zkDescribeSObject.h"
 #import "FieldImportance.h"
 #import "PlusMinusWidget.h"
 

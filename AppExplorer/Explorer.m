@@ -29,13 +29,7 @@
 #import "QueryListController.h"
 #import "QueryTextListView.h"
 #import "ApexController.h"
-#import "../sforce/zkSoapException.h"
-#import "../sforce/zkDescribeSObject.h"
-#import "../sforce/zkDescribeField.h"
-#import "../sforce/zkUserInfo.h"
-#import "../sforce/zkQueryResult.h"
-#import "../sforce/zkSObject.h"
-#import "../sforce/zkSaveResult.h"
+#import "zkSforce.h"
 #import "ResultsSaver.h"
 #import "BulkDelete.h"
 #import <Sparkle/Sparkle.h>
@@ -247,7 +241,7 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 }
 
 - (IBAction)postLogin:(id)sender {
-	NSString *msg = [NSString stringWithFormat:@"Welcome %@ (instance:%@)", [[sforce currentUserInfo] fullName], [[NSURL URLWithString:[sforce serverUrl]] host]];
+	NSString *msg = [NSString stringWithFormat:@"Welcome %@ (instance:%@)", [[sforce currentUserInfo] fullName], [[sforce serverUrl] host]];
 	[self setStatusText:msg];
     [myWindow setTitle:[NSString stringWithFormat:@"SoqlX : %@ (%@ on %@)", [[sforce currentUserInfo] fullName], [[sforce currentUserInfo] userName], [sforce serverHostAbbriviation]]];
 	

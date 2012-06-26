@@ -21,7 +21,7 @@
 
 #import "EditableQueryResultWrapper.h"
 #import "QueryResultCell.h"
-#import "zkQueryResult_NSTableView.h"
+#import "zkQueryResult+NSTableView.h"
 
 NSString *DELETE_COLUMN_IDENTIFIER = @"row__delete";
 NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";

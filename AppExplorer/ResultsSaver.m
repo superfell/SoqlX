@@ -21,10 +21,9 @@
 
 #import "ResultsSaver.h"
 #import "QueryResultTable.h"
-#import "zkQueryResult.h"
-#import "zkSforceClient.h"
+#import "zkSforce.h"
+#import "zkQueryResult+NSTableView.h"
 #import "EditableQueryResultWrapper.h"
-#import "zkQueryResult_NSTableView.h"
 
 @implementation ResultsSaver
 

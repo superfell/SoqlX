@@ -113,10 +113,10 @@ static NSArray *logLevelNames;
 }
 
 - (void)setEndpointUrl {
-	[endpointUrl release];
-    NSString *sUrl = [sforce serverUrl];
+	[endpointUrl autorelease];
+    NSString *sUrl = [[sforce serverUrl] absoluteString];
     sUrl = [sUrl stringByReplacingOccurrencesOfString:@"/services/Soap/u/" withString:@"/services/Soap/s/"];
-	endpointUrl = [sUrl retain];
+	endpointUrl = [[NSURL URLWithString:sUrl] retain];
 }
 
 - (ZKEnvelope *)startEnvelope {

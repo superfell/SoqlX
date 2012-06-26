@@ -23,7 +23,7 @@
 #import "DataSources.h"
 #import "SchemaController.h"
 #import "StandAloneTableHeaderView.h"
-#import "../sforce/zkSforceClient.h"
+#import "zkSforceClient.h"
 #import "EditableQueryResultWrapper.h"
 
 @class ReportWizardController;

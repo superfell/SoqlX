@@ -20,10 +20,10 @@
 //
 
 #import "DataSources.h"
-#import "../sforce/zkDescribeSObject.h"
-#import "../sforce/zkDescribeField.h"
-#import "../sforce/zkChildRelationship.h"
-#import "../sforce/zkSForceClient.h"
+#import "zkDescribeSObject.h"
+#import "zkDescribeField.h"
+#import "zkChildRelationship.h"
+#import "zkSForceClient.h"
 #import "DescribeOperation.h"
 #import "HighlightTextFieldCell.h"
 
