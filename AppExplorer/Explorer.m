@@ -62,8 +62,8 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[defaults setObject:[NSNumber numberWithBool:NO] forKey:@"details"];
 	[defaults setObject:@"select id, firstname, lastname from contact" forKey:@"soql"];
 
-	NSString *prod = [NSString stringWithString:@"https://www.salesforce.com"];
-	NSString *test = [NSString stringWithString:@"https://test.salesforce.com"];
+	NSString *prod = @"https://www.salesforce.com";
+	NSString *test = @"https://test.salesforce.com";
 	
 	NSMutableArray * defaultServers = [NSMutableArray arrayWithObjects:prod, test, nil];
 	[defaults setObject:defaultServers forKey:@"systems"];
