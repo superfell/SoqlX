@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -94,6 +93,7 @@
 		F4CF71F40D4704EE001001F2 /* QueryResultTable.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CF71F30D4704EE001001F2 /* QueryResultTable.m */; };
 		F4CF73E80D49BDDB001001F2 /* QueryResultCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CF73E70D49BDDB001001F2 /* QueryResultCell.m */; };
 		F4D6E18A0BD70DA200813881 /* EditableQueryResultWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D6E1880BD70DA200813881 /* EditableQueryResultWrapper.m */; };
+		F4D7831815D489B800D00BB9 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4D7831615D489B800D00BB9 /* MainMenu.xib */; };
 		F4D9DD060AD8A1190065EA2D /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4D9DD050AD8A1190065EA2D /* Sparkle.framework */; };
 		F4D9DD1D0AD8A1840065EA2D /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = F4D9DD050AD8A1190065EA2D /* Sparkle.framework */; };
 		F4DAAC340D31E812009C9C09 /* DescribeOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DAAC330D31E812009C9C09 /* DescribeOperation.m */; };
@@ -126,7 +126,6 @@
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* AppExplorer_Prefix.pch */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = AppExplorer_Prefix.pch; sourceTree = "<group>"; };
@@ -288,6 +287,7 @@
 		F4CF73E70D49BDDB001001F2 /* QueryResultCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QueryResultCell.m; sourceTree = "<group>"; };
 		F4D6E1870BD70DA200813881 /* EditableQueryResultWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditableQueryResultWrapper.h; sourceTree = "<group>"; };
 		F4D6E1880BD70DA200813881 /* EditableQueryResultWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditableQueryResultWrapper.m; sourceTree = "<group>"; };
+		F4D7831715D489B800D00BB9 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		F4D9DD050AD8A1190065EA2D /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		F4DAAC320D31E812009C9C09 /* DescribeOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DescribeOperation.h; sourceTree = "<group>"; };
 		F4DAAC330D31E812009C9C09 /* DescribeOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DescribeOperation.m; sourceTree = "<group>"; };
@@ -432,7 +432,7 @@
 				F413C7250AACB9B4000A8CDC /* sf.icns */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
-				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
+				F4D7831615D489B800D00BB9 /* MainMenu.xib */,
 				F44FC9DC0E1EB5D600B5F70C /* querySavePanel.xib */,
 				F4C877F40F395C6E000075D4 /* ProgressWindow.nib */,
 			);
@@ -657,6 +657,7 @@
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				en,
+				English,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* AppExplorer */;
 			projectDirPath = "";
@@ -672,7 +673,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				F413C7260AACB9B4000A8CDC /* sf.icns in Resources */,
 				F40444D40ACA4B870060C0F2 /* Credits.html in Resources */,
@@ -686,6 +686,7 @@
 				F4C877F50F395C6E000075D4 /* ProgressWindow.nib in Resources */,
 				F454D2E01267E0AF00DC16D9 /* redLight.png in Resources */,
 				F454D2E11267E0AF00DC16D9 /* greenLight.png in Resources */,
+				F4D7831815D489B800D00BB9 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -804,12 +805,12 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		29B97318FDCFA39411CA2CEA /* MainMenu.nib */ = {
+		F4D7831615D489B800D00BB9 /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				29B97319FDCFA39411CA2CEA /* English */,
+				F4D7831715D489B800D00BB9 /* English */,
 			);
-			name = MainMenu.nib;
+			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
