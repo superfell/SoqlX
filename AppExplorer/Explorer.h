@@ -45,7 +45,6 @@
 	IBOutlet NSTableView			*childTableView;
     IBOutlet NSTextView			    *soql;	
 	IBOutlet NSProgressIndicator	*progress;
-	IBOutlet NSWindow				*prefsWindow;
 	IBOutlet NSWindow				*myWindow;
 	IBOutlet NSTabView				*soqlSchemaTabs;
 	IBOutlet NSSplitView			*vertSplitView;
@@ -73,8 +72,6 @@
 
 - (IBAction)showLogin:(id)sender;
 - (IBAction)showInBrowser:(id)sender;
-- (IBAction)showPreferences:(id)sender;
-- (IBAction)closePreferences:(id)sender;
 - (IBAction)executeQuery:(id)sender;
 - (IBAction)executeQueryAll:(id)sender;
 - (IBAction)queryMore:(id)sender;

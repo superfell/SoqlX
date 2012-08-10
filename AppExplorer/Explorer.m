@@ -179,15 +179,6 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[loginController cancelLogin:sender];
 }
 
-- (IBAction)showPreferences:(id)sender  {
-	[NSApp beginSheet:prefsWindow modalForWindow:myWindow modalDelegate:self didEndSelector:nil contextInfo:nil];
-}
-
-- (IBAction)closePreferences:(id)sender {
-	[NSApp endSheet:prefsWindow];
-	[prefsWindow orderOut:sender];
-}
-	
 - (BOOL)isLoggedIn {
 	return [sforce loggedIn];
 }
