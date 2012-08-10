@@ -223,6 +223,7 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
                        [sforce serverHostAbbriviation]];
     [myWindow setTitle:title];
 	[queryListController setPrefPrefix:[[sforce currentUserInfo] userId]];
+    
 	NSArray * types = [sforce describeGlobal];
 	[descDataSource release];
 	descDataSource = [[DescribeListDataSource alloc] init];

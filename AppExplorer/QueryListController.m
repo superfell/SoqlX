@@ -23,19 +23,36 @@
 #import "QueryTextListView.h"
 #import "NSWindow_additions.h"
 
-NSString *RECENT_QUERIES = @"recentQueries";
+static NSString *RECENT_QUERIES = @"recentQueries";
+static NSString *RECENT_SHOWN = @"recentQueriesVisible";
 
 @implementation QueryListController
 
 -(void)awakeFromNib {
 	[window setContentBorderThickness:28.0 forEdge:NSMinYEdge];
 	[window setAlphaValue:0.0];
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"recentQueriesVisible"])
-		[self showHideWindow:self];
+    visible = NO;
 }
 
--(IBAction)showHideWindow:(id)sender {
-	[window displayOrCloseWindow:sender];
+// returns TRUE if the visible state changes.
+-(BOOL)updateWindowVisibleState:(BOOL)newState triggerKVONotification:(BOOL)doKvo {
+    NSLog(@"updateWindowVisibleState newState=%d visible=%d", newState, visible);
+    if (newState == visible) return FALSE;
+    if (doKvo) [self willChangeValueForKey:@"windowVisible"];
+    visible = newState;
+    if (doKvo) [self didChangeValueForKey:@"windowVisible"];
+    [[NSUserDefaults standardUserDefaults] setBool:visible forKey:[self prefName:RECENT_SHOWN]];
+    return TRUE;
+}
+
+-(void)setWindowVisible:(BOOL)newState {
+    // we don't need to manually trigger KVO here because this is the actual real property
+    if ([self updateWindowVisibleState:newState triggerKVONotification:NO])
+        [window displayOrCloseWindow:self];
+}
+
+-(BOOL)windowVisible {
+    return visible;
 }
 
 - (void)addQuery:(NSString *)soql {
@@ -55,12 +72,16 @@ NSString *RECENT_QUERIES = @"recentQueries";
 }
 
 -(void)windowWillClose:(NSNotification *)notification {
-	[[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"recentQueriesVisible"];
+    [self updateWindowVisibleState:NO triggerKVONotification:YES];
 	[[window animator] setAlphaValue:0.0];
 }
 
 -(void)setDelegate:(id<QueryTextListViewDelegate>)delegate {
     [view setDelegate:delegate];
+}
+
+-(id<QueryTextListViewDelegate>)delegate {
+    return [view delegate];
 }
 
 -(void)loadSavedItems {
@@ -78,6 +99,21 @@ NSString *RECENT_QUERIES = @"recentQueries";
         [view setInitialItems:saved];
 }
 
+-(void)checkShowWindow {
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    BOOL show = [def boolForKey:[self prefName:RECENT_SHOWN]];
+    if (!show) {
+        // migrate legacy setting
+        if ([def objectForKey:RECENT_SHOWN] != nil) {
+            show = [def boolForKey:RECENT_SHOWN];
+            [def setBool:show forKey:[self prefName:RECENT_SHOWN]];
+            [def removeObjectForKey:RECENT_SHOWN];
+        }
+    }
+    if (show)
+		[self setWindowVisible:TRUE];
+}
+    
 -(NSString *)prefPrefix {
     return prefPrefix;
 }
@@ -86,6 +122,7 @@ NSString *RECENT_QUERIES = @"recentQueries";
     [prefPrefix autorelease];
     prefPrefix = [pp retain];
     [self loadSavedItems];
+    [self checkShowWindow];
 }
 
 @end

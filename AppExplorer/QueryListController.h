@@ -28,14 +28,13 @@
 	IBOutlet QueryTextListView	*view;
 	IBOutlet NSWindow			*window;
     NSString                    *prefPrefix;
+    BOOL                        visible;
 }
 
--(IBAction)showHideWindow:(id)sender;
+@property (assign) BOOL windowVisible;
+@property (retain) NSString *prefPrefix;
+@property (assign) id<QueryTextListViewDelegate> delegate;
 
 -(void)addQuery:(NSString *)soql;
-
--(void)setDelegate:(id<QueryTextListViewDelegate>)delegate;
-
-@property (retain) NSString *prefPrefix;
 
 @end
