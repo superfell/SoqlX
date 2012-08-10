@@ -671,7 +671,7 @@
 			<object class="NSUserDefaultsController" id="850949266">
 				<bool key="NSSharedInstance">YES</bool>
 			</object>
-			<object class="NSCustomObject" id="710543975">
+			<object class="NSCustomObject" id="618588879">
 				<string key="NSClassName">AppDelegate</string>
 			</object>
 		</array>
@@ -721,7 +721,7 @@
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">delegate</string>
 						<reference key="source" ref="210285772"/>
-						<reference key="destination" ref="710543975"/>
+						<reference key="destination" ref="618588879"/>
 					</object>
 					<int key="connectionID">1678</int>
 				</object>
@@ -936,10 +936,18 @@
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">launchHelp:</string>
-						<reference key="source" ref="710543975"/>
+						<reference key="source" ref="618588879"/>
 						<reference key="destination" ref="800822810"/>
 					</object>
 					<int key="connectionID">1679</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">openNewWindow:</string>
+						<reference key="source" ref="618588879"/>
+						<reference key="destination" ref="333745525"/>
+					</object>
+					<int key="connectionID">1682</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1412,7 +1420,7 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">1677</int>
-						<reference key="object" ref="710543975"/>
+						<reference key="object" ref="618588879"/>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">App Delegate</string>
 					</object>
@@ -1495,7 +1503,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">1681</int>
+			<int key="maxID">1682</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1535,17 +1543,20 @@
 				<object class="IBPartialClassDescription">
 					<string key="className">AppDelegate</string>
 					<string key="superclassName">NSObject</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">launchHelp:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">launchHelp:</string>
-						<object class="IBActionInfo" key="NS.object.0">
+					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="launchHelp:">id</string>
+						<string key="openNewWindow:">id</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="launchHelp:">
 							<string key="name">launchHelp:</string>
 							<string key="candidateClassName">id</string>
 						</object>
-					</object>
+						<object class="IBActionInfo" key="openNewWindow:">
+							<string key="name">openNewWindow:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</dictionary>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/AppDelegate.h</string>
@@ -1588,7 +1599,6 @@
 					<string key="className">Explorer</string>
 					<string key="superclassName">NSObject</string>
 					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="closePreferences:">id</string>
 						<string key="deleteCheckedRows:">id</string>
 						<string key="deleteSelectedRow:">id</string>
 						<string key="describeItemClicked:">id</string>
@@ -1604,15 +1614,10 @@
 						<string key="selectedSObjectChanged:">id</string>
 						<string key="showInBrowser:">id</string>
 						<string key="showLogin:">id</string>
-						<string key="showPreferences:">id</string>
 						<string key="showSelectedIdFronChildInBrowser:">id</string>
 						<string key="showSelectedIdFronRootInBrowser:">id</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="closePreferences:">
-							<string key="name">closePreferences:</string>
-							<string key="candidateClassName">id</string>
-						</object>
 						<object class="IBActionInfo" key="deleteCheckedRows:">
 							<string key="name">deleteCheckedRows:</string>
 							<string key="candidateClassName">id</string>
@@ -1673,10 +1678,6 @@
 							<string key="name">showLogin:</string>
 							<string key="candidateClassName">id</string>
 						</object>
-						<object class="IBActionInfo" key="showPreferences:">
-							<string key="name">showPreferences:</string>
-							<string key="candidateClassName">id</string>
-						</object>
 						<object class="IBActionInfo" key="showSelectedIdFronChildInBrowser:">
 							<string key="name">showSelectedIdFronChildInBrowser:</string>
 							<string key="candidateClassName">id</string>
@@ -1692,7 +1693,6 @@
 						<string key="describeList">NSOutlineView</string>
 						<string key="detailsController">DetailsController</string>
 						<string key="myWindow">NSWindow</string>
-						<string key="prefsWindow">NSWindow</string>
 						<string key="progress">NSProgressIndicator</string>
 						<string key="queryListController">QueryListController</string>
 						<string key="rootTableView">NSTableView</string>
@@ -1722,10 +1722,6 @@
 						</object>
 						<object class="IBToOneOutletInfo" key="myWindow">
 							<string key="name">myWindow</string>
-							<string key="candidateClassName">NSWindow</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="prefsWindow">
-							<string key="name">prefsWindow</string>
 							<string key="candidateClassName">NSWindow</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="progress">

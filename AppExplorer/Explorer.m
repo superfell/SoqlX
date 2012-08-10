@@ -102,7 +102,7 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[childResults setDelegate:self];
 	[self collapseChildTableView];
 	
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(initUi:) name:NSApplicationDidFinishLaunchingNotification object:nil];
+    [self performSelector:@selector(initUi:) withObject:nil afterDelay:0];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(closeLoginPanelIfOpen:) name:SUUpdaterWillRestartNotification object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(describeFinished:) name:DescribeDidFinish object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recentQueryListClicked:) name:QueryTextListViewItem_Clicked object:nil];
@@ -116,6 +116,7 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[rootResults removeObserver:self forKeyPath:@"hasCheckedRows"];
 	[rootResults release];
 	[childResults release];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 	[super dealloc];
 }
 

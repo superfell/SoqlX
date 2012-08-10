@@ -50,6 +50,12 @@
 		[[NSUserDefaults standardUserDefaults] setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"system"] forKey:@"server"];
 	}
 	[self resetApiVersionOverrideIfAppVersionChanged];
+    [self openNewWindow:self];
+}
+
+-(void)openNewWindow:(id)sender {
+    NSWindowController *controller = [[NSWindowController alloc] initWithWindowNibName:@"Explorer"];
+    [controller showWindow:sender];
 }
 
 @end

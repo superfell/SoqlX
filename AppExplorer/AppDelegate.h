@@ -25,5 +25,6 @@
 }
 
 - (IBAction)launchHelp:(id)sender;
+- (IBAction)openNewWindow:(id)sender;
 
 @end
