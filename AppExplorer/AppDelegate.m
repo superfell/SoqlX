@@ -23,6 +23,17 @@
 
 @implementation AppDelegate
 
+-(id)init {
+    self = [super init];
+    windowControllers = [[NSMutableArray alloc] init];
+    return self;
+}
+
+-(void)dealloc {
+    [windowControllers release];
+    [super dealloc];
+}
+
 - (IBAction)launchHelp:(id)sender {
 	NSString *help = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"ZKHelpUrl"];
 	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:help]];
@@ -56,6 +67,8 @@
 -(void)openNewWindow:(id)sender {
     NSWindowController *controller = [[NSWindowController alloc] initWithWindowNibName:@"Explorer"];
     [controller showWindow:sender];
+    [windowControllers addObject:controller];
+    [controller release];
 }
 
 @end

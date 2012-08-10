@@ -22,6 +22,7 @@
 #import <Foundation/Foundation.h>
 
 @interface AppDelegate : NSObject<NSApplicationDelegate> {
+    NSMutableArray *windowControllers;
 }
 
 - (IBAction)launchHelp:(id)sender;
