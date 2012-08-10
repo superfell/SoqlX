@@ -78,17 +78,6 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
     return paths;
 }
 
--(void)resetApiVersionOverrideIfAppVersionChanged {
-	NSDictionary *plist = [[NSBundle mainBundle] infoDictionary];
-	NSString * currentVersionString = [plist objectForKey:@"CFBundleVersion"];
-	float currentVersion = currentVersionString == nil ? 0.0f : [currentVersionString floatValue];	
-	float lastRun = [[NSUserDefaults standardUserDefaults] floatForKey:@"LastAppVersionRun"];
-	if (currentVersion > lastRun) {
-		[[NSUserDefaults standardUserDefaults] removeObjectForKey:@"zkApiVersion"];
-		[[NSUserDefaults standardUserDefaults] setFloat:currentVersion forKey:@"LastAppVersionRun"];
-	}
-}
-
 - (void)awakeFromNib {
 	[myWindow setContentBorderThickness:28.0 forEdge:NSMinYEdge]; 	
 	[myWindow setContentBorderThickness:28.0 forEdge:NSMaxYEdge]; 	
@@ -117,15 +106,6 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(closeLoginPanelIfOpen:) name:SUUpdaterWillRestartNotification object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(describeFinished:) name:DescribeDidFinish object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recentQueryListClicked:) name:QueryTextListViewItem_Clicked object:nil];
-	
-	// one-off, fix up preferences for new shared Login nib / controller
-	NSArray *servers = [[NSUserDefaults standardUserDefaults] objectForKey:@"servers"];
-	if ([servers count] == 0) {
-		servers = [[NSUserDefaults standardUserDefaults] objectForKey:@"systems"];
-		[[NSUserDefaults standardUserDefaults] setObject:servers forKey:@"servers"];
-		[[NSUserDefaults standardUserDefaults] setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"system"] forKey:@"server"];
-	}
-	[self resetApiVersionOverrideIfAppVersionChanged];
 }
 
 - (void)dealloc {

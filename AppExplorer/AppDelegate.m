@@ -28,4 +28,28 @@
 	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:help]];
 }
 
+// If the version of the app has changed, then reset any pref setting that is overriding the API version from
+// the default (as a new version likely means we've moved API versions anyway)
+-(void)resetApiVersionOverrideIfAppVersionChanged {
+	NSDictionary *plist = [[NSBundle mainBundle] infoDictionary];
+	NSString * currentVersionString = [plist objectForKey:@"CFBundleVersion"];
+	float currentVersion = currentVersionString == nil ? 0.0f : [currentVersionString floatValue];
+	float lastRun = [[NSUserDefaults standardUserDefaults] floatForKey:@"LastAppVersionRun"];
+	if (currentVersion > lastRun) {
+		[[NSUserDefaults standardUserDefaults] removeObjectForKey:@"zkApiVersion"];
+		[[NSUserDefaults standardUserDefaults] setFloat:currentVersion forKey:@"LastAppVersionRun"];
+	}
+}
+
+-(void)applicationDidFinishLaunching:(NSNotification *)notification {
+    // one-off, fix up preferences for new shared Login nib / controller
+	NSArray *servers = [[NSUserDefaults standardUserDefaults] objectForKey:@"servers"];
+	if ([servers count] == 0) {
+		servers = [[NSUserDefaults standardUserDefaults] objectForKey:@"systems"];
+		[[NSUserDefaults standardUserDefaults] setObject:servers forKey:@"servers"];
+		[[NSUserDefaults standardUserDefaults] setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"system"] forKey:@"server"];
+	}
+	[self resetApiVersionOverrideIfAppVersionChanged];
+}
+
 @end
