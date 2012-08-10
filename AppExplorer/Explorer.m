@@ -154,11 +154,6 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	}
 }
 
-- (IBAction)launchHelp:(id)sender {
-	NSString *help = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"ZKHelpUrl"];
-	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:help]];
-}
-
 - (NSString *)statusText {
 	return statusText;
 }

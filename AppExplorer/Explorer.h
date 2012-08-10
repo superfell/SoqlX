@@ -71,7 +71,6 @@
 	BOOL							schemaViewIsActive;
 }
 
-- (IBAction)launchHelp:(id)sender;
 - (IBAction)showLogin:(id)sender;
 - (IBAction)showInBrowser:(id)sender;
 - (IBAction)showPreferences:(id)sender;
