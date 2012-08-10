@@ -212,10 +212,17 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 }
 
 - (IBAction)postLogin:(id)sender {
-	NSString *msg = [NSString stringWithFormat:@"Welcome %@ (instance:%@)", [[sforce currentUserInfo] fullName], [[sforce serverUrl] host]];
+	NSString *msg = [NSString stringWithFormat:@"Welcome %@ (instance:%@)",
+                        [[sforce currentUserInfo] fullName],
+                        [[sforce serverUrl] host]];
 	[self setStatusText:msg];
-    [myWindow setTitle:[NSString stringWithFormat:@"SoqlX : %@ (%@ on %@)", [[sforce currentUserInfo] fullName], [[sforce currentUserInfo] userName], [sforce serverHostAbbriviation]]];
-	
+    
+    NSString *title = [NSString stringWithFormat:@"SoqlX : %@ (%@ on %@)",
+                       [[sforce currentUserInfo] fullName],
+                       [[sforce currentUserInfo] userName],
+                       [sforce serverHostAbbriviation]];
+    [myWindow setTitle:title];
+	[queryListController setPrefPrefix:[[sforce currentUserInfo] userId]];
 	NSArray * types = [sforce describeGlobal];
 	[descDataSource release];
 	descDataSource = [[DescribeListDataSource alloc] init];

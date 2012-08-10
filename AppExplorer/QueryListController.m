@@ -23,13 +23,12 @@
 #import "QueryTextListView.h"
 #import "NSWindow_additions.h"
 
+NSString *RECENT_QUERIES = @"recentQueries";
+
 @implementation QueryListController
 
 -(void)awakeFromNib {
-	[window setContentBorderThickness:28.0 forEdge:NSMinYEdge]; 
-	NSArray *saved = [[NSUserDefaults standardUserDefaults] arrayForKey:@"recentQueries"];
-	if (saved != nil) 
-		[view setInitialItems:saved];
+	[window setContentBorderThickness:28.0 forEdge:NSMinYEdge];
 	[window setAlphaValue:0.0];
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"recentQueriesVisible"])
 		[self showHideWindow:self];
@@ -47,8 +46,12 @@
 		for (QueryTextListViewItem *i in [view items]) 
 			[q addObject:[i text]];
 			
-		[[NSUserDefaults standardUserDefaults] setObject:q forKey:@"recentQueries"];
+		[[NSUserDefaults standardUserDefaults] setObject:q forKey:[self prefName:RECENT_QUERIES]];
 	}
+}
+
+-(NSString *)prefName:(NSString *)name {
+    return [NSString stringWithFormat:@"%@-%@", prefPrefix, name];
 }
 
 -(void)windowWillClose:(NSNotification *)notification {
@@ -58,6 +61,31 @@
 
 -(void)setDelegate:(id<QueryTextListViewDelegate>)delegate {
     [view setDelegate:delegate];
+}
+
+-(void)loadSavedItems {
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    NSArray *saved = [def arrayForKey:[self prefName:RECENT_QUERIES]];
+    if (saved == nil) {
+        // see if we need to migrate the existing items from the previous versions pref scheme.
+        saved = [def arrayForKey:RECENT_QUERIES];
+        if (saved != nil) {
+            [def setObject:saved forKey:[self prefName:RECENT_QUERIES]];
+            [def removeObjectForKey:RECENT_QUERIES];
+        }
+    }
+	if (saved != nil)
+        [view setInitialItems:saved];
+}
+
+-(NSString *)prefPrefix {
+    return prefPrefix;
+}
+
+-(void)setPrefPrefix:(NSString *)pp {
+    [prefPrefix autorelease];
+    prefPrefix = [pp retain];
+    [self loadSavedItems];
 }
 
 @end

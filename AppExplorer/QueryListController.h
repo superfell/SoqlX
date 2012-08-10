@@ -27,6 +27,7 @@
 @interface QueryListController : NSObject {
 	IBOutlet QueryTextListView	*view;
 	IBOutlet NSWindow			*window;
+    NSString                    *prefPrefix;
 }
 
 -(IBAction)showHideWindow:(id)sender;
@@ -34,5 +35,7 @@
 -(void)addQuery:(NSString *)soql;
 
 -(void)setDelegate:(id<QueryTextListViewDelegate>)delegate;
+
+@property (retain) NSString *prefPrefix;
 
 @end
