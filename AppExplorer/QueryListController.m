@@ -56,4 +56,8 @@
 	[[window animator] setAlphaValue:0.0];
 }
 
+-(void)setDelegate:(id<QueryTextListViewDelegate>)delegate {
+    [view setDelegate:delegate];
+}
+
 @end

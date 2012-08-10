@@ -1,4 +1,4 @@
-// Copyright (c) 2008 Simon Fell
+// Copyright (c) 2008,2012 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -20,8 +20,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-
-@class QueryTextListView;
+#import "QueryTextListView.h"
 
 // This manages the recent queries list/window
 
@@ -33,5 +32,7 @@
 -(IBAction)showHideWindow:(id)sender;
 
 -(void)addQuery:(NSString *)soql;
+
+-(void)setDelegate:(id<QueryTextListViewDelegate>)delegate;
 
 @end

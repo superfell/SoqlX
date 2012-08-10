@@ -25,6 +25,7 @@
 #import "StandAloneTableHeaderView.h"
 #import "zkSforceClient.h"
 #import "EditableQueryResultWrapper.h"
+#import "QueryListController.h"
 
 @class ReportWizardController;
 @class DetailsController;
@@ -34,10 +35,9 @@
 @class ZKSObject;
 @class ZKQueryResult;
 @class QueryResultTable;
-@class QueryListController;
 @class ApexController;
 
-@interface Explorer : NSObject<EditableQueryResultWrapperDelegate, NSTabViewDelegate>
+@interface Explorer : NSObject<EditableQueryResultWrapperDelegate, NSTabViewDelegate, QueryTextListViewDelegate>
 {
 	// old world order, needs modernizing
     IBOutlet NSOutlineView			*describeList;

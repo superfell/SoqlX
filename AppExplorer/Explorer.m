@@ -52,7 +52,6 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 
 - (void)collapseChildTableView;
 - (void)openChildTableView;
-- (void)recentQueryListClicked:(NSNotification *)notification;
 @end
 
 @implementation Explorer
@@ -105,7 +104,8 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
     [self performSelector:@selector(initUi:) withObject:nil afterDelay:0];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(closeLoginPanelIfOpen:) name:SUUpdaterWillRestartNotification object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(describeFinished:) name:DescribeDidFinish object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recentQueryListClicked:) name:QueryTextListViewItem_Clicked object:nil];
+    
+    [queryListController setDelegate:self];
 }
 
 - (void)dealloc {
@@ -238,8 +238,8 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[self colorize];
 }
 
-- (void)recentQueryListClicked:(NSNotification *)notification {
-	NSString *t = [[notification userInfo] objectForKey:@"text"];
+- (void)queryTextListView:(QueryTextListView *)listView itemClicked:(QueryTextListViewItem *)item {
+	NSString *t = [item text];
 	if (t == nil || [t length] == 0) return;
 	[self setSoqlString:t];
 }
