@@ -42,7 +42,9 @@ extern NSString *QueryTextListViewItem_Clicked;
 -(void)setFrameWidth:(CGFloat)w;
 @end;
 
-
+// This is a listview of items where each item is a string
+// each item is managed by a QueryTextListViewItem
+// upsertHead will handle the case where an existing item is "moved" to the head of the list.
 @interface QueryTextListView : NSView {
 	NSMutableArray	*items;
 	NSDictionary	*textAttributes;

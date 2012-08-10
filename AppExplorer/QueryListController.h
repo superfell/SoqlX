@@ -23,6 +23,8 @@
 
 @class QueryTextListView;
 
+// This manages the recent queries list/window
+
 @interface QueryListController : NSObject {
 	IBOutlet QueryTextListView	*view;
 	IBOutlet NSWindow			*window;

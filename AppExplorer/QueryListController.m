@@ -21,7 +21,7 @@
 
 #import "QueryListController.h"
 #import "QueryTextListView.h"
-#import "../common/NSWindow_additions.h"
+#import "NSWindow_additions.h"
 
 @implementation QueryListController
 
@@ -42,6 +42,7 @@
 - (void)addQuery:(NSString *)soql {
 	soql = [soql stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 	if ([view upsertHead:soql]) {
+        // save the current list of recent queries
 		NSMutableArray *q = [NSMutableArray arrayWithCapacity:[[view items] count]];
 		for (QueryTextListViewItem *i in [view items]) 
 			[q addObject:[i text]];
