@@ -159,7 +159,7 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 
 - (IBAction)initUi:(id)sender {
 	[self setSoqlString:[[NSUserDefaults standardUserDefaults] stringForKey:@"soql"]];
-	[NSTimer scheduledTimerWithTimeInterval:0.50 target:self selector:@selector(showLogin:) userInfo:nil repeats:NO];
+    [self performSelector:@selector(showLogin:) withObject:nil afterDelay:0];
 }
 
 - (IBAction)showLogin:(id)sender {
@@ -177,7 +177,7 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	sforce = [sf retain];
 	[loginController release];
 	loginController = nil;
-	[NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(postLogin:) userInfo:nil repeats:NO];	
+    [self performSelector:@selector(postLogin:) withObject:nil afterDelay:0];
 }
 
 - (void)closeLoginPanelIfOpen:(id)sender {
