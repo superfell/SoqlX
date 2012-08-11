@@ -228,7 +228,7 @@
 
 
 - (id)initWithDescribe:(ZKDescribeSObject *)s {
-	[super init];
+	self = [super init];
 	sobject = [s retain];
 	
 	NSMutableArray *t = [NSMutableArray arrayWithObjects:@"Name", @"Label", @"PluralLabel", @"Key Prefix", @"Custom", 
@@ -292,8 +292,9 @@
 @end
 
 @implementation SObjectFieldDataSource
+
 - (id)initWithDescribe:(ZKDescribeField *)f {
-	[super init];
+	self = [super init];
 	field = [f retain];
 	titles = [[NSArray arrayWithObjects:@"Name", @"Label", @"Type", @"Custom", @"Help Text",
 					@"Length", @"Digits", @"Scale", @"Precision", @"Byte Length",
@@ -362,19 +363,3 @@
 }
 
 @end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
