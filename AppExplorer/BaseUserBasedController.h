@@ -30,6 +30,8 @@
 @property (retain) NSString *prefsPrefix;
 -(NSString *)prefName:(NSString *)pref;
 
+-(void)onPrefsPrefixSet:(NSString *)pp;
+
 @end
 
 @interface BaseWindowToggleController : BaseUserBasedController<NSWindowDelegate> {

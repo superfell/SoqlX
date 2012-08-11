@@ -84,7 +84,9 @@
 }
 
 -(void)windowWillClose:(NSNotification *)notification {
+    [self willChangeValueForKey:@"windowVisible"];
     [self setWindowVisible:NO updateWindow:NO];
+    [self didChangeValueForKey:@"windowVisible"];
 	[[window animator] setAlphaValue:0.0];
 }
 

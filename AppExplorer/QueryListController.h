@@ -19,20 +19,15 @@
 // THE SOFTWARE.
 //
 
-#import <Cocoa/Cocoa.h>
+#import "BaseUserBasedController.h"
 #import "QueryTextListView.h"
 
 // This manages the recent queries list/window
 
-@interface QueryListController : NSObject {
+@interface QueryListController : BaseWindowToggleController {
 	IBOutlet QueryTextListView	*view;
-	IBOutlet NSWindow			*window;
-    NSString                    *prefPrefix;
-    BOOL                        visible;
 }
 
-@property (assign) BOOL windowVisible;
-@property (retain) NSString *prefPrefix;
 @property (assign) id<QueryTextListViewDelegate> delegate;
 
 -(void)addQuery:(NSString *)soql;

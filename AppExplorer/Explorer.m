@@ -27,7 +27,6 @@
 #import "DescribeOperation.h"
 #import "QueryResultTable.h"
 #import "QueryListController.h"
-#import "QueryTextListView.h"
 #import "ApexController.h"
 #import "zkSforce.h"
 #import "ResultsSaver.h"
@@ -223,7 +222,7 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
                        [sforce serverHostAbbriviation]];
     [myWindow setTitle:title];
     NSString *userId = [[sforce currentUserInfo] userId];
-	[queryListController setPrefPrefix:userId];
+	[queryListController setPrefsPrefix:userId];
     [detailsController setPrefsPrefix:userId];
 
 	NSArray * types = [sforce describeGlobal];

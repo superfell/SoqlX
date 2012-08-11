@@ -20,8 +20,6 @@
 //
 
 #import "QueryListController.h"
-#import "QueryTextListView.h"
-#import "NSWindow_additions.h"
 
 static NSString *RECENT_QUERIES = @"recentQueries";
 static NSString *RECENT_SHOWN = @"recentQueriesVisible";
@@ -29,29 +27,12 @@ static NSString *RECENT_SHOWN = @"recentQueriesVisible";
 @implementation QueryListController
 
 -(void)awakeFromNib {
+    [super awakeFromNib];
 	[window setContentBorderThickness:28.0 forEdge:NSMinYEdge];
-	[window setAlphaValue:0.0];
-    visible = NO;
 }
 
-// returns TRUE if the visible state changes.
--(BOOL)updateWindowVisibleState:(BOOL)newState triggerKVONotification:(BOOL)doKvo {
-    if (newState == visible) return FALSE;
-    if (doKvo) [self willChangeValueForKey:@"windowVisible"];
-    visible = newState;
-    if (doKvo) [self didChangeValueForKey:@"windowVisible"];
-    [[NSUserDefaults standardUserDefaults] setBool:visible forKey:[self prefName:RECENT_SHOWN]];
-    return TRUE;
-}
-
--(void)setWindowVisible:(BOOL)newState {
-    // we don't need to manually trigger KVO here because this is the actual real property
-    if ([self updateWindowVisibleState:newState triggerKVONotification:NO])
-        [window displayOrCloseWindow:self];
-}
-
--(BOOL)windowVisible {
-    return visible;
+-(NSString *)windowVisiblePrefName {
+    return RECENT_SHOWN;
 }
 
 - (void)addQuery:(NSString *)soql {
@@ -64,15 +45,6 @@ static NSString *RECENT_SHOWN = @"recentQueriesVisible";
 			
 		[[NSUserDefaults standardUserDefaults] setObject:q forKey:[self prefName:RECENT_QUERIES]];
 	}
-}
-
--(NSString *)prefName:(NSString *)name {
-    return [NSString stringWithFormat:@"%@-%@", prefPrefix, name];
-}
-
--(void)windowWillClose:(NSNotification *)notification {
-    [self updateWindowVisibleState:NO triggerKVONotification:YES];
-	[[window animator] setAlphaValue:0.0];
 }
 
 -(void)setDelegate:(id<QueryTextListViewDelegate>)delegate {
@@ -97,31 +69,10 @@ static NSString *RECENT_SHOWN = @"recentQueriesVisible";
 	if (saved != nil)
         [view setInitialItems:saved];
 }
-
--(void)checkShowWindow {
-    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
-    BOOL show = [def boolForKey:[self prefName:RECENT_SHOWN]];
-    if (!show) {
-        // migrate legacy setting
-        if ([def objectForKey:RECENT_SHOWN] != nil) {
-            show = [def boolForKey:RECENT_SHOWN];
-            [def setBool:show forKey:[self prefName:RECENT_SHOWN]];
-            [def removeObjectForKey:RECENT_SHOWN];
-        }
-    }
-    if (show)
-		[self setWindowVisible:TRUE];
-}
     
--(NSString *)prefPrefix {
-    return prefPrefix;
-}
-
--(void)setPrefPrefix:(NSString *)pp {
-    [prefPrefix autorelease];
-    prefPrefix = [pp retain];
+-(void)onPrefsPrefixSet:(NSString *)pp {
     [self loadSavedItems];
-    [self checkShowWindow];
+    [super onPrefsPrefixSet:pp];
 }
 
 @end
