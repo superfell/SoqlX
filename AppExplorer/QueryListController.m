@@ -1,4 +1,4 @@
-// Copyright (c) 2008 Simon Fell
+// Copyright (c) 2008,2012 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -36,7 +36,6 @@ static NSString *RECENT_SHOWN = @"recentQueriesVisible";
 
 // returns TRUE if the visible state changes.
 -(BOOL)updateWindowVisibleState:(BOOL)newState triggerKVONotification:(BOOL)doKvo {
-    NSLog(@"updateWindowVisibleState newState=%d visible=%d", newState, visible);
     if (newState == visible) return FALSE;
     if (doKvo) [self willChangeValueForKey:@"windowVisible"];
     visible = newState;
