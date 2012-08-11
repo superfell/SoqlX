@@ -96,6 +96,7 @@
 		F4D7831815D489B800D00BB9 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4D7831615D489B800D00BB9 /* MainMenu.xib */; };
 		F4D7831B15D48C8500D00BB9 /* Explorer.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4D7831915D48C8500D00BB9 /* Explorer.xib */; };
 		F4D7831E15D49F7B00D00BB9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D7831D15D49F7B00D00BB9 /* AppDelegate.m */; };
+		F4D7833415D5F46600D00BB9 /* BaseUserBasedController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D7833315D5F46600D00BB9 /* BaseUserBasedController.m */; };
 		F4D9DD060AD8A1190065EA2D /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4D9DD050AD8A1190065EA2D /* Sparkle.framework */; };
 		F4D9DD1D0AD8A1840065EA2D /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = F4D9DD050AD8A1190065EA2D /* Sparkle.framework */; };
 		F4DAAC340D31E812009C9C09 /* DescribeOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DAAC330D31E812009C9C09 /* DescribeOperation.m */; };
@@ -293,6 +294,8 @@
 		F4D7831A15D48C8500D00BB9 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Explorer.xib; sourceTree = "<group>"; };
 		F4D7831C15D49F7B00D00BB9 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		F4D7831D15D49F7B00D00BB9 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		F4D7833215D5F46600D00BB9 /* BaseUserBasedController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseUserBasedController.h; sourceTree = "<group>"; };
+		F4D7833315D5F46600D00BB9 /* BaseUserBasedController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseUserBasedController.m; sourceTree = "<group>"; };
 		F4D9DD050AD8A1190065EA2D /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		F4DAAC320D31E812009C9C09 /* DescribeOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DescribeOperation.h; sourceTree = "<group>"; };
 		F4DAAC330D31E812009C9C09 /* DescribeOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DescribeOperation.m; sourceTree = "<group>"; };
@@ -363,6 +366,8 @@
 				F454D162126785EA00DC16D9 /* ApexController.m */,
 				F4D7831C15D49F7B00D00BB9 /* AppDelegate.h */,
 				F4D7831D15D49F7B00D00BB9 /* AppDelegate.m */,
+				F4D7833215D5F46600D00BB9 /* BaseUserBasedController.h */,
+				F4D7833315D5F46600D00BB9 /* BaseUserBasedController.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -801,6 +806,7 @@
 				F4AC55D915996F2700F5CA45 /* zkUserInfo.m in Sources */,
 				F4AC55DA15996F2700F5CA45 /* zkXmlDeserializer.m in Sources */,
 				F4D7831E15D49F7B00D00BB9 /* AppDelegate.m in Sources */,
+				F4D7833415D5F46600D00BB9 /* BaseUserBasedController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

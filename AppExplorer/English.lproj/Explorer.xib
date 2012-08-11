@@ -2481,7 +2481,7 @@
 				<nil key="NSViewClass"/>
 				<nil key="NSUserInterfaceItemIdentifier"/>
 				<object class="NSView" key="NSWindowView" id="39012690">
-					<nil key="NSNextResponder"/>
+					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<array class="NSMutableArray" key="NSSubviews">
 						<object class="NSScrollView" id="669176206">
@@ -2497,6 +2497,7 @@
 											<int key="NSvFlags">4352</int>
 											<string key="NSFrameSize">{448, 516}</string>
 											<reference key="NSSuperview" ref="5700782"/>
+											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="588655851"/>
 											<bool key="NSEnabled">YES</bool>
 											<object class="_NSCornerView" key="NSCornerView">
@@ -2595,6 +2596,7 @@
 									</array>
 									<string key="NSFrameSize">{448, 516}</string>
 									<reference key="NSSuperview" ref="669176206"/>
+									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="713477176"/>
 									<reference key="NSDocView" ref="713477176"/>
 									<object class="NSColor" key="NSBGColor">
@@ -2608,6 +2610,7 @@
 									<int key="NSvFlags">-2147483392</int>
 									<string key="NSFrame">{{89, 0}, {11, 89}}</string>
 									<reference key="NSSuperview" ref="669176206"/>
+									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="40518268"/>
 									<int key="NSsFlags">256</int>
 									<reference key="NSTarget" ref="669176206"/>
@@ -2619,6 +2622,8 @@
 									<int key="NSvFlags">-2147483392</int>
 									<string key="NSFrame">{{0, 505}, {448, 11}}</string>
 									<reference key="NSSuperview" ref="669176206"/>
+									<reference key="NSWindow"/>
+									<reference key="NSNextKeyView"/>
 									<int key="NSsFlags">257</int>
 									<reference key="NSTarget" ref="669176206"/>
 									<string key="NSAction">_doScroller:</string>
@@ -2627,6 +2632,7 @@
 							</array>
 							<string key="NSFrame">{{11, 12}, {448, 516}}</string>
 							<reference key="NSSuperview" ref="39012690"/>
+							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="5700782"/>
 							<int key="NSsFlags">133680</int>
 							<reference key="NSVScroller" ref="588655851"/>
@@ -2636,6 +2642,8 @@
 						</object>
 					</array>
 					<string key="NSFrameSize">{468, 536}</string>
+					<reference key="NSSuperview"/>
+					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="669176206"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {2560, 1578}}</string>
@@ -3064,14 +3072,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">updateDetailsState:</string>
-						<reference key="source" ref="674645748"/>
-						<reference key="destination" ref="32900718"/>
-					</object>
-					<int key="connectionID">1416</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
 						<string key="label">takeSelectedTabViewItemFromSender:</string>
 						<reference key="source" ref="790622027"/>
 						<reference key="destination" ref="416645685"/>
@@ -3173,14 +3173,6 @@
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">delegate</string>
-						<reference key="source" ref="676050481"/>
-						<reference key="destination" ref="674645748"/>
-					</object>
-					<int key="connectionID">1193</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">delegate</string>
 						<reference key="source" ref="713477176"/>
 						<reference key="destination" ref="1008364201"/>
 					</object>
@@ -3268,19 +3260,19 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: values.details</string>
+						<string key="label">value: windowVisible</string>
 						<reference key="source" ref="32900718"/>
-						<reference key="destination" ref="850949266"/>
+						<reference key="destination" ref="674645748"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="32900718"/>
-							<reference key="NSDestination" ref="850949266"/>
-							<string key="NSLabel">value: values.details</string>
+							<reference key="NSDestination" ref="674645748"/>
+							<string key="NSLabel">value: windowVisible</string>
 							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">values.details</string>
+							<string key="NSKeyPath">windowVisible</string>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">1414</int>
+					<int key="connectionID">1664</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
@@ -5547,7 +5539,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">1662</int>
+			<int key="maxID">1664</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -5585,6 +5577,33 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">BaseUserBasedController</string>
+					<string key="superclassName">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BaseUserBasedController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BaseWindowToggleController</string>
+					<string key="superclassName">BaseUserBasedController</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">window</string>
+						<string key="NS.object.0">NSWindow</string>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<string key="NS.key.0">window</string>
+						<object class="IBToOneOutletInfo" key="NS.object.0">
+							<string key="name">window</string>
+							<string key="candidateClassName">NSWindow</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BaseWindowToggleController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">BlueView</string>
 					<string key="superclassName">NSView</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
@@ -5594,32 +5613,18 @@
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">DetailsController</string>
-					<string key="superclassName">NSObject</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">updateDetailsState:</string>
-						<string key="NS.object.0">id</string>
+					<string key="superclassName">BaseWindowToggleController</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">detailsTable</string>
+						<string key="NS.object.0">NSTableView</string>
 					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">updateDetailsState:</string>
-						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">updateDetailsState:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</object>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="detailsTable">NSTableView</string>
-						<string key="window">NSPanel</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="detailsTable">
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<string key="NS.key.0">detailsTable</string>
+						<object class="IBToOneOutletInfo" key="NS.object.0">
 							<string key="name">detailsTable</string>
 							<string key="candidateClassName">NSTableView</string>
 						</object>
-						<object class="IBToOneOutletInfo" key="window">
-							<string key="name">window</string>
-							<string key="candidateClassName">NSPanel</string>
-						</object>
-					</dictionary>
+					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/DetailsController.h</string>
