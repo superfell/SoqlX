@@ -35,7 +35,8 @@
 @end
 
 @interface BaseWindowToggleController : BaseUserBasedController<NSWindowDelegate> {
-    IBOutlet    NSWindow    *window;
+    IBOutlet    NSPanel     *panelWindow;
+    IBOutlet    NSWindow    *mainWindow;
     BOOL                    visible;
 }
 

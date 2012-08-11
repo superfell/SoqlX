@@ -28,7 +28,7 @@ static NSString *RECENT_SHOWN = @"recentQueriesVisible";
 
 -(void)awakeFromNib {
     [super awakeFromNib];
-	[window setContentBorderThickness:28.0 forEdge:NSMinYEdge];
+	[panelWindow setContentBorderThickness:28.0 forEdge:NSMinYEdge];
 }
 
 -(NSString *)windowVisiblePrefName {

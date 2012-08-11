@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Simon Fell
+// Copyright (c) 2009,2012 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -31,6 +31,25 @@
 	} else {
 		[[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
 		[self makeKeyAndOrderFront:self];
+		[[self animator] setAlphaValue:1.0];
+	}
+}
+
+@end
+
+@implementation NSPanel (Fade)
+
+-(void)detachAndClosePanel {
+    [[self parentWindow] removeChildWindow:self];
+    [self close];
+}
+
+-(void)displayOrClosePanel:(id)sender forMainWindow:(NSWindow *)mainWindow {
+	if ([self alphaValue] > 0) {
+		[[self animator] setAlphaValue:0.0];
+		[self performSelector:@selector(detachAndClosePanel) withObject:nil afterDelay:[[NSAnimationContext currentContext] duration]];
+	} else {
+        [mainWindow addChildWindow:self ordered:NSWindowBelow];
 		[[self animator] setAlphaValue:1.0];
 	}
 }

@@ -53,13 +53,14 @@
 @implementation BaseWindowToggleController
 
 -(void)awakeFromNib {
-	[window setAlphaValue:0.0];
-    [window setDelegate:self];
+	[panelWindow setAlphaValue:0.0];
+    [panelWindow setDelegate:self];
     visible = NO;
 }
 
 -(void)dealloc {
-    [window release];
+    [panelWindow release];
+    [mainWindow release];
     [super dealloc];
 }
 
@@ -76,7 +77,7 @@
     visible = windowVisible;
     [[NSUserDefaults standardUserDefaults] setBool:visible forKey:[self prefName:[self windowVisiblePrefName]]];
     if (updateWindow)
-        [window displayOrCloseWindow:self];
+        [panelWindow displayOrClosePanel:self forMainWindow:mainWindow];
 }
 
 -(void)setWindowVisible:(BOOL)windowVisible {
@@ -87,7 +88,8 @@
     [self willChangeValueForKey:@"windowVisible"];
     [self setWindowVisible:NO updateWindow:NO];
     [self didChangeValueForKey:@"windowVisible"];
-	[[window animator] setAlphaValue:0.0];
+	[[panelWindow animator] setAlphaValue:0.0];
+    [[panelWindow parentWindow] removeChildWindow:panelWindow];
 }
 
 -(void)onPrefsPrefixSet:(NSString *)pp {

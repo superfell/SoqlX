@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Simon Fell
+// Copyright (c) 2009,2012 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -23,4 +23,8 @@
 
 @interface NSWindow (Fade) 
 -(IBAction)displayOrCloseWindow:(id)sender;
+@end
+
+@interface NSPanel (Fade)
+-(void)displayOrClosePanel:(id)sender forMainWindow:(NSWindow *)mainWindow;
 @end
