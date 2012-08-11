@@ -53,9 +53,7 @@
 		</object>
 		<array class="NSMutableArray" key="IBDocument.RootObjects" id="610793795">
 			<object class="NSCustomObject" id="210285772">
-				<object class="NSMutableString" key="NSClassName">
-					<characters key="NS.bytes">NSApplication</characters>
-				</object>
+				<string key="NSClassName">NSWindowController</string>
 			</object>
 			<object class="NSCustomObject" id="550803046">
 				<string key="NSClassName">FirstResponder</string>
@@ -124,6 +122,7 @@
 							<string key="NSFrame">{{40, 6}, {627, 16}}</string>
 							<reference key="NSSuperview" ref="12794907"/>
 							<reference key="NSWindow"/>
+							<reference key="NSNextKeyView"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="1264897">
 								<int key="NSCellFlags">68288000</int>
@@ -2622,6 +2621,7 @@
 									<string key="NSFrame">{{0, 505}, {448, 11}}</string>
 									<reference key="NSSuperview" ref="669176206"/>
 									<reference key="NSWindow"/>
+									<reference key="NSNextKeyView"/>
 									<int key="NSsFlags">257</int>
 									<reference key="NSTarget" ref="669176206"/>
 									<string key="NSAction">_doScroller:</string>
@@ -2738,6 +2738,7 @@
 									<string key="NSFrame">{{448, 1}, {15, 437}}</string>
 									<reference key="NSSuperview" ref="629758754"/>
 									<reference key="NSWindow"/>
+									<reference key="NSNextKeyView"/>
 									<reference key="NSTarget" ref="629758754"/>
 									<string key="NSAction">_doScroller:</string>
 									<double key="NSCurValue">1</double>
@@ -2819,6 +2820,14 @@
 		</array>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
 			<array class="NSMutableArray" key="connectionRecords">
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">window</string>
+						<reference key="source" ref="210285772"/>
+						<reference key="destination" ref="1008487136"/>
+					</object>
+					<int key="connectionID">1669</int>
+				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">myWindow</string>
@@ -5560,7 +5569,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">1668</int>
+			<int key="maxID">1669</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">

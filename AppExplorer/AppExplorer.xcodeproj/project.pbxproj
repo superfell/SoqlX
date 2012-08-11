@@ -348,14 +348,16 @@
 				F413C6530AACABD5000A8CDC /* DataSources.m */,
 				F4DAAC320D31E812009C9C09 /* DescribeOperation.h */,
 				F4DAAC330D31E812009C9C09 /* DescribeOperation.m */,
-				F4FCF8230B644DDD003C4A5C /* DetailsController.h */,
-				F4FCF8240B644DDD003C4A5C /* DetailsController.m */,
 				F4D6E1870BD70DA200813881 /* EditableQueryResultWrapper.h */,
 				F4D6E1880BD70DA200813881 /* EditableQueryResultWrapper.m */,
 				F4CF71F20D4704EE001001F2 /* QueryResultTable.h */,
 				F4CF71F30D4704EE001001F2 /* QueryResultTable.m */,
+				F4D7833215D5F46600D00BB9 /* BaseUserBasedController.h */,
+				F4D7833315D5F46600D00BB9 /* BaseUserBasedController.m */,
 				F49741EE0D554DB500DD77F4 /* QueryListController.h */,
 				F49741EF0D554DB500DD77F4 /* QueryListController.m */,
+				F4FCF8230B644DDD003C4A5C /* DetailsController.h */,
+				F4FCF8240B644DDD003C4A5C /* DetailsController.m */,
 				F44FC9DF0E1EB69D00B5F70C /* ResultsSaver.h */,
 				F44FC9E00E1EB69D00B5F70C /* ResultsSaver.m */,
 				F4C877F80F395DB4000075D4 /* ProgressController.h */,
@@ -366,8 +368,6 @@
 				F454D162126785EA00DC16D9 /* ApexController.m */,
 				F4D7831C15D49F7B00D00BB9 /* AppDelegate.h */,
 				F4D7831D15D49F7B00D00BB9 /* AppDelegate.m */,
-				F4D7833215D5F46600D00BB9 /* BaseUserBasedController.h */,
-				F4D7833315D5F46600D00BB9 /* BaseUserBasedController.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
