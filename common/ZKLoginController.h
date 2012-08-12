@@ -26,6 +26,15 @@
 @class Credential;
 @class ZKSforceClient;
 @class ZKSoapException;
+@class ZKLoginController;
+
+@protocol ZKLoginControllerDelegate <NSObject>
+@optional
+-(void)loginControllerLoginCancelled:(ZKLoginController *)controller;
+-(void)loginController:(ZKLoginController *)controller loginCompleted:(ZKSforceClient *)client;
+-(void)loginController:(ZKLoginController *)controller serverUrlAdded:(NSURL *)url;
+-(void)loginController:(ZKLoginController *)controller serverUrlRemoved:(NSURL *)url;
+@end
 
 @interface ZKLoginController : NSObject {
 	NSString 		*username;
@@ -47,6 +56,8 @@
 	IBOutlet NSButton	*delButton;
 	IBOutlet NSWindow	*newUrlWindow;
 	IBOutlet NSProgressIndicator *loginProgress;
+    
+    NSObject<ZKLoginControllerDelegate> *delegate;
 }
 
 - (ZKSforceClient *)showModalLoginWindow:(id)sender;
@@ -69,6 +80,7 @@
 @property (retain) NSString *statusText;
 @property (retain) NSString *clientId;
 @property (assign) int preferedApiVersion;
+@property (assign) NSObject<ZKLoginControllerDelegate> *delegate;
 
 - (NSArray *)credentials;
 - (BOOL)canDeleteServer;

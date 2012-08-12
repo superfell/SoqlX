@@ -26,7 +26,7 @@
 
 @implementation ZKLoginController
 
-@synthesize clientId, urlOfNewServer, statusText, password, preferedApiVersion;
+@synthesize clientId, urlOfNewServer, statusText, password, preferedApiVersion, delegate;
 
 static NSString *login_lastUsernameKey = @"login_lastUserName";
 static NSString *prod = @"https://www.salesforce.com";
@@ -153,16 +153,17 @@ static NSString *test = @"https://test.salesforce.com";
 
 - (IBAction)deleteServer:(id)sender {
 	if (![self canDeleteServer]) return;
+    NSString *removedServer = [self server];
 	NSArray *servers = [[NSUserDefaults standardUserDefaults] objectForKey:@"servers"];
 	NSMutableArray *newServers = [NSMutableArray arrayWithCapacity:[servers count]];
-	NSString *s;
-	NSEnumerator *e = [servers objectEnumerator];
-	while (s = [e nextObject]) {
-		if ([s caseInsensitiveCompare:server] == NSOrderedSame) continue;
+    for (NSString *s in servers) {
+		if ([s caseInsensitiveCompare:removedServer] == NSOrderedSame) continue;
 		[newServers addObject:s];
 	}
 	[[NSUserDefaults standardUserDefaults] setObject:newServers forKey:@"servers"];
 	[self setServer:prod];
+    if ([delegate respondsToSelector:@selector(loginController:serverUrlRemoved:)])
+        [delegate loginController:self serverUrlRemoved:[NSURL URLWithString:removedServer]];
 }
 
 - (IBAction)addNewServer:(id)sender {
@@ -177,6 +178,8 @@ static NSString *test = @"https://test.salesforce.com";
 		}
 		[self setServer:new];
 		[self closeAddNewServer:sender];
+        if ([delegate respondsToSelector:@selector(loginController:serverUrlAdded:)])
+            [delegate loginController:self serverUrlAdded:[NSURL URLWithString:new]];
 	}
 }
 
@@ -189,6 +192,8 @@ static NSString *test = @"https://test.salesforce.com";
 	} else {
 		[window close];
 	}
+    if ([delegate respondsToSelector:@selector(loginControllerLoginCancelled:)])
+        [delegate loginControllerLoginCancelled:self];
 }
 
 - (Credential *)selectedCredential {
@@ -301,6 +306,8 @@ static NSString *test = @"https://test.salesforce.com";
 			return;
 		}
 		[self cancelLogin:sender];
+        if ([delegate respondsToSelector:@selector(loginController:loginCompleted:)])
+            [delegate loginController:self loginCompleted:sforce];
 		[target performSelector:selector withObject:sforce];
 	}
 	@finally {		
