@@ -302,19 +302,19 @@
 
 - (IBAction)saveAsPdf:(id)sender {
 	NSSavePanel *sp = [NSSavePanel savePanel];
-	[sp setRequiredFileType:@"pdf"];
+    [sp setAllowedFileTypes:[NSArray arrayWithObject:@"pdf"]];
 	[sp setTitle:@"Save Schema Report"];
 	NSWindow *window = [[[self windowControllers] objectAtIndex:0] window];
-	NSArray *dirs = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-	NSString *dir = [dirs count] > 0 ? [dirs objectAtIndex:0] : NSHomeDirectory(); 
-	[sp beginSheetForDirectory:dir file:sobjectType modalForWindow:window modalDelegate:self didEndSelector:@selector(savePanelDidEnd:returnCode:contextInfo:) contextInfo:nil];
+    [sp beginSheetModalForWindow:window completionHandler:^(NSInteger result) {
+        [self savePanelDidEnd:sp returnCode:result contextInfo:nil];
+    }];
 }
 
 - (void)savePanelDidEnd:(NSSavePanel *)sheet returnCode:(int)returnCode contextInfo:(void  *)contextInfo {
-	if (NSOKButton == returnCode) {
+	if (NSFileHandlingPanelOKButton == returnCode) {
 		NSView *docView = [[[webview mainFrame] frameView] documentView];
 		NSData *pdf =  [docView dataWithPDFInsideRect:[docView bounds]];
-	    [pdf writeToFile:[sheet filename] atomically:YES];
+	    [pdf writeToURL:[sheet URL] atomically:YES];
 	}
 }
 
