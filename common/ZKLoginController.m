@@ -26,6 +26,7 @@
 
 @interface ZKLoginController ()
 @property (retain) Credential *selectedCredential;
+-(void)closeLoginUi;
 @end
 
 @implementation ZKLoginController
@@ -179,15 +180,19 @@ static NSString *test = @"https://test.salesforce.com";
 	}
 }
 
-- (IBAction)cancelLogin:(id)sender {
+-(void)closeLoginUi {
 	if (target == self) {
 		[NSApp stopModal];
 	} else if (modalWindow != nil) {
 		[NSApp endSheet:window];
-		[window orderOut:sender];
+		[window orderOut:self];
 	} else {
 		[window close];
 	}
+}
+
+- (IBAction)cancelLogin:(id)sender {
+    [self closeLoginUi];
     if ([delegate respondsToSelector:@selector(loginControllerLoginCancelled:)])
         [delegate loginControllerLoginCancelled:self];
 }
@@ -213,7 +218,7 @@ static NSString *test = @"https://test.salesforce.com";
 	if (returnCode == NSAlertDefaultReturn)
 		[[self selectedCredential] update:username password:password];
 	[[alert window] orderOut:self];
-	[self cancelLogin:self];
+	[self closeLoginUi];
 	[target performSelector:selector withObject:sforce];	
 }
 
@@ -222,7 +227,7 @@ static NSString *test = @"https://test.salesforce.com";
 	if (returnCode == NSAlertDefaultReturn) 
 		[Credential createCredentialForServer:server username:username password:password];
 	[[alert window] orderOut:self];
-	[self cancelLogin:self];
+    [self closeLoginUi];
 	[target performSelector:selector withObject:sforce];	
 }
 
@@ -291,7 +296,7 @@ static NSString *test = @"https://test.salesforce.com";
 			[self promptAndUpdateKeychain];
 			return;
 		}
-		[self cancelLogin:sender];
+		[self closeLoginUi];
         if ([delegate respondsToSelector:@selector(loginController:loginCompleted:)])
             [delegate loginController:self loginCompleted:sforce];
 		[target performSelector:selector withObject:sforce];
