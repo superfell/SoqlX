@@ -60,7 +60,12 @@
 	[self retain];
 	NSSavePanel *sp = [NSSavePanel savePanel];
 	[sp setAccessoryView:optionsView];
-	[sp beginSheetForDirectory:NSHomeDirectory() file:@"" modalForWindow:parentWindow modalDelegate:self didEndSelector:@selector(savePanelDidEnd:returnCode:contextInfo:) contextInfo:parentWindow];
+	[sp beginSheetForDirectory:NSHomeDirectory()
+                          file:@""
+                modalForWindow:parentWindow
+                 modalDelegate:self
+                didEndSelector:@selector(savePanelDidEnd:returnCode:contextInfo:)
+                   contextInfo:parentWindow];
 }
 
 -(NSUInteger)totalRows {
