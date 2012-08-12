@@ -146,14 +146,26 @@
 	if (![dataSource hasDescribe:sobjectType]) 
 		[self setTotalObjects:[[dataSource SObjects] count]];
 	[tabview selectTabViewItemWithIdentifier:@"progress"];
-	ZKDescribeSObject *desc = [dataSource describe:sobjectType];
-	NSSet *allTypes = [desc namesOfAllReferencedObjects];
-	[self setTotalObjects:[allTypes count]+1];
-	[self setDescribesDone:1];
-    for (NSString *t in allTypes) {
-		[dataSource describe:t];
-		[self setDescribesDone:describesDone+1];
-	}
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0), ^{
+        ZKDescribeSObject *desc = [dataSource describe:sobjectType];
+        NSSet *allTypes = [desc namesOfAllReferencedObjects];
+        int total = [allTypes count] + 1;
+        int done = 1;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self setTotalObjects:total];
+            [self setDescribesDone:done];
+        });
+        for (NSString *t in allTypes) {
+            [dataSource describe:t];
+            done++;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self setDescribesDone:done];
+            });
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self renderReportFromDataSource:dataSource];
+        });
+    });
 }
 
 -(void)renderFieldTable:(NSMutableString *)s sobject:(ZKDescribeSObject *)desc {
@@ -197,11 +209,16 @@
 }
 
 - (void)setSObjectType:(NSString *)type andDataSource:(DescribeListDataSource *)newDataSource {
-	[sobjectType release];
+	[sobjectType autorelease];
 	sobjectType = [type copy];
 	if (![self haveAllDescribes:newDataSource]) {
 		[self describeWithProgress:newDataSource];
-	}
+	} else {
+        [self renderReportFromDataSource:newDataSource];
+    }
+}
+
+- (void)renderReportFromDataSource:(DescribeListDataSource *)newDataSource {
 	[schemaView setDescribesDataSource:newDataSource];
 	[[schemaView centralBox] setViewMode:vmAllFields];
 	[schemaView setCentralSObject:[newDataSource describe:sobjectType]];
@@ -242,7 +259,7 @@
 	[s appendString:@"</head><body>"];
 	[s appendFormat:@"<h1>%@</h1>", [self displayName]];
 	[s appendString:@"<hr/>"];
-	[s appendFormat:@"<img src='schema://%@'/>", type];
+	[s appendFormat:@"<img src='schema://%@'/>", sobjectType];
 
 	ZKDescribeSObject *sobject = [newDataSource describe:sobjectType];
 	[self renderFieldTable:s sobject:sobject];
