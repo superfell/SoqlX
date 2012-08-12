@@ -24,9 +24,13 @@
 #import "zkSforceClient.h"
 #import "zkSoapException.h"
 
+@interface ZKLoginController ()
+@property (retain) Credential *selectedCredential;
+@end
+
 @implementation ZKLoginController
 
-@synthesize clientId, urlOfNewServer, statusText, password, preferedApiVersion, delegate;
+@synthesize clientId, urlOfNewServer, statusText, password, preferedApiVersion, delegate, selectedCredential;
 
 static NSString *login_lastUsernameKey = @"login_lastUserName";
 static NSString *prod = @"https://www.salesforce.com";
@@ -165,9 +169,7 @@ static NSString *test = @"https://test.salesforce.com";
 	if (![new isEqualToString:@"https://"]) {
 		NSArray *servers = [[NSUserDefaults standardUserDefaults] objectForKey:@"servers"];
 		if (![servers containsObject:new]) {
-			NSMutableArray *newServers = [NSMutableArray array];
-			[newServers addObjectsFromArray:servers];
-			[newServers addObject:new];
+            NSArray *newServers = [servers arrayByAddingObject:new];
 			[[NSUserDefaults standardUserDefaults] setObject:newServers forKey:@"servers"];
 		}
 		[self setServer:new];
@@ -188,16 +190,6 @@ static NSString *test = @"https://test.salesforce.com";
 	}
     if ([delegate respondsToSelector:@selector(loginControllerLoginCancelled:)])
         [delegate loginControllerLoginCancelled:self];
-}
-
-- (Credential *)selectedCredential {
-	return selectedCredential;
-}
-
-- (void)setSelectedCredential:(Credential *)aValue {
-	Credential *oldSelectedCredential = selectedCredential;
-	selectedCredential = [aValue retain];
-	[oldSelectedCredential release];
 }
 
 - (void)showAlertSheetWithMessageText:(NSString *)message 
