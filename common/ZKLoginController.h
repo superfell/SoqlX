@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2008 Simon Fell
+// Copyright (c) 2006-2012 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -35,7 +35,7 @@
 	NSArray  		*credentials;
 	Credential 		*selectedCredential;
 	ZKSforceClient 	*sforce;
-	NSString		*newUrl;
+	NSString		*urlOfNewServer;
 	NSString		*statusText;
 	int				preferedApiVersion;
 	
@@ -62,24 +62,18 @@
 - (IBAction)addNewServer:(id)sender;
 - (IBAction)deleteServer:(id)sender;
 
-- (NSString *)username;
-- (void)setUsername:(NSString *)aUsername;
-- (NSString *)password;
-- (void)setPassword:(NSString *)aPassword;
-- (NSString *)server;
-- (void)setServer:(NSString *)aServer;
+@property (retain) NSString *username;
+@property (retain) NSString *password;
+@property (retain) NSString *server;
+@property (retain) NSString *urlOfNewServer;
+@property (retain) NSString *statusText;
+@property (retain) NSString *clientId;
+@property (assign) int preferedApiVersion;
+
 - (NSArray *)credentials;
-- (NSString *)newUrl;
-- (void)setNewUrl:(NSString *)aNewUrl;
-- (NSString *)statusText;
-- (void)setStatusText:(NSString *)aStatusText;
 - (BOOL)canDeleteServer;
-- (NSString *)clientId;
-- (void)setClientId:(NSString *)aClientId;
 - (void)setClientIdFromInfoPlist;
 - (ZKSforceClient *)performLogin:(ZKSoapException **)error;
 
--(int)preferedApiVersion;
--(void)setPreferedApiVersion:(int)v;
 
 @end

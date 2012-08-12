@@ -26,7 +26,12 @@
 
 @implementation ZKLoginController
 
-static NSString * login_lastUsernameKey = @"login_lastUserName";
+@synthesize clientId, urlOfNewServer, statusText, password, preferedApiVersion;
+
+static NSString *login_lastUsernameKey = @"login_lastUserName";
+static NSString *prod = @"https://www.salesforce.com";
+static NSString *test = @"https://test.salesforce.com";
+
 
 +(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
     NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
@@ -65,20 +70,12 @@ static NSString * login_lastUsernameKey = @"login_lastUserName";
 	[credentials release];
 	[selectedCredential release];
 	[sforce release];
-	[newUrl release];
+	[urlOfNewServer release];
 	[super dealloc];
 }
 
 - (void)loadNib {
 	[NSBundle loadNibNamed:@"Login" owner:self];	
-}
-
--(int)preferedApiVersion {
-	return preferedApiVersion;
-}
-
--(void)setPreferedApiVersion:(int)v {
-	preferedApiVersion = v;
 }
 
 - (void)setClientIdFromInfoPlist {
@@ -132,20 +129,21 @@ static NSString * login_lastUsernameKey = @"login_lastUserName";
 	}
 }
 
-static NSString *prod = @"https://www.salesforce.com";
-static NSString *test = @"https://test.salesforce.com";
-
 - (BOOL)canDeleteServer {
 	return ([server caseInsensitiveCompare:prod] != NSOrderedSame) && ([server caseInsensitiveCompare:test] != NSOrderedSame);
 }
 
 - (IBAction)showAddNewServer:(id)sender {
-	[self setNewUrl:@"https://"];
+	[self setUrlOfNewServer:@"https://"];
 	if (modalWindow != nil) {
 		[NSApp endSheet:window];
 		[window orderOut:sender];
 	}
-	[NSApp beginSheet:newUrlWindow modalForWindow:modalWindow == nil ? window : modalWindow modalDelegate:self didEndSelector:@selector(restoreLoginWindow:returnCode:contextInfo:) contextInfo:nil];	
+	[NSApp beginSheet:newUrlWindow
+       modalForWindow:modalWindow == nil ? window : modalWindow
+        modalDelegate:self
+       didEndSelector:@selector(restoreLoginWindow:returnCode:contextInfo:)
+          contextInfo:nil];
 }
 
 - (IBAction)closeAddNewServer:(id)sender {
@@ -168,7 +166,7 @@ static NSString *test = @"https://test.salesforce.com";
 }
 
 - (IBAction)addNewServer:(id)sender {
-	NSString *new = [self newUrl];
+	NSString *new = [self urlOfNewServer];
 	if (![new isEqualToString:@"https://"]) {
 		NSArray *servers = [[NSUserDefaults standardUserDefaults] objectForKey:@"servers"];
 		if (![servers containsObject:new]) {
@@ -360,55 +358,14 @@ static NSString *test = @"https://test.salesforce.com";
 	[self setPasswordFromKeychain];
 }
 
-- (NSString *)password {
-	return password;
-}
-
-- (void)setPassword:(NSString *)aPassword {
-	aPassword = [aPassword copy];
-	[password release];
-	password = aPassword;
-}
-
 - (NSString *)username {
-	return username;
+	return [[username retain] autorelease];
 }
 
 - (void)setUsername:(NSString *)aUsername {
-	aUsername = [aUsername copy];
-	[username release];
-	username = aUsername;
+	[username autorelease];
+	username = [aUsername copy];
 	[self setPasswordFromKeychain];
-}
-
-- (NSString *)clientId {
-	return clientId;
-}
-
-- (void)setClientId:(NSString *)aClientId {
-	aClientId = [aClientId copy];
-	[clientId release];
-	clientId = aClientId;
-}
-
-- (NSString *)newUrl {
-	return newUrl;
-}
-
-- (void)setNewUrl:(NSString *)aNewUrl {
-	aNewUrl = [aNewUrl copy];
-	[newUrl release];
-	newUrl = aNewUrl;
-}
-
-- (NSString *)statusText {
-	return statusText;
-}
-
-- (void)setStatusText:(NSString *)aStatusText {
-	aStatusText = [aStatusText copy];
-	[statusText release];
-	statusText = aStatusText;
 }
 
 @end
