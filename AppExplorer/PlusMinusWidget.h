@@ -48,10 +48,10 @@ typedef enum pmButtonStyle
 }
 
 -(id)initWithFrame:(NSRect)frame view:(SchemaView *)v andStyle:(pmButtonStyle)s;
--(BOOL)visible;
--(void)setVisible:(BOOL)aValue;
--(NSPoint)origin;
--(void)setOrigin:(NSPoint)aPoint;
+
+@property (assign) BOOL visible;
+@property (assign) NSPoint origin;
+
 -(pmButtonState)state;
 -(void)setTarget:(id)target andAction:(SEL)action;
 

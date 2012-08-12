@@ -50,22 +50,17 @@
 
 -(id)initWithFrame:(NSRect)frame andView:(SchemaView *)v;
 
--(ZKDescribeSObject *)sobject;
--(void)setSobject:(ZKDescribeSObject *)newSobject;
--(SObjectBoxViewMode)viewMode;
--(void)setViewMode:(SObjectBoxViewMode)newMode;
--(NSColor *)color;
--(void)setColor:(NSColor *)aValue;
--(ZKDescribeSObject *)includeFksTo;
--(void)setIncludeFksTo:(ZKDescribeSObject *)o;
+@property (retain) ZKDescribeSObject *sobject;
+@property (assign) SObjectBoxViewMode viewMode;
+@property (retain) NSColor *color;
+@property (retain) ZKDescribeSObject *includeFksTo;
 
 -(BOOL)isHighlighted;
 -(NSSize)size;
 -(NSPoint)centerPoint;
--(NSPoint)origin;
--(void)setOrigin:(NSPoint)point;
--(BOOL)needsDrawing;
--(void)setNeedsDrawing:(BOOL)aValue;
+
+@property (assign) NSPoint origin;
+@property (assign) BOOL needsDrawing;
 
 -(void)resetTrackingRect;
 

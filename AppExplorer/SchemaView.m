@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Simon Fell
+// Copyright (c) 2006,2012 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -28,8 +28,7 @@
 #import "zkDescribeSObject.h"
 #import "RRGlossCausticShader.h"
 
-@interface SchemaView (Private)
-- (void)removeRelatedViews;
+@interface SchemaView ()
 - (NSArray *)childSObjectsSkipping:(NSArray *)toSkip;
 - (NSArray *)foreignKeySObjects;
 - (NSArray *)createSObjectBoxes:(NSArray *)sobjects withColor:(NSColor *)aColor;
@@ -61,7 +60,10 @@
 
 @implementation SchemaView
 
+@synthesize describesDataSource=describes;
+
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 	[centralBox release];
 	[describes release];
 	[relatedBoxes release];
@@ -71,17 +73,6 @@
 	[foreignKeyColor release];
 	[childRelColor release];
 	[super dealloc];
-}
-
-- (DescribeListDataSource *)describesDataSource {
-	return describes;
-}
-
-- (void)setDescribesDataSource:(DescribeListDataSource *)newDataSource {
-	if (newDataSource != describes) {
-		[describes release];
-		describes = [newDataSource retain];
-	}
 }
 
 // Printing
@@ -258,9 +249,7 @@ static const float minSpacerSize = 5.0f;
 
 - (void)getHeightOfboxes:(NSArray *)boxes totalHeight:(float *)totalHeight heightWithSpacers:(float *)withSpacers {
 	float height = 0;
-	SObjectBox *box;
-	NSEnumerator *e = [boxes objectEnumerator];
-	while (box = [e nextObject]) {
+    for (SObjectBox *box in boxes) {
 		height += [box size].height;
 	}
 	*totalHeight = height;
@@ -285,9 +274,7 @@ static const float minSpacerSize = 5.0f;
 	NSPoint controlPoint = NSMakePoint(arcOuterX, NSMidY(bounds));
 	[path curveToPoint:NSMakePoint(arcStartX, bounds.size.height - spacerSize) controlPoint1:controlPoint controlPoint2:controlPoint];
 	NSBezierPath *flatPath = [path bezierPathByFlatteningPath];
-	NSEnumerator *e = [boxes objectEnumerator];
-	SObjectBox *box;
-	while (box = [e nextObject]) {
+    for (SObjectBox *box in boxes) {
 		NSSize boxSize = [box size];
 		[box setOrigin:NSMakePoint(startingPos.x - (boxSize.width/2), startingPos.y)];
 		startingPos.y += boxSize.height + spacerSize; 
@@ -317,12 +304,10 @@ static const float minSpacerSize = 5.0f;
 
 - (void)addReferencedSObjectsFromFieldEnumerator:(NSEnumerator *)enm results:(NSMutableDictionary *)results trackWeights:(BOOL)trackWeights {
 	ZKDescribeField *field;
-	NSString *refSObject;
 	uint weightIndex = 0;
 	while (field = [enm nextObject]) {
 		if ([[field referenceTo] count] == 0) continue;
-		NSEnumerator *refe = [[field referenceTo] objectEnumerator];
-		while (refSObject = [refe nextObject]) {
+        for (NSString *refSObject in [field referenceTo]) {
 			if ([refSObject isEqualTo:[[centralBox sobject] name]]) continue;
 			WeightedSObject *weight = [results objectForKey:refSObject];
 			if (weight == nil) {
@@ -347,9 +332,7 @@ static const float minSpacerSize = 5.0f;
 - (NSArray *)childSObjectsSkipping:(NSArray *)toSkip {
 	NSMutableArray *orderedRefs = [NSMutableArray array];
 	NSMutableSet * refs = [NSMutableSet setWithArray:toSkip];
-	NSEnumerator *e = [[[centralBox sobject] childRelationships] objectEnumerator];
-	ZKChildRelationship *cr;
-	while(cr = [e nextObject]) {
+    for (ZKChildRelationship *cr in [[centralBox sobject] childRelationships]) {
 		if ([refs containsObject:[cr childSObject]]) continue;
 		if ([[cr childSObject] isEqualTo:[[centralBox sobject] name]]) continue;
 		[refs addObject:[cr childSObject]];
@@ -362,10 +345,8 @@ static const float minSpacerSize = 5.0f;
 	NSRect frame = [self frame];
 	NSSize sz = NSMakeSize(100,100);
 	NSRect relRect = NSMakeRect(frame.origin.x, frame.origin.y, sz.width, sz.height);
-	NSString *objName;
-	NSEnumerator *e = [sobjects objectEnumerator];
 	NSMutableArray *createdBoxes = [NSMutableArray array];
-	while (objName = [e nextObject]) {
+    for (NSString *objName in sobjects) {
 		ZKDescribeSObject *desc = [describes describe:objName];
 		SObjectBox *b = [[SObjectBox alloc] initWithFrame:relRect andView:self];
 		[b setSobject:desc];
@@ -480,18 +461,3 @@ static const float minSpacerSize = 5.0f;
 }
 
 @end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

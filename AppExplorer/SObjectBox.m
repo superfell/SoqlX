@@ -31,7 +31,7 @@ static const float radius = 8.0;
 static const float gradientAngle = 235.0;
 static const float plusMinusSize = 10.0;
 
-@interface SObjectBox (Private)
+@interface SObjectBox ()
 -(void)updateColors;
 -(void)recalcLayout;
 -(void)recalcFieldsToDisplay;
@@ -251,9 +251,7 @@ static const float plusMinusSize = 10.0;
 	float newWidth = MAX(minimumWidth, titleSz.width + borderWidth*3);
 	// borderWidth 3 in use, 2 for padding between edges
 	float newHeight = borderWidth*2;
-	ZKDescribeField *field;
-	NSEnumerator *e = [fieldsToDisplay objectEnumerator];
-	while (field = [e nextObject]) {
+    for (ZKDescribeField *field in fieldsToDisplay) {
 		NSSize fieldSz = [[field name] sizeWithAttributes:fieldAttributes];
 		newWidth = MAX(newWidth, fieldSz.width + borderWidth*4);
 		NSRect fieldRect = NSMakeRect(borderWidth*2, newHeight, fieldSz.width, fieldSz.height);
@@ -282,9 +280,7 @@ static const float plusMinusSize = 10.0;
 
 -(void)recalcFieldsToDisplay {
 	NSMutableArray *fields = [[NSMutableArray alloc] init];
-	ZKDescribeField *f;
-	NSEnumerator *e = [[sobject fields] objectEnumerator];
-	while (f = [e nextObject]) {
+    for (ZKDescribeField *f in [sobject fields]) {
 		if ([self shouldDisplayField:f])
 			[fields addObject:f];
 	}

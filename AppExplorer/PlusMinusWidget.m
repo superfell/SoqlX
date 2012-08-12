@@ -22,13 +22,15 @@
 #import "PlusMinusWidget.h"
 #import "SchemaView.h"
 
-@interface PlusMinusWidget (Private)
+@interface PlusMinusWidget ()
 -(void)clearTrackingRect;
 -(void)setTrackingRect;
 -(void)setState:(pmButtonState)newState;
 @end
 
 @implementation PlusMinusWidget
+
+@synthesize visible;
 
 - (id)initWithFrame:(NSRect)frame view:(SchemaView *)v andStyle:(pmButtonStyle)s {
 	self = [super init];
@@ -44,14 +46,6 @@
 	[self clearTrackingRect];
 	[view release];
 	[super dealloc];
-}
-
-- (BOOL)visible {
-	return visible;
-}
-
-- (void)setVisible:(BOOL)aValue {
-	visible = aValue;
 }
 
 -(NSPoint)origin {

@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Simon Fell
+// Copyright (c) 2006,2012 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -42,8 +42,8 @@
 	IBOutlet Explorer		*primaryController;
 }
 
-- (DescribeListDataSource *)describesDataSource;
-- (void)setDescribesDataSource:(DescribeListDataSource *)newDataSource;
+@property (retain) DescribeListDataSource *describesDataSource;
+
 - (ZKDescribeSObject *)centralSObject;
 - (void)setCentralSObject:(ZKDescribeSObject *)s;
 - (void)setCentralSObject:(ZKDescribeSObject *)s withRipplePoint:(NSPoint)ripple;
