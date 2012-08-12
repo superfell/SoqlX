@@ -1,4 +1,4 @@
-// Copyright (c) 2008 Simon Fell
+// Copyright (c) 2008,2012 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -55,7 +55,7 @@
 	BufferedWriter		*stream;
 	ZKSforceClient		*client;
 	QueryResultTable	*results;
-	NSString			*filename;
+	NSURL               *filename;
 	NSDate				*started;
 	
 	NSUInteger			rowsWritten;
@@ -65,10 +65,10 @@
 
 -(void)save:(NSWindow *)parentWindow;
 
-@property (assign)   BOOL saveAll;
-@property (assign) NSUInteger rowsWritten;
+@property (assign)   BOOL       saveAll;
+@property (assign)   NSUInteger rowsWritten;
 @property (readonly) NSUInteger totalRows;
-@property (retain) NSString *filename;
+@property (retain)   NSURL      *filename;
 
 @end
 

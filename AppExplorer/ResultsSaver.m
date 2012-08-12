@@ -60,12 +60,9 @@
 	[self retain];
 	NSSavePanel *sp = [NSSavePanel savePanel];
 	[sp setAccessoryView:optionsView];
-	[sp beginSheetForDirectory:NSHomeDirectory()
-                          file:@""
-                modalForWindow:parentWindow
-                 modalDelegate:self
-                didEndSelector:@selector(savePanelDidEnd:returnCode:contextInfo:)
-                   contextInfo:parentWindow];
+    [sp beginSheetModalForWindow:parentWindow completionHandler:^(NSInteger result) {
+        [self savePanelDidEnd:sp returnCode:result contextInfo:parentWindow];
+    }];
 }
 
 -(NSUInteger)totalRows {
@@ -76,13 +73,13 @@
 	return [[results table] tableColumns];
 }
 
--(void)savePanelDidEnd:(NSSavePanel *)sheet returnCode:(int)returnCode  contextInfo:(void  *)contextInfo {
+-(void)savePanelDidEnd:(NSSavePanel *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo {
 	[optionsView autorelease];
-	if (returnCode == NSCancelButton) {
+	if (returnCode == NSFileHandlingPanelCancelButton) {
 		[self autorelease];
 		return;
 	}
-	[self setFilename:[sheet filename]];
+	[self setFilename:[sheet URL]];
 	[self performSelectorOnMainThread:@selector(startWrite:) withObject:contextInfo waitUntilDone:NO];
 }
 
@@ -92,7 +89,7 @@
 		[NSApp beginSheet:progressWindow modalForWindow:(NSWindow *)contextInfo modalDelegate:self didEndSelector:nil contextInfo:nil];
 	
 	started = [[NSDate date] retain];
-	NSOutputStream *s = [NSOutputStream outputStreamToFileAtPath:filename append:NO];
+	NSOutputStream *s = [NSOutputStream outputStreamWithURL:filename append:NO];
 	[s open];
 	stream = [[BufferedWriter alloc] initOnStream:s];
 	
