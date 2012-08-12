@@ -65,10 +65,34 @@
 }
 
 -(void)openNewWindow:(id)sender {
-    NSWindowController *controller = [[NSWindowController alloc] initWithWindowNibName:@"Explorer"];
+    NSWindowController *controller = [[[SoqlXWindowController alloc] initWithWindowControllers:windowControllers] autorelease];
     [controller showWindow:sender];
-    [windowControllers addObject:controller];
-    [controller release];
+}
+
+@end
+
+@implementation SoqlXWindowController
+
+-(id)initWithWindowControllers:(NSMutableArray *)c {
+    self = [super initWithWindowNibName:@"Explorer"];
+    controllers = [c retain];
+    [c addObject:self];
+    return self;
+}
+
+-(void)dealloc {
+    [controllers release];
+    [super dealloc];
+}
+
+-(void)windowDidLoad {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowWillClose:) name:NSWindowWillCloseNotification object:[self window]];
+}
+
+-(void)windowWillClose:(id)sender {
+    // when the window gets closed, remove ourselves from the list of window controllers.
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [controllers removeObject:self];
 }
 
 @end

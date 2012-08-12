@@ -29,3 +29,10 @@
 - (IBAction)openNewWindow:(id)sender;
 
 @end
+
+@interface SoqlXWindowController : NSWindowController {
+    NSMutableArray  *controllers;
+    id              observer;
+}
+-(id)initWithWindowControllers:(NSMutableArray *)controllers;
+@end
