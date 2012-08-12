@@ -1,4 +1,4 @@
-// Copyright (c) 2007 Simon Fell
+// Copyright (c) 2007,2012 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -42,11 +42,9 @@
 
 - (NSString *)name;
 - (void)setSObjectType:(NSString *)type andDataSource:(DescribeListDataSource *)newDataSource;
-- (int)totalObjects;
-- (void)setTotalObjects:(int)newTotalObjects;
-- (int)describesDone;
-- (void)setDescribesDone:(int)newDescribesDone;
-- (BOOL)enabledButtons;
-- (void)setEnabledButtons:(BOOL)newEnabledButtons;
+
+@property (assign) int totalObjects;
+@property (assign) int describesDone;
+@property (assign) BOOL enabledButtons;
 
 @end

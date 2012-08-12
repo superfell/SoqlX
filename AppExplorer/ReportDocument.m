@@ -1,4 +1,4 @@
-// Copyright (c) 2007 Simon Fell
+// Copyright (c) 2007,2012 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -66,25 +66,21 @@
 
 - (NSString *)picklistProperties {
 	NSMutableString *pp = [NSMutableString string];
-	ZKPicklistEntry *ple;
-	NSEnumerator *e = [[self picklistValues] objectEnumerator];
-	while (ple = [e nextObject]) {
-		if ([ple active]) {
-			if ([[ple label] isEqualToString:[ple value]])
-				[pp appendFormat:@"%@<br>", [ple value]];
-			else
-				[pp appendFormat:@"%@ (%@)<br>", [ple label], [ple value]];
-		}
+    for (ZKPicklistEntry *ple in [self picklistValues]) {
+        if (![ple active]) continue;
+		if ([[ple label] isEqualToString:[ple value]])
+			[pp appendFormat:@"%@<br>", [ple value]];
+		else
+			[pp appendFormat:@"%@ (%@)<br>", [ple label], [ple value]];
 	}
 	return pp;
 }
 
 - (NSString *)referenceProperties {
 	NSMutableString *rp = [NSMutableString string];
-	NSString *type;
-	NSEnumerator *e = [[self referenceTo] objectEnumerator];
-	while (type = [e nextObject])
+    for (NSString *type in [self referenceTo]) {
 		[rp appendFormat:@"%@<br>", type];
+    }
 	return rp;
 }
 
@@ -101,13 +97,10 @@
 @implementation ZKDescribeSObject (Reporting)
 - (NSSet *)namesOfAllReferencedObjects {
 	NSMutableSet *names = [NSMutableSet setWithCapacity:20];
-	ZKChildRelationship *cr;
-	NSEnumerator *e = [[self childRelationships] objectEnumerator];
-	while (cr = [e nextObject]) 
+    for (ZKChildRelationship *cr in [self childRelationships]) {
 		[names addObject:[cr childSObject]];
-	ZKDescribeField *f;
-	e = [[self fields] objectEnumerator];
-	while (f = [e nextObject]) {
+    }
+    for (ZKDescribeField *f in [self fields]) {
 		if (![[f type] isEqualToString:@"reference"]) continue;
 		[names addObjectsFromArray:[f referenceTo]];
 	}
@@ -116,6 +109,8 @@
 @end
 
 @implementation ReportDocument
+
+@synthesize enabledButtons;
 
 - (void)awakeFromNib {
 	[progress setUsesThreadedAnimation:YES];
@@ -140,9 +135,7 @@
 - (BOOL)haveAllDescribes:(DescribeListDataSource *)dataSource {
 	if (![dataSource hasDescribe:sobjectType]) return NO;
 	ZKDescribeSObject *desc = [dataSource describe:sobjectType];
-	NSString *t;
-	NSEnumerator *e = [[desc namesOfAllReferencedObjects] objectEnumerator];
-	while (t = [e nextObject]) {
+    for(NSString *t in [desc namesOfAllReferencedObjects]) {
 		if (![dataSource hasDescribe:t]) return NO;
 	}
 	return YES;
@@ -157,9 +150,7 @@
 	NSSet *allTypes = [desc namesOfAllReferencedObjects];
 	[self setTotalObjects:[allTypes count]+1];
 	[self setDescribesDone:1];
-	NSString *t;
-	NSEnumerator *e = [allTypes objectEnumerator];
-	while (t = [e nextObject]) {
+    for (NSString *t in allTypes) {
 		[dataSource describe:t];
 		[self setDescribesDone:describesDone+1];
 	}
@@ -316,14 +307,6 @@
 		NSData *pdf =  [docView dataWithPDFInsideRect:[docView bounds]];
 	    [pdf writeToURL:[sheet URL] atomically:YES];
 	}
-}
-
-- (BOOL)enabledButtons {
-	return enabledButtons;
-}
-
-- (void)setEnabledButtons:(BOOL)newEnabledButtons {
-	enabledButtons = newEnabledButtons;
 }
 
 @end
