@@ -1,4 +1,4 @@
-// Copyright (c) 2008 Simon Fell
+// Copyright (c) 2008,2012 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -19,16 +19,16 @@
 // THE SOFTWARE.
 //
 
-#import <Cocoa/Cocoa.h>
+#import "BaseUserBasedController.h"
+#import "QueryTextListView.h"
 
-@class QueryTextListView;
+// This manages the recent queries list/window
 
-@interface QueryListController : NSObject {
+@interface QueryListController : BaseWindowToggleController {
 	IBOutlet QueryTextListView	*view;
-	IBOutlet NSWindow			*window;
 }
 
--(IBAction)showHideWindow:(id)sender;
+@property (assign) id<QueryTextListViewDelegate> delegate;
 
 -(void)addQuery:(NSString *)soql;
 

@@ -25,19 +25,19 @@
 #import "StandAloneTableHeaderView.h"
 #import "zkSforceClient.h"
 #import "EditableQueryResultWrapper.h"
+#import "QueryListController.h"
+#import "ZKLoginController.h"
 
 @class ReportWizardController;
 @class DetailsController;
 @class LoginController;
-@class ZKLoginController;
 @class EditableQueryResultWrapper;
 @class ZKSObject;
 @class ZKQueryResult;
 @class QueryResultTable;
-@class QueryListController;
 @class ApexController;
 
-@interface Explorer : NSObject<EditableQueryResultWrapperDelegate, NSTabViewDelegate>
+@interface Explorer : NSObject<EditableQueryResultWrapperDelegate, NSTabViewDelegate, QueryTextListViewDelegate, ZKLoginControllerDelegate>
 {
 	// old world order, needs modernizing
     IBOutlet NSOutlineView			*describeList;
@@ -45,7 +45,6 @@
 	IBOutlet NSTableView			*childTableView;
     IBOutlet NSTextView			    *soql;	
 	IBOutlet NSProgressIndicator	*progress;
-	IBOutlet NSWindow				*prefsWindow;
 	IBOutlet NSWindow				*myWindow;
 	IBOutlet NSTabView				*soqlSchemaTabs;
 	IBOutlet NSSplitView			*vertSplitView;
@@ -71,11 +70,8 @@
 	BOOL							schemaViewIsActive;
 }
 
-- (IBAction)launchHelp:(id)sender;
 - (IBAction)showLogin:(id)sender;
 - (IBAction)showInBrowser:(id)sender;
-- (IBAction)showPreferences:(id)sender;
-- (IBAction)closePreferences:(id)sender;
 - (IBAction)executeQuery:(id)sender;
 - (IBAction)executeQueryAll:(id)sender;
 - (IBAction)queryMore:(id)sender;

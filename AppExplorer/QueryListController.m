@@ -1,4 +1,4 @@
-// Copyright (c) 2008 Simon Fell
+// Copyright (c) 2008,2012 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -20,39 +20,59 @@
 //
 
 #import "QueryListController.h"
-#import "QueryTextListView.h"
-#import "../common/NSWindow_additions.h"
+
+static NSString *RECENT_QUERIES = @"recentQueries";
+static NSString *RECENT_SHOWN = @"recentQueriesVisible";
 
 @implementation QueryListController
 
 -(void)awakeFromNib {
-	[window setContentBorderThickness:28.0 forEdge:NSMinYEdge]; 
-	NSArray *saved = [[NSUserDefaults standardUserDefaults] arrayForKey:@"recentQueries"];
-	if (saved != nil) 
-		[view setInitialItems:saved];
-	[window setAlphaValue:0.0];
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"recentQueriesVisible"])
-		[self showHideWindow:self];
+    [super awakeFromNib];
+	[panelWindow setContentBorderThickness:28.0 forEdge:NSMinYEdge];
 }
 
--(IBAction)showHideWindow:(id)sender {
-	[window displayOrCloseWindow:sender];
+-(NSString *)windowVisiblePrefName {
+    return RECENT_SHOWN;
 }
 
 - (void)addQuery:(NSString *)soql {
 	soql = [soql stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 	if ([view upsertHead:soql]) {
+        // save the current list of recent queries
 		NSMutableArray *q = [NSMutableArray arrayWithCapacity:[[view items] count]];
 		for (QueryTextListViewItem *i in [view items]) 
 			[q addObject:[i text]];
 			
-		[[NSUserDefaults standardUserDefaults] setObject:q forKey:@"recentQueries"];
+		[[NSUserDefaults standardUserDefaults] setObject:q forKey:[self prefName:RECENT_QUERIES]];
 	}
 }
 
--(void)windowWillClose:(NSNotification *)notification {
-	[[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"recentQueriesVisible"];
-	[[window animator] setAlphaValue:0.0];
+-(void)setDelegate:(id<QueryTextListViewDelegate>)delegate {
+    [view setDelegate:delegate];
+}
+
+-(id<QueryTextListViewDelegate>)delegate {
+    return [view delegate];
+}
+
+-(void)loadSavedItems {
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    NSArray *saved = [def arrayForKey:[self prefName:RECENT_QUERIES]];
+    if (saved == nil) {
+        // see if we need to migrate the existing items from the previous versions pref scheme.
+        saved = [def arrayForKey:RECENT_QUERIES];
+        if (saved != nil) {
+            [def setObject:saved forKey:[self prefName:RECENT_QUERIES]];
+            [def removeObjectForKey:RECENT_QUERIES];
+        }
+    }
+	if (saved != nil)
+        [view setInitialItems:saved];
+}
+    
+-(void)onPrefsPrefixSet:(NSString *)pp {
+    [self loadSavedItems];
+    [super onPrefsPrefixSet:pp];
 }
 
 @end

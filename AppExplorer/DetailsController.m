@@ -20,7 +20,9 @@
 //
 
 #import "DetailsController.h"
-#import "../common/NSWindow_additions.h"
+#import "NSWindow_additions.h"
+
+static NSString *SHOWING_DETAILS = @"details";
 
 @implementation DetailsController
 
@@ -31,14 +33,8 @@
     return paths;
 }
 
--(void)awakeFromNib {
-	[window setAlphaValue:0.0];
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"details"])
-		[self updateDetailsState:self];
-}
-
--(IBAction)updateDetailsState:(id)sender {
-	[window displayOrCloseWindow:sender];
+-(NSString *)windowVisiblePrefName {
+    return SHOWING_DETAILS;
 }
 
 -(NSString *)title {
@@ -55,11 +51,6 @@
 	[detailsTable setDataSource:aValue];
 	[aValue retain];
 	[oldDataSource release];
-}
-
--(void)windowWillClose:(NSNotification *)notification {
-	[[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"details"];
-	[[window animator] setAlphaValue:0.0];
 }
 
 @end

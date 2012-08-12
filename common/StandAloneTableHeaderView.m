@@ -24,13 +24,17 @@
 @implementation StandAloneTableHeaderView
 
 -(id)initWithFrame:(NSRect)rect {
-	[super initWithFrame:rect];
+	self = [super initWithFrame:rect];
 	textAttributes =  [[NSMutableDictionary dictionaryWithObjectsAndKeys:
 						[NSFont titleBarFontOfSize:11.0], NSFontAttributeName,
 						[NSColor blackColor], NSForegroundColorAttributeName,
 						nil] retain];
 						
-	gradient = [[NSGradient alloc] initWithColors:[NSArray arrayWithObjects:[NSColor whiteColor], [NSColor colorWithCalibratedRed:0.875 green:0.875 blue:0.875 alpha:1.0], [NSColor whiteColor], nil]];
+	gradient = [[NSGradient alloc] initWithColors:[NSArray arrayWithObjects:
+                                                   [NSColor whiteColor],
+                                                   [NSColor colorWithCalibratedRed:0.875 green:0.875 blue:0.875 alpha:1.0],
+                                                   [NSColor whiteColor],
+                                                   nil]];
 	return self;
 }
 

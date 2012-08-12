@@ -27,7 +27,6 @@
 #import "DescribeOperation.h"
 #import "QueryResultTable.h"
 #import "QueryListController.h"
-#import "QueryTextListView.h"
 #import "ApexController.h"
 #import "zkSforce.h"
 #import "ResultsSaver.h"
@@ -52,7 +51,6 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 
 - (void)collapseChildTableView;
 - (void)openChildTableView;
-- (void)recentQueryListClicked:(NSNotification *)notification;
 @end
 
 @implementation Explorer
@@ -76,17 +74,6 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
     if ([key isEqualToString:@"canQueryMore"])
         return [paths setByAddingObjectsFromArray:[NSArray arrayWithObjects:@"currentResults", @"rowsLoadedStatusText", nil]];
     return paths;
-}
-
--(void)resetApiVersionOverrideIfAppVersionChanged {
-	NSDictionary *plist = [[NSBundle mainBundle] infoDictionary];
-	NSString * currentVersionString = [plist objectForKey:@"CFBundleVersion"];
-	float currentVersion = currentVersionString == nil ? 0.0f : [currentVersionString floatValue];	
-	float lastRun = [[NSUserDefaults standardUserDefaults] floatForKey:@"LastAppVersionRun"];
-	if (currentVersion > lastRun) {
-		[[NSUserDefaults standardUserDefaults] removeObjectForKey:@"zkApiVersion"];
-		[[NSUserDefaults standardUserDefaults] setFloat:currentVersion forKey:@"LastAppVersionRun"];
-	}
 }
 
 - (void)awakeFromNib {
@@ -113,19 +100,15 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[childResults setDelegate:self];
 	[self collapseChildTableView];
 	
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(initUi:) name:NSApplicationDidFinishLaunchingNotification object:nil];
+    [self performSelector:@selector(initUi:) withObject:nil afterDelay:0];
+    // If the updater is going to restart the app, we need to close the login sheet if its currently open.
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(closeLoginPanelIfOpen:) name:SUUpdaterWillRestartNotification object:nil];
+    
+    // A describeSObject operation has finished, see if we can recolor our soql text. (this is going to pick up describes from other windows, but it
+    // doesn't matter for now, as the color code re-checks to see if the describe result is available)
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(describeFinished:) name:DescribeDidFinish object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recentQueryListClicked:) name:QueryTextListViewItem_Clicked object:nil];
-	
-	// one-off, fix up preferences for new shared Login nib / controller
-	NSArray *servers = [[NSUserDefaults standardUserDefaults] objectForKey:@"servers"];
-	if ([servers count] == 0) {
-		servers = [[NSUserDefaults standardUserDefaults] objectForKey:@"systems"];
-		[[NSUserDefaults standardUserDefaults] setObject:servers forKey:@"servers"];
-		[[NSUserDefaults standardUserDefaults] setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"system"] forKey:@"server"];
-	}
-	[self resetApiVersionOverrideIfAppVersionChanged];
+    
+    [queryListController setDelegate:self];
 }
 
 - (void)dealloc {
@@ -136,6 +119,7 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[rootResults removeObserver:self forKeyPath:@"hasCheckedRows"];
 	[rootResults release];
 	[childResults release];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 	[super dealloc];
 }
 
@@ -152,11 +136,6 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 		CGFloat p = [soqlTextSplitView maxPossiblePositionOfDividerAtIndex:1] - MIN_PANE_SIZE;
 		[soqlTextSplitView setPosition:p ofDividerAtIndex:1];
 	}
-}
-
-- (IBAction)launchHelp:(id)sender {
-	NSString *help = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"ZKHelpUrl"];
-	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:help]];
 }
 
 - (NSString *)statusText {
@@ -179,40 +158,36 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 
 - (IBAction)initUi:(id)sender {
 	[self setSoqlString:[[NSUserDefaults standardUserDefaults] stringForKey:@"soql"]];
-	[NSTimer scheduledTimerWithTimeInterval:0.50 target:self selector:@selector(showLogin:) userInfo:nil repeats:NO];
+    [self performSelector:@selector(showLogin:) withObject:nil afterDelay:0];
 }
 
 - (IBAction)showLogin:(id)sender {
 	[loginController release];
 	loginController = [[ZKLoginController alloc] init];
 	[loginController setClientIdFromInfoPlist];
+    [loginController setDelegate:self];
 	NSNumber *apiVersion = [[NSUserDefaults standardUserDefaults] objectForKey:@"zkApiVersion"];
 	if (apiVersion != nil)
 		[loginController setPreferedApiVersion:[apiVersion intValue]];
 	[loginController showLoginSheet:myWindow target:self selector:@selector(loginComplete:)];
 }
-	
+
+-(void)loginControllerLoginCancelled:(ZKLoginController *)controller {
+    [myWindow close];
+}
+
 - (void)loginComplete:(ZKSforceClient *)sf {
 	[sforce release];
 	sforce = [sf retain];
 	[loginController release];
 	loginController = nil;
-	[NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(postLogin:) userInfo:nil repeats:NO];	
+    [self performSelector:@selector(postLogin:) withObject:nil afterDelay:0];
 }
 
 - (void)closeLoginPanelIfOpen:(id)sender {
 	[loginController cancelLogin:sender];
 }
 
-- (IBAction)showPreferences:(id)sender  {
-	[NSApp beginSheet:prefsWindow modalForWindow:myWindow modalDelegate:self didEndSelector:nil contextInfo:nil];
-}
-
-- (IBAction)closePreferences:(id)sender {
-	[NSApp endSheet:prefsWindow];
-	[prefsWindow orderOut:sender];
-}
-	
 - (BOOL)isLoggedIn {
 	return [sforce loggedIn];
 }
@@ -268,10 +243,20 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 }
 
 - (IBAction)postLogin:(id)sender {
-	NSString *msg = [NSString stringWithFormat:@"Welcome %@ (instance:%@)", [[sforce currentUserInfo] fullName], [[sforce serverUrl] host]];
+	NSString *msg = [NSString stringWithFormat:@"Welcome %@ (instance:%@)",
+                        [[sforce currentUserInfo] fullName],
+                        [[sforce serverUrl] host]];
 	[self setStatusText:msg];
-    [myWindow setTitle:[NSString stringWithFormat:@"SoqlX : %@ (%@ on %@)", [[sforce currentUserInfo] fullName], [[sforce currentUserInfo] userName], [sforce serverHostAbbriviation]]];
-	
+    
+    NSString *title = [NSString stringWithFormat:@"SoqlX : %@ (%@ on %@)",
+                       [[sforce currentUserInfo] fullName],
+                       [[sforce currentUserInfo] userName],
+                       [sforce serverHostAbbriviation]];
+    [myWindow setTitle:title];
+    NSString *userId = [[sforce currentUserInfo] userId];
+	[queryListController setPrefsPrefix:userId];
+    [detailsController setPrefsPrefix:userId];
+
 	NSArray * types = [sforce describeGlobal];
 	[descDataSource release];
 	descDataSource = [[DescribeListDataSource alloc] init];
@@ -298,8 +283,8 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[self colorize];
 }
 
-- (void)recentQueryListClicked:(NSNotification *)notification {
-	NSString *t = [[notification userInfo] objectForKey:@"text"];
+- (void)queryTextListView:(QueryTextListView *)listView itemClicked:(QueryTextListViewItem *)item {
+	NSString *t = [item text];
 	if (t == nil || [t length] == 0) return;
 	[self setSoqlString:t];
 }

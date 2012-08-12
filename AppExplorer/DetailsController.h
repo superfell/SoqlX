@@ -19,15 +19,15 @@
 // THE SOFTWARE.
 //
 
-#import <Cocoa/Cocoa.h>
+#import "BaseUserBasedController.h"
 
-@interface DetailsController : NSObject {
-	IBOutlet NSPanel			*window;
+@interface DetailsController : BaseWindowToggleController {
 	IBOutlet NSTableView		*detailsTable;
 }
-- (IBAction)updateDetailsState:(id)sender;
+
+- (NSString *)title;
+
 - (NSObject<NSTableViewDataSource> *)dataSource;
 - (void)setDataSource:(NSObject<NSTableViewDataSource> *)aValue;
-- (NSString *)title;
 
 @end

@@ -1,4 +1,4 @@
-// Copyright (c) 2008 Simon Fell
+// Copyright (c) 2008,2012 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -21,14 +21,13 @@
 
 #import "QueryTextListView.h"
 
-NSString *QueryTextListViewItem_Clicked = @"QueryTextListViewItem_Clicked";
-
 static const CGFloat MARGIN = 5.0;
 
 @implementation QueryTextListViewItem
 
--(id)initWithFrame:(NSRect)f attributes:(NSDictionary*)attributes {
+-(id)initWithFrame:(NSRect)f attributes:(NSDictionary*)attributes listView:(QueryTextListView *)lv {
 	self = [super initWithFrame:f];
+    listView = lv;  // not retained, to prevent retain loop.
 	textAttributes = [attributes retain];
 	verticalPad = [@"M" sizeWithAttributes:textAttributes].height / 2; 
 	backgroundColor = [[NSColor whiteColor] retain];
@@ -108,7 +107,7 @@ static const CGFloat MARGIN = 5.0;
 }
 
 - (void)mouseUp:(NSEvent *)theEvent {
-	[[NSNotificationCenter defaultCenter] postNotificationName:QueryTextListViewItem_Clicked object:self userInfo:[NSDictionary dictionaryWithObject:text forKey:@"text"]];
+    [[listView delegate] queryTextListView:listView itemClicked:self];
 }
 
 - (BOOL)isFlipped {
@@ -126,6 +125,8 @@ static const CGFloat MARGIN = 5.0;
 @end
 
 @implementation QueryTextListView
+
+@synthesize delegate;
 
 -(id)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
@@ -205,7 +206,7 @@ static const CGFloat MARGIN = 5.0;
 
 -(QueryTextListViewItem *)createItem:(NSString *)text {
 	NSRect b = [self bounds];
-	QueryTextListViewItem *i = [[QueryTextListViewItem alloc] initWithFrame:b attributes:textAttributes];
+	QueryTextListViewItem *i = [[QueryTextListViewItem alloc] initWithFrame:b attributes:textAttributes listView:self];
 	[i setText:text];
 	[self addSubview:i];
 	return [i autorelease];

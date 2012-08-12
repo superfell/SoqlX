@@ -1,4 +1,4 @@
-// Copyright (c) 2008 Simon Fell
+// Copyright (c) 2008,2012 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -21,8 +21,41 @@
 
 #import <Cocoa/Cocoa.h>
 
-extern NSString *QueryTextListViewItem_Clicked;
+@class QueryTextListViewItem;
+@class QueryTextListView;
 
+@protocol QueryTextListViewDelegate
+
+// Called when the user clicks on an item in the list.
+-(void)queryTextListView:(QueryTextListView *)listView itemClicked:(QueryTextListViewItem *)item;
+
+@end
+
+// This is a listview of items where each item is a string
+// each item is managed by a QueryTextListViewItem
+@interface QueryTextListView : NSView {
+	NSMutableArray                  *items;
+	NSDictionary                    *textAttributes;
+    id<QueryTextListViewDelegate>   delegate;
+}
+
+// set the list of items in the list, to this array of strings.
+-(void)setInitialItems:(NSArray *)texts;
+
+// add a new item at the head/top of the list, if needed, the oldest item will be removed
+// if the item added to the head already exists in the list, it will be moved to the head
+// if the item is already at the head of the list, then nothing happens.
+// returns true if the list actually changed in some way.
+-(BOOL)upsertHead:(NSString *)text;
+
+// The current list of QueryTextListViewItems in the list view.
+-(NSArray *)items;
+
+@property (assign, nonatomic) id<QueryTextListViewDelegate> delegate;
+
+@end
+
+// The view/container for a single item in the list.
 @interface QueryTextListViewItem : NSView {
 	NSString		*text;
 	NSDictionary	*textAttributes;
@@ -32,23 +65,16 @@ extern NSString *QueryTextListViewItem_Clicked;
 
 	NSTrackingArea	*trackingArea;
 	BOOL			highlighted;
+    
+    QueryTextListView *listView;
 }
 
--(id)initWithFrame:(NSRect)f attributes:(NSDictionary*)attributes;
+-(id)initWithFrame:(NSRect)f attributes:(NSDictionary*)attributes listView:(QueryTextListView *)lv;
 
 @property (retain) NSString *text;
 @property (retain) NSColor	*backgroundColor;
 
 -(void)setFrameWidth:(CGFloat)w;
+
 @end;
 
-
-@interface QueryTextListView : NSView {
-	NSMutableArray	*items;
-	NSDictionary	*textAttributes;
-}
-
--(void)setInitialItems:(NSArray *)texts;
--(BOOL)upsertHead:(NSString *)text;
--(NSArray *)items;
-@end
