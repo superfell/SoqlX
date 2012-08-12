@@ -58,12 +58,6 @@
     visible = NO;
 }
 
--(void)dealloc {
-    [panelWindow release];
-    [mainWindow release];
-    [super dealloc];
-}
-
 -(NSString *)windowVisiblePrefName {
     @throw [[[NSException alloc] initWithName:@"ABSTRACT_METHOD" reason:@"subclasses need to implement windowVisiblePrefName" userInfo:nil] autorelease];
 }
