@@ -86,10 +86,9 @@
 - (IBAction)deleteCheckedRows:(id)sender;
 - (IBAction)filterSObjectListView:(id)sender;
 
-- (NSString *)statusText;
-- (void)setStatusText:(NSString *)aValue;
-- (BOOL)schemaViewIsActive;
-- (void)setSchemaViewIsActive:(BOOL)active;
+@property (retain) NSString *statusText;
+@property (assign) BOOL schemaViewIsActive;
+
 - (BOOL)isLoggedIn;
 - (BOOL)hasSelectedForDelete;
 - (BOOL)canQueryMore;

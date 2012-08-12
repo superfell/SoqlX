@@ -55,6 +55,8 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 
 @implementation Explorer
 
+@synthesize statusText, schemaViewIsActive;
+
 + (void)initialize {
 	NSMutableDictionary * defaults = [NSMutableDictionary dictionary];
 	[defaults setObject:[NSNumber numberWithBool:NO] forKey:@"details"];
@@ -136,24 +138,6 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 		CGFloat p = [soqlTextSplitView maxPossiblePositionOfDividerAtIndex:1] - MIN_PANE_SIZE;
 		[soqlTextSplitView setPosition:p ofDividerAtIndex:1];
 	}
-}
-
-- (NSString *)statusText {
-	return statusText;
-}
-
-- (void)setStatusText:(NSString *)aValue {
-	NSString *oldStatusText = statusText;
-	statusText = [aValue retain];
-	[oldStatusText release];
-}
-
-- (BOOL)schemaViewIsActive {
-	return schemaViewIsActive;
-}
-
-- (void)setSchemaViewIsActive:(BOOL)active {
-	schemaViewIsActive = active;
 }
 
 - (IBAction)initUi:(id)sender {
