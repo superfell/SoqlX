@@ -26,18 +26,18 @@
 #import "zkSforceClient.h"
 #import "EditableQueryResultWrapper.h"
 #import "QueryListController.h"
+#import "ZKLoginController.h"
 
 @class ReportWizardController;
 @class DetailsController;
 @class LoginController;
-@class ZKLoginController;
 @class EditableQueryResultWrapper;
 @class ZKSObject;
 @class ZKQueryResult;
 @class QueryResultTable;
 @class ApexController;
 
-@interface Explorer : NSObject<EditableQueryResultWrapperDelegate, NSTabViewDelegate, QueryTextListViewDelegate>
+@interface Explorer : NSObject<EditableQueryResultWrapperDelegate, NSTabViewDelegate, QueryTextListViewDelegate, ZKLoginControllerDelegate>
 {
 	// old world order, needs modernizing
     IBOutlet NSOutlineView			*describeList;

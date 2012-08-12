@@ -165,12 +165,17 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[loginController release];
 	loginController = [[ZKLoginController alloc] init];
 	[loginController setClientIdFromInfoPlist];
+    [loginController setDelegate:self];
 	NSNumber *apiVersion = [[NSUserDefaults standardUserDefaults] objectForKey:@"zkApiVersion"];
 	if (apiVersion != nil)
 		[loginController setPreferedApiVersion:[apiVersion intValue]];
 	[loginController showLoginSheet:myWindow target:self selector:@selector(loginComplete:)];
 }
-	
+
+-(void)loginControllerLoginCancelled:(ZKLoginController *)controller {
+    [myWindow close];
+}
+
 - (void)loginComplete:(ZKSforceClient *)sf {
 	[sforce release];
 	sforce = [sf retain];
