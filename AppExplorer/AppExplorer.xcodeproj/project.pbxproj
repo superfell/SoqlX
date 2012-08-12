@@ -85,7 +85,6 @@
 		F4C878B80F3964BD000075D4 /* BulkDelete.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C878B70F3964BD000075D4 /* BulkDelete.m */; };
 		F4CD3DAD0B85701100084479 /* ZKLoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CD3DAB0B85701100084479 /* ZKLoginController.m */; };
 		F4CD3DBA0B8572DB00084479 /* credential.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CD3DB80B8572DB00084479 /* credential.m */; };
-		F4CD3DE90B85757500084479 /* Login.nib in Resources */ = {isa = PBXBuildFile; fileRef = F4CD3DE80B85757500084479 /* Login.nib */; };
 		F4CD50530B0C134A00345D9E /* TransitionView.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CD50510B0C134A00345D9E /* TransitionView.m */; };
 		F4CD50770B0C18BC00345D9E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4CD50760B0C18BC00345D9E /* QuartzCore.framework */; };
 		F4CD511B0B0C342100345D9E /* PlusMinusWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CD51190B0C342100345D9E /* PlusMinusWidget.m */; };
@@ -97,6 +96,7 @@
 		F4D7831B15D48C8500D00BB9 /* Explorer.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4D7831915D48C8500D00BB9 /* Explorer.xib */; };
 		F4D7831E15D49F7B00D00BB9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D7831D15D49F7B00D00BB9 /* AppDelegate.m */; };
 		F4D7833415D5F46600D00BB9 /* BaseUserBasedController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D7833315D5F46600D00BB9 /* BaseUserBasedController.m */; };
+		F4D7834615D82C8200D00BB9 /* Login.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4D7834515D82C8200D00BB9 /* Login.xib */; };
 		F4D9DD060AD8A1190065EA2D /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4D9DD050AD8A1190065EA2D /* Sparkle.framework */; };
 		F4D9DD1D0AD8A1840065EA2D /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = F4D9DD050AD8A1190065EA2D /* Sparkle.framework */; };
 		F4DAAC340D31E812009C9C09 /* DescribeOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DAAC330D31E812009C9C09 /* DescribeOperation.m */; };
@@ -275,7 +275,6 @@
 		F4CD3DAB0B85701100084479 /* ZKLoginController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = ZKLoginController.m; path = ../common/ZKLoginController.m; sourceTree = SOURCE_ROOT; };
 		F4CD3DB70B8572DB00084479 /* credential.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = credential.h; path = ../common/credential.h; sourceTree = SOURCE_ROOT; };
 		F4CD3DB80B8572DB00084479 /* credential.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = credential.m; path = ../common/credential.m; sourceTree = SOURCE_ROOT; };
-		F4CD3DE80B85757500084479 /* Login.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Login.nib; path = ../common/Login.nib; sourceTree = SOURCE_ROOT; };
 		F4CD50500B0C134A00345D9E /* TransitionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransitionView.h; sourceTree = "<group>"; };
 		F4CD50510B0C134A00345D9E /* TransitionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TransitionView.m; sourceTree = "<group>"; };
 		F4CD50760B0C18BC00345D9E /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
@@ -296,6 +295,7 @@
 		F4D7831D15D49F7B00D00BB9 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		F4D7833215D5F46600D00BB9 /* BaseUserBasedController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseUserBasedController.h; sourceTree = "<group>"; };
 		F4D7833315D5F46600D00BB9 /* BaseUserBasedController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseUserBasedController.m; sourceTree = "<group>"; };
+		F4D7834515D82C8200D00BB9 /* Login.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = Login.xib; path = ../common/Login.xib; sourceTree = "<group>"; };
 		F4D9DD050AD8A1190065EA2D /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		F4DAAC320D31E812009C9C09 /* DescribeOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DescribeOperation.h; sourceTree = "<group>"; };
 		F4DAAC330D31E812009C9C09 /* DescribeOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DescribeOperation.m; sourceTree = "<group>"; };
@@ -434,7 +434,7 @@
 			children = (
 				F454D2DE1267E0AF00DC16D9 /* redLight.png */,
 				F454D2DF1267E0AF00DC16D9 /* greenLight.png */,
-				F4CD3DE80B85757500084479 /* Login.nib */,
+				F4D7834515D82C8200D00BB9 /* Login.xib */,
 				F4B8DFF40B61F4B900DDD00A /* key_b.png */,
 				F4B8DFF50B61F4B900DDD00A /* key_r.png */,
 				F4B8DFE70B61EB8900DDD00A /* report.css */,
@@ -694,13 +694,13 @@
 				F4B8DFE80B61EB8900DDD00A /* report.css in Resources */,
 				F4B8DFF60B61F4B900DDD00A /* key_b.png in Resources */,
 				F4B8DFF70B61F4B900DDD00A /* key_r.png in Resources */,
-				F4CD3DE90B85757500084479 /* Login.nib in Resources */,
 				F44FC9DD0E1EB5D600B5F70C /* querySavePanel.xib in Resources */,
 				F4C877F50F395C6E000075D4 /* ProgressWindow.nib in Resources */,
 				F454D2E01267E0AF00DC16D9 /* redLight.png in Resources */,
 				F454D2E11267E0AF00DC16D9 /* greenLight.png in Resources */,
 				F4D7831815D489B800D00BB9 /* MainMenu.xib in Resources */,
 				F4D7831B15D48C8500D00BB9 /* Explorer.xib in Resources */,
+				F4D7834615D82C8200D00BB9 /* Login.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
