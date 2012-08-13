@@ -52,15 +52,6 @@
 	return [NSArray array];
 }
 
-- (BOOL)haveAllDescribes:(DescribeListDataSource *)dataSource {
-	if (![dataSource hasDescribe:sobjectType]) return NO;
-	ZKDescribeSObject *desc = [dataSource describe:sobjectType];
-    for(NSString *t in [desc namesOfAllReferencedObjects]) {
-		if (![dataSource hasDescribe:t]) return NO;
-	}
-	return YES;
-}
-
 - (void)describeWithProgress:(DescribeListDataSource *)dataSource {
 	[self setDescribesDone:0];
 	if (![dataSource hasDescribe:sobjectType]) 
@@ -131,7 +122,7 @@
 - (void)setSObjectType:(NSString *)type andDataSource:(DescribeListDataSource *)newDataSource {
 	[sobjectType autorelease];
 	sobjectType = [type copy];
-	if (![self haveAllDescribes:newDataSource]) {
+    if (![newDataSource hasAllDescribesRelatedTo:type]) {
 		[self describeWithProgress:newDataSource];
 	} else {
         [self renderReportFromDataSource:newDataSource];

@@ -22,6 +22,7 @@
 #import <Foundation/Foundation.h>
 #import "zkDescribeSObject.h"
 #import "zkDescribeField.h"
+#import "DataSources.h"
 
 @interface ZKDescribeSObject (Reporting)
 - (NSSet *)namesOfAllReferencedObjects;
@@ -30,4 +31,8 @@
 @interface ZKDescribeField (Reporting)
 - (NSString *)descriptiveType;
 - (NSString *)properties;
+@end
+
+@interface DescribeListDataSource (Reporting)
+- (BOOL)hasAllDescribesRelatedTo:(NSString *)sobjectType;
 @end
