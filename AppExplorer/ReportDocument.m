@@ -23,90 +23,10 @@
 #import "DataSources.h"
 #import "SchemaView.h"
 #import "SchemaProtocol.h"
-#import "ZKDescribeSObject.h"
-#import "ZKDescribeField.h"
 #import "ZKPicklistEntry.h"
 #import "ZKChildRelationship.h"
 #import "SObjectBox.h"
-
-@interface ZKDescribeSObject (Reporting)
-- (NSSet *)namesOfAllReferencedObjects;
-@end
-
-@interface ZKDescribeField (Reporting)
-- (NSString *)descriptiveType;
-- (NSString *)properties;
-@end 
-
-@implementation ZKDescribeField (Reporting)
-- (NSString *)descriptiveType {
-	NSString *type = [self type];
-	if ([type isEqualToString:@"string"])
-		return [NSString stringWithFormat:@"text(%d)", [self length]];
-	if ([type isEqualToString:@"picklist"])
-		return @"picklist";
-	if ([type isEqualToString:@"multipicklist"])
-		return @"multi select picklist";
-	if ([type isEqualToString:@"combobox"])
-		return @"combo box";
-	if ([type isEqualToString:@"reference"])
-		return @"foreign key";
-	if ([type isEqualToString:@"base64"])
-		return @"blob";
-	if ([type isEqualToString:@"textarea"])
-		return [NSString stringWithFormat:@"textarea(%d)", [self length]];
-	if ([type isEqualToString:@"currency"])
-		return [NSString stringWithFormat:@"currency(%d,%d)", [self precision] - [self scale], [self scale]];
-	if ([type isEqualToString:@"double"])
-		return [NSString stringWithFormat:@"double(%d,%d)", [self precision] - [self scale], [self scale]];
-	if ([type isEqualToString:@"int"])
-		return [NSString stringWithFormat:@"int(%d)", [self digits]];
-	return type;
-}
-
-- (NSString *)picklistProperties {
-	NSMutableString *pp = [NSMutableString string];
-    for (ZKPicklistEntry *ple in [self picklistValues]) {
-        if (![ple active]) continue;
-		if ([[ple label] isEqualToString:[ple value]])
-			[pp appendFormat:@"%@<br>", [ple value]];
-		else
-			[pp appendFormat:@"%@ (%@)<br>", [ple label], [ple value]];
-	}
-	return pp;
-}
-
-- (NSString *)referenceProperties {
-	NSMutableString *rp = [NSMutableString string];
-    for (NSString *type in [self referenceTo]) {
-		[rp appendFormat:@"%@<br>", type];
-    }
-	return rp;
-}
-
-- (NSString *)properties {
-	NSString *type = [self type];
-	if ([type isEqualToString:@"picklist"] || [type isEqualToString:@"multipicklist"])
-		return [self picklistProperties];
-	if ([type isEqualToString:@"reference"])
-		return [self referenceProperties];
-	return @"";
-}
-@end
-
-@implementation ZKDescribeSObject (Reporting)
-- (NSSet *)namesOfAllReferencedObjects {
-	NSMutableSet *names = [NSMutableSet setWithCapacity:20];
-    for (ZKChildRelationship *cr in [self childRelationships]) {
-		[names addObject:[cr childSObject]];
-    }
-    for (ZKDescribeField *f in [self fields]) {
-		if (![[f type] isEqualToString:@"reference"]) continue;
-		[names addObjectsFromArray:[f referenceTo]];
-	}
-	return names;
-}
-@end
+#import "ZKDescribe_Reporting.h"
 
 @implementation ReportDocument
 
