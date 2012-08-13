@@ -537,18 +537,36 @@ typedef enum SoqlParsePosition {
 	}
 }
 
+// When the user selected an sobject we don't have a describe for, we'll do a describe in the background
+// then re-update the UI/data sources.
+-(void)asyncSelectedSObjectChanged:(NSString *)sobjectType {
+    [self updateProgress:YES];
+    [detailsController setDataSource:nil];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [descDataSource describe:sobjectType];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self selectedSObjectChanged:self];
+            [self updateProgress:NO];
+        });
+    });
+}
+
 - (IBAction)selectedSObjectChanged:(id)sender {
 	id selectedItem = [describeList itemAtRow:[describeList selectedRow]];
-	NSObject<NSTableViewDataSource> *dataSource;
+	NSObject<NSTableViewDataSource> *dataSource = nil;
 	if ([selectedItem isKindOfClass:[NSString class]]) {
 		// sobject
+        if (![descDataSource hasDescribe:selectedItem] && ![self schemaViewIsActive]) {
+            [self asyncSelectedSObjectChanged:selectedItem];
+            return;
+        }
 		ZKDescribeSObject *desc = [descDataSource describe:selectedItem];
 		dataSource = [[[SObjectDataSource alloc] initWithDescribe:desc] autorelease];
 		if ([[[soqlSchemaTabs selectedTabViewItem] identifier] isEqualToString:schemaTabId])
 			[schemaController setSchemaViewToSObject:desc];
 	} else {
 		// field
-		[dataSource = [[SObjectFieldDataSource alloc] initWithDescribe:selectedItem] autorelease];
+		dataSource = [[[SObjectFieldDataSource alloc] initWithDescribe:selectedItem] autorelease];
 	}
 	[detailsController setDataSource:dataSource];
 }
