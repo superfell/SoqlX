@@ -156,7 +156,7 @@
 }
 
 -(void)aboutToDeleteFromIndex:(NSNumber *)idx {
-	NSString *l = [NSString stringWithFormat:@"Deleting %d of %d rows", [idx intValue], [indexes count]];
+	NSString *l = [NSString stringWithFormat:@"Deleting %d of %ld rows", [idx intValue], (unsigned long)[indexes count]];
 	[progress setProgressLabel:l];
 }
 

@@ -414,7 +414,7 @@ typedef enum SoqlParsePosition {
 }
 
 - (void)setRowsLoadedStatusText:(ZKQueryResult *)qr {
-	[self setStatusText:[NSString stringWithFormat:@"loaded %d of %d total rows", [[qr records] count], [qr size]]];
+	[self setStatusText:[NSString stringWithFormat:@"loaded %ld of %d total rows", (unsigned long)[[qr records] count], [qr size]]];
 }
 
 - (void)permformQuery:(BOOL)useQueryAll {

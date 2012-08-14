@@ -262,7 +262,7 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
 - (void)tableView:(NSTableView *)aTableView
     setObjectValue:(id)anObject
     forTableColumn:(NSTableColumn *)aTableColumn
-    row:(int)rowIndex
+    row:(NSInteger)rowIndex
 {
 	BOOL allow = [self allowEdit:aTableColumn];
 	if (!allow) return;

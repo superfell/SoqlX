@@ -116,7 +116,7 @@
 
 -(void)endWrite {
 	NSTimeInterval ttaken = [[NSDate date] timeIntervalSinceDate:started];
-	NSLog(@"query result saving complete, %d rows in %f seconds (%d rows per hour)", rowsWritten, ttaken, (int)(rowsWritten * 3600 / ttaken) );
+	NSLog(@"query result saving complete, %lu rows in %f seconds (%d rows per hour)", (unsigned long)rowsWritten, ttaken, (int)(rowsWritten * 3600 / ttaken) );
 	[stream close];
 	if (saveAll) {
 		[NSApp endSheet:progressWindow];
