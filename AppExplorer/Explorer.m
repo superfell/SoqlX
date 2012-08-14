@@ -103,14 +103,15 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[self collapseChildTableView];
 	
     [self performSelector:@selector(initUi:) withObject:nil afterDelay:0];
-    // If the updater is going to restart the app, we need to close the login sheet if its currently open.
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(closeLoginPanelIfOpen:) name:SUUpdaterWillRestartNotification object:nil];
     
     // A describeSObject operation has finished, see if we can recolor our soql text. (this is going to pick up describes from other windows, but it
     // doesn't matter for now, as the color code re-checks to see if the describe result is available)
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(describeFinished:) name:DescribeDidFinish object:nil];
     
     [queryListController setDelegate:self];
+
+    // If the updater is going to restart the app, we need to close the login sheet if its currently open.
+    [[SUUpdater sharedUpdater] setDelegate:self];
 }
 
 - (void)dealloc {
@@ -123,6 +124,11 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[childResults release];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 	[super dealloc];
+}
+
+// Sparkle : SUUpdaterDelegate - Called immediately before relaunching.
+- (void)updaterWillRelaunchApplication:(SUUpdater *)updater {
+    [self closeLoginPanelIfOpen:updater];
 }
 
 - (void)collapseChildTableView {
