@@ -149,8 +149,8 @@
 BOOL checkAccessToAcl(SecACLRef acl, NSData *thisAppHash) {
 	NSArray *apps;
 	NSString *desc;
-	CSSM_ACL_KEYCHAIN_PROMPT_SELECTOR ps;
-	OSStatus err = SecACLCopySimpleContents(acl, (CFArrayRef *)&apps, (CFStringRef *)&desc, &ps);
+	SecKeychainPromptSelector ps;
+	OSStatus err = SecACLCopyContents(acl, (CFArrayRef *)&apps, (CFStringRef *)&desc, &ps);
 	BOOL res = NO;
 	if (err == noErr) {
 		if (apps == nil) {
