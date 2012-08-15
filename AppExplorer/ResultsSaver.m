@@ -94,15 +94,14 @@
 	stream = [[BufferedWriter alloc] initOnStream:s];
 	
 	ZKQueryResult *qr = [results queryResult];
-	NSTableColumn *c;
-	NSEnumerator *ce = [[self columns] objectEnumerator];
 	BOOL first = YES;
-	while(c = [ce nextObject]) {
+    for (NSTableColumn *c in [self columns]) {
 		if ([[[results wrapper] allSystemColumnIdentifiers] containsObject:[c identifier]])
 			continue;
-		if (first) first = NO;
-		else [stream write:@","];
-		[stream writeQuoted:[c identifier]];
+		if (!first)
+            [stream write:@","];
+        first = NO;
+		[stream writeQuoted:[[c headerCell] stringValue]];
 	}
 	[stream write:@"\r"];
 

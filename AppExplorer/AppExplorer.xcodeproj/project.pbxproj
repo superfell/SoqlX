@@ -80,6 +80,7 @@
 		F4B8DFF70B61F4B900DDD00A /* key_r.png in Resources */ = {isa = PBXBuildFile; fileRef = F4B8DFF50B61F4B900DDD00A /* key_r.png */; };
 		F4BAD5750AF717D200E335DF /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4BAD5740AF717D200E335DF /* Security.framework */; };
 		F4BF72A70F79E58C0089F459 /* NSWindow_additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F4BF72A60F79E58C0089F459 /* NSWindow_additions.m */; };
+		F4C440CA15DB50BC00590A1E /* SearchQueryResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C440C915DB50BC00590A1E /* SearchQueryResult.m */; };
 		F4C877F50F395C6E000075D4 /* ProgressWindow.nib in Resources */ = {isa = PBXBuildFile; fileRef = F4C877F40F395C6E000075D4 /* ProgressWindow.nib */; };
 		F4C877FA0F395DB4000075D4 /* ProgressController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C877F90F395DB4000075D4 /* ProgressController.m */; };
 		F4C878B80F3964BD000075D4 /* BulkDelete.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C878B70F3964BD000075D4 /* BulkDelete.m */; };
@@ -267,6 +268,8 @@
 		F4BAD5740AF717D200E335DF /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		F4BF72A50F79E58C0089F459 /* NSWindow_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSWindow_additions.h; path = ../common/NSWindow_additions.h; sourceTree = SOURCE_ROOT; };
 		F4BF72A60F79E58C0089F459 /* NSWindow_additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSWindow_additions.m; path = ../common/NSWindow_additions.m; sourceTree = SOURCE_ROOT; };
+		F4C440C815DB50BC00590A1E /* SearchQueryResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchQueryResult.h; sourceTree = "<group>"; };
+		F4C440C915DB50BC00590A1E /* SearchQueryResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchQueryResult.m; sourceTree = "<group>"; };
 		F4C877F40F395C6E000075D4 /* ProgressWindow.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; path = ProgressWindow.nib; sourceTree = "<group>"; };
 		F4C877F80F395DB4000075D4 /* ProgressController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgressController.h; sourceTree = "<group>"; };
 		F4C877F90F395DB4000075D4 /* ProgressController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProgressController.m; sourceTree = "<group>"; };
@@ -355,6 +358,8 @@
 				F4D6E1880BD70DA200813881 /* EditableQueryResultWrapper.m */,
 				F4CF71F20D4704EE001001F2 /* QueryResultTable.h */,
 				F4CF71F30D4704EE001001F2 /* QueryResultTable.m */,
+				F4C440C815DB50BC00590A1E /* SearchQueryResult.h */,
+				F4C440C915DB50BC00590A1E /* SearchQueryResult.m */,
 				F4D7833215D5F46600D00BB9 /* BaseUserBasedController.h */,
 				F4D7833315D5F46600D00BB9 /* BaseUserBasedController.m */,
 				F49741EE0D554DB500DD77F4 /* QueryListController.h */,
@@ -813,6 +818,7 @@
 				F4D7831E15D49F7B00D00BB9 /* AppDelegate.m in Sources */,
 				F4D7833415D5F46600D00BB9 /* BaseUserBasedController.m in Sources */,
 				F4D7836B15D8814C00D00BB9 /* ZKDescribe_Reporting.m in Sources */,
+				F4C440CA15DB50BC00590A1E /* SearchQueryResult.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

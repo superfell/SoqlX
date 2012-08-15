@@ -31,6 +31,7 @@
 #import "zkSforce.h"
 #import "ResultsSaver.h"
 #import "BulkDelete.h"
+#import "SearchQueryResult.h"
 #import <Sparkle/Sparkle.h>
 
 static NSString *schemaTabId = @"schema";
@@ -88,7 +89,7 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	//}
 	
 	[soqlSchemaTabs setDelegate:self];
-	[soqlHeader setHeaderText:@"SOQL Query"];
+	[soqlHeader setHeaderText:@"Query"];
 	[self setStatusText:@""];
 	
 	[progress setUsesThreadedAnimation:YES];
@@ -422,8 +423,13 @@ typedef enum SoqlParsePosition {
 	[queryListController addQuery:[self soqlString]];
 	[[NSUserDefaults standardUserDefaults] setObject:[self soqlString] forKey:@"soql"];
 	@try {
-		NSString *query = [self soqlString];
-		ZKQueryResult * qr = useQueryAll ? [sforce queryAll:query] : [sforce query:query];
+		NSString *query = [[self soqlString] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        ZKQueryResult *qr = nil;
+        if ([[query lowercaseString] hasPrefix:@"find "]) {
+            qr = [SearchQueryResult searchQueryResults:[sforce search:query]];
+        } else {
+            qr = useQueryAll ? [sforce queryAll:query] : [sforce query:query];
+        }
 		if ([qr size] > 0) {
 			if ([[qr records] count] == 0) {
 				[self setStatusText:[NSString stringWithFormat:@"Count query result is %d rows", [qr size]]];

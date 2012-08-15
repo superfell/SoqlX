@@ -1,4 +1,4 @@
-// Copyright (c) 2008 Simon Fell
+// Copyright (c) 2008,2012 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -23,6 +23,7 @@
 #import "zkSObject.h"
 #import "ZKQueryResult.h"
 #import "EditableQueryResultWrapper.h"
+#import "SearchQueryResult.h"
 
 @interface QueryResultTable ()
 - (NSArray *)createTableColumns:(ZKQueryResult *)qr;
@@ -180,17 +181,21 @@
 	[self updateTable];
 }
 
+- (NSTableColumn *)createTableColumnWithIdentifier:(NSString *)identifier label:(NSString *)label {
+    NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:identifier];
+    [[col headerCell] setStringValue:label];
+    [col setEditable:YES];
+    [col setResizingMask:NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask];
+    if ([identifier hasSuffix:@"Id"])
+        [col setWidth:165];
+    return [col autorelease];
+}
+
 - (NSArray *)createTableColumns:(ZKQueryResult *)qr {
 	NSArray *cols = [self buildColumnListFromQueryResult:qr];
 	for (NSString *colName in cols) {
-		NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:colName];
-		[[col headerCell] setStringValue:colName];
-		[col setEditable:YES];
-		[col setResizingMask:NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask];
-		if ([colName hasSuffix:@"Id"])
-			[col setWidth:165];
+		NSTableColumn *col = [self createTableColumnWithIdentifier:colName label:colName];
 		[table addTableColumn:col];
-        [col release];
 	}
 	return cols;
 }
@@ -229,13 +234,25 @@
 
 - (NSArray *)buildColumnListFromQueryResult:(ZKQueryResult *)qr {
 	NSMutableArray *columns = [NSMutableArray array];
+    NSMutableSet *processedTypes = [NSMutableSet set];
+    BOOL isSearchResult = [qr conformsToProtocol:@protocol(IsSearchQueryResult)];
+    
 	for (ZKSObject *row in [qr records]) {
+        // in the case we're looking at search results, we need to get columns for each distinct type.
+        if ([processedTypes containsObject:[row type]]) continue;
+        
 		// if we didn't see any null columns, then there's no need to look at any further rows.
-		if (![self addColumnsFromSObject:row withPrefix:nil toList:columns])
-			break;
+		if (![self addColumnsFromSObject:row withPrefix:nil toList:columns]) {
+            if (!isSearchResult) break; // all done.
+			[processedTypes addObject:[row type]];
+        }
 	}
 	// now flatten the queryColumns into a set of real columns
-	NSMutableArray *colNames = [NSMutableArray arrayWithCapacity:[columns count]];
+	NSMutableArray *colNames = [NSMutableArray arrayWithCapacity:[columns count] + 1];
+
+    if (isSearchResult)
+        [table addTableColumn:[self createTableColumnWithIdentifier:@"SObject__Type" label:@"Type"]];
+    
 	for (QueryColumn *qc in columns)
 		[colNames addObjectsFromArray:[qc allNames]];
 		
