@@ -6,3 +6,4 @@ build/
 *.pbxuser
 AppExplorer/AppExplorer.xcodeproj/xcuserdata/simon.xcuserdatad/xcdebugger/Breakpoints.xcbkptlist
 AppExplorer/AppExplorer.xcodeproj/project.xcworkspace/
+/AppExplorer/dsa_priv.pem

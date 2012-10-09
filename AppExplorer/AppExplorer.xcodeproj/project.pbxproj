@@ -92,6 +92,7 @@
 		F4CD51200B0C350300345D9E /* FieldImportance.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CD511E0B0C350300345D9E /* FieldImportance.m */; };
 		F4CF71F40D4704EE001001F2 /* QueryResultTable.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CF71F30D4704EE001001F2 /* QueryResultTable.m */; };
 		F4CF73E80D49BDDB001001F2 /* QueryResultCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CF73E70D49BDDB001001F2 /* QueryResultCell.m */; };
+		F4D4F5AB1623CD5D009CF3D4 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = F4D4F5AA1623CD5D009CF3D4 /* dsa_pub.pem */; };
 		F4D6E18A0BD70DA200813881 /* EditableQueryResultWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D6E1880BD70DA200813881 /* EditableQueryResultWrapper.m */; };
 		F4D7831815D489B800D00BB9 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4D7831615D489B800D00BB9 /* MainMenu.xib */; };
 		F4D7831B15D48C8500D00BB9 /* Explorer.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4D7831915D48C8500D00BB9 /* Explorer.xib */; };
@@ -291,6 +292,7 @@
 		F4CF71F30D4704EE001001F2 /* QueryResultTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QueryResultTable.m; sourceTree = "<group>"; };
 		F4CF73E60D49BDDB001001F2 /* QueryResultCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueryResultCell.h; sourceTree = "<group>"; };
 		F4CF73E70D49BDDB001001F2 /* QueryResultCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QueryResultCell.m; sourceTree = "<group>"; };
+		F4D4F5AA1623CD5D009CF3D4 /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		F4D6E1870BD70DA200813881 /* EditableQueryResultWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditableQueryResultWrapper.h; sourceTree = "<group>"; };
 		F4D6E1880BD70DA200813881 /* EditableQueryResultWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditableQueryResultWrapper.m; sourceTree = "<group>"; };
 		F4D7831715D489B800D00BB9 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -440,6 +442,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				F4D4F5AA1623CD5D009CF3D4 /* dsa_pub.pem */,
 				F4D7836715D879BE00D00BB9 /* ReportDocument.xib */,
 				F454D2DE1267E0AF00DC16D9 /* redLight.png */,
 				F454D2DF1267E0AF00DC16D9 /* greenLight.png */,
@@ -654,7 +657,6 @@
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
 				F4D9DD1A0AD8A13E0065EA2D /* CopyFiles */,
-				F458F9B90E19E673005FB6E8 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -711,26 +713,11 @@
 				F4D7831B15D48C8500D00BB9 /* Explorer.xib in Resources */,
 				F4D7834615D82C8200D00BB9 /* Login.xib in Resources */,
 				F4D7836815D879BE00D00BB9 /* ReportDocument.xib in Resources */,
+				F4D4F5AB1623CD5D009CF3D4 /* dsa_pub.pem in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		F458F9B90E19E673005FB6E8 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [[ ${CONFIGURATION} == \"Debug\" ]]\nthen\n\t# -f means force to re-sign even if already signed\n\tcodesign -f -s \"SZF Code Signing\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/\"\nfi";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8D11072C0486CEB800E47090 /* Sources */ = {
