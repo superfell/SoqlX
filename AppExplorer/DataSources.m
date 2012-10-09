@@ -298,11 +298,12 @@
 	field = [f retain];
 	titles = [[NSArray arrayWithObjects:@"Name", @"Label", @"Type", @"Custom", @"Help Text",
 					@"Length", @"Digits", @"Scale", @"Precision", @"Byte Length",
-					@"Createable", @"Updatable", @"Cascade Delete", @"Default On Create", @"Calculated", @"AutoNumber",  
-					@"Unique", @"Case Sensitive", @"Name Pointing", @"Sortable", @"Groupable",
+					@"Createable", @"Updatable", @"Cascade Delete", @"Restricted Delete",
+                    @"Default On Create", @"Calculated", @"AutoNumber",
+					@"Unique", @"Case Sensitive", @"Name Pointing", @"Sortable", @"Groupable", @"Permissionable",
 					@"External Id", @"ID Lookup", @"Filterable", @"HTML Formatted", @"Name Field", @"Nillable", 
 					@"Name Pointing", @"Reference To", @"Relationship Name", 
-					@"Dependent Picklist", @"Controller Name", @"Restricted Picklist", 
+					@"Dependent Picklist", @"Controller Name", @"Restricted Picklist",
 					@"Value Formula", @"Default Formula", @"Relationship Order (CJOs)", @"Write Requires Read on Master (CJOs)", @"Display Location in Decimal", nil] retain];
 	return self;
 }
@@ -328,8 +329,9 @@
 
 	SEL selectors[] = { @selector(name), @selector(label), @selector(type), @selector(custom), @selector(inlineHelpText),
 						@selector(length), @selector(digits), @selector(scale), @selector(precision), @selector(byteLength),			
-						@selector(createable), @selector(updateable), @selector(cascadeDelete), @selector(defaultOnCreate), @selector(calculated), @selector(autoNumber),
-						@selector(unique), @selector(caseSensitive), @selector(namePointing), @selector(sortable), @selector(groupable),
+						@selector(createable), @selector(updateable), @selector(cascadeDelete), @selector(restrictedDelete),
+                        @selector(defaultOnCreate), @selector(calculated), @selector(autoNumber),
+						@selector(unique), @selector(caseSensitive), @selector(namePointing), @selector(sortable), @selector(groupable), @selector(permissionable),
 						@selector(externalId), @selector(idLookup), @selector(filterable), @selector(htmlFormatted), @selector(nameField), @selector(nillable),
 						@selector(namePointing), @selector(referenceTo), @selector(relationshipName), 
 						@selector(dependentPicklist), @selector(controllerName), @selector(restrictedPicklist),
