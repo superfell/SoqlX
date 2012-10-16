@@ -211,7 +211,7 @@
 		NSString *fullName = [prefix length] > 0 ? [NSString stringWithFormat:@"%@.%@", prefix, fn] : fn;
 		QueryColumn *qc = [QueryColumn columnWithName:fullName];
 		if ([val isKindOfClass:[ZKSObject class]]) {
-			int containerIdx = [columns indexOfObject:qc];
+			NSUInteger containerIdx = [columns indexOfObject:qc];
 			if (containerIdx != NSNotFound)
 				qc = [columns objectAtIndex:containerIdx];
 			if (![qc hasChildNames]) {
