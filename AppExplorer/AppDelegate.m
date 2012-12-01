@@ -53,13 +53,6 @@
 }
 
 -(void)applicationDidFinishLaunching:(NSNotification *)notification {
-    // one-off, fix up preferences for new shared Login nib / controller
-	NSArray *servers = [[NSUserDefaults standardUserDefaults] objectForKey:@"servers"];
-	if ([servers count] == 0) {
-		servers = [[NSUserDefaults standardUserDefaults] objectForKey:@"systems"];
-		[[NSUserDefaults standardUserDefaults] setObject:servers forKey:@"servers"];
-		[[NSUserDefaults standardUserDefaults] setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"system"] forKey:@"server"];
-	}
 	[self resetApiVersionOverrideIfAppVersionChanged];
     [self openNewWindow:self];
 }

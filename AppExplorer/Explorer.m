@@ -67,8 +67,8 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	NSString *test = @"https://test.salesforce.com";
 	
 	NSMutableArray * defaultServers = [NSMutableArray arrayWithObjects:prod, test, nil];
-	[defaults setObject:defaultServers forKey:@"systems"];
-	[defaults setObject:prod forKey:@"system"];
+	[defaults setObject:defaultServers forKey:@"servers"];
+	[defaults setObject:prod forKey:@"server"];
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
 }
 
