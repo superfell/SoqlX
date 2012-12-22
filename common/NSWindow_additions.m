@@ -39,17 +39,12 @@
 
 @implementation NSPanel (Fade)
 
--(void)detachAndClosePanel {
-    [[self parentWindow] removeChildWindow:self];
-    [self close];
-}
-
 -(void)displayOrClosePanel:(id)sender forMainWindow:(NSWindow *)mainWindow {
 	if ([self alphaValue] > 0) {
 		[[self animator] setAlphaValue:0.0];
-		[self performSelector:@selector(detachAndClosePanel) withObject:nil afterDelay:[[NSAnimationContext currentContext] duration]];
+		[self performSelector:@selector(close) withObject:nil afterDelay:[[NSAnimationContext currentContext] duration]];
 	} else {
-        [mainWindow addChildWindow:self ordered:NSWindowBelow];
+        [self orderFront:self];
 		[[self animator] setAlphaValue:1.0];
 	}
 }
