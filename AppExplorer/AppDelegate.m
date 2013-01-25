@@ -1,4 +1,4 @@
-// Copyright (c) 2012 Simon Fell
+// Copyright (c) 2012-2013 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -20,6 +20,8 @@
 //
 
 #import "AppDelegate.h"
+#import "Explorer.h"
+#import <Sparkle/Sparkle.h>
 
 @implementation AppDelegate
 
@@ -55,11 +57,19 @@
 -(void)applicationDidFinishLaunching:(NSNotification *)notification {
 	[self resetApiVersionOverrideIfAppVersionChanged];
     [self openNewWindow:self];
+    
+    // If the updater is going to restart the app, we need to close the login sheet if its currently open.
+    [[SUUpdater sharedUpdater] setDelegate:self];
 }
 
 -(void)openNewWindow:(id)sender {
     NSWindowController *controller = [[[SoqlXWindowController alloc] initWithWindowControllers:windowControllers] autorelease];
     [controller showWindow:sender];
+}
+
+// Sparkle : SUUpdaterDelegate - Called immediately before relaunching.
+- (void)updaterWillRelaunchApplication:(SUUpdater *)updater {
+    [windowControllers makeObjectsPerformSelector:@selector(closeLoginPanelIfOpen:) withObject:updater];
 }
 
 @end
@@ -76,6 +86,11 @@
 -(void)dealloc {
     [controllers release];
     [super dealloc];
+}
+
+-(void)closeLoginPanelIfOpen:(id)sender {
+    Explorer *e = (Explorer *)[[self window] delegate];
+    [e closeLoginPanelIfOpen:sender];
 }
 
 -(void)windowDidLoad {

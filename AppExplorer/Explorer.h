@@ -71,6 +71,7 @@
 }
 
 - (IBAction)showLogin:(id)sender;
+- (IBAction)closeLoginPanelIfOpen:(id)sender;
 - (IBAction)showInBrowser:(id)sender;
 - (IBAction)executeQuery:(id)sender;
 - (IBAction)executeQueryAll:(id)sender;

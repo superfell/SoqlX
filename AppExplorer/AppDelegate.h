@@ -35,4 +35,6 @@
     id              observer;
 }
 -(id)initWithWindowControllers:(NSMutableArray *)controllers;
+-(void)closeLoginPanelIfOpen:(id)sender;
+
 @end

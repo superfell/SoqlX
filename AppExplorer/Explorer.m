@@ -32,7 +32,6 @@
 #import "ResultsSaver.h"
 #import "BulkDelete.h"
 #import "SearchQueryResult.h"
-#import <Sparkle/Sparkle.h>
 
 static NSString *schemaTabId = @"schema";
 static CGFloat MIN_PANE_SIZE = 128.0f;
@@ -110,9 +109,6 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(describeFinished:) name:DescribeDidFinish object:nil];
     
     [queryListController setDelegate:self];
-
-    // If the updater is going to restart the app, we need to close the login sheet if its currently open.
-    [[SUUpdater sharedUpdater] setDelegate:self];
 }
 
 - (void)dealloc {
@@ -125,11 +121,6 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[childResults release];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 	[super dealloc];
-}
-
-// Sparkle : SUUpdaterDelegate - Called immediately before relaunching.
-- (void)updaterWillRelaunchApplication:(SUUpdater *)updater {
-    [self closeLoginPanelIfOpen:updater];
 }
 
 - (void)collapseChildTableView {
