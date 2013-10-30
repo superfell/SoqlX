@@ -32,6 +32,8 @@
 #import "ResultsSaver.h"
 #import "BulkDelete.h"
 #import "SearchQueryResult.h"
+#import "ZKLimitInfoHeader.h"
+#import "ZKLimitInfo.h"
 
 static NSString *schemaTabId = @"schema";
 static CGFloat MIN_PANE_SIZE = 128.0f;
@@ -55,7 +57,7 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 
 @implementation Explorer
 
-@synthesize statusText, schemaViewIsActive;
+@synthesize statusText, schemaViewIsActive, apiCallCountText;
 
 + (void)initialize {
 	NSMutableDictionary * defaults = [NSMutableDictionary dictionary];
@@ -121,6 +123,15 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[childResults release];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 	[super dealloc];
+}
+
+-(void)updateCallCount {
+    ZKLimitInfoHeader *h = [sforce lastLimitInfoHeader];
+    ZKLimitInfo *api = [h limitInfoOfType:@"API REQUESTS"];
+    if (api == nil)
+        self.apiCallCountText = nil;
+    else
+        self.apiCallCountText = [NSString stringWithFormat:@"Org API calls %d/%d", [api current], [api limit]];
 }
 
 - (void)collapseChildTableView {
@@ -222,6 +233,7 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 		[progress stopAnimation:self];
 	[progress setHidden:!show];
 	[progress display];
+    [self updateCallCount];
 }
 
 - (IBAction)postLogin:(id)sender {
@@ -399,6 +411,7 @@ typedef enum SoqlParsePosition {
 		[query appendFormat:@" from %@", selectedItem];
 		[self setSoqlString:query];
 	}
+    [self updateCallCount];
 }
 
 - (IBAction)filterSObjectListView:(id)sender {
@@ -507,6 +520,7 @@ typedef enum SoqlParsePosition {
 		NSAlert * a = [NSAlert alertWithMessageText:[sr message] defaultButton:@"Cancel" alternateButton:nil otherButton:nil informativeTextWithFormat:[sr statusCode]];
 		[a runModal];
 	}
+    [self updateCallCount];
 }
 
 - (IBAction)queryMore:(id)sender {
@@ -572,6 +586,7 @@ typedef enum SoqlParsePosition {
 		dataSource = [[[SObjectFieldDataSource alloc] initWithDescribe:selectedItem] autorelease];
 	}
 	[detailsController setDataSource:dataSource];
+    [self updateCallCount];
 }
 
 - (IBAction)generateReportForSelection:(id)sender {
@@ -607,6 +622,7 @@ typedef enum SoqlParsePosition {
 	if (theId == nil) return;
 	NSString *retUrl = [NSString stringWithFormat:@"/%@", theId];
 	[self launchSfdcBrowser:retUrl];
+    [self updateCallCount];
 }
 
 - (IBAction)showSelectedIdFronRootInBrowser:(id)sender {
@@ -629,6 +645,7 @@ typedef enum SoqlParsePosition {
 		NSAlert * a = [NSAlert alertWithMessageText:[sr message] defaultButton:@"Cancel" alternateButton:nil otherButton:nil informativeTextWithFormat:[sr statusCode]];
 		[a runModal];
 	}
+    [self updateCallCount];
 }
 
 - (IBAction)deleteSelectedRow:(id)sender {

@@ -67,6 +67,7 @@
 	
 	// new world order, uses binding
 	NSString						*statusText;
+    NSString                        *apiCallCountText;
 	BOOL							schemaViewIsActive;
 }
 
@@ -88,6 +89,7 @@
 - (IBAction)filterSObjectListView:(id)sender;
 
 @property (retain) NSString *statusText;
+@property (retain) NSString *apiCallCountText;
 @property (assign) BOOL schemaViewIsActive;
 
 - (BOOL)isLoggedIn;
