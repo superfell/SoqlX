@@ -106,6 +106,8 @@
 		F4DAAC340D31E812009C9C09 /* DescribeOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DAAC330D31E812009C9C09 /* DescribeOperation.m */; };
 		F4DD944B0AFEEC9400B0E3AC /* SchemaView.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DD94490AFEEC9400B0E3AC /* SchemaView.m */; };
 		F4DD94540AFEED9500B0E3AC /* SchemaController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DD94520AFEED9500B0E3AC /* SchemaController.m */; };
+		F4E11E361820AFD5001D18C6 /* ZKLimitInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E11E331820AFD5001D18C6 /* ZKLimitInfo.m */; };
+		F4E11E371820AFD5001D18C6 /* ZKLimitInfoHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E11E351820AFD5001D18C6 /* ZKLimitInfoHeader.m */; };
 		F4F249A60B0D92800027987B /* restrictedshine.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F4F249A50B0D92800027987B /* restrictedshine.tiff */; };
 		F4F75D940D4EFCEE00608927 /* QueryTextListView.m in Sources */ = {isa = PBXBuildFile; fileRef = F4F75D930D4EFCEE00608927 /* QueryTextListView.m */; };
 		F4F897B4134CD84C00699880 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F4F897B3134CD84C00699880 /* libxml2.2.dylib */; };
@@ -312,6 +314,10 @@
 		F4DD94490AFEEC9400B0E3AC /* SchemaView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SchemaView.m; sourceTree = "<group>"; };
 		F4DD94510AFEED9500B0E3AC /* SchemaController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SchemaController.h; sourceTree = "<group>"; };
 		F4DD94520AFEED9500B0E3AC /* SchemaController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SchemaController.m; sourceTree = "<group>"; };
+		F4E11E321820AFD5001D18C6 /* ZKLimitInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKLimitInfo.h; path = ../zksforce/zkSforce/ZKLimitInfo.h; sourceTree = "<group>"; };
+		F4E11E331820AFD5001D18C6 /* ZKLimitInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKLimitInfo.m; path = ../zksforce/zkSforce/ZKLimitInfo.m; sourceTree = "<group>"; };
+		F4E11E341820AFD5001D18C6 /* ZKLimitInfoHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKLimitInfoHeader.h; path = ../zksforce/zkSforce/ZKLimitInfoHeader.h; sourceTree = "<group>"; };
+		F4E11E351820AFD5001D18C6 /* ZKLimitInfoHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKLimitInfoHeader.m; path = ../zksforce/zkSforce/ZKLimitInfoHeader.m; sourceTree = "<group>"; };
 		F4F249A50B0D92800027987B /* restrictedshine.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = restrictedshine.tiff; sourceTree = "<group>"; };
 		F4F75D920D4EFCEE00608927 /* QueryTextListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueryTextListView.h; sourceTree = "<group>"; };
 		F4F75D930D4EFCEE00608927 /* QueryTextListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QueryTextListView.m; sourceTree = "<group>"; };
@@ -521,6 +527,10 @@
 		F45DE02D0AABC00A00ED0BA0 /* Sforce */ = {
 			isa = PBXGroup;
 			children = (
+				F4E11E321820AFD5001D18C6 /* ZKLimitInfo.h */,
+				F4E11E331820AFD5001D18C6 /* ZKLimitInfo.m */,
+				F4E11E341820AFD5001D18C6 /* ZKLimitInfoHeader.h */,
+				F4E11E351820AFD5001D18C6 /* ZKLimitInfoHeader.m */,
 				F4AC556E15996F2600F5CA45 /* zkAuthentication.h */,
 				F4AC556F15996F2600F5CA45 /* zkAuthentication.m */,
 				F4AC557015996F2600F5CA45 /* zkBaseClient.h */,
@@ -806,6 +816,8 @@
 				F4D7833415D5F46600D00BB9 /* BaseUserBasedController.m in Sources */,
 				F4D7836B15D8814C00D00BB9 /* ZKDescribe_Reporting.m in Sources */,
 				F4C440CA15DB50BC00590A1E /* SearchQueryResult.m in Sources */,
+				F4E11E361820AFD5001D18C6 /* ZKLimitInfo.m in Sources */,
+				F4E11E371820AFD5001D18C6 /* ZKLimitInfoHeader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
