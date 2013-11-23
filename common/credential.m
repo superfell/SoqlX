@@ -52,7 +52,7 @@
 				[results addObject:[Credential forServer:protocolAndServer username:un keychainItem:itemRef]];
 				SecKeychainItemFreeContent(&al, NULL);
 			} else {
-				NSLog(@"SecKeychainItemCopyAttributesAndData error %ld", s2);
+				NSLog(@"SecKeychainItemCopyAttributesAndData error %ld", (long)s2);
 				// no need to release itemRef in the normal caseas the Credential object will own it
 				CFRelease(itemRef);
 			}
@@ -60,7 +60,7 @@
 		}
 		CFRelease(searchRef);
 	} else {
-		NSLog(@"SecKeychainSearchCreateFromAttributes returned error %ld", status);
+		NSLog(@"SecKeychainSearchCreateFromAttributes returned error %ld", (long)status);
 	}
 	return results;
 }
@@ -96,7 +96,7 @@
 								[pwd UTF8String],
 								&itemRef);
 	if (status != noErr) {
-		NSLog(@"SecKeychainAddInternetPassword returned error %ld", status);
+		NSLog(@"SecKeychainAddInternetPassword returned error %ld", (long)status);
 		return nil;
 	}
 	return [Credential forServer:protocolAndServer username:un keychainItem:itemRef];						
@@ -170,7 +170,7 @@ BOOL checkAccessToAcl(SecACLRef acl, NSData *thisAppHash) {
 		}
 		CFRelease(desc);
 	} else {
-		NSLog(@"SecACLCopySimpleContents failed with error %ld", err);
+		NSLog(@"SecACLCopySimpleContents failed with error %ld", (long)err);
 	}
 	return res;
 }
@@ -179,7 +179,7 @@ BOOL checkAccessToAcl(SecACLRef acl, NSData *thisAppHash) {
 	SecTrustedApplicationRef app;
 	OSStatus err = SecTrustedApplicationCreateFromPath(NULL, &app);
 	if (noErr != err) {
-		NSLog(@"SecTrustedApplicationCreateFromPath failed with error %ld", err);
+		NSLog(@"SecTrustedApplicationCreateFromPath failed with error %ld", (long)err);
 		return NO;
 	}
 	NSData *thisAppHash;
@@ -200,15 +200,15 @@ BOOL checkAccessToAcl(SecACLRef acl, NSData *thisAppHash) {
 				}
 				CFRelease(acls);
 			} else {
-				NSLog(@"SecAccessCopySelectedACLList failed with error %ld", err);
+				NSLog(@"SecAccessCopySelectedACLList failed with error %ld", (long)err);
 			}
 			CFRelease(access);
 		} else {
-			NSLog(@"SecKeychainItemCopyAccess failed with error %ld", err);
+			NSLog(@"SecKeychainItemCopyAccess failed with error %ld", (long)err);
 		}
 		CFRelease(thisAppHash);
 	} else {
-		NSLog(@"SecTrustedApplicationCopyData failed with error %ld", err);
+		NSLog(@"SecTrustedApplicationCopyData failed with error %ld", (long)err);
 	}
 	CFRelease(app);
 	return res;
@@ -225,7 +225,7 @@ BOOL checkAccessToAcl(SecACLRef acl, NSData *thisAppHash) {
 									(UInt32)[password lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
 									[password UTF8String] );
 	if (status != noErr) 
-		NSLog(@"SecKeychainItemModifyAttributesAndData returned %ld", status);
+		NSLog(@"SecKeychainItemModifyAttributesAndData returned %ld", (long)status);
 	return status;
 }
 
