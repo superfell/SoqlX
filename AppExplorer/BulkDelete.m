@@ -22,11 +22,8 @@
 #import "BulkDelete.h"
 #import "ProgressController.h"
 #import "EditableQueryResultWrapper.h"
-#import "zkQueryResult.h"
-#import "zkSObject.h"
-#import "zkSforceClient.h"
+#import "zkSforce.h"
 #import "QueryResultTable.h"
-#import "zkSaveResult.h"
 
 @interface BulkDelete ()
 -(void)doDeleteFrom:(int)start length:(int)length;

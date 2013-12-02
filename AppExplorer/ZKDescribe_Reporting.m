@@ -28,7 +28,7 @@
 - (NSString *)descriptiveType {
 	NSString *type = [self type];
 	if ([type isEqualToString:@"string"])
-		return [NSString stringWithFormat:@"text(%d)", [self length]];
+		return [NSString stringWithFormat:@"text(%ld)", (long)[self length]];
 	if ([type isEqualToString:@"picklist"])
 		return @"picklist";
 	if ([type isEqualToString:@"multipicklist"])
@@ -40,13 +40,13 @@
 	if ([type isEqualToString:@"base64"])
 		return @"blob";
 	if ([type isEqualToString:@"textarea"])
-		return [NSString stringWithFormat:@"textarea(%d)", [self length]];
+		return [NSString stringWithFormat:@"textarea(%ld)", (long)[self length]];
 	if ([type isEqualToString:@"currency"])
-		return [NSString stringWithFormat:@"currency(%d,%d)", [self precision] - [self scale], [self scale]];
+		return [NSString stringWithFormat:@"currency(%ld,%ld)", (long)([self precision] - [self scale]), (long)[self scale]];
 	if ([type isEqualToString:@"double"])
-		return [NSString stringWithFormat:@"double(%d,%d)", [self precision] - [self scale], [self scale]];
+		return [NSString stringWithFormat:@"double(%ld,%ld)", (long)([self precision] - [self scale]), (long)[self scale]];
 	if ([type isEqualToString:@"int"])
-		return [NSString stringWithFormat:@"int(%d)", [self digits]];
+		return [NSString stringWithFormat:@"int(%ld)", (long)[self digits]];
 	return type;
 }
 

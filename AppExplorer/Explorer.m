@@ -550,7 +550,7 @@ typedef enum SoqlParsePosition {
 		return [descDataSource describe:selectedItem];
 	} else {
 		// field
-		return [selectedItem sobject];
+		return [(ZKDescribeField *)selectedItem sobject];
 	}
 }
 
