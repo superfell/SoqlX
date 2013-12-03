@@ -125,13 +125,17 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[super dealloc];
 }
 
--(void)updateCallCount {
-    ZKLimitInfoHeader *h = [sforce lastLimitInfoHeader];
+-(void)updateCallCount:(ZKSforceClient *)c {
+    ZKLimitInfoHeader *h = [c lastLimitInfoHeader];
     ZKLimitInfo *api = [h limitInfoOfType:@"API REQUESTS"];
-    if (api == nil)
-        self.apiCallCountText = nil;
-    else
-        self.apiCallCountText = [NSString stringWithFormat:@"Org API calls %d/%d", [api current], [api limit]];
+    NSString *newVal = (api == nil) ? nil : [NSString stringWithFormat:@"Org API calls %d/%d", [api current], [api limit]];
+    if ([NSThread isMainThread])
+        self.apiCallCountText = newVal;
+    else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.apiCallCountText = newVal;
+        });
+    }
 }
 
 - (void)collapseChildTableView {
@@ -172,6 +176,7 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 - (void)loginComplete:(ZKSforceClient *)sf {
 	[sforce release];
 	sforce = [sf retain];
+    [sforce setDelegate:self];
 	[loginController release];
 	loginController = nil;
     [self performSelector:@selector(postLogin:) withObject:nil afterDelay:0];
@@ -233,7 +238,6 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 		[progress stopAnimation:self];
 	[progress setHidden:!show];
 	[progress display];
-    [self updateCallCount];
 }
 
 - (IBAction)postLogin:(id)sender {
@@ -411,7 +415,6 @@ typedef enum SoqlParsePosition {
 		[query appendFormat:@" from %@", selectedItem];
 		[self setSoqlString:query];
 	}
-    [self updateCallCount];
 }
 
 - (IBAction)filterSObjectListView:(id)sender {
@@ -520,7 +523,6 @@ typedef enum SoqlParsePosition {
 		NSAlert * a = [NSAlert alertWithMessageText:[sr message] defaultButton:@"Cancel" alternateButton:nil otherButton:nil informativeTextWithFormat:[sr statusCode]];
 		[a runModal];
 	}
-    [self updateCallCount];
 }
 
 - (IBAction)queryMore:(id)sender {
@@ -550,7 +552,7 @@ typedef enum SoqlParsePosition {
 		return [descDataSource describe:selectedItem];
 	} else {
 		// field
-		return [selectedItem sobject];
+		return [(ZKDescribeField *)selectedItem sobject];
 	}
 }
 
@@ -586,7 +588,6 @@ typedef enum SoqlParsePosition {
 		dataSource = [[[SObjectFieldDataSource alloc] initWithDescribe:selectedItem] autorelease];
 	}
 	[detailsController setDataSource:dataSource];
-    [self updateCallCount];
 }
 
 - (IBAction)generateReportForSelection:(id)sender {
@@ -622,7 +623,6 @@ typedef enum SoqlParsePosition {
 	if (theId == nil) return;
 	NSString *retUrl = [NSString stringWithFormat:@"/%@", theId];
 	[self launchSfdcBrowser:retUrl];
-    [self updateCallCount];
 }
 
 - (IBAction)showSelectedIdFronRootInBrowser:(id)sender {
@@ -645,7 +645,6 @@ typedef enum SoqlParsePosition {
 		NSAlert * a = [NSAlert alertWithMessageText:[sr message] defaultButton:@"Cancel" alternateButton:nil otherButton:nil informativeTextWithFormat:[sr statusCode]];
 		[a runModal];
 	}
-    [self updateCallCount];
 }
 
 - (IBAction)deleteSelectedRow:(id)sender {
@@ -678,6 +677,15 @@ typedef enum SoqlParsePosition {
 
 - (BOOL)splitView:(NSSplitView *)splitView shouldCollapseSubview:(NSView *)subview forDoubleClickOnDividerAtIndex:(NSInteger)dividerIndex {
 	return dividerIndex == 1 && [self splitView:splitView canCollapseSubview:subview];
+}
+
+// ZKBaseClientDelegate
+-(void)client:(ZKBaseClient *)client sentRequest:(NSString *)payload named:(NSString *)callName to:(NSURL *)destination withResponse:(zkElement *)response in:(NSTimeInterval)time {
+    [self updateCallCount:(ZKSforceClient *)client];
+}
+
+-(void)client:(ZKBaseClient *)client sentRequest:(NSString *)payload named:(NSString *)callName to:(NSURL *)destination withException:(NSException *)ex    in:(NSTimeInterval)time {
+    
 }
 
 @end

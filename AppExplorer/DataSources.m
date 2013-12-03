@@ -232,8 +232,8 @@
 	sobject = [s retain];
 	
 	NSMutableArray *t = [NSMutableArray arrayWithObjects:@"Name", @"Label", @"PluralLabel", @"Key Prefix", @"Custom", 
-				@"Createable", @"Updateable", @"Activateable", @"Deleteable", @"Undeleteable", 
-				@"Mergeable", @"Queryable", @"Retrieveable", @"Searchable", @"Layoutable",  
+				@"Createable", @"Updateable", @"Activateable", @"Deletable", @"Undeletable", 
+				@"Mergeable", @"Queryable", @"Retrieveable", @"Searchable", @"Layoutable",
 				@"Replicateable", @"Triggerable", @"URL for Edit", @"URL for Detail", @"URL for New", nil];
 	NSArray *cr = [s childRelationships];
 	if ([cr count] > 0) {
@@ -268,7 +268,7 @@
 		return [titles objectAtIndex:rowIdx];
 
 	SEL selectors[] = { @selector(name), @selector(label), @selector(labelPlural), @selector(keyPrefix), @selector(custom),			
-						@selector(createable), @selector(updateable), @selector(activateable), @selector(deletable), @selector(undeleteable),
+						@selector(createable), @selector(updateable), @selector(activateable), @selector(deletable), @selector(undeletable),
 						@selector(mergeable), @selector(queryable), @selector(retrieveable), @selector(searchable), @selector(layoutable),
 						@selector(replicateable), @selector(triggerable), @selector(urlEdit), @selector(urlDetail), @selector(urlNew) };
 
@@ -330,7 +330,7 @@
 	SEL selectors[] = { @selector(name), @selector(label), @selector(type), @selector(custom), @selector(inlineHelpText),
 						@selector(length), @selector(digits), @selector(scale), @selector(precision), @selector(byteLength),			
 						@selector(createable), @selector(updateable), @selector(cascadeDelete), @selector(restrictedDelete),
-                        @selector(defaultOnCreate), @selector(calculated), @selector(autoNumber),
+                        @selector(defaultedOnCreate), @selector(calculated), @selector(autoNumber),
 						@selector(unique), @selector(caseSensitive), @selector(namePointing), @selector(sortable), @selector(groupable), @selector(permissionable),
 						@selector(externalId), @selector(idLookup), @selector(filterable), @selector(htmlFormatted), @selector(nameField), @selector(nillable),
 						@selector(namePointing), @selector(referenceTo), @selector(relationshipName), 
@@ -343,8 +343,10 @@
 	
 	if (returnType[0] == 'c')
 		return f ? @"Yes" : @"";
-	if (returnType[0] == 'i')  
+	if (returnType[0] == 'i')
 		return f == 0 ? (id)@"" : (id)[NSNumber numberWithInt:(int)f];
+    if (returnType[0] == 'q')
+        return [NSNumber numberWithLongLong:(long long)f];
 	if (returnType[0] == '@') {
 		if ([f isKindOfClass:[NSArray class]]) {
 			if ([f count] == 0) return @"";

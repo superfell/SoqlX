@@ -1,4 +1,4 @@
-// Copyright (c) 2007 Simon Fell
+// Copyright (c) 2007,2013 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -148,10 +148,9 @@ static NSArray *logLevelNames;
 	return [debugLogE stringValue];
 }
 
-- (NSArray *)sendAndParseResults:(ZKEnvelope *)requestEnv resultType:(Class)resultClass {
+- (NSArray *)sendAndParseResults:(ZKEnvelope *)requestEnv name:(NSString *)callName resultType:(Class)resultClass {
 	NSString *soapRequest = [requestEnv end];
-//	NSLog(@"request is\r\n%@", soapRequest);
-	zkElement *soapRoot = [self sendRequest:soapRequest returnRoot:YES];
+	zkElement *soapRoot = [self sendRequest:soapRequest name:callName returnRoot:YES];
 	NSString *debugLogStr = [self getResponseDebugLog:soapRoot];
 	[self setLastDebugLog:debugLogStr];
 	
@@ -173,8 +172,7 @@ static NSArray *logLevelNames;
 	[env startElement:elemName];
 	[env addElementArray:@"scripts" elemValue:src];
 	[env endElement:elemName];
-	[env endElement:@"s:Body"];
-	return [self sendAndParseResults:env resultType:[ZKCompileResult class]];
+	return [self sendAndParseResults:env name:[NSString stringWithFormat:@"%@:", elemName] resultType:[ZKCompileResult class]];
 }
 
 - (NSArray *)compilePackages:(NSArray *)src {
@@ -190,8 +188,7 @@ static NSArray *logLevelNames;
 	[env startElement:@"executeAnonymous"];
 	[env addElement:@"String" elemValue:src];
 	[env endElement:@"executeAnonymous"];
-	[env endElement:@"s:Body"];
-	return [[self sendAndParseResults:env resultType:[ZKExecuteAnonymousResult class]] objectAtIndex:0];
+	return [[self sendAndParseResults:env name:NSStringFromSelector(_cmd) resultType:[ZKExecuteAnonymousResult class]] objectAtIndex:0];
 }
 
 - (ZKRunTestResult *)runTests:(BOOL)allTests namespace:(NSString *)ns packages:(NSArray *)pkgs {
@@ -203,8 +200,7 @@ static NSArray *logLevelNames;
 	[env addElement:@"packages" elemValue:pkgs];
 	[env endElement:@"RunTestsRequest"];
 	[env endElement:@"runTests"];
-	[env endElement:@"s:Body"];
-	return [[self sendAndParseResults:env resultType:[ZKRunTestResult class]] objectAtIndex:0];
+	return [[self sendAndParseResults:env name:NSStringFromSelector(_cmd) resultType:[ZKRunTestResult class]] objectAtIndex:0];
 }
 
 @end
