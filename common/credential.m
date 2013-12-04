@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2012 Simon Fell
+// Copyright (c) 2006-2013 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -25,6 +25,10 @@
 - (SecProtocolType)SecProtocolType {
 	return [[[self scheme] lowercaseString] isEqualToString:@"http"] ? kSecProtocolTypeHTTP : kSecProtocolTypeHTTPS;
 }
+- (CFTypeRef)SecAttrProtocol {
+    return [[[self scheme] lowercaseString] isEqualToString:@"http"] ? kSecAttrProtocolHTTP : kSecAttrProtocolHTTPS;
+}
+
 @end
 
 @implementation Credential
@@ -32,35 +36,28 @@
 + (NSArray *)credentialsForServer:(NSString *)protocolAndServer {
 	NSURL *url = [NSURL URLWithString:protocolAndServer];
 	NSString *server = [url host];
-	SecProtocolType protocol = [url SecProtocolType];
 	
-	NSMutableArray *results = [NSMutableArray array];
-	SecKeychainAttribute att[] = { {kSecServerItemAttr, (UInt32)[server length], (void *)[server UTF8String] }, 
-								   {kSecProtocolItemAttr, sizeof(SecProtocolType), &protocol } }; 
-	SecKeychainAttributeList attList = { 2, att };
-	SecKeychainItemRef itemRef;
-	SecKeychainSearchRef searchRef;	
-	OSStatus status = SecKeychainSearchCreateFromAttributes ( NULL, kSecInternetPasswordItemClass, &attList, &searchRef );
+    NSMutableArray *results = [NSMutableArray array];
+	NSArray *queryResults = nil;
+    NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
+                           kSecClassInternetPassword, kSecClass,
+                           kSecMatchLimitAll, kSecMatchLimit,
+                           kCFBooleanTrue, kSecReturnRef,
+                           kCFBooleanTrue, kSecReturnAttributes,
+                           server, kSecAttrServer,
+                           [url SecAttrProtocol], kSecAttrProtocol,
+                           nil];
+
+    OSStatus status = SecItemCopyMatching((CFDictionaryRef)query, (CFTypeRef *)&queryResults);
 	if (status == noErr) {
-		status = SecKeychainSearchCopyNext(searchRef, &itemRef);
-		while (status == noErr) {
-			SecKeychainAttribute a[] = { { kSecAccountItemAttr, 0, NULL } };
-			SecKeychainAttributeList al = { 1, a };
-			OSStatus s2 = SecKeychainItemCopyContent(itemRef, NULL, &al, 0, NULL);
-			if (noErr == s2) {
-                NSString *un = [[[NSString alloc] initWithBytes:a[0].data length:a[0].length encoding:NSUTF8StringEncoding] autorelease];
-				[results addObject:[Credential forServer:protocolAndServer username:un keychainItem:itemRef]];
-				SecKeychainItemFreeContent(&al, NULL);
-			} else {
-				NSLog(@"SecKeychainItemCopyAttributesAndData error %ld", (long)s2);
-				// no need to release itemRef in the normal caseas the Credential object will own it
-				CFRelease(itemRef);
-			}
-			status = SecKeychainSearchCopyNext(searchRef, &itemRef);
-		}
-		CFRelease(searchRef);
+        for (NSDictionary *item in queryResults) {
+            NSString *username = [item objectForKey:kSecAttrAccount];
+            SecKeychainItemRef itemRef = (SecKeychainItemRef)[item objectForKey:kSecValueRef];
+            [results addObject:[Credential forServer:protocolAndServer username:username keychainItem:itemRef]];
+        }
+        CFRelease(queryResults);
 	} else {
-		NSLog(@"SecKeychainSearchCreateFromAttributes returned error %ld", (long)status);
+		NSLog(@"SecItemCopyMatching returned error %ld", (long)status);
 	}
 	return results;
 }
@@ -99,7 +96,9 @@
 		NSLog(@"SecKeychainAddInternetPassword returned error %ld", (long)status);
 		return nil;
 	}
-	return [Credential forServer:protocolAndServer username:un keychainItem:itemRef];						
+	Credential *result = [Credential forServer:protocolAndServer username:un keychainItem:itemRef];
+    CFRelease(itemRef);
+    return result;
 }
 
 - (id)initForServer:(NSString *)s username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem {
@@ -107,6 +106,7 @@
 	server = [s copy];
 	username = [un copy];
 	keychainItem = kcItem;
+    CFRetain(keychainItem);
 	return self;
 }
 
@@ -189,19 +189,16 @@ BOOL checkAccessToAcl(SecACLRef acl, NSData *thisAppHash) {
 		SecAccessRef access;
 		err = SecKeychainItemCopyAccess(keychainItem, &access);
 		if (noErr == err) {
-			NSArray *acls;
-			err = SecAccessCopySelectedACLList(access, CSSM_ACL_AUTHORIZATION_DECRYPT, (CFArrayRef *)&acls);
-			if (noErr == err) {
-				SecACLRef acl;
-				NSEnumerator *e = [acls objectEnumerator];
-				while ((acl = (SecACLRef)[e nextObject])) {
-					res = checkAccessToAcl(acl, thisAppHash);
-					if (res) break;
-				}
-				CFRelease(acls);
-			} else {
-				NSLog(@"SecAccessCopySelectedACLList failed with error %ld", (long)err);
-			}
+            NSArray *acls = (NSArray *)SecAccessCopyMatchingACLList(access, kSecACLAuthorizationDecrypt);
+            if (acls != NULL) {
+                SecACLRef acl;
+                NSEnumerator *e = [acls objectEnumerator];
+                while ((acl = (SecACLRef)[e nextObject])) {
+                    res = checkAccessToAcl(acl, thisAppHash);
+                    if (res) break;
+                }
+                CFRelease(acls);
+            }
 			CFRelease(access);
 		} else {
 			NSLog(@"SecKeychainItemCopyAccess failed with error %ld", (long)err);
