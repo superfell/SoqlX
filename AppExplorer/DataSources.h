@@ -24,6 +24,7 @@
 @class ZKSforceClient;
 @class ZKDescribeSObject;
 @class ZKDescribeField;
+@class ZKDescribeGlobalTheme;
 
 @interface DescribeListDataSource : NSObject<NSOutlineViewDataSource, NSOutlineViewDelegate> {
 	NSArray					*types;
@@ -31,6 +32,7 @@
 	ZKSforceClient			*sforce;
 	NSMutableDictionary		*describes;
 	NSMutableDictionary		*operations;
+    NSMutableDictionary     *icons;
 	NSOperationQueue		*describeQueue;
 	
 	NSString				*filter;
@@ -39,7 +41,7 @@
 }
 
 - (void)setSforce:(ZKSforceClient *)sf;
-- (void)setTypes:(NSArray *)t view:(NSOutlineView *)ov;
+- (void)setTypes:(ZKDescribeGlobalTheme *)t view:(NSOutlineView *)ov;
 
 // access to the desc cache
 - (ZKDescribeSObject *)describe:(NSString *)type;

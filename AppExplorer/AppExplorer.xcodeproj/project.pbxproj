@@ -199,6 +199,7 @@
 		F4DD94540AFEED9500B0E3AC /* SchemaController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DD94520AFEED9500B0E3AC /* SchemaController.m */; };
 		F4E11E361820AFD5001D18C6 /* ZKLimitInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E11E331820AFD5001D18C6 /* ZKLimitInfo.m */; };
 		F4E11E371820AFD5001D18C6 /* ZKLimitInfoHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E11E351820AFD5001D18C6 /* ZKLimitInfoHeader.m */; };
+		F4E8BB10184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E8BB0F184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m */; };
 		F4F249A60B0D92800027987B /* restrictedshine.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F4F249A50B0D92800027987B /* restrictedshine.tiff */; };
 		F4F75D940D4EFCEE00608927 /* QueryTextListView.m in Sources */ = {isa = PBXBuildFile; fileRef = F4F75D930D4EFCEE00608927 /* QueryTextListView.m */; };
 		F4F897B4134CD84C00699880 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F4F897B3134CD84C00699880 /* libxml2.2.dylib */; };
@@ -592,6 +593,8 @@
 		F4E11E331820AFD5001D18C6 /* ZKLimitInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKLimitInfo.m; path = ../zksforce/zkSforce/ZKLimitInfo.m; sourceTree = "<group>"; };
 		F4E11E341820AFD5001D18C6 /* ZKLimitInfoHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKLimitInfoHeader.h; path = ../zksforce/zkSforce/ZKLimitInfoHeader.h; sourceTree = "<group>"; };
 		F4E11E351820AFD5001D18C6 /* ZKLimitInfoHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKLimitInfoHeader.m; path = ../zksforce/zkSforce/ZKLimitInfoHeader.m; sourceTree = "<group>"; };
+		F4E8BB0E184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZKDescribeThemeItem+ZKFindResource.h"; sourceTree = "<group>"; };
+		F4E8BB0F184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ZKDescribeThemeItem+ZKFindResource.m"; sourceTree = "<group>"; };
 		F4F249A50B0D92800027987B /* restrictedshine.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = restrictedshine.tiff; sourceTree = "<group>"; };
 		F4F75D920D4EFCEE00608927 /* QueryTextListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueryTextListView.h; sourceTree = "<group>"; };
 		F4F75D930D4EFCEE00608927 /* QueryTextListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QueryTextListView.m; sourceTree = "<group>"; };
@@ -658,6 +661,8 @@
 				F454D162126785EA00DC16D9 /* ApexController.m */,
 				F4D7831C15D49F7B00D00BB9 /* AppDelegate.h */,
 				F4D7831D15D49F7B00D00BB9 /* AppDelegate.m */,
+				F4E8BB0E184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.h */,
+				F4E8BB0F184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -1366,6 +1371,7 @@
 				F454E248184C3B990083AEA8 /* ZKUpsertResult.m in Sources */,
 				F454E249184C3B990083AEA8 /* ZKUserInfo+Extras.m in Sources */,
 				F454E24A184C3B990083AEA8 /* ZKUserTerritoryDeleteHeader.m in Sources */,
+				F4E8BB10184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

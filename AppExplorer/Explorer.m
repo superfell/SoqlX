@@ -32,8 +32,7 @@
 #import "ResultsSaver.h"
 #import "BulkDelete.h"
 #import "SearchQueryResult.h"
-#import "ZKLimitInfoHeader.h"
-#import "ZKLimitInfo.h"
+#import "ZKDescribeThemeItem+ZKFindResource.h"
 
 static NSString *schemaTabId = @"schema";
 static CGFloat MIN_PANE_SIZE = 128.0f;
@@ -255,17 +254,13 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[queryListController setPrefsPrefix:userId];
     [detailsController setPrefsPrefix:userId];
 
-	NSArray * types = [sforce describeGlobal];
 	[descDataSource release];
 	descDataSource = [[DescribeListDataSource alloc] init];
-	[self willChangeValueForKey:@"SObjects"];
 	[apexController setSforceClient:sforce];
 	[descDataSource setSforce:sforce];
-	[descDataSource setTypes:types view:describeList];
 	[describeList setDataSource:descDataSource];
 	[describeList setDelegate:descDataSource];
 	[describeList reloadData];
-	[self didChangeValueForKey:@"SObjects"];
 
 	[schemaController setDescribeDataSource:descDataSource];
 	[self colorize];
@@ -274,6 +269,27 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[self didChangeValueForKey:@"isLoggedIn"];
 	[rootResults setQueryResult:nil];
 	[childResults setQueryResult:nil];
+
+    [sforce performDescribeGlobalThemeWithFailBlock:^(NSException *result) {
+        NSLog(@"error doing descGT %@", result);
+    } completeBlock:^(ZKDescribeGlobalTheme *result) {
+        [self willChangeValueForKey:@"SObjects"];
+        [descDataSource setTypes:result view:describeList];
+        [self didChangeValueForKey:@"SObjects"];
+    }];
+    
+    [sforce performDescribeAvailableQuickActions:nil failBlock:^(NSException *result) {
+        NSLog(@"error doing descAQA %@", result);
+    } completeBlock:^(NSArray *result) {
+        for (ZKDescribeAvailableQuickActionResult *qa in result)
+            NSLog(@"quick action %@ %@ %@", [qa label], [qa name], [qa type]);
+        [sforce performDescribeQuickActions:[result valueForKey:@"name"] failBlock:^(NSException *result) {
+            NSLog(@"error doing descAQA %@", result);
+        } completeBlock:^(NSArray *result) {
+            for (ZKDescribeQuickActionResult *r in result)
+                NSLog(@"action %@ %@", [r label], [r iconUrl]);
+        }];
+    }];
 }
 
 - (void)setSoqlString:(NSString *)str {
@@ -401,18 +417,15 @@ typedef enum SoqlParsePosition {
 
 - (IBAction)describeItemClicked:(id)sender {
 	id selectedItem = [describeList itemAtRow:[describeList selectedRow]];
-	if ([selectedItem isKindOfClass:[NSString class]])
-	{
-		ZKDescribeSObject * d = [descDataSource describe:selectedItem];
+	if ([selectedItem isKindOfClass:[ZKDescribeGlobalSObject class]]) {
+		ZKDescribeSObject * d = [descDataSource describe:[selectedItem name]];
 		NSMutableString * query = [NSMutableString string];
 		[query appendString:@"select"];
-		ZKDescribeField * f;
-		NSEnumerator *e = [[d fields] objectEnumerator];
-		while (f = [e nextObject]) 
+        for (ZKDescribeField *f in [d fields])
 			[query appendFormat:@" %@,", [f name]];
 		NSRange lastChar = {[query length]-1, 1};
 		[query deleteCharactersInRange:lastChar];
-		[query appendFormat:@" from %@", selectedItem];
+		[query appendFormat:@" from %@", [selectedItem name]];
 		[self setSoqlString:query];
 	}
 }
@@ -573,13 +586,13 @@ typedef enum SoqlParsePosition {
 - (IBAction)selectedSObjectChanged:(id)sender {
 	id selectedItem = [describeList itemAtRow:[describeList selectedRow]];
 	NSObject<NSTableViewDataSource> *dataSource = nil;
-	if ([selectedItem isKindOfClass:[NSString class]]) {
+	if ([selectedItem isKindOfClass:[ZKDescribeGlobalSObject class]]) {
 		// sobject
-        if (![descDataSource hasDescribe:selectedItem] && ![self schemaViewIsActive]) {
-            [self asyncSelectedSObjectChanged:selectedItem];
+        if (![descDataSource hasDescribe:[selectedItem name]] && ![self schemaViewIsActive]) {
+            [self asyncSelectedSObjectChanged:[selectedItem name]];
             return;
         }
-		ZKDescribeSObject *desc = [descDataSource describe:selectedItem];
+		ZKDescribeSObject *desc = [descDataSource describe:[selectedItem name]];
 		dataSource = [[[SObjectDataSource alloc] initWithDescribe:desc] autorelease];
 		if ([[[soqlSchemaTabs selectedTabViewItem] identifier] isEqualToString:schemaTabId])
 			[schemaController setSchemaViewToSObject:desc];

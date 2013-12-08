@@ -20,12 +20,10 @@
 //
 
 #import "DataSources.h"
-#import "zkDescribeSObject.h"
-#import "zkDescribeField.h"
-#import "zkChildRelationship.h"
-#import "zkSForceClient.h"
+#import "zkSforce.h"
 #import "DescribeOperation.h"
 #import "HighlightTextFieldCell.h"
+#import "ZKDescribeThemeItem+ZKFindResource.h"
 
 @interface DescribeListDataSource ()
 -(void)updateFilter;
@@ -63,28 +61,33 @@
 	[filteredTypes release];
 	[outlineView release];
 	[descGlobalSobjects release];
+    [icons release];
 	[super dealloc];
 }
 
-- (void)setTypes:(NSArray *)t view:(NSOutlineView *)ov {
+- (void)setTypes:(ZKDescribeGlobalTheme *)t view:(NSOutlineView *)ov {
 	outlineView = [ov retain];
-	types = [t retain];
+	types = [t.global.sobjects retain];
 	describes = [[NSMutableDictionary alloc] init];
 	operations = [[NSMutableDictionary alloc] init];
-	
+	icons = [[NSMutableDictionary alloc] init];
+    
 	NSMutableDictionary *byname = [NSMutableDictionary dictionary];
-	for (ZKDescribeGlobalSObject *o in t)
+	for (ZKDescribeGlobalSObject *o in types)
 		[byname setObject:o forKey:[[o name] lowercaseString]];
 		
 	descGlobalSobjects = [byname retain];
-	/*
-	for(NSString *sobject in t) {
-		sobject = [sobject lowercaseString];
-		DescribeOperation *op = [[DescribeOperation alloc] initForSObject:sobject cache:self];
-		[op setQueuePriority:NSOperationQueuePriorityLow];
-		[operations setObject:op forKey:sobject];
-		[describeQueue addOperation:op];
-	}*/
+    
+    NSString *sid = sforce.sessionId;
+    for (ZKDescribeThemeItem *r in t.theme.themeItems) {
+        ZKDescribeIcon *i = [r iconWithHeight:32 theme:@"theme3"];
+        [i fetchIconUsingSessionId:sid whenCompleteDo:^(NSImage *img) {
+            NSString *tn = [[r name] lowercaseString];
+            [icons setValue:img forKey:tn];
+            [outlineView reloadItem:[byname objectForKey:tn]];
+        }];
+    }
+    
 	[self updateFilter];
 }
 
@@ -176,23 +179,21 @@
 // for use in an outline view
 - (int)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
 	if (item == nil) return [filteredTypes count];
-	return [[[self describe:item] fields] count];
+	return [[[self describe:[item name]] fields] count];
 }
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item  {
-	return item == nil || [item isKindOfClass:[NSString class]];
+	return item == nil || [item isKindOfClass:[ZKDescribeGlobalSObject class]];
 }
 
 - (id)outlineView:(NSOutlineView *)outlineView child:(int)index ofItem:(id)item {
-	if (item == nil) return [[filteredTypes objectAtIndex:index] name];
-	id f = [[[self describe:item] fields] objectAtIndex:index];
+	if (item == nil) return [filteredTypes objectAtIndex:index];
+	id f = [[[self describe:[item name]] fields] objectAtIndex:index];
 	return f;
 }
 
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
 	if ([[[tableColumn headerCell] stringValue] isEqualToString:@"SObjects"]) {
-		if ([item isKindOfClass:[NSString class]])
-			return item;
 		return [item name];
 	}
 	return nil;
@@ -200,10 +201,15 @@
 
 -(NSCell *)outlineView:(NSOutlineView *)outlineView dataCellForTableColumn:(NSTableColumn *)tableColumn item:(id)item {
 	HighlightTextFieldCell *c = [tableColumn dataCell];
+    [c setImage:nil];
 	[c setTextColor:[NSColor blackColor]];
 	[c setFont:[NSFont systemFontOfSize:12.0f]];
 	[c setZkStandout:NO];
-	if ([item isKindOfClass:[ZKDescribeField class]]) {
+    
+    if ([item isKindOfClass:[ZKDescribeGlobalSObject class]]) {
+        [c setImage:[icons valueForKey:[[item name] lowercaseString]]];
+
+	} else if ([item isKindOfClass:[ZKDescribeField class]]) {
 		if ([item fieldMatchesFilter:filter]) {
 			[c setFont:[NSFont boldSystemFontOfSize:13.0f]];
 			[c setTextColor:[[NSColor blueColor] blendedColorWithFraction:0.5 ofColor:[NSColor blackColor]]];

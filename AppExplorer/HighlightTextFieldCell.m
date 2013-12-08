@@ -37,8 +37,11 @@
 	tf.origin.x += 5.0;
 	tf.size.width -= 7.0;
 	NSMutableDictionary *a = [NSMutableDictionary dictionary];
-	[a setObject:[self font] forKey:NSFontAttributeName];
-	[a setObject:[self textColor] forKey:NSForegroundColorAttributeName];
+    if ([self font] != nil)
+        [a setObject:[self font] forKey:NSFontAttributeName];
+    if ([self textColor] != nil)
+        [a setObject:[self textColor] forKey:NSForegroundColorAttributeName];
+    
 	NSString *v = [self stringValue];
 	NSSize txtSize = [v sizeWithAttributes:a];
 
@@ -62,6 +65,14 @@
 		tf = NSInsetRect(tf, 9, 0);
 	}
 	
+    if (self.image != nil) {
+        NSRect imagef = tf;
+        imagef.size.width = 16;
+        imagef.size.height = 16;
+        [[self image] drawInRect:imagef fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0 respectFlipped:YES hints:nil];
+    }
+    tf.origin.x += 18;
+    tf.size.width -= 18;
 	tf.origin.y += (NSHeight(tf) - txtSize.height) / 2;
 	[[self stringValue] drawWithRect:tf options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingTruncatesLastVisibleLine attributes:a];
 }
