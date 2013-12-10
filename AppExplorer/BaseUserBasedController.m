@@ -56,6 +56,13 @@
 	[panelWindow setAlphaValue:0.0];
     [panelWindow setDelegate:self];
     visible = NO;
+    terminating = NO;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillTerminate:) name:NSApplicationWillTerminateNotification object:nil];
+}
+
+-(void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [super dealloc];
 }
 
 -(NSString *)windowVisiblePrefName {
@@ -66,10 +73,15 @@
     return visible;
 }
 
+-(void)appWillTerminate:(NSNotification *)n {
+    terminating = YES;
+}
+
 -(void)setWindowVisible:(BOOL)windowVisible updateWindow:(BOOL)updateWindow {
     if (visible == windowVisible) return;
     visible = windowVisible;
-    [[NSUserDefaults standardUserDefaults] setBool:visible forKey:[self prefName:[self windowVisiblePrefName]]];
+    if (!terminating)
+        [[NSUserDefaults standardUserDefaults] setBool:visible forKey:[self prefName:[self windowVisiblePrefName]]];
     if (updateWindow)
         [panelWindow displayOrClosePanel:self forMainWindow:mainWindow];
 }

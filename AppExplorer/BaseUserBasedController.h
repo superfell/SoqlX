@@ -38,6 +38,7 @@
     IBOutlet    NSPanel     *panelWindow;
     IBOutlet    NSWindow    *mainWindow;
     BOOL                    visible;
+    BOOL                    terminating;
 }
 
 @property (assign) BOOL windowVisible;
