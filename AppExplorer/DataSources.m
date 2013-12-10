@@ -91,6 +91,10 @@
 	[self updateFilter];
 }
 
+- (NSImage *)iconForType:(NSString *)type {
+    return [icons valueForKey:[type lowercaseString]];
+}
+
 - (void)setSforce:(ZKSforceClient *)sf {
 	sforce = [[sf copy] retain];
 }
@@ -209,7 +213,7 @@
     
     if ([item isKindOfClass:[ZKDescribeGlobalSObject class]]) {
         c.zkTextXOffset = 18;
-        c.zkImage = [icons valueForKey:[[item name] lowercaseString]];
+        c.zkImage = [self iconForType:[item name]];
 
 	} else if ([item isKindOfClass:[ZKDescribeField class]]) {
 		if ([item fieldMatchesFilter:filter]) {

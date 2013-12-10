@@ -48,6 +48,7 @@
 - (BOOL)isTypeDescribable:(NSString *)type;
 - (BOOL)hasDescribe:(NSString *)type;
 - (void)prioritizeDescribe:(NSString *)type;
+- (NSImage *)iconForType:(NSString *)type;
 
 // filter the view
 - (NSString *)filter;

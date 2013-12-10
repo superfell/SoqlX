@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2012 Simon Fell
+// Copyright (c) 2007-2013 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -51,6 +51,11 @@ static NSString *SHOWING_DETAILS = @"details";
 	[detailsTable setDataSource:aValue];
 	[aValue retain];
 	[oldDataSource release];
+}
+
+- (void)setIcon:(NSImage *)image {
+    [[detailsTable window] setRepresentedURL:[NSURL fileURLWithPath:self.title]];
+    [[[detailsTable window] standardWindowButton:NSWindowDocumentIconButton] setImage:image];
 }
 
 @end

@@ -594,11 +594,13 @@ typedef enum SoqlParsePosition {
         }
 		ZKDescribeSObject *desc = [descDataSource describe:[selectedItem name]];
 		dataSource = [[[SObjectDataSource alloc] initWithDescribe:desc] autorelease];
+        [detailsController setIcon:[descDataSource iconForType:[selectedItem name]]];
 		if ([[[soqlSchemaTabs selectedTabViewItem] identifier] isEqualToString:schemaTabId])
 			[schemaController setSchemaViewToSObject:desc];
 	} else {
 		// field
 		dataSource = [[[SObjectFieldDataSource alloc] initWithDescribe:selectedItem] autorelease];
+        [detailsController  setIcon:nil];
 	}
 	[detailsController setDataSource:dataSource];
 }
