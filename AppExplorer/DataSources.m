@@ -80,7 +80,7 @@
     
     NSString *sid = sforce.sessionId;
     for (ZKDescribeThemeItem *r in t.theme.themeItems) {
-        ZKDescribeIcon *i = [r iconWithHeight:32 theme:@"theme3"];
+        ZKDescribeIcon *i = [r iconWithHeight:16 theme:@"theme3"];
         [i fetchIconUsingSessionId:sid whenCompleteDo:^(NSImage *img) {
             NSString *tn = [[r name] lowercaseString];
             [icons setValue:img forKey:tn];
@@ -201,13 +201,15 @@
 
 -(NSCell *)outlineView:(NSOutlineView *)outlineView dataCellForTableColumn:(NSTableColumn *)tableColumn item:(id)item {
 	HighlightTextFieldCell *c = [tableColumn dataCell];
-    [c setImage:nil];
+    c.zkImage = nil;
+    c.zkStandout = NO;
+    c.zkTextXOffset = 8;
 	[c setTextColor:[NSColor blackColor]];
 	[c setFont:[NSFont systemFontOfSize:12.0f]];
-	[c setZkStandout:NO];
     
     if ([item isKindOfClass:[ZKDescribeGlobalSObject class]]) {
-        [c setImage:[icons valueForKey:[[item name] lowercaseString]]];
+        c.zkTextXOffset = 18;
+        c.zkImage = [icons valueForKey:[[item name] lowercaseString]];
 
 	} else if ([item isKindOfClass:[ZKDescribeField class]]) {
 		if ([item fieldMatchesFilter:filter]) {

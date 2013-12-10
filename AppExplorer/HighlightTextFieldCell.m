@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Simon Fell
+// Copyright (c) 2009,2013 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -24,13 +24,7 @@
 
 @implementation HighlightTextFieldCell
 
--(BOOL)zkStandout {
-	return zkStandout;
-}
-
--(void)setZkStandout:(BOOL)h {
-	zkStandout = h;
-}
+@synthesize zkTextXOffset, zkImage, zkStandout;
 
 -(void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView {
 	NSRect tf = cellFrame;
@@ -44,6 +38,10 @@
     
 	NSString *v = [self stringValue];
 	NSSize txtSize = [v sizeWithAttributes:a];
+
+    NSRect imagef = tf;
+    tf.origin.x += zkTextXOffset;
+    tf.size.width -= zkTextXOffset;
 
 	if (zkStandout && ![self isHighlighted]) {
 		[[NSColor lightGrayColor] setStroke];
@@ -65,14 +63,10 @@
 		tf = NSInsetRect(tf, 9, 0);
 	}
 	
-    if (self.image != nil) {
-        NSRect imagef = tf;
-        imagef.size.width = 16;
-        imagef.size.height = 16;
-        [[self image] drawInRect:imagef fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0 respectFlipped:YES hints:nil];
+    if (zkImage != nil) {
+        imagef.size = zkImage.size;
+        [zkImage drawInRect:imagef fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0 respectFlipped:YES hints:nil];
     }
-    tf.origin.x += 18;
-    tf.size.width -= 18;
 	tf.origin.y += (NSHeight(tf) - txtSize.height) / 2;
 	[[self stringValue] drawWithRect:tf options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingTruncatesLastVisibleLine attributes:a];
 }

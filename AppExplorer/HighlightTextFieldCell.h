@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Simon Fell
+// Copyright (c) 2009,2013 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -23,10 +23,15 @@
 
 
 @interface HighlightTextFieldCell : NSTextFieldCell {
-	BOOL	zkStandout;
+    NSInteger   zkTextXOffset;
+    NSImage     *zkImage;
+	BOOL        zkStandout;
 }
 
--(BOOL)zkStandout;
--(void)setZkStandout:(BOOL)h;
+@property (assign) BOOL zkStandout;
+@property (retain) NSImage *zkImage;
+@property (assign) NSInteger zkTextXOffset;
+
+
 
 @end
