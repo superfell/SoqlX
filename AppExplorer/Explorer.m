@@ -35,6 +35,8 @@
 #import "ZKDescribeThemeItem+ZKFindResource.h"
 
 static NSString *schemaTabId = @"schema";
+static NSString *PREF_QUERY_SORT_FIELDS = @"SortFieldsInGeneratedQueries";
+
 static CGFloat MIN_PANE_SIZE = 128.0f;
 
 @interface Explorer ()
@@ -69,6 +71,7 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	NSMutableArray * defaultServers = [NSMutableArray arrayWithObjects:prod, test, nil];
 	[defaults setObject:defaultServers forKey:@"servers"];
 	[defaults setObject:prod forKey:@"server"];
+    [defaults setObject:[NSNumber numberWithBool:YES] forKey:PREF_QUERY_SORT_FIELDS];
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
 }
 
@@ -421,7 +424,12 @@ typedef enum SoqlParsePosition {
 		ZKDescribeSObject * d = [descDataSource describe:[selectedItem name]];
 		NSMutableString * query = [NSMutableString string];
 		[query appendString:@"select"];
-        for (ZKDescribeField *f in [d fields])
+        NSArray *fields = [d fields];
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:PREF_QUERY_SORT_FIELDS]) {
+            NSSortDescriptor *sd = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)];
+            fields = [fields sortedArrayUsingDescriptors:[NSArray arrayWithObject:sd]];
+        }
+        for (ZKDescribeField *f in fields)
 			[query appendFormat:@" %@,", [f name]];
 		NSRange lastChar = {[query length]-1, 1};
 		[query deleteCharactersInRange:lastChar];
