@@ -569,12 +569,20 @@ typedef enum SoqlParsePosition {
 - (ZKDescribeSObject *)selectedSObject {
 	id selectedItem = [describeList itemAtRow:[describeList selectedRow]];
 	if ([selectedItem isKindOfClass:[NSString class]]) {
-		// sobject
+		// sobject name
 		return [descDataSource describe:selectedItem];
-	} else {
+        
+    } else if ([selectedItem isKindOfClass:[ZKDescribeGlobalSObject class]]) {
+        // sobject desc
+        return [descDataSource describe:[selectedItem name]];
+        
+	} else if ([selectedItem isKindOfClass:[ZKDescribeField class]]) {
 		// field
 		return [(ZKDescribeField *)selectedItem sobject];
-	}
+    }
+    // unknown
+    NSLog(@"selected item from describeList of unexpected type %@ %@", selectedItem, [selectedItem class]);
+    return selectedItem;
 }
 
 // When the user selected an sobject we don't have a describe for, we'll do a describe in the background
