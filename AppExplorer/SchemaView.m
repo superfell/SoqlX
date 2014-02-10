@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2012 Simon Fell
+// Copyright (c) 2006,2012,2014 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -354,6 +354,7 @@ static const float minSpacerSize = 5.0f;
 		[b setIncludeFksTo:[centralBox sobject]];
 		[b setViewMode:vmTitleOnly];
 		[b setColor:aColor];
+        [b setIconProvider:describes];
 		relRect.origin.y += sz.height;
 		[relatedBoxes setObject:b forKey:objName];
 		[createdBoxes addObject:b];
@@ -364,6 +365,7 @@ static const float minSpacerSize = 5.0f;
 
 -(void)setCentralSObjectImpl:(ZKDescribeSObject *)s {
 	[centralBox setSobject:s];
+    [centralBox setIconProvider:describes];
 	[relatedBoxes release];
 	relatedBoxes = [[NSMutableDictionary alloc] init];
 	NSArray *fkSObjects = [self foreignKeySObjects];

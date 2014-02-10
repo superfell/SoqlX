@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Simon Fell
+// Copyright (c) 2006,2014 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -30,6 +30,7 @@ static const float borderWidth = 2.0;
 static const float radius = 8.0;
 static const float gradientAngle = 235.0;
 static const float plusMinusSize = 10.0;
+static const float titleIconGap  = 6.0f;
 
 @interface SObjectBox ()
 -(void)updateColors;
@@ -98,6 +99,7 @@ static const float plusMinusSize = 10.0;
 	[gradientStartColor release];
 	[gradientEndColor release];
 	[view release];
+    [iconProvider release];
 	[super dealloc];
 }
 
@@ -122,6 +124,19 @@ static const float plusMinusSize = 10.0;
 	[sobject release];
 	sobject = [newSobject retain];
 	[self recalcLayout];
+}
+
+-(NSObject<IconProvider> *)iconProvider {
+    return iconProvider;
+}
+
+-(void)setIconProvider:(NSObject<IconProvider> *)ip {
+    if (ip == iconProvider) return;
+    BOOL needsLayout = ip != nil && iconProvider == nil;
+    [iconProvider autorelease];
+    iconProvider = [ip retain];
+    if (needsLayout)
+        [self recalcLayout];
 }
 
 -(ZKDescribeSObject *)includeFksTo {
@@ -247,8 +262,10 @@ static const float plusMinusSize = 10.0;
 - (void)recalcLayout {
 	[self recalcFieldsToDisplay];
 	NSMutableDictionary *positions = [NSMutableDictionary dictionary];
-	NSSize titleSz = [[self title] sizeWithAttributes:titleAttributes];
-	float newWidth = MAX(minimumWidth, titleSz.width + borderWidth*3);
+	NSSize titleTextSz = [[self title] sizeWithAttributes:titleAttributes];
+    NSSize titleIconSz = [iconProvider iconForType:sobject.name].size;
+    float iconPlusGap = titleIconSz.width > 0 ? titleIconSz.width + titleIconGap : 0;
+	float newWidth = MAX(minimumWidth, titleTextSz.width + iconPlusGap + borderWidth*3);
 	// borderWidth 3 in use, 2 for padding between edges
 	float newHeight = borderWidth*2;
     for (ZKDescribeField *field in fieldsToDisplay) {
@@ -258,7 +275,7 @@ static const float plusMinusSize = 10.0;
 		[positions setObject:[NSValue valueWithRect:fieldRect] forKey:[field name]];
 		newHeight += fieldSz.height;
 	}
-	newHeight += titleSz.height + borderWidth *4;
+	newHeight += titleTextSz.height + borderWidth *4;
 	// recalc frame posn, leaving it centered where it used to be.
 	origin.x -= (newWidth - size.width) /2;
 	origin.y -= (newHeight - size.height) /2;
@@ -341,10 +358,13 @@ static const float plusMinusSize = 10.0;
 	[gradient release];
 	
     // Create drawing rectangle for title
+    NSImage *titleIcon = [iconProvider iconForType:[sobject name]];
+    NSSize titleIconSize = titleIcon.size;
+    float iconOffset = titleIcon == nil ? 0 : titleIconSize.width + titleIconGap;
     float titleHInset = borderWidth * 2;
     float titleVInset = borderWidth;
     NSSize titleSize = [title sizeWithAttributes:titleAttributes];
-    NSRect titleRect = NSMakeRect(boxRect.origin.x + titleHInset, 
+    NSRect titleRect = NSMakeRect(boxRect.origin.x + titleHInset + iconOffset,
                                   boxRect.origin.y + boxRect.size.height - titleSize.height - (titleVInset * 2.0), 
                                   titleSize.width + borderWidth, 
                                   titleSize.height);
@@ -357,6 +377,13 @@ static const float plusMinusSize = 10.0;
     [bgPath stroke];
     // Draw title text
     [title drawInRect:titleRect withAttributes:titleAttributes];
+    // Draw title icon if we have one
+    if (titleIcon != nil) {
+        NSRect iconRect = titleRect;
+        iconRect.origin.x -= iconOffset;
+        iconRect.size.width = titleIconSize.width;
+        [titleIcon drawInRect:iconRect fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0 respectFlipped:YES hints:nil];
+    }
 }
 
 -(BOOL)needsDrawing {

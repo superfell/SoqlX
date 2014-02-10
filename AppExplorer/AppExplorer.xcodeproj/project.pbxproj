@@ -540,6 +540,7 @@
 		F4AC55B615996F2600F5CA45 /* zkXmlDeserializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = zkXmlDeserializer.m; path = ../zksforce/zkSforce/zkXmlDeserializer.m; sourceTree = "<group>"; };
 		F4B461FD0F79EB850099C434 /* FieldResizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FieldResizer.h; sourceTree = "<group>"; };
 		F4B461FE0F79EB850099C434 /* FieldResizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FieldResizer.m; sourceTree = "<group>"; };
+		F4B8AFC518A8540800FE114F /* IconProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconProvider.h; sourceTree = "<group>"; };
 		F4B8DFE70B61EB8900DDD00A /* report.css */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = report.css; path = templates/report.css; sourceTree = "<group>"; };
 		F4B8DFF40B61F4B900DDD00A /* key_b.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = key_b.png; path = templates/key_b.png; sourceTree = "<group>"; };
 		F4B8DFF50B61F4B900DDD00A /* key_r.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = key_r.png; path = templates/key_r.png; sourceTree = "<group>"; };
@@ -635,6 +636,7 @@
 				F4CD3DAB0B85701100084479 /* ZKLoginController.m */,
 				F45DDFDB0AABBA6100ED0BA0 /* Explorer.m */,
 				F45DDFDC0AABBA6100ED0BA0 /* Explorer.h */,
+				F4B8AFC518A8540800FE114F /* IconProvider.h */,
 				F413C6520AACABD5000A8CDC /* DataSources.h */,
 				F413C6530AACABD5000A8CDC /* DataSources.m */,
 				F4DAAC320D31E812009C9C09 /* DescribeOperation.h */,

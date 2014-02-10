@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Simon Fell
+// Copyright (c) 2006,2014 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -21,6 +21,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "SObjectViewMode.h"
+#import "IconProvider.h"
 
 @class ZKDescribeSObject;
 @class SchemaView;
@@ -45,7 +46,8 @@
 	PlusMinusWidget		*plusWidget;
 	PlusMinusWidget		*minusWidget;
 	
-	ZKDescribeSObject	*includeFksTo;
+	ZKDescribeSObject       *includeFksTo;
+    NSObject<IconProvider>  *iconProvider;
 }
 
 -(id)initWithFrame:(NSRect)frame andView:(SchemaView *)v;
@@ -54,6 +56,7 @@
 @property (assign) SObjectBoxViewMode viewMode;
 @property (retain) NSColor *color;
 @property (retain) ZKDescribeSObject *includeFksTo;
+@property (retain) NSObject<IconProvider> *iconProvider;
 
 -(BOOL)isHighlighted;
 -(NSSize)size;

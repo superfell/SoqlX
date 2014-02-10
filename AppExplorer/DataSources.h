@@ -20,13 +20,14 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "IconProvider.h"
 
 @class ZKSforceClient;
 @class ZKDescribeSObject;
 @class ZKDescribeField;
 @class ZKDescribeGlobalTheme;
 
-@interface DescribeListDataSource : NSObject<NSOutlineViewDataSource, NSOutlineViewDelegate> {
+@interface DescribeListDataSource : NSObject<NSOutlineViewDataSource, NSOutlineViewDelegate, IconProvider> {
 	NSArray					*types;
 	NSDictionary			*descGlobalSobjects;
 	ZKSforceClient			*sforce;
@@ -48,7 +49,7 @@
 - (BOOL)isTypeDescribable:(NSString *)type;
 - (BOOL)hasDescribe:(NSString *)type;
 - (void)prioritizeDescribe:(NSString *)type;
-- (NSImage *)iconForType:(NSString *)type;
+- (NSImage *)iconForType:(NSString *)sobjectName;
 
 // filter the view
 - (NSString *)filter;
