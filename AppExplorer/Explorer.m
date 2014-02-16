@@ -36,6 +36,9 @@
 
 static NSString *schemaTabId = @"schema";
 static NSString *PREF_QUERY_SORT_FIELDS = @"SortFieldsInGeneratedQueries";
+// If true we'll skip address fields from the generated query, and just select the component fields
+// If false (default) we'll skip the component fields and just select the compound field (short resulting query text, slightly cleaner results table, but not editable)
+static NSString *PREF_SKIP_ADDRESS_FIELDS = @"SkipAddressFieldsInGeneratedQueries";
 
 static CGFloat MIN_PANE_SIZE = 128.0f;
 
@@ -72,6 +75,7 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[defaults setObject:defaultServers forKey:@"servers"];
 	[defaults setObject:prod forKey:@"server"];
     [defaults setObject:[NSNumber numberWithBool:YES] forKey:PREF_QUERY_SORT_FIELDS];
+    [defaults setObject:[NSNumber numberWithBool:NO] forKey:PREF_SKIP_ADDRESS_FIELDS];
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
 }
 
@@ -418,6 +422,17 @@ typedef enum SoqlParsePosition {
 	}
 }
 
+-(NSString *)removeSuffix:(NSString *)suffix from:(NSString *)src {
+    if ([src hasSuffix:suffix])
+        return [src substringToIndex:[src length] - [suffix length]];
+    return src;
+}
+
+-(void)addSuffixes:(NSString *)prefix suffixes:(NSArray *)suffixes to:(NSMutableSet *)col {
+    for (NSString *s in suffixes)
+        [col addObject:[prefix stringByAppendingString:s]];
+}
+
 - (IBAction)describeItemClicked:(id)sender {
 	id selectedItem = [describeList itemAtRow:[describeList selectedRow]];
 	if ([selectedItem isKindOfClass:[ZKDescribeGlobalSObject class]]) {
@@ -428,6 +443,29 @@ typedef enum SoqlParsePosition {
         if ([[NSUserDefaults standardUserDefaults] boolForKey:PREF_QUERY_SORT_FIELDS]) {
             NSSortDescriptor *sd = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)];
             fields = [fields sortedArrayUsingDescriptors:[NSArray arrayWithObject:sd]];
+        }
+        // There's no point selecting both the compound address field,and its component parts, do one or the other.
+        BOOL useComponentFields = [[NSUserDefaults standardUserDefaults] boolForKey:PREF_SKIP_ADDRESS_FIELDS];
+        if (useComponentFields) {
+            // easy case, just skip the compound fields
+            fields = [fields filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"not (type in { 'address','location'})"]];
+        } else {
+            // more work, calculate set of the component field names to skip, based on the name of the compound Field + the standard trailers
+            NSMutableSet *fieldsToSkip = [NSMutableSet set];
+            for (ZKDescribeField * f in [fields filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type=='address' || type='location'"]]) {
+                NSArray *lsuffixes = [NSArray arrayWithObjects:@"Longitude", @"Latitude",nil];
+                NSArray *lcsuffixes= [NSArray arrayWithObjects:@"__Longitude__s", @"__Latitude__s",nil];
+                NSArray *asuffixes = [NSArray arrayWithObjects:@"City", @"Country", @"CountryCode", @"State", @"StateCode", @"PostalCode", @"Street", nil];
+                NSString *prefix = [f name];
+                prefix = [self removeSuffix:@"__c" from:prefix];
+                prefix = [self removeSuffix:@"Address" from:prefix];
+                [self addSuffixes:prefix suffixes:lsuffixes to:fieldsToSkip];
+                if ([[f type] isEqualToString:@"address"])
+                    [self addSuffixes:prefix suffixes:asuffixes to:fieldsToSkip];
+                if ([f custom])
+                    [self addSuffixes:prefix suffixes:lcsuffixes to:fieldsToSkip];
+            }
+            fields = [fields filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"not (name in %@)", fieldsToSkip]];
         }
         for (ZKDescribeField *f in fields)
 			[query appendFormat:@" %@,", [f name]];

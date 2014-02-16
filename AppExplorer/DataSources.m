@@ -314,8 +314,8 @@
                     @"Default On Create", @"Calculated", @"AutoNumber",
 					@"Unique", @"Case Sensitive", @"Name Pointing", @"Sortable", @"Groupable", @"Permissionable",
 					@"External Id", @"ID Lookup", @"Filterable", @"HTML Formatted", @"Name Field", @"Nillable", 
-					@"Name Pointing", @"Reference To", @"Relationship Name", 
-					@"Dependent Picklist", @"Controller Name", @"Restricted Picklist",
+					@"Name Pointing", @"Extra TypeInfo", @"Reference To", @"Relationship Name",
+					@"Dependent Picklist", @"Controller Name", @"Restricted Picklist", @"Query By Distance",
 					@"Value Formula", @"Default Formula", @"Relationship Order (CJOs)", @"Write Requires Read on Master (CJOs)", @"Display Location in Decimal", nil] retain];
 	return self;
 }
@@ -345,8 +345,8 @@
                         @selector(defaultedOnCreate), @selector(calculated), @selector(autoNumber),
 						@selector(unique), @selector(caseSensitive), @selector(namePointing), @selector(sortable), @selector(groupable), @selector(permissionable),
 						@selector(externalId), @selector(idLookup), @selector(filterable), @selector(htmlFormatted), @selector(nameField), @selector(nillable),
-						@selector(namePointing), @selector(referenceTo), @selector(relationshipName), 
-						@selector(dependentPicklist), @selector(controllerName), @selector(restrictedPicklist),
+						@selector(namePointing), @selector(extraTypeInfo), @selector(referenceTo), @selector(relationshipName),
+						@selector(dependentPicklist), @selector(controllerName), @selector(restrictedPicklist), @selector(queryByDistance),
 						@selector(calculatedFormula), @selector(defaultValueFormula), @selector(relationshipOrder), @selector(writeRequiresMasterRead), @selector(displayLocationInDecimal) };
 	
 	if (field == nil) return @"";
