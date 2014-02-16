@@ -157,8 +157,13 @@
 				continue;
 			if (first) first = NO;
 			else [stream write:@","];
-			NSString *v = [qr tableView:nil objectValueForTableColumn:c row:i];
-			[stream writeQuoted:v];
+			NSObject *v = [qr tableView:nil objectValueForTableColumn:c row:i];
+            if ([v isKindOfClass:[NSNumber class]])
+                v = [(NSNumber *)v stringValue];
+            if (v != nil && ![v isKindOfClass:[NSString class]])
+                NSLog(@"expected NSString, but got %@ for column %@, row %d", [v class], [c identifier], i);
+            
+            [stream writeQuoted:(NSString *)v];
 		}
 		[stream write:@"\r"];
 	}
