@@ -1,4 +1,4 @@
-// Copyright (c) 2008,2012 Simon Fell
+// Copyright (c) 2008,2012,2014 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -24,6 +24,7 @@
 #import "ZKQueryResult.h"
 #import "EditableQueryResultWrapper.h"
 #import "SearchQueryResult.h"
+#import "ZKAddress.h"
 
 @interface QueryResultTable ()
 - (NSArray *)createTableColumns:(ZKQueryResult *)qr;
@@ -32,7 +33,7 @@
 
 @interface QueryColumn : NSObject {
 	NSString		*name;
-	NSMutableArray	*childCols;
+	NSMutableArray	*childCols; // of QueryColumn
 }
 @end
 
@@ -75,6 +76,12 @@
 -(void)addChildCols:(NSArray *)cols {
 	for (QueryColumn *c in cols)
 		[self addChildCol:c];
+}
+
+-(void)addChildColWithNames:(NSArray *)childNames {
+    for (NSString *cn in childNames) {
+        [self addChildCol:[QueryColumn columnWithName:[name stringByAppendingFormat:@".%@", cn]]];
+    }
 }
 
 -(NSArray *)allNames {
@@ -200,6 +207,18 @@
 	return cols;
 }
 
+// looks to see if the queryColumn already exists in the columns collection, its returned if it is
+// otherwise it's added to the collection.
+// so in either case, the return value is the QueryColumn instance that is in the columns collection.
+- (QueryColumn *)getOrAddQueryColumn:(QueryColumn *)qc fromList:(NSMutableArray *)columns {
+    NSUInteger idx = [columns indexOfObject:qc];
+    if (idx == NSNotFound) {
+        [columns addObject:qc];
+        return qc;
+    }
+    return [columns objectAtIndex:idx];
+}
+
 - (BOOL)addColumnsFromSObject:(ZKSObject *)row withPrefix:(NSString *)prefix toList:(NSMutableArray *)columns {
 	BOOL seenNull = NO;
 	
@@ -209,25 +228,22 @@
 			seenNull = YES;
 		}
 		NSString *fullName = [prefix length] > 0 ? [NSString stringWithFormat:@"%@.%@", prefix, fn] : fn;
-		QueryColumn *qc = [QueryColumn columnWithName:fullName];
-		if ([val isKindOfClass:[ZKSObject class]]) {
-			NSUInteger containerIdx = [columns indexOfObject:qc];
-			if (containerIdx != NSNotFound)
-				qc = [columns objectAtIndex:containerIdx];
+		QueryColumn *qc = [self getOrAddQueryColumn:[QueryColumn columnWithName:fullName] fromList:columns];
+        if ([val isKindOfClass:[ZKAddress class]]) {
+            if (![qc hasChildNames])
+                [qc addChildColWithNames:[NSArray arrayWithObjects:@"street", @"city", @"state", @"stateCode", @"country", @"countryCode", @"postalCode", @"longitude", @"latitude", nil]];
+
+        } else if ([val isKindOfClass:[ZKLocation class]]) {
+            if (![qc hasChildNames])
+                [qc addChildColWithNames:[NSArray arrayWithObjects:@"longitude", @"latitude", nil]];
+
+		} else if ([val isKindOfClass:[ZKSObject class]]) {
 			if (![qc hasChildNames]) {
 				NSMutableArray *relatedColumns = [NSMutableArray array];
 				seenNull |= [self addColumnsFromSObject:(ZKSObject *)val withPrefix:fullName toList:relatedColumns];
 				[qc addChildCols:relatedColumns];
 			}
-			if (containerIdx == NSNotFound)
-				[columns addObject:qc];
-
-		} else {
-			if (![columns containsObject:qc]) {
-				[columns addObject:qc];
-			}
 		}
-		
 	}
 	return seenNull;
 }
