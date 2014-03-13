@@ -315,11 +315,11 @@ static NSString *test = @"https://test.salesforce.com";
 		NSArray *allCredentials = [Credential credentialsForServer:server];
 		NSMutableArray * filtered = [NSMutableArray arrayWithCapacity:[allCredentials count]];
 		NSMutableSet *usernames = [NSMutableSet set];
-		Credential *c;
-		NSEnumerator *e = [allCredentials objectEnumerator];
-		while (c = [e nextObject]) {
-			if ([usernames containsObject:[[c username] lowercaseString]]) continue;
-			[usernames addObject:[[c username] lowercaseString]];
+        for (Credential *c in allCredentials) {
+            if ([[c username] length] == 0) continue;
+            NSString *lowerUsername = [[c username] lowercaseString];
+			if ([usernames containsObject:lowerUsername]) continue;
+			[usernames addObject:lowerUsername];
 			[filtered addObject:c];
 		}
 		credentials = [filtered retain];
