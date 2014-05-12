@@ -1,6 +1,6 @@
 # SoqlX
 
-SoqlX is a tool for developers using the Salesforce.com platform, it allows you to easily explorer your schema, write and run SOQL queries, make edits to data, and to run Apex code.
+SoqlX is a tool for developers using the Salesforce.com platform, it allows you to easily explore your schema, write and run SOQL queries, make edits to data, and to run Apex code.
 
 
 ![schema viewer](http://www.pocketsoap.com/osx/soqlx/schema.png)
@@ -8,7 +8,7 @@ SoqlX is a tool for developers using the Salesforce.com platform, it allows you 
 
 # License
 
-Copyright (c) 2006-2013 Simon Fell
+Copyright (c) 2006-2014 Simon Fell
 
 Permission is hereby granted, free of charge, to any person obtaining a 
 copy of this software and associated documentation files (the "Software"), 
