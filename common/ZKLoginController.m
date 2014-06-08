@@ -204,7 +204,7 @@ static NSString *test = @"https://test.salesforce.com";
 			additionalText:(NSString *)additionalText 
 			didEndSelector:(SEL)didEndSelector
 			contextInfo:(id)context {
-	NSAlert * a = [NSAlert alertWithMessageText:message defaultButton:defaultButton alternateButton:altButton otherButton:otherButton informativeTextWithFormat:additionalText];
+	NSAlert * a = [NSAlert alertWithMessageText:message defaultButton:defaultButton alternateButton:altButton otherButton:otherButton informativeTextWithFormat:@"%@", additionalText];
 	NSWindow *wndForAlertSheet = modalWindow == nil ? window : modalWindow;
 	if (modalWindow != nil) {
 		[NSApp endSheet:window];

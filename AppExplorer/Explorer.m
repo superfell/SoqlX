@@ -579,7 +579,7 @@ typedef enum SoqlParsePosition {
 		[self setStatusText:[NSString stringWithFormat:@"Updated field %@ on row with Id %@", fieldName, [anObject id]]];
 		[anObject setFieldValue:newValue field:fieldName];
 	} else {
-		NSAlert * a = [NSAlert alertWithMessageText:[sr message] defaultButton:@"Cancel" alternateButton:nil otherButton:nil informativeTextWithFormat:[sr statusCode]];
+		NSAlert * a = [NSAlert alertWithMessageText:[sr message] defaultButton:@"Cancel" alternateButton:nil otherButton:nil informativeTextWithFormat:@"%@", [sr statusCode]];
 		[a runModal];
 	}
 }
@@ -711,7 +711,7 @@ typedef enum SoqlParsePosition {
 		[tr removeRowAtIndex:r];
 		[self setRowsLoadedStatusText:[tr queryResult]];
 	} else {
-		NSAlert * a = [NSAlert alertWithMessageText:[sr message] defaultButton:@"Cancel" alternateButton:nil otherButton:nil informativeTextWithFormat:[sr statusCode]];
+		NSAlert * a = [NSAlert alertWithMessageText:[sr message] defaultButton:@"Cancel" alternateButton:nil otherButton:nil informativeTextWithFormat:@"%@", [sr statusCode]];
 		[a runModal];
 	}
 }
