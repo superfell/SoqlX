@@ -468,7 +468,7 @@
                                     <tabViewItem label="Apex" identifier="Apex" id="1428">
                                         <view key="view" id="1429">
                                             <rect key="frame" x="0.0" y="0.0" width="837" height="695"/>
-                                            <autoresizingMask key="autoresizingMask"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <splitView autosaveName="apexHSplit" id="1430">
                                                     <rect key="frame" x="0.0" y="0.0" width="837" height="695"/>
@@ -682,7 +682,7 @@ DQ
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <clipView key="contentView" id="Kpl-p7-SPv">
                                                                         <rect key="frame" x="1" y="1" width="834" height="233"/>
-                                                                        <autoresizingMask key="autoresizingMask"/>
+                                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                         <subviews>
                                                                             <textView importsGraphics="NO" richText="NO" findStyle="panel" allowsUndo="YES" usesRuler="YES" usesFontPanel="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" spellingCorrection="YES" smartInsertDelete="YES" id="1644">
                                                                                 <rect key="frame" x="0.0" y="0.0" width="834" height="233"/>
@@ -694,6 +694,7 @@ DQ
                                                                                 <size key="minSize" width="834" height="233"/>
                                                                                 <size key="maxSize" width="834" height="10000000"/>
                                                                                 <connections>
+                                                                                    <binding destination="354" name="fontSize" keyPath="values.TextSize" id="I6Z-rn-QYQ"/>
                                                                                     <binding destination="1449" name="value" keyPath="apex" id="1656">
                                                                                         <dictionary key="options">
                                                                                             <bool key="NSContinuouslyUpdatesValue" value="YES"/>
@@ -712,6 +713,9 @@ DQ
                                                                         <rect key="frame" x="820" y="1" width="15" height="233"/>
                                                                         <autoresizingMask key="autoresizingMask"/>
                                                                     </scroller>
+                                                                    <connections>
+                                                                        <outlet property="menu" destination="iz2-fO-orK" id="Vp2-KZ-4zN"/>
+                                                                    </connections>
                                                                 </scrollView>
                                                             </subviews>
                                                         </customView>
@@ -732,7 +736,7 @@ DQ
                                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                     <clipView key="contentView" id="8QW-WY-ZbW">
                                                                                         <rect key="frame" x="1" y="17" width="211" height="342"/>
-                                                                                        <autoresizingMask key="autoresizingMask"/>
+                                                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                         <subviews>
                                                                                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" headerView="1577" id="1576">
                                                                                                 <rect key="frame" x="0.0" y="0.0" width="211" height="342"/>
@@ -859,7 +863,7 @@ DQ
                                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                     <clipView key="contentView" id="wiT-5w-VwX">
                                                                                         <rect key="frame" x="1" y="1" width="610" height="329"/>
-                                                                                        <autoresizingMask key="autoresizingMask"/>
+                                                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                         <subviews>
                                                                                             <textView editable="NO" importsGraphics="NO" richText="NO" findStyle="panel" allowsUndo="YES" usesRuler="YES" usesFontPanel="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" spellingCorrection="YES" smartInsertDelete="YES" id="1652">
                                                                                                 <rect key="frame" x="0.0" y="0.0" width="610" height="329"/>
@@ -871,6 +875,7 @@ DQ
                                                                                                 <size key="minSize" width="610" height="329"/>
                                                                                                 <size key="maxSize" width="610" height="10000000"/>
                                                                                                 <connections>
+                                                                                                    <binding destination="354" name="fontSize" keyPath="values.TextSize" id="BWg-bl-Nba"/>
                                                                                                     <binding destination="1583" name="value" keyPath="selection.debugLog" id="1655"/>
                                                                                                 </connections>
                                                                                             </textView>
@@ -885,6 +890,9 @@ DQ
                                                                                         <rect key="frame" x="596" y="1" width="15" height="314"/>
                                                                                         <autoresizingMask key="autoresizingMask"/>
                                                                                     </scroller>
+                                                                                    <connections>
+                                                                                        <outlet property="menu" destination="iz2-fO-orK" id="e6h-51-ffG"/>
+                                                                                    </connections>
                                                                                 </scrollView>
                                                                             </subviews>
                                                                         </customView>
