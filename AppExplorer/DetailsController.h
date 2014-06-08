@@ -23,6 +23,7 @@
 
 @interface DetailsController : BaseWindowToggleController {
 	IBOutlet NSTableView		*detailsTable;
+    NSObject                    *dataSourceRef;
 }
 
 - (NSString *)title;
