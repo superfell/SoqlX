@@ -39,6 +39,7 @@ static NSString *PREF_QUERY_SORT_FIELDS = @"SortFieldsInGeneratedQueries";
 // If true we'll skip address fields from the generated query, and just select the component fields
 // If false (default) we'll skip the component fields and just select the compound field (short resulting query text, slightly cleaner results table, but not editable)
 static NSString *PREF_SKIP_ADDRESS_FIELDS = @"SkipAddressFieldsInGeneratedQueries";
+static NSString *PREF_TEXT_SIZE = @"TextSize";
 
 static CGFloat MIN_PANE_SIZE = 128.0f;
 
@@ -76,6 +77,7 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[defaults setObject:prod forKey:@"server"];
     [defaults setObject:[NSNumber numberWithBool:YES] forKey:PREF_QUERY_SORT_FIELDS];
     [defaults setObject:[NSNumber numberWithBool:NO] forKey:PREF_SKIP_ADDRESS_FIELDS];
+    [defaults setObject:[NSNumber numberWithInt:11] forKey:PREF_TEXT_SIZE];
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
 }
 
@@ -84,6 +86,19 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
     if ([key isEqualToString:@"canQueryMore"])
         return [paths setByAddingObjectsFromArray:[NSArray arrayWithObjects:@"currentResults", @"rowsLoadedStatusText", nil]];
     return paths;
+}
+
+-(void)updateMenuState {
+    NSInteger currentSize = [[[NSUserDefaults standardUserDefaults] objectForKey:PREF_TEXT_SIZE] intValue];
+    for (NSMenuItem *i in [soqlContextMenu itemArray]) {
+        for (NSMenuItem *c in [[i submenu] itemArray]) {
+            if ([c target] == nil) {
+                [c setAction:@selector(updateQueryTextFontSize:)];
+                [c setTarget:self];
+            }
+            [c setState:[c tag] == currentSize ? NSOnState : NSOffState];
+        }
+    }
 }
 
 - (void)awakeFromNib {
@@ -109,7 +124,7 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	childResults = [[QueryResultTable alloc] initForTableView:childTableView];
 	[childResults setDelegate:self];
 	[self collapseChildTableView];
-	
+	[self updateMenuState];
     [self performSelector:@selector(initUi:) withObject:nil afterDelay:0];
     
     // A describeSObject operation has finished, see if we can recolor our soql text. (this is going to pick up describes from other windows, but it
@@ -129,6 +144,12 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[childResults release];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 	[super dealloc];
+}
+
+-(void)updateQueryTextFontSize:(id)sender {
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:[sender tag]] forKey:PREF_TEXT_SIZE];
+    [self updateMenuState];
+    [self colorize];    
 }
 
 -(void)updateCallCount:(ZKSforceClient *)c {
@@ -359,7 +380,7 @@ typedef enum SoqlParsePosition {
 	NSMutableDictionary *noUnderline = [NSMutableDictionary dictionary];
 	[noUnderline setObject:[NSNumber numberWithInt:NSUnderlineStyleNone] forKey:NSUnderlineStyleAttributeName];
 	
-	[[soql textStorage] setFont:[NSFont userFixedPitchFontOfSize:11.0f]];
+	[[soql textStorage] setFont:[NSFont userFixedPitchFontOfSize:[[[NSUserDefaults standardUserDefaults] valueForKey:PREF_TEXT_SIZE] floatValue]]];
 		
 	NSArray * words = [[soql textStorage] words];
 	NSString *entity = [self parseEntityName:words];

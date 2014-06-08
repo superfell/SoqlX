@@ -44,12 +44,12 @@
     IBOutlet NSTableView			*rootTableView;
 	IBOutlet NSTableView			*childTableView;
     IBOutlet NSTextView			    *soql;	
+	IBOutlet NSMenu                 *soqlContextMenu;
 	IBOutlet NSProgressIndicator	*progress;
 	IBOutlet NSWindow				*myWindow;
 	IBOutlet NSTabView				*soqlSchemaTabs;
 	IBOutlet NSSplitView			*vertSplitView;
 	IBOutlet NSSplitView			*soqlTextSplitView;
-	
 	IBOutlet StandAloneTableHeaderView	*soqlHeader;
 	
 	ZKSforceClient					*sforce;
@@ -101,7 +101,7 @@
 - (void)updateProgress:(BOOL)show;
 
 - (void)dataChangedOnObject:(ZKSObject *)anObject field:(NSString *)fieldName value:(id)newValue;
-
+- (void)updateQueryTextFontSize:(id)sender;
 @end
 
 
