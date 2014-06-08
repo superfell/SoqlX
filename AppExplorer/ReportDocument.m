@@ -137,7 +137,7 @@
 	
 	NSRect offscreenRect = NSMakeRect(0.0, 0.0, bounds.size.width - 40.0, bounds.size.height);
 	NSBitmapImageRep* offscreenRep = nil;
-	offscreenRep = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:nil
+	offscreenRep = [[[NSBitmapImageRep alloc] initWithBitmapDataPlanes:nil
 	                        pixelsWide:offscreenRect.size.width 
 	                        pixelsHigh:offscreenRect.size.height 
 	                        bitsPerSample:8 
@@ -147,7 +147,7 @@
 	                        colorSpaceName:NSCalibratedRGBColorSpace 
 	                        bitmapFormat:0 
 	                        bytesPerRow:(4 * offscreenRect.size.width) 
-	                        bitsPerPixel:32];
+                            bitsPerPixel:32] autorelease];
 
 	[NSGraphicsContext saveGraphicsState];
 	[NSGraphicsContext setCurrentContext:[NSGraphicsContext 
