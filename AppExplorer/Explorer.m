@@ -62,7 +62,7 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 
 @implementation Explorer
 
-@synthesize statusText, schemaViewIsActive, apiCallCountText;
+@synthesize statusText, schemaViewIsActive, apiCallCountText, selectedObjectName, selectedFields;
 
 + (void)initialize {
 	NSMutableDictionary * defaults = [NSMutableDictionary dictionary];
@@ -135,6 +135,8 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 }
 
 - (void)dealloc {
+    if(selectedFields != nil) [selectedFields release];
+    if(selectedObjectName != nil) [selectedObjectName release];
 	[sforce release];
 	[descDataSource release];
 	[loginController release];
@@ -455,46 +457,80 @@ typedef enum SoqlParsePosition {
 }
 
 - (IBAction)describeItemClicked:(id)sender {
-	id selectedItem = [describeList itemAtRow:[describeList selectedRow]];
-	if ([selectedItem isKindOfClass:[ZKDescribeGlobalSObject class]]) {
-		ZKDescribeSObject * d = [descDataSource describe:[selectedItem name]];
-		NSMutableString * query = [NSMutableString string];
-		[query appendString:@"select"];
-        NSArray *fields = [d fields];
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:PREF_QUERY_SORT_FIELDS]) {
-            NSSortDescriptor *sd = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)];
-            fields = [fields sortedArrayUsingDescriptors:[NSArray arrayWithObject:sd]];
+    if(selectedFields == nil) {
+        selectedFields = [[[NSMutableArray alloc] init] retain];
+    }
+    BOOL isField = false;
+    ZKDescribeSObject * d;
+    id selectedItem = [describeList itemAtRow:[describeList selectedRow]];
+    
+    if ([selectedItem isKindOfClass:[ZKDescribeField class]]) {
+        isField = true;
+        if(![selectedObjectName isEqualToString:[(ZKDescribeGlobalSObject *)[selectedItem sobject] name]]) {
+            [selectedFields removeAllObjects];
         }
-        // There's no point selecting both the compound address field,and its component parts, do one or the other.
-        BOOL useComponentFields = [[NSUserDefaults standardUserDefaults] boolForKey:PREF_SKIP_ADDRESS_FIELDS];
-        if (useComponentFields) {
-            // easy case, just skip the compound fields
-            fields = [fields filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"not (type in { 'address','location'})"]];
+        selectedObjectName = [(ZKDescribeGlobalSObject *)[selectedItem sobject] name];
+        if([selectedFields containsObject:selectedItem]) {
+            [selectedFields removeObject:selectedItem];
         } else {
-            // more work, calculate set of the component field names to skip, based on the name of the compound Field + the standard trailers
-            NSMutableSet *fieldsToSkip = [NSMutableSet set];
-            for (ZKDescribeField * f in [fields filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type=='address' || type='location'"]]) {
-                NSArray *lsuffixes = [NSArray arrayWithObjects:@"Longitude", @"Latitude",nil];
-                NSArray *lcsuffixes= [NSArray arrayWithObjects:@"__Longitude__s", @"__Latitude__s",nil];
-                NSArray *asuffixes = [NSArray arrayWithObjects:@"City", @"Country", @"CountryCode", @"State", @"StateCode", @"PostalCode", @"Street", nil];
-                NSString *prefix = [f name];
-                prefix = [self removeSuffix:@"__c" from:prefix];
-                prefix = [self removeSuffix:@"Address" from:prefix];
-                [self addSuffixes:prefix suffixes:lsuffixes to:fieldsToSkip];
-                if ([[f type] isEqualToString:@"address"])
-                    [self addSuffixes:prefix suffixes:asuffixes to:fieldsToSkip];
-                if ([f custom])
-                    [self addSuffixes:prefix suffixes:lcsuffixes to:fieldsToSkip];
-            }
-            fields = [fields filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"not (name in %@)", fieldsToSkip]];
+            [selectedFields addObject:selectedItem];
         }
-        for (ZKDescribeField *f in fields)
-			[query appendFormat:@" %@,", [f name]];
-		NSRange lastChar = {[query length]-1, 1};
-		[query deleteCharactersInRange:lastChar];
-		[query appendFormat:@" from %@", [selectedItem name]];
-		[self setSoqlString:query];
-	}
+        
+    } else {
+        isField = false;
+        selectedObjectName = [selectedItem name];
+        d = [descDataSource describe:selectedObjectName];
+        [selectedFields removeAllObjects];
+        [selectedFields addObjectsFromArray:[d fields]];
+    }
+    
+
+    
+	// if ([selectedItem isKindOfClass:[ZKDescribeGlobalSObject class]]) {
+    
+    NSMutableString * query = [NSMutableString string];
+        
+    [query appendString:@"select"];
+    
+
+    
+    NSArray *fields = [[selectedFields copy] autorelease];
+    
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:PREF_QUERY_SORT_FIELDS]) {
+        NSSortDescriptor *sd = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)];
+        fields = [fields sortedArrayUsingDescriptors:[NSArray arrayWithObject:sd]];
+    }
+        // There's no point selecting both the compound address field,and its component parts, do one or the other.
+    BOOL useComponentFields = [[NSUserDefaults standardUserDefaults] boolForKey:PREF_SKIP_ADDRESS_FIELDS];
+    if (useComponentFields) {
+            // easy case, just skip the compound fields
+        fields = [fields filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"not (type in { 'address','location'})"]];
+    } else {
+        // more work, calculate set of the component field names to skip, based on the name of the compound Field + the standard trailers
+        NSMutableSet *fieldsToSkip = [NSMutableSet set];
+        for (ZKDescribeField * f in [fields filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type=='address' || type='location'"]]) {
+            NSArray *lsuffixes = [NSArray arrayWithObjects:@"Longitude", @"Latitude",nil];
+            NSArray *lcsuffixes= [NSArray arrayWithObjects:@"__Longitude__s", @"__Latitude__s",nil];
+            NSArray *asuffixes = [NSArray arrayWithObjects:@"City", @"Country", @"CountryCode", @"State", @"StateCode", @"PostalCode", @"Street", nil];
+            NSString *prefix = [f name];
+            prefix = [self removeSuffix:@"__c" from:prefix];
+            prefix = [self removeSuffix:@"Address" from:prefix];
+            [self addSuffixes:prefix suffixes:lsuffixes to:fieldsToSkip];
+            if ([[f type] isEqualToString:@"address"])
+                [self addSuffixes:prefix suffixes:asuffixes to:fieldsToSkip];
+            if ([f custom])
+                [self addSuffixes:prefix suffixes:lcsuffixes to:fieldsToSkip];
+        }
+        fields = [fields filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"not (name in %@)", fieldsToSkip]];
+    }
+
+    for (ZKDescribeField *f in fields)
+        [query appendFormat:@" %@,", [f name]];
+    NSRange lastChar = {[query length]-1, 1};
+    [query deleteCharactersInRange:lastChar];
+    [query appendFormat:@" from %@", selectedObjectName];
+    [self setSoqlString:query];
+	//}
 }
 
 - (IBAction)filterSObjectListView:(id)sender {
