@@ -69,6 +69,10 @@
 	NSString						*statusText;
     NSString                        *apiCallCountText;
 	BOOL							schemaViewIsActive;
+    
+    // generate query with specific fields by doubleclicking
+    NSMutableArray                  *selectedFields;
+    NSString                        *selectedObjectName;
 }
 
 - (IBAction)showLogin:(id)sender;
@@ -88,6 +92,8 @@
 - (IBAction)deleteCheckedRows:(id)sender;
 - (IBAction)filterSObjectListView:(id)sender;
 
+@property (retain) NSMutableArray *selectedFields;
+@property (retain) NSString *selectedObjectName;
 @property (retain) NSString *statusText;
 @property (retain) NSString *apiCallCountText;
 @property (assign) BOOL schemaViewIsActive;
