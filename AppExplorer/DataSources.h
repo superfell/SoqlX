@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2012 Simon Fell
+// Copyright (c) 2006-2014 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -32,6 +32,7 @@
 	NSDictionary			*descGlobalSobjects;
 	ZKSforceClient			*sforce;
 	NSMutableDictionary		*describes;
+    NSMutableDictionary     *sortedDescribes;
 	NSMutableDictionary		*operations;
     NSMutableDictionary     *icons;
 	NSOperationQueue		*describeQueue;
@@ -39,6 +40,8 @@
 	NSString				*filter;
 	NSArray					*filteredTypes;
 	NSOutlineView			*outlineView;
+    
+    NSSortDescriptor        *fieldSortOrder;
 }
 
 - (void)setSforce:(ZKSforceClient *)sf;

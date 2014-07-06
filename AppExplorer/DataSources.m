@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2012 Simon Fell
+// Copyright (c) 2006,2014 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -24,6 +24,7 @@
 #import "DescribeOperation.h"
 #import "HighlightTextFieldCell.h"
 #import "ZKDescribeThemeItem+ZKFindResource.h"
+#import "Prefs.h"
 
 @interface DescribeListDataSource ()
 -(void)updateFilter;
@@ -48,6 +49,7 @@
 	self = [super init];
 	describeQueue = [[NSOperationQueue alloc] init];
 	[describeQueue setMaxConcurrentOperationCount:2];
+    fieldSortOrder = [[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)] retain];
 	return self;
 }
 
@@ -56,12 +58,14 @@
 	[sforce release];
 	[operations release];
 	[describes release];
+    [sortedDescribes release];
 	[describeQueue release];
 	[filter release];
 	[filteredTypes release];
 	[outlineView release];
 	[descGlobalSobjects release];
     [icons release];
+    [fieldSortOrder release];
 	[super dealloc];
 }
 
@@ -69,6 +73,7 @@
 	outlineView = [ov retain];
 	types = [t.global.sobjects retain];
 	describes = [[NSMutableDictionary alloc] init];
+    sortedDescribes = [[NSMutableDictionary alloc] init];
 	operations = [[NSMutableDictionary alloc] init];
 	icons = [[NSMutableDictionary alloc] init];
     
@@ -174,7 +179,9 @@
 		if (![self isTypeDescribable:t]) 
 			return nil; 
 		d = [sforce describeSObject:t];
+        NSArray *sortedFields = [[d fields] sortedArrayUsingDescriptors:[NSArray arrayWithObject:fieldSortOrder]];
 		[describes setObject:d forKey:t];
+        [sortedDescribes setObject:sortedFields forKey:t];
 		[self performSelectorOnMainThread:@selector(updateFilter) withObject:nil waitUntilDone:NO];
 	}
 	return d;
@@ -192,7 +199,11 @@
 
 - (id)outlineView:(NSOutlineView *)outlineView child:(int)index ofItem:(id)item {
 	if (item == nil) return [filteredTypes objectAtIndex:index];
-	id f = [[[self describe:[item name]] fields] objectAtIndex:index];
+    NSArray *fields = [[self describe:[item name]] fields];
+    BOOL isSorted = [[NSUserDefaults standardUserDefaults] boolForKey:PREF_SORTED_FIELD_LIST];
+    if (isSorted)
+        fields = [sortedDescribes objectForKey:[[item name] lowercaseString]];
+	id f = [fields objectAtIndex:index];
 	return f;
 }
 

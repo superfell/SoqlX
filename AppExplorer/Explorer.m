@@ -76,6 +76,8 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
     [defaults setObject:[NSNumber numberWithBool:YES] forKey:PREF_QUERY_SORT_FIELDS];
     [defaults setObject:[NSNumber numberWithBool:NO] forKey:PREF_SKIP_ADDRESS_FIELDS];
     [defaults setObject:[NSNumber numberWithInt:11] forKey:PREF_TEXT_SIZE];
+    [defaults setObject:[NSNumber numberWithBool:YES] forKey:PREF_SORTED_FIELD_LIST];
+    
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
 }
 
