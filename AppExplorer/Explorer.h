@@ -92,8 +92,6 @@
 - (IBAction)deleteCheckedRows:(id)sender;
 - (IBAction)filterSObjectListView:(id)sender;
 
-@property (retain) NSMutableArray *selectedFields;
-@property (retain) NSString *selectedObjectName;
 @property (retain) NSString *statusText;
 @property (retain) NSString *apiCallCountText;
 @property (assign) BOOL schemaViewIsActive;

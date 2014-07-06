@@ -58,6 +58,9 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 
 - (void)collapseChildTableView;
 - (void)openChildTableView;
+
+@property (retain) NSMutableArray *selectedFields;
+@property (retain) NSString *selectedObjectName;
 @end
 
 @implementation Explorer
