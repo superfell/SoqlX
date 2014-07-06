@@ -460,12 +460,10 @@ typedef enum SoqlParsePosition {
     if(selectedFields == nil) {
         selectedFields = [[NSMutableArray alloc] init];
     }
-    BOOL isField = false;
     ZKDescribeSObject * d;
     id selectedItem = [describeList itemAtRow:[describeList selectedRow]];
     
     if ([selectedItem isKindOfClass:[ZKDescribeField class]]) {
-        isField = true;
         if (![selectedObjectName isEqualToString:[(ZKDescribeGlobalSObject *)[selectedItem sobject] name]]) {
             [selectedFields removeAllObjects];
         }
@@ -477,7 +475,6 @@ typedef enum SoqlParsePosition {
         }
         
     } else {
-        isField = false;
         self.selectedObjectName = [selectedItem name];
         d = [descDataSource describe:selectedObjectName];
         [selectedFields removeAllObjects];
