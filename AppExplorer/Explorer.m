@@ -33,14 +33,9 @@
 #import "BulkDelete.h"
 #import "SearchQueryResult.h"
 #import "ZKDescribeThemeItem+ZKFindResource.h"
+#import "Prefs.h"
 
 static NSString *schemaTabId = @"schema";
-static NSString *PREF_QUERY_SORT_FIELDS = @"SortFieldsInGeneratedQueries";
-// If true we'll skip address fields from the generated query, and just select the component fields
-// If false (default) we'll skip the component fields and just select the compound field (short resulting query text, slightly cleaner results table, but not editable)
-static NSString *PREF_SKIP_ADDRESS_FIELDS = @"SkipAddressFieldsInGeneratedQueries";
-static NSString *PREF_TEXT_SIZE = @"TextSize";
-
 static CGFloat MIN_PANE_SIZE = 128.0f;
 
 @interface Explorer ()

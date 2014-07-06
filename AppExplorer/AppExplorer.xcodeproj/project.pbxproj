@@ -116,6 +116,7 @@
 		F45C7EEB0B5FDB5F00F93DD7 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F45C7EEA0B5FDB5F00F93DD7 /* WebKit.framework */; };
 		F45DDFDD0AABBA6100ED0BA0 /* Explorer.m in Sources */ = {isa = PBXBuildFile; fileRef = F45DDFDB0AABBA6100ED0BA0 /* Explorer.m */; };
 		F46D91070B33DFC800913AD2 /* StandAloneTableHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F46D91010B33DFC800913AD2 /* StandAloneTableHeaderView.m */; };
+		F48B6B8C1969E68700496C82 /* Prefs.m in Sources */ = {isa = PBXBuildFile; fileRef = F48B6B8B1969E68700496C82 /* Prefs.m */; };
 		F494FA470F7EFE22001216EC /* RRCausticColorMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = F494FA400F7EFE22001216EC /* RRCausticColorMatcher.m */; };
 		F494FA480F7EFE22001216EC /* RRExponentialFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = F494FA420F7EFE22001216EC /* RRExponentialFunction.m */; };
 		F494FA490F7EFE22001216EC /* RRGlossCausticShader.m in Sources */ = {isa = PBXBuildFile; fileRef = F494FA440F7EFE22001216EC /* RRGlossCausticShader.m */; };
@@ -444,6 +445,8 @@
 		F45DDFDC0AABBA6100ED0BA0 /* Explorer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Explorer.h; sourceTree = "<group>"; };
 		F46D91000B33DFC800913AD2 /* StandAloneTableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = StandAloneTableHeaderView.h; path = ../common/StandAloneTableHeaderView.h; sourceTree = SOURCE_ROOT; };
 		F46D91010B33DFC800913AD2 /* StandAloneTableHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = StandAloneTableHeaderView.m; path = ../common/StandAloneTableHeaderView.m; sourceTree = SOURCE_ROOT; };
+		F48B6B8A1969E68700496C82 /* Prefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Prefs.h; sourceTree = "<group>"; };
+		F48B6B8B1969E68700496C82 /* Prefs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Prefs.m; sourceTree = "<group>"; };
 		F494FA3F0F7EFE22001216EC /* RRCausticColorMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RRCausticColorMatcher.h; path = ../common/RRCausticColorMatcher.h; sourceTree = SOURCE_ROOT; };
 		F494FA400F7EFE22001216EC /* RRCausticColorMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RRCausticColorMatcher.m; path = ../common/RRCausticColorMatcher.m; sourceTree = SOURCE_ROOT; };
 		F494FA410F7EFE22001216EC /* RRExponentialFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RRExponentialFunction.h; path = ../common/RRExponentialFunction.h; sourceTree = SOURCE_ROOT; };
@@ -680,6 +683,8 @@
 				F4D7831D15D49F7B00D00BB9 /* AppDelegate.m */,
 				F4E8BB0E184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.h */,
 				F4E8BB0F184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m */,
+				F48B6B8A1969E68700496C82 /* Prefs.h */,
+				F48B6B8B1969E68700496C82 /* Prefs.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -1245,6 +1250,7 @@
 				F4CF71F40D4704EE001001F2 /* QueryResultTable.m in Sources */,
 				F4CF73E80D49BDDB001001F2 /* QueryResultCell.m in Sources */,
 				F4F75D940D4EFCEE00608927 /* QueryTextListView.m in Sources */,
+				F48B6B8C1969E68700496C82 /* Prefs.m in Sources */,
 				F49741F00D554DB500DD77F4 /* QueryListController.m in Sources */,
 				F44FC9E10E1EB69D00B5F70C /* ResultsSaver.m in Sources */,
 				F4C877FA0F395DB4000075D4 /* ProgressController.m in Sources */,
