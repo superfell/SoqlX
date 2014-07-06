@@ -28,6 +28,7 @@
 
 @interface DescribeListDataSource ()
 -(void)updateFilter;
+-(void)prefsChanged:(NSNotification *)notif;
 @end
 
 @interface ZKDescribeField (Filtering)
@@ -50,10 +51,12 @@
 	describeQueue = [[NSOperationQueue alloc] init];
 	[describeQueue setMaxConcurrentOperationCount:2];
     fieldSortOrder = [[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)] retain];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(prefsChanged:) name:NSUserDefaultsDidChangeNotification object:nil];
 	return self;
 }
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 	[types release];
 	[sforce release];
 	[operations release];
@@ -67,6 +70,10 @@
     [icons release];
     [fieldSortOrder release];
 	[super dealloc];
+}
+
+-(void)prefsChanged:(NSNotification *)notif {
+    [outlineView reloadData];
 }
 
 - (void)setTypes:(ZKDescribeGlobalTheme *)t view:(NSOutlineView *)ov {
