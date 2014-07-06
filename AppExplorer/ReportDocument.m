@@ -1,4 +1,4 @@
-// Copyright (c) 2007,2012 Simon Fell
+// Copyright (c) 2007,2012,2014 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -27,6 +27,7 @@
 #import "ZKChildRelationship.h"
 #import "SObjectBox.h"
 #import "ZKDescribe_Reporting.h"
+#import "Prefs.h"
 
 @implementation ReportDocument
 
@@ -84,7 +85,11 @@
 	NSString *redKey  = [[NSBundle mainBundle] pathForResource:@"key_r" ofType:@"png"];
 
 	[s appendString:@"<table cellspacing='0' cellpadding='0'><tr><th colspan='2'>Field</th><th>Label</th><th>Type</th><th>Properties</th><tr>"];
-	for (ZKDescribeField *f in [desc fields]) {
+    NSArray *fields = [desc fields];
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:PREF_SORTED_FIELD_LIST])
+        fields = [fields sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)]]];
+    
+	for (ZKDescribeField *f in fields) {
 		[s appendString:@"<tr><td colspan='2'>"];
 		if ([[f name] isEqualToString:@"Id"])
 			[s appendFormat:@"<img src='file://%@' alt='Primary Key'>", redKey];
