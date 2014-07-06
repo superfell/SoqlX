@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2012 Simon Fell
+// Copyright (c) 2006-2014 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -135,8 +135,8 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 }
 
 - (void)dealloc {
-    if(selectedFields != nil) [selectedFields release];
-    if(selectedObjectName != nil) [selectedObjectName release];
+    [selectedFields release];
+    [selectedObjectName release];
 	[sforce release];
 	[descDataSource release];
 	[loginController release];
@@ -458,7 +458,7 @@ typedef enum SoqlParsePosition {
 
 - (IBAction)describeItemClicked:(id)sender {
     if(selectedFields == nil) {
-        selectedFields = [[[NSMutableArray alloc] init] retain];
+        selectedFields = [[NSMutableArray alloc] init];
     }
     BOOL isField = false;
     ZKDescribeSObject * d;
@@ -466,11 +466,11 @@ typedef enum SoqlParsePosition {
     
     if ([selectedItem isKindOfClass:[ZKDescribeField class]]) {
         isField = true;
-        if(![selectedObjectName isEqualToString:[(ZKDescribeGlobalSObject *)[selectedItem sobject] name]]) {
+        if (![selectedObjectName isEqualToString:[(ZKDescribeGlobalSObject *)[selectedItem sobject] name]]) {
             [selectedFields removeAllObjects];
         }
-        selectedObjectName = [(ZKDescribeGlobalSObject *)[selectedItem sobject] name];
-        if([selectedFields containsObject:selectedItem]) {
+        self.selectedObjectName = [(ZKDescribeGlobalSObject *)[selectedItem sobject] name];
+        if ([selectedFields containsObject:selectedItem]) {
             [selectedFields removeObject:selectedItem];
         } else {
             [selectedFields addObject:selectedItem];
@@ -478,21 +478,14 @@ typedef enum SoqlParsePosition {
         
     } else {
         isField = false;
-        selectedObjectName = [selectedItem name];
+        self.selectedObjectName = [selectedItem name];
         d = [descDataSource describe:selectedObjectName];
         [selectedFields removeAllObjects];
         [selectedFields addObjectsFromArray:[d fields]];
     }
     
-
-    
-	// if ([selectedItem isKindOfClass:[ZKDescribeGlobalSObject class]]) {
-    
     NSMutableString * query = [NSMutableString string];
-        
     [query appendString:@"select"];
-    
-
     
     NSArray *fields = [[selectedFields copy] autorelease];
     
@@ -500,7 +493,7 @@ typedef enum SoqlParsePosition {
         NSSortDescriptor *sd = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)];
         fields = [fields sortedArrayUsingDescriptors:[NSArray arrayWithObject:sd]];
     }
-        // There's no point selecting both the compound address field,and its component parts, do one or the other.
+    // There's no point selecting both the compound address field,and its component parts, do one or the other.
     BOOL useComponentFields = [[NSUserDefaults standardUserDefaults] boolForKey:PREF_SKIP_ADDRESS_FIELDS];
     if (useComponentFields) {
             // easy case, just skip the compound fields
@@ -530,7 +523,6 @@ typedef enum SoqlParsePosition {
     [query deleteCharactersInRange:lastChar];
     [query appendFormat:@" from %@", selectedObjectName];
     [self setSoqlString:query];
-	//}
 }
 
 - (IBAction)filterSObjectListView:(id)sender {
