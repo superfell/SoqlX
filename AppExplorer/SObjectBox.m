@@ -74,10 +74,8 @@ static const float titleIconGap  = 6.0f;
 	NSPoint mpos = [self positionForMinusWidget];
 	plusWidget = [[PlusMinusWidget alloc] initWithFrame:NSMakeRect(ppos.x, ppos.y, plusMinusSize, plusMinusSize) view:view andStyle:pmPlusButton];
 	[plusWidget setTarget:self andAction:@selector(plusClicked)];
-	[plusWidget addObserver:self forKeyPath:@"state" options:NSKeyValueObservingOptionNew context:nil];
 	minusWidget = [[PlusMinusWidget alloc] initWithFrame:NSMakeRect(mpos.x, mpos.y, plusMinusSize, plusMinusSize) view:view andStyle:pmMinusButton];
 	[minusWidget setTarget:self andAction:@selector(minusClicked)];
-	[minusWidget addObserver:self forKeyPath:@"state" options:NSKeyValueObservingOptionNew context:nil];
 	[self setTrackingRect];
 	[self setViewMode:vmImportantFields];
 	return self;
@@ -86,9 +84,7 @@ static const float titleIconGap  = 6.0f;
 - (void)dealloc {
 	[self clearTrackingRect];
 	[sobject release];
-	[plusWidget removeObserver:self forKeyPath:@"state"];
 	[plusWidget release];
-	[minusWidget removeObserver:self forKeyPath:@"state"];
 	[minusWidget release];
 	[titleAttributes release];
 	[fieldAttributes release];
@@ -100,16 +96,6 @@ static const float titleIconGap  = 6.0f;
 	[view release];
     [iconProvider release];
 	[super dealloc];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath
-              		  ofObject:(id)object 
-                        change:(NSDictionary *)change
-                       context:(void *)context
-{
-	if([keyPath isEqualTo:@"state"]) {
-		[view setNeedsDisplay:YES];
-	}
 }
 
 // SObjectBox
@@ -334,8 +320,6 @@ static const float titleIconGap  = 6.0f;
 }
 
 -(void)drawBoxAndTitle:(NSRect)rect {
-	NSString *title = [self title];
-	
 	// Construct rounded rect path
     NSRect boxRect = [self bounds];
     NSRect bgRect = NSInsetRect(boxRect, borderWidth / 2.0, borderWidth / 2.0);
@@ -361,6 +345,7 @@ static const float titleIconGap  = 6.0f;
     float iconOffset = titleIcon == nil ? 0 : titleIconSize.width + titleIconGap;
     float titleHInset = borderWidth * 2;
     float titleVInset = borderWidth;
+	NSString *title = [self title];
     NSSize titleSize = [title sizeWithAttributes:titleAttributes];
     NSRect titleRect = NSMakeRect(boxRect.origin.x + titleHInset + iconOffset,
                                   boxRect.origin.y + boxRect.size.height - titleSize.height - (titleVInset * 2.0), 
@@ -384,11 +369,14 @@ static const float titleIconGap  = 6.0f;
     }
 }
 
-- (void)drawRect:(NSRect)rect {
-	[self drawBoxAndTitle:rect];
-	[plusWidget drawRect:rect];
-	[minusWidget drawRect:rect];
-	[self drawFieldsToDisplay:rect];
+- (void)drawRect:(NSRect)dirtyRect {
+    NSRect b = [self bounds];
+    // only do drawing if we're inside the dirtyBounds
+    if (!NSIntersectsRect(b, dirtyRect)) return;
+	[self drawBoxAndTitle:dirtyRect];
+	[plusWidget drawRect:dirtyRect];
+	[minusWidget drawRect:dirtyRect];
+	[self drawFieldsToDisplay:dirtyRect];
 }
 
 - (void)resetTrackingRect {
@@ -407,7 +395,7 @@ static const float titleIconGap  = 6.0f;
 	if (highlight == newValue) return;
 	highlight = newValue;
 	[self updateColors];
-	[view setNeedsDisplay:YES];
+    [view setNeedsDisplayInRect:[self bounds]];
 }
 
 -(void)setTrackingRect {

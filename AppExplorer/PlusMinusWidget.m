@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Simon Fell
+// Copyright (c) 2006,2014 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -62,7 +62,9 @@
 }
 
 -(void)setState:(pmButtonState)newState {
+    if (state == newState) return;
 	state = newState;
+    [view setNeedsDisplayInRect:rect];
 }
 
 -(void)setTarget:(id)aTarget andAction:(SEL)anAction {
@@ -104,7 +106,7 @@
 	[target performSelector:action];
 }
 
--(void)drawRect:(NSRect)ignoreMe
+-(void)drawRect:(NSRect)dirtyRect
 {
 	if (!visible) return;
 	if (state != pmOutside)
