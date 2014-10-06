@@ -217,7 +217,7 @@
 	}
 
 	[centralBox drawRect:rect];
-	for (SObjectBox *box in [foreignKeys objectEnumerator])  
+	for (SObjectBox *box in foreignKeys)
 		[box drawRect:rect];
 	for (SObjectBox *box in children)  
 		[box drawRect:rect];
@@ -291,10 +291,9 @@ static const float minSpacerSize = 5.0f;
 	return [centralBox sobject];
 }
 
-- (void)addReferencedSObjectsFromFieldEnumerator:(NSEnumerator *)enm results:(NSMutableDictionary *)results trackWeights:(BOOL)trackWeights {
-	ZKDescribeField *field;
+- (void)addReferencedSObjectsFromArray:(NSArray *)fields results:(NSMutableDictionary *)results trackWeights:(BOOL)trackWeights {
 	uint weightIndex = 0;
-	while (field = [enm nextObject]) {
+	for (ZKDescribeField *field in fields) {
 		if ([[field referenceTo] count] == 0) continue;
         for (NSString *refSObject in [field referenceTo]) {
 			if ([refSObject isEqualTo:[[centralBox sobject] name]]) continue;
@@ -312,8 +311,8 @@ static const float minSpacerSize = 5.0f;
 
 - (NSArray *)foreignKeySObjects {
 	NSMutableDictionary *orderedWeights = [NSMutableDictionary dictionary];
-	[self addReferencedSObjectsFromFieldEnumerator:[[centralBox fieldsToDisplay] objectEnumerator] results:orderedWeights trackWeights:YES];
-	[self addReferencedSObjectsFromFieldEnumerator:[[[centralBox sobject] fields] objectEnumerator] results:orderedWeights trackWeights:NO];
+	[self addReferencedSObjectsFromArray:[centralBox fieldsToDisplay] results:orderedWeights trackWeights:YES];
+	[self addReferencedSObjectsFromArray:[[centralBox sobject] fields] results:orderedWeights trackWeights:NO];
 	return [orderedWeights keysSortedByValueUsingSelector:@selector(compare:)];
 }
 
@@ -395,9 +394,8 @@ static const float minSpacerSize = 5.0f;
 	[self setNeedsDisplay:YES];
 }
 
--(BOOL)delegateMouseDown:(NSEnumerator *)e withEvent:(NSEvent *)event{
-	SObjectBox *box;
-	while (box = [e nextObject]) {
+-(BOOL)delegateMouseDown:(NSArray *)boxes withEvent:(NSEvent *)event{
+	for (SObjectBox *box in boxes) {
 		if ([box isHighlighted]) {
 			[box mouseDown:event];
 			return YES;
@@ -406,9 +404,8 @@ static const float minSpacerSize = 5.0f;
 	return NO;
 }
 
--(BOOL)delegateMouseUp:(NSEnumerator *)e withEvent:(NSEvent *)event{
-	SObjectBox *box;
-	while (box = [e nextObject]) {
+-(BOOL)delegateMouseUp:(NSArray *)boxes withEvent:(NSEvent *)event{
+    for (SObjectBox *box in boxes) {
 		if ([box isHighlighted]) {
 			[box mouseUp:event];
 			return YES;
@@ -420,15 +417,15 @@ static const float minSpacerSize = 5.0f;
 - (void)mouseDown:(NSEvent *)event {
 	if ([centralBox isHighlighted])
 		[centralBox mouseDown:event];
-	else if (![self delegateMouseDown:[children objectEnumerator] withEvent:event])
-		[self delegateMouseDown:[foreignKeys objectEnumerator] withEvent:event];
+	else if (![self delegateMouseDown:children withEvent:event])
+		[self delegateMouseDown:foreignKeys withEvent:event];
 }
 
 -(void)mouseUp:(NSEvent *)event {
 	if ([centralBox isHighlighted]) 
 		[centralBox mouseUp:event];
-	else if (![self delegateMouseUp:[children objectEnumerator] withEvent:event])
-		[self delegateMouseUp:[foreignKeys objectEnumerator] withEvent:event];
+	else if (![self delegateMouseUp:children withEvent:event])
+		[self delegateMouseUp:foreignKeys withEvent:event];
 }
 
 - (BOOL)mousePointerIsInsideRect:(NSRect)rect {
