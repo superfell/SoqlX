@@ -1496,7 +1496,7 @@
 					"$(inherited)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = SoqlXplorer;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = macosx10.8;
@@ -1526,7 +1526,7 @@
 					"$(inherited)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = SoqlXplorer;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = macosx10.8;
