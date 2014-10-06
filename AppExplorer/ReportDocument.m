@@ -159,7 +159,7 @@
 	                        graphicsContextWithBitmapImageRep:offscreenRep]];
 
 	// Draw your content...
-	[schemaView setNeedsFullRedraw:YES];
+	[schemaView setNeedsDisplay:YES];
 	[schemaView drawRect:offscreenRect];
 	[NSGraphicsContext restoreGraphicsState];
 

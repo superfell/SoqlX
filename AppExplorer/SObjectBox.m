@@ -70,7 +70,6 @@ static const float titleIconGap  = 6.0f;
     						paragraphStyle, NSParagraphStyleAttributeName,
     						nil] retain];
 	highlight = NO;
-	needsDrawing = NO;
 	NSPoint ppos = [self positionForPlusWidget];
 	NSPoint mpos = [self positionForMinusWidget];
 	plusWidget = [[PlusMinusWidget alloc] initWithFrame:NSMakeRect(ppos.x, ppos.y, plusMinusSize, plusMinusSize) view:view andStyle:pmPlusButton];
@@ -109,7 +108,6 @@ static const float titleIconGap  = 6.0f;
                        context:(void *)context
 {
 	if([keyPath isEqualTo:@"state"]) {
-		needsDrawing = YES;
 		[view setNeedsDisplay:YES];
 	}
 }
@@ -196,7 +194,7 @@ static const float titleIconGap  = 6.0f;
 	origin = point;
 	[self resetTrackingRect];
 	[self positionPlusMinusWidgets];
-	needsDrawing = YES;	
+    [view setNeedsDisplay:YES];
 }
 
 - (NSPoint)origin {
@@ -285,7 +283,7 @@ static const float titleIconGap  = 6.0f;
 	fieldRects = [positions retain];
 	[self positionPlusMinusWidgets];
 	[self resetTrackingRect];	
-	[self setNeedsDrawing:YES];
+	[view setNeedsDisplay:YES];
 }
 
 -(BOOL)shouldDisplayField:(ZKDescribeField *)f {
@@ -386,24 +384,11 @@ static const float titleIconGap  = 6.0f;
     }
 }
 
--(BOOL)needsDrawing {
-	return needsDrawing;
-}
-
--(void)setNeedsDrawing:(BOOL)aValue {
-	if (needsDrawing == aValue) return;
-	needsDrawing = aValue;
-	if (needsDrawing)
-		[view setNeedsDisplay:YES];
-}
-
-- (void)drawRect:(NSRect)rect forceRedraw:(BOOL)force {
-	if (!force && !needsDrawing) return;
+- (void)drawRect:(NSRect)rect {
 	[self drawBoxAndTitle:rect];
 	[plusWidget drawRect:rect];
 	[minusWidget drawRect:rect];
 	[self drawFieldsToDisplay:rect];
-	[self setNeedsDrawing:NO];
 }
 
 - (void)resetTrackingRect {
@@ -422,7 +407,7 @@ static const float titleIconGap  = 6.0f;
 	if (highlight == newValue) return;
 	highlight = newValue;
 	[self updateColors];
-	[self setNeedsDrawing:YES];
+	[view setNeedsDisplay:YES];
 }
 
 -(void)setTrackingRect {

@@ -189,7 +189,6 @@
 		F4C878B80F3964BD000075D4 /* BulkDelete.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C878B70F3964BD000075D4 /* BulkDelete.m */; };
 		F4CD3DAD0B85701100084479 /* ZKLoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CD3DAB0B85701100084479 /* ZKLoginController.m */; };
 		F4CD3DBA0B8572DB00084479 /* credential.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CD3DB80B8572DB00084479 /* credential.m */; };
-		F4CD50530B0C134A00345D9E /* TransitionView.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CD50510B0C134A00345D9E /* TransitionView.m */; };
 		F4CD50770B0C18BC00345D9E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4CD50760B0C18BC00345D9E /* QuartzCore.framework */; };
 		F4CD511B0B0C342100345D9E /* PlusMinusWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CD51190B0C342100345D9E /* PlusMinusWidget.m */; };
 		F4CD51200B0C350300345D9E /* FieldImportance.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CD511E0B0C350300345D9E /* FieldImportance.m */; };
@@ -594,8 +593,6 @@
 		F4CD3DAB0B85701100084479 /* ZKLoginController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = ZKLoginController.m; path = ../common/ZKLoginController.m; sourceTree = SOURCE_ROOT; };
 		F4CD3DB70B8572DB00084479 /* credential.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = credential.h; path = ../common/credential.h; sourceTree = SOURCE_ROOT; };
 		F4CD3DB80B8572DB00084479 /* credential.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = credential.m; path = ../common/credential.m; sourceTree = SOURCE_ROOT; };
-		F4CD50500B0C134A00345D9E /* TransitionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransitionView.h; sourceTree = "<group>"; };
-		F4CD50510B0C134A00345D9E /* TransitionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TransitionView.m; sourceTree = "<group>"; };
 		F4CD50760B0C18BC00345D9E /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		F4CD51180B0C342100345D9E /* PlusMinusWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlusMinusWidget.h; sourceTree = "<group>"; };
 		F4CD51190B0C342100345D9E /* PlusMinusWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlusMinusWidget.m; sourceTree = "<group>"; };
@@ -804,8 +801,6 @@
 				F4A62E2E0D31AC6300D7EACA /* NSView_additions.m */,
 				F46D91000B33DFC800913AD2 /* StandAloneTableHeaderView.h */,
 				F46D91010B33DFC800913AD2 /* StandAloneTableHeaderView.m */,
-				F4CD50500B0C134A00345D9E /* TransitionView.h */,
-				F4CD50510B0C134A00345D9E /* TransitionView.m */,
 				F4CF73E60D49BDDB001001F2 /* QueryResultCell.h */,
 				F4CF73E70D49BDDB001001F2 /* QueryResultCell.m */,
 				F4F75D920D4EFCEE00608927 /* QueryTextListView.h */,
@@ -1265,7 +1260,6 @@
 				F4DD94540AFEED9500B0E3AC /* SchemaController.m in Sources */,
 				F458CEB20AFF2442008A20A9 /* SObjectBox.m in Sources */,
 				F412575D0B098593001622AC /* WeightedSObject.m in Sources */,
-				F4CD50530B0C134A00345D9E /* TransitionView.m in Sources */,
 				F4CD511B0B0C342100345D9E /* PlusMinusWidget.m in Sources */,
 				F4CD51200B0C350300345D9E /* FieldImportance.m in Sources */,
 				F46D91070B33DFC800913AD2 /* StandAloneTableHeaderView.m in Sources */,
@@ -1482,7 +1476,7 @@
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1514,7 +1508,7 @@
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1543,7 +1537,7 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_IDENTITY = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1561,7 +1555,7 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_IDENTITY = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;

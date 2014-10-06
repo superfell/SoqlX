@@ -42,7 +42,6 @@
 	NSSize				size;
 	NSPoint				origin;
 	BOOL				highlight;
-	BOOL				needsDrawing;
 	PlusMinusWidget		*plusWidget;
 	PlusMinusWidget		*minusWidget;
 	
@@ -63,11 +62,10 @@
 -(NSPoint)centerPoint;
 
 @property (assign) NSPoint origin;
-@property (assign) BOOL needsDrawing;
 
 -(void)resetTrackingRect;
 
--(void)drawRect:(NSRect)rect forceRedraw:(BOOL)force;
+-(void)drawRect:(NSRect)rect;
 -(void)mouseDown:(NSEvent *)event;
 -(void)mouseUp:(NSEvent *)event;
 -(NSArray *)fieldsToDisplay;

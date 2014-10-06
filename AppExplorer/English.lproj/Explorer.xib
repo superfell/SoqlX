@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="12F45" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1060" defaultVersion="1070" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
@@ -498,7 +498,7 @@ DQ
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="1462" id="1460">
                                                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                        <font key="font" metaFont="system"/>
+                                                                        <font key="font" metaFont="menu"/>
                                                                         <menu key="menu" title="OtherViews" id="1461">
                                                                             <items>
                                                                                 <menuItem title="Item 1" state="on" id="1462"/>
@@ -537,7 +537,7 @@ DQ
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="1501" id="1497">
                                                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                        <font key="font" metaFont="system"/>
+                                                                        <font key="font" metaFont="menu"/>
                                                                         <menu key="menu" title="OtherViews" id="1498">
                                                                             <items>
                                                                                 <menuItem title="Item 1" state="on" id="1501"/>
@@ -567,7 +567,7 @@ DQ
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="1512" id="1510">
                                                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                        <font key="font" metaFont="system"/>
+                                                                        <font key="font" metaFont="menu"/>
                                                                         <menu key="menu" title="OtherViews" id="1511">
                                                                             <items>
                                                                                 <menuItem title="Item 1" state="on" id="1512"/>
@@ -588,7 +588,7 @@ DQ
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="1543" id="1539">
                                                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                        <font key="font" metaFont="system"/>
+                                                                        <font key="font" metaFont="menu"/>
                                                                         <menu key="menu" title="OtherViews" id="1540">
                                                                             <items>
                                                                                 <menuItem title="Item 1" state="on" id="1543"/>
@@ -627,7 +627,7 @@ DQ
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="1534" id="1532">
                                                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                        <font key="font" metaFont="system"/>
+                                                                        <font key="font" metaFont="menu"/>
                                                                         <menu key="menu" title="OtherViews" id="1533">
                                                                             <items>
                                                                                 <menuItem title="Item 1" state="on" id="1534"/>
@@ -637,10 +637,10 @@ DQ
                                                                         </menu>
                                                                     </popUpButtonCell>
                                                                     <connections>
+                                                                        <binding destination="1449" name="selectedObject" keyPath="apexCodeLogLevel" previousBinding="1554" id="1557"/>
                                                                         <binding destination="1465" name="content" keyPath="arrangedObjects" id="1552"/>
                                                                         <binding destination="1465" name="contentObjects" keyPath="arrangedObjects" previousBinding="1552" id="1553"/>
                                                                         <binding destination="1465" name="contentValues" keyPath="arrangedObjects.Name" previousBinding="1553" id="1554"/>
-                                                                        <binding destination="1449" name="selectedObject" keyPath="apexCodeLogLevel" previousBinding="1554" id="1557"/>
                                                                     </connections>
                                                                 </popUpButton>
                                                                 <textField verticalHuggingPriority="750" id="1524">
@@ -657,7 +657,7 @@ DQ
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="1530" id="1526">
                                                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                        <font key="font" metaFont="system"/>
+                                                                        <font key="font" metaFont="menu"/>
                                                                         <menu key="menu" title="OtherViews" id="1527">
                                                                             <items>
                                                                                 <menuItem title="Item 1" state="on" id="1530"/>
@@ -667,10 +667,10 @@ DQ
                                                                         </menu>
                                                                     </popUpButtonCell>
                                                                     <connections>
+                                                                        <binding destination="1449" name="selectedObject" keyPath="apexProfilingLogLevel" previousBinding="1546" id="1558"/>
                                                                         <binding destination="1465" name="content" keyPath="arrangedObjects" id="1544"/>
                                                                         <binding destination="1465" name="contentObjects" keyPath="arrangedObjects" previousBinding="1544" id="1545"/>
                                                                         <binding destination="1465" name="contentValues" keyPath="arrangedObjects.Name" previousBinding="1545" id="1546"/>
-                                                                        <binding destination="1449" name="selectedObject" keyPath="apexProfilingLogLevel" previousBinding="1546" id="1558"/>
                                                                     </connections>
                                                                 </popUpButton>
                                                                 <customView id="1559" customClass="StandAloneTableHeaderView">
@@ -689,17 +689,17 @@ DQ
                                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                                                 <size key="minSize" width="834" height="233"/>
-                                                                                <size key="maxSize" width="834" height="10000000"/>
+                                                                                <size key="maxSize" width="836" height="10000000"/>
                                                                                 <color key="insertionPointColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                                 <size key="minSize" width="834" height="233"/>
-                                                                                <size key="maxSize" width="834" height="10000000"/>
+                                                                                <size key="maxSize" width="836" height="10000000"/>
                                                                                 <connections>
-                                                                                    <binding destination="354" name="fontSize" keyPath="values.TextSize" id="I6Z-rn-QYQ"/>
                                                                                     <binding destination="1449" name="value" keyPath="apex" id="1656">
                                                                                         <dictionary key="options">
                                                                                             <bool key="NSContinuouslyUpdatesValue" value="YES"/>
                                                                                         </dictionary>
                                                                                     </binding>
+                                                                                    <binding destination="354" name="fontSize" keyPath="values.TextSize" id="I6Z-rn-QYQ"/>
                                                                                 </connections>
                                                                             </textView>
                                                                         </subviews>
@@ -870,13 +870,13 @@ DQ
                                                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                                                                 <size key="minSize" width="610" height="329"/>
-                                                                                                <size key="maxSize" width="610" height="10000000"/>
+                                                                                                <size key="maxSize" width="612" height="10000000"/>
                                                                                                 <color key="insertionPointColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                                                 <size key="minSize" width="610" height="329"/>
-                                                                                                <size key="maxSize" width="610" height="10000000"/>
+                                                                                                <size key="maxSize" width="612" height="10000000"/>
                                                                                                 <connections>
-                                                                                                    <binding destination="354" name="fontSize" keyPath="values.TextSize" id="BWg-bl-Nba"/>
                                                                                                     <binding destination="1583" name="value" keyPath="selection.debugLog" id="1655"/>
+                                                                                                    <binding destination="354" name="fontSize" keyPath="values.TextSize" id="BWg-bl-Nba"/>
                                                                                                 </connections>
                                                                                             </textView>
                                                                                         </subviews>
@@ -963,7 +963,7 @@ DQ
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" id="1671">
-                        <rect key="frame" x="697" y="7" width="300" height="14"/>
+                        <rect key="frame" x="697.00000001087392" y="7" width="300" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="API Calls" id="1672">
                             <font key="font" metaFont="smallSystem"/>

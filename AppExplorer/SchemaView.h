@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2012 Simon Fell
+// Copyright (c) 2006,2012,2014 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -20,14 +20,13 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "TransitionView.h"
 
 @class ZKDescribeSObject;
 @class SObjectBox;
 @class DescribeListDataSource;
 @class Explorer;
 
-@interface SchemaView : TransitionView {
+@interface SchemaView : NSView {
 	SObjectBox				*centralBox;
 	DescribeListDataSource  *describes;
 	NSMutableDictionary		*relatedBoxes;	// (SObjectBox keyed by SObject name)
@@ -37,7 +36,6 @@
 	NSColor					*primaryColor;
 	NSColor					*foreignKeyColor;
 	NSColor					*childRelColor;
-	BOOL					needsFullRedraw;
 	BOOL					isPrinting;
 	IBOutlet Explorer		*primaryController;
 }
@@ -52,6 +50,4 @@
 - (void)layoutBoxes;
 - (BOOL)mousePointerIsInsideRect:(NSRect)rect;
 - (NSTrackingRectTag)addTrackingRect:(NSRect)rect owner:(id)owner;
-- (BOOL)needsFullRedraw;
-- (void)setNeedsFullRedraw:(BOOL)aValue;
 @end

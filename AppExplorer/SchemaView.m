@@ -110,7 +110,6 @@
 }
 
 - (void) boundsDidChangeNotification:(NSNotification *)notification {
-	needsFullRedraw = YES;
 	[centralBox resetTrackingRect];
 	[foreignKeys makeObjectsPerformSelector:@selector(resetTrackingRect)];
 	[children makeObjectsPerformSelector:@selector(resetTrackingRect)];
@@ -154,20 +153,13 @@
 	[path stroke];
 }
 
-- (BOOL)needsFullRedraw {
-	return needsFullRedraw;
+-(void)drawRect:(NSRect)dirtyRect {
+    [self drawBackground:dirtyRect];
+    [self drawForeground:dirtyRect];
 }
 
-- (void)setNeedsFullRedraw:(BOOL)aValue {
-	if (needsFullRedraw == aValue) return;
-	needsFullRedraw = aValue;
-	if (needsFullRedraw)
-		[self setNeedsDisplay:YES];
-}
-
-// NSTransitionView
 - (void)drawBackground:(NSRect)rect {
-	if (!isPrinting && !needsFullRedraw) return;
+	if (isPrinting) return;
 	[[NSColor whiteColor] set];
 	NSRectFill(rect);
 }
@@ -204,35 +196,31 @@
 	[txt drawInRect:box withAttributes:a];
 }
 
-// NSTransitionView
 - (void)drawForeground:(NSRect)rect {
 	if ([centralBox sobject] == nil) {
 		[self drawSelectAnSObject];
 		return;
 	}
-	if (isPrinting || needsFullRedraw) {
-		for (ZKDescribeField *field in [centralBox fieldsToDisplay]) {
-			NSArray *refs = [field referenceTo];
-			for (NSString *refSObjectName in refs) {
-				SObjectBox *refBox = [relatedBoxes objectForKey:refSObjectName];
-				if ((refBox == nil) && [refSObjectName isEqualTo:[[centralBox sobject] name]])
-					refBox = centralBox;
-				[self drawRelationshipLine:refBox fieldNameOnPrimarySObject:[field name] fieldNameOnRelatedSObject:@"Id" withColor:foreignKeyColor];
-			}
-		}
-		for (ZKChildRelationship *cr in [[centralBox sobject] childRelationships]) { 
-			SObjectBox *refBox = [relatedBoxes objectForKey:[cr childSObject]];
-			if (refBox == nil) continue;
-			[self drawRelationshipLine:refBox fieldNameOnPrimarySObject:@"Id" fieldNameOnRelatedSObject:[cr field] withColor:childRelColor];
+    for (ZKDescribeField *field in [centralBox fieldsToDisplay]) {
+		NSArray *refs = [field referenceTo];
+		for (NSString *refSObjectName in refs) {
+			SObjectBox *refBox = [relatedBoxes objectForKey:refSObjectName];
+			if ((refBox == nil) && [refSObjectName isEqualTo:[[centralBox sobject] name]])
+				refBox = centralBox;
+			[self drawRelationshipLine:refBox fieldNameOnPrimarySObject:[field name] fieldNameOnRelatedSObject:@"Id" withColor:foreignKeyColor];
 		}
 	}
-	[centralBox drawRect:rect forceRedraw:isPrinting || needsFullRedraw];
+	for (ZKChildRelationship *cr in [[centralBox sobject] childRelationships]) {
+		SObjectBox *refBox = [relatedBoxes objectForKey:[cr childSObject]];
+		if (refBox == nil) continue;
+		[self drawRelationshipLine:refBox fieldNameOnPrimarySObject:@"Id" fieldNameOnRelatedSObject:[cr field] withColor:childRelColor];
+	}
+
+	[centralBox drawRect:rect];
 	for (SObjectBox *box in [foreignKeys objectEnumerator])  
-		[box drawRect:rect  forceRedraw:isPrinting || needsFullRedraw];
+		[box drawRect:rect];
 	for (SObjectBox *box in children)  
-		[box drawRect:rect  forceRedraw:isPrinting || needsFullRedraw];
-		
-	[self setNeedsFullRedraw:NO];
+		[box drawRect:rect];
 }
 
 // NSView
@@ -295,7 +283,7 @@ static const float minSpacerSize = 5.0f;
 	[self setFrameSize:visibleSize];
 	NSRect bounds = [self bounds];
 	[centralBox setOrigin:NSMakePoint(NSMidX(bounds) - (cb.width/2), NSMidY(bounds) - (cb.height/2))];
-	[self setNeedsFullRedraw:YES];
+    [self setNeedsDisplay:YES];
 }
 
 // SchemaView
@@ -376,9 +364,6 @@ static const float minSpacerSize = 5.0f;
 	[self layoutBoxes];
 }
 
-// ScheamView
-// takes a starting snapshot, recalcs the display, takes a second snapshot, then does a transition between the 2
-// the base class, TransitionView does all the animation/transition work given the before & after images
 - (void)setCentralSObject:(ZKDescribeSObject *)s {
 	NSRect f = [self visibleRect];
 	NSPoint center = NSMakePoint(NSMidX(f), NSMidY(f));
@@ -398,30 +383,16 @@ static const float minSpacerSize = 5.0f;
 
 - (void)setCentralSObject:(ZKDescribeSObject *)s withRipplePoint:(NSPoint)ripple {
     if (![describes hasAllDescribesRelatedTo:[s name]]) {
+        [primaryController updateProgress:YES];
+        [primaryController setStatusText:[NSString stringWithFormat:@"describing schema for %@", [s name]]];
         [self asyncLoadDescribes:s withRipplePoint:ripple];
         return;
     }
-	[primaryController updateProgress:YES];
-	[primaryController setStatusText:[NSString stringWithFormat:@"describing schema for %@", [s name]]];
-	BOOL doAnimation = [centralBox sobject] != nil;
-	NSBitmapImageRep *before, *after;
-	if (doAnimation) {
-		before = [self bitmapImageRepForCachingDisplayInRect:[self visibleRect]];
-		[self cacheDisplayInRect:[self visibleRect] toBitmapImageRep:before];
-	}
 
-	[self setCentralSObjectImpl:s];
-
-	if (doAnimation) {	
-		after = [self bitmapImageRepForCachingDisplayInRect:[self visibleRect]];
-		[self cacheDisplayInRect:[self visibleRect] toBitmapImageRep:after];
-	}
-	
 	[primaryController updateProgress:NO];
 	[primaryController setStatusText:[s name]];
-	if (doAnimation) 
-		[self performAnimationStartingWith:before endingWith:after ripplePoint:ripple withDuration:1.0];
-	[self setNeedsFullRedraw:YES];	
+	[self setCentralSObjectImpl:s];
+	[self setNeedsDisplay:YES];
 }
 
 -(BOOL)delegateMouseDown:(NSEnumerator *)e withEvent:(NSEvent *)event{
