@@ -620,14 +620,27 @@ typedef enum SoqlParsePosition {
 	[self setStatusText:[NSString stringWithFormat:@"Updating field %@ on row with Id %@", fieldName, [anObject id]]];
 	ZKSObject *update = [ZKSObject withTypeAndId:[anObject type] sfId:[anObject id]];
 	[update setFieldValue:newValue field:fieldName];
-	ZKSaveResult *sr = [[sforce update:[NSArray arrayWithObject:update]] objectAtIndex:0];
-	if ([sr success]) {
-		[self setStatusText:[NSString stringWithFormat:@"Updated field %@ on row with Id %@", fieldName, [anObject id]]];
-		[anObject setFieldValue:newValue field:fieldName];
-	} else {
-		NSAlert * a = [NSAlert alertWithMessageText:[sr message] defaultButton:@"Cancel" alternateButton:nil otherButton:nil informativeTextWithFormat:@"%@", [sr statusCode]];
-		[a runModal];
-	}
+    @try {
+        ZKSaveResult *sr = [[sforce update:[NSArray arrayWithObject:update]] objectAtIndex:0];
+        if ([sr success]) {
+            [self setStatusText:[NSString stringWithFormat:@"Updated field %@ on row with Id %@", fieldName, [anObject id]]];
+            [anObject setFieldValue:newValue field:fieldName];
+        } else {
+            NSAlert * a = [NSAlert alertWithMessageText:[sr message]
+                                          defaultButton:@"Close"
+                                        alternateButton:nil
+                                            otherButton:nil
+                              informativeTextWithFormat:@"%@", [sr statusCode]];
+            [a runModal];
+        }
+    } @catch (ZKSoapException *ex) {
+        NSAlert *a =[NSAlert alertWithMessageText:[NSString stringWithFormat:@"Unable to update field %@", fieldName]
+                                    defaultButton:@"Close"
+                                  alternateButton:nil
+                                      otherButton:nil
+                        informativeTextWithFormat:@"%@", [ex reason]];
+        [a runModal];
+    }
 }
 
 - (IBAction)queryMore:(id)sender {
