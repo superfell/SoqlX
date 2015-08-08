@@ -60,6 +60,9 @@
 - (void)save:(NSWindow *)parentWindow {
 	[self retain];
 	NSSavePanel *sp = [NSSavePanel savePanel];
+    [sp setAllowedFileTypes:@[@"csv"]];
+    [sp setAllowsOtherFileTypes:YES];
+    [sp setCanSelectHiddenExtension:YES];
 	[sp setAccessoryView:optionsView];
     [sp beginSheetModalForWindow:parentWindow completionHandler:^(NSInteger result) {
         [self savePanelDidEnd:sp returnCode:result contextInfo:parentWindow];
