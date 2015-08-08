@@ -107,7 +107,7 @@
         first = NO;
 		[stream writeQuoted:[[c headerCell] stringValue]];
 	}
-	[stream write:@"\r"];
+	[stream write:@"\n"];
 
 	ZKSforceClient *sf = [client copyWithZone:nil];
 	[client autorelease];
@@ -159,17 +159,27 @@
 		for (NSTableColumn *c in [self columns]) {
 			if ([[[results wrapper] allSystemColumnIdentifiers] containsObject:[c identifier]])
 				continue;
-			if (first) first = NO;
-			else [stream write:@","];
+            if (first) {
+                first = NO;
+            } else {
+                [stream write:@","];
+            }
 			NSObject *v = [qr tableView:nil objectValueForTableColumn:c row:i];
-            if ([v isKindOfClass:[NSNumber class]])
-                v = [(NSNumber *)v stringValue];
-            if (v != nil && ![v isKindOfClass:[NSString class]])
+            NSString *s = nil;
+            if ([v isKindOfClass:[NSString class]]) {
+                s = (NSString *)v;
+            } else if ([v isKindOfClass:[NSNumber class]]) {
+                s = [(NSNumber *)v stringValue];
+            } else if ([v isKindOfClass:[ZKQueryResult class]]) {
+                ZKQueryResult *child = (ZKQueryResult *)v;
+                s = [NSString stringWithFormat:@"[%ld child rows]", (long)child.size];
+            } else if (v != nil && ![v isKindOfClass:[NSString class]]) {
                 NSLog(@"expected NSString, but got %@ for column %@, row %d", [v class], [c identifier], i);
-            
-            [stream writeQuoted:(NSString *)v];
+                s = [v description];
+            }
+            [stream writeQuoted:s];
 		}
-		[stream write:@"\r"];
+		[stream write:@"\n"];
 	}
 	[self updateRowCount:rows];
 	if ([qr done] || !saveAll) {
@@ -203,29 +213,41 @@
 	if (len < (capacity - [buffer length])) {
 		[buffer appendBytes:data length:len];
 	} else if (len < capacity) {
-		[self flush];
+        [self flush:FALSE];
 		[buffer appendBytes:data length:len];
 	} else {
-		[self flush];
+        [self flush:TRUE];
 		[stream write:data maxLength:len];
 	}
 }
 
--(void)flush {
-	if ([buffer length] > 0) {
-		[stream write:[buffer mutableBytes] maxLength:[buffer length]];
-		[buffer setLength:0];
+-(void)flush:(BOOL)ensureFullyFlushed {
+	while ([buffer length] > 0) {
+		NSInteger written = [stream write:[buffer mutableBytes] maxLength:[buffer length]];
+        if (written == [buffer length]) {
+            [buffer setLength:0];
+            return;
+        } else {
+            NSLog(@"stream:write returned less than supplied written=%ld, maxLength=%ld", written, [buffer length]);
+            memmove([buffer mutableBytes], [buffer mutableBytes] + written, [buffer length] - written);
+            [buffer setLength:[buffer length] - written];
+        }
+        if (ensureFullyFlushed) {
+            [NSThread sleepForTimeInterval:0.001];
+        } else {
+            return;
+        }
 	}
 }
 
 -(void)close {
-	[self flush];
+    [self flush:TRUE];
 	[stream close];
 }
 
 // String helpers
 -(void)write:(NSString *)s {
-	if (s == nil) return;
+	if (s == nil || [s length] == 0) return;
 	[self write:(const uint8_t *)[s UTF8String] maxLength:[s lengthOfBytesUsingEncoding:NSUTF8StringEncoding]];
 }
 

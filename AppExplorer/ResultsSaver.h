@@ -33,7 +33,7 @@
 -(id)initOnStream:(NSOutputStream *)s;
 
 -(void)write:(const uint8_t *)data maxLength:(uint)len;
--(void)flush;
+-(void)flush:(BOOL)ensureFullyFlushed;
 -(void)close;
 
 @end
