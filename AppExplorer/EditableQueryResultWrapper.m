@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2012 Simon Fell
+// Copyright (c) 2007-2015 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -218,8 +218,14 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
 	return [[aColumn identifier] rangeOfString:@"."].location == NSNotFound;
 }
 
-- (BOOL)tableView:(NSTableView *)aTableView shouldEditTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
-	return [self allowEdit:aTableColumn];
+- (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor {
+    NSTableView *t = (NSTableView *)control;
+    NSTableColumn *c =t.tableColumns[t.editedColumn];
+    return [self allowEdit:c];
+}
+
+- (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor {
+    return YES;
 }
 
 - (void)setChecksOnAllRows:(BOOL)checked {

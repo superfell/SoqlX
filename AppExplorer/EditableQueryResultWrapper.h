@@ -1,4 +1,4 @@
-// Copyright (c) 2007 Simon Fell
+// Copyright (c) 2007,2015 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -32,7 +32,7 @@ NSArray  *ALL_APP_COLUMN_IDENTIFIERS;
 -(void) dataChangedOnObject:(ZKSObject *)sobject field:(NSString *)fieldName value:(id)value;
 @end
 
-@interface EditableQueryResultWrapper : NSObject<NSTableViewDataSource, NSTableViewDelegate> {
+@interface EditableQueryResultWrapper : NSObject<NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate> {
 	NSObject<EditableQueryResultWrapperDelegate>	*delegate;
 	ZKQueryResult	*result;
 	BOOL			editable;
