@@ -224,6 +224,14 @@ NSString * tc(NSString *src) {
 	[progress display];
 }
 
+- (IBAction)copy:(id)sender {
+    NSView *docView = [[[webview mainFrame] frameView] documentView];
+    NSData *pdf =  [docView dataWithPDFInsideRect:[docView bounds]];
+    NSPasteboard *pb = [NSPasteboard generalPasteboard];
+    [pb declareTypes:@[NSPasteboardTypePDF] owner:nil];
+    [pb setData:pdf forType:NSPasteboardTypePDF];
+}
+
 - (IBAction)print:(id)sender {
 	[[[[webview mainFrame] frameView] documentView] print:sender];
 }

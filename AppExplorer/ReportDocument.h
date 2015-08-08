@@ -37,6 +37,7 @@
 	BOOL				enabledButtons;
 }
 
+- (IBAction)copy:(id)sender;
 - (IBAction)print:(id)sender;
 - (IBAction)saveAsPdf:(id)sender;
 
