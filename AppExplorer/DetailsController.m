@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2013 Simon Fell
+// Copyright (c) 2007-2015 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -21,6 +21,7 @@
 
 #import "DetailsController.h"
 #import "NSWindow_additions.h"
+#import "NSTableView_additions.h"
 
 static NSString *SHOWING_DETAILS = @"details";
 
@@ -60,6 +61,10 @@ static NSString *SHOWING_DETAILS = @"details";
 - (void)setIcon:(NSImage *)image {
     [[detailsTable window] setRepresentedURL:[NSURL fileURLWithPath:self.title]];
     [[[detailsTable window] standardWindowButton:NSWindowDocumentIconButton] setImage:image];
+}
+
+- (IBAction) copy:(id)sender {
+    [detailsTable zkCopyTableDataToClipboard];
 }
 
 @end

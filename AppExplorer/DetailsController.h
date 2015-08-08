@@ -21,7 +21,7 @@
 
 #import "BaseUserBasedController.h"
 
-@interface DetailsController : BaseWindowToggleController {
+@interface DetailsController : BaseWindowToggleController<NSWindowDelegate> {
 	IBOutlet NSTableView		*detailsTable;
     NSObject                    *dataSourceRef;
 }

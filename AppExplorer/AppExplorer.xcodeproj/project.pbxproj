@@ -218,6 +218,7 @@
 		F4C877F50F395C6E000075D4 /* ProgressWindow.nib in Resources */ = {isa = PBXBuildFile; fileRef = F4C877F40F395C6E000075D4 /* ProgressWindow.nib */; };
 		F4C877FA0F395DB4000075D4 /* ProgressController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C877F90F395DB4000075D4 /* ProgressController.m */; };
 		F4C878B80F3964BD000075D4 /* BulkDelete.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C878B70F3964BD000075D4 /* BulkDelete.m */; };
+		F4CD2AB71B76881500BDD68D /* NSTableView_additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CD2AB61B76881500BDD68D /* NSTableView_additions.m */; };
 		F4CD3DAD0B85701100084479 /* ZKLoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CD3DAB0B85701100084479 /* ZKLoginController.m */; };
 		F4CD3DBA0B8572DB00084479 /* credential.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CD3DB80B8572DB00084479 /* credential.m */; };
 		F4CD50770B0C18BC00345D9E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4CD50760B0C18BC00345D9E /* QuartzCore.framework */; };
@@ -682,6 +683,8 @@
 		F4C877F90F395DB4000075D4 /* ProgressController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProgressController.m; sourceTree = "<group>"; };
 		F4C878B60F3964BD000075D4 /* BulkDelete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BulkDelete.h; sourceTree = "<group>"; };
 		F4C878B70F3964BD000075D4 /* BulkDelete.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BulkDelete.m; sourceTree = "<group>"; };
+		F4CD2AB51B76881500BDD68D /* NSTableView_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSTableView_additions.h; sourceTree = "<group>"; };
+		F4CD2AB61B76881500BDD68D /* NSTableView_additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSTableView_additions.m; sourceTree = "<group>"; };
 		F4CD3DAA0B85701100084479 /* ZKLoginController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ZKLoginController.h; path = ../common/ZKLoginController.h; sourceTree = SOURCE_ROOT; };
 		F4CD3DAB0B85701100084479 /* ZKLoginController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = ZKLoginController.m; path = ../common/ZKLoginController.m; sourceTree = SOURCE_ROOT; };
 		F4CD3DB70B8572DB00084479 /* credential.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = credential.h; path = ../common/credential.h; sourceTree = SOURCE_ROOT; };
@@ -890,8 +893,12 @@
 		F41257530B0981AB001622AC /* UI Widgets */ = {
 			isa = PBXGroup;
 			children = (
+				F4CD2AB51B76881500BDD68D /* NSTableView_additions.h */,
+				F4CD2AB61B76881500BDD68D /* NSTableView_additions.m */,
 				F4A62E2D0D31AC6300D7EACA /* NSView_additions.h */,
 				F4A62E2E0D31AC6300D7EACA /* NSView_additions.m */,
+				F4BF72A50F79E58C0089F459 /* NSWindow_additions.h */,
+				F4BF72A60F79E58C0089F459 /* NSWindow_additions.m */,
 				F46D91000B33DFC800913AD2 /* StandAloneTableHeaderView.h */,
 				F46D91010B33DFC800913AD2 /* StandAloneTableHeaderView.m */,
 				F4CF73E60D49BDDB001001F2 /* QueryResultCell.h */,
@@ -902,8 +909,6 @@
 				F428A2D20F677BC3007BD862 /* BlueView.m */,
 				F4FAFB640F68CAFD00ECC9BB /* HighlightTextFieldCell.h */,
 				F4FAFB650F68CAFD00ECC9BB /* HighlightTextFieldCell.m */,
-				F4BF72A50F79E58C0089F459 /* NSWindow_additions.h */,
-				F4BF72A60F79E58C0089F459 /* NSWindow_additions.m */,
 				F4B461FD0F79EB850099C434 /* FieldResizer.h */,
 				F4B461FE0F79EB850099C434 /* FieldResizer.m */,
 			);
@@ -1552,6 +1557,7 @@
 				F454E20F184C3B990083AEA8 /* ZKDescribeRelatedContentItem.m in Sources */,
 				F454E210184C3B990083AEA8 /* ZKDescribeSearchLayoutResult.m in Sources */,
 				F454E211184C3B990083AEA8 /* ZKDescribeSearchScopeOrderResult.m in Sources */,
+				F4CD2AB71B76881500BDD68D /* NSTableView_additions.m in Sources */,
 				F454E212184C3B990083AEA8 /* ZKDescribeSObject+Extras.m in Sources */,
 				F454E213184C3B990083AEA8 /* ZKDescribeSoftphoneLayoutCallType.m in Sources */,
 				F454E214184C3B990083AEA8 /* ZKDescribeSoftphoneLayoutInfoField.m in Sources */,
