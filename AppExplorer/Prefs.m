@@ -1,4 +1,4 @@
-// Copyright (c) 2014 Simon Fell
+// Copyright (c) 2014-2015 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -25,3 +25,4 @@ NSString *PREF_SORTED_FIELD_LIST = @"SortedFieldList";
 NSString *PREF_QUERY_SORT_FIELDS = @"SortFieldsInGeneratedQueries";
 NSString *PREF_SKIP_ADDRESS_FIELDS = @"SkipAddressFieldsInGeneratedQueries";
 NSString *PREF_TEXT_SIZE = @"TextSize";
+NSString *PREF_QUIT_ON_LAST_WINDOW_CLOSE = @"QuitOnLastWindowClose";

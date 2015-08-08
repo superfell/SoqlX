@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2013 Simon Fell
+// Copyright (c) 2012-2015 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -21,6 +21,7 @@
 
 #import "AppDelegate.h"
 #import "Explorer.h"
+#import "Prefs.h"
 #import <Sparkle/Sparkle.h>
 
 @implementation AppDelegate
@@ -70,6 +71,10 @@
 // Sparkle : SUUpdaterDelegate - Called immediately before relaunching.
 - (void)updaterWillRelaunchApplication:(SUUpdater *)updater {
     [windowControllers makeObjectsPerformSelector:@selector(closeLoginPanelIfOpen:) withObject:updater];
+}
+
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender {
+    return [[NSUserDefaults standardUserDefaults] boolForKey:PREF_QUIT_ON_LAST_WINDOW_CLOSE];
 }
 
 @end
