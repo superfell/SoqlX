@@ -1,4 +1,4 @@
-// Copyright (c) 2008,2012 Simon Fell
+// Copyright (c) 2008,2012,2015 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -44,10 +44,10 @@
 @end
 
 @interface ResultsSaver : NSObject {
-	IBOutlet NSWindow		*progressWindow;
-	IBOutlet NSView			*optionsView;
-	IBOutlet NSButtonCell	*buttonAll;
-	IBOutlet NSButtonCell	*buttonCurrent;
+    NSWindow		*progressWindow;
+	NSView			*optionsView;
+	NSButtonCell	*buttonAll;
+	NSButtonCell	*buttonCurrent;
 	
 	BOOL				saveAll;
 	NSOperationQueue	*queryQueue;
@@ -64,6 +64,11 @@
 -(id)initWithResults:(QueryResultTable *)res client:(ZKSforceClient *)c;
 
 -(void)save:(NSWindow *)parentWindow;
+
+@property (retain) IBOutlet NSWindow *progressWindow;
+@property (retain) IBOutlet NSView *optionsView;
+@property (retain) IBOutlet NSButtonCell *buttonAll;
+@property (retain) IBOutlet NSButtonCell *buttonCurrent;
 
 @property (assign)   BOOL       saveAll;
 @property (assign)   NSUInteger rowsWritten;

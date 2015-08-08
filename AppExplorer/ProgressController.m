@@ -1,4 +1,4 @@
-// Copyright (c) 2009,2012 Simon Fell
+// Copyright (c) 2009,2012,2015 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -32,9 +32,15 @@
     return paths;
 }
 
+-(void)setProgressWindow:(NSWindow *)w {
+    [window autorelease];
+    window = [w retain];
+}
+
 -(NSWindow *)progressWindow {
-	if (window == nil) 
-		[NSBundle loadNibNamed:@"ProgressWindow" owner:self];	
+    if (window == nil) {
+		[[NSBundle mainBundle] loadNibNamed:@"ProgressWindow" owner:self topLevelObjects:nil];
+    }
 	return window;
 }
 

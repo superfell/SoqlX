@@ -70,11 +70,13 @@ static NSString *test = @"https://test.salesforce.com";
 	[selectedCredential release];
 	[sforce release];
 	[urlOfNewServer release];
+    [nibTopLevelObjects release];
 	[super dealloc];
 }
 
 - (void)loadNib {
-	[NSBundle loadNibNamed:@"Login" owner:self];	
+    [[NSBundle mainBundle] loadNibNamed:@"Login" owner:self topLevelObjects:&nibTopLevelObjects];
+    [nibTopLevelObjects retain];
 }
 
 - (void)setClientIdFromInfoPlist {

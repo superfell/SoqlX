@@ -1,4 +1,4 @@
-// Copyright (c) 2008 Simon Fell
+// Copyright (c) 2008,2015 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -27,13 +27,14 @@
 
 @implementation ResultsSaver
 
+@synthesize progressWindow, optionsView, buttonAll, buttonCurrent;
 @synthesize saveAll, rowsWritten, filename;
 
 -(id)initWithResults:(QueryResultTable *)r client:(ZKSforceClient *)c {
 	self = [super init];
 	results = [r retain];
 	if ([[results queryResult] queryLocator] != nil) {
-		[NSBundle loadNibNamed:@"querySavePanel" owner:self];
+        [[NSBundle mainBundle] loadNibNamed:@"querySavePanel" owner:self topLevelObjects:nil];
 		[buttonAll setTitle:[NSString stringWithFormat:[buttonAll title], [[results queryResult] size]]];
 		[buttonCurrent setTitle:[NSString stringWithFormat:[buttonCurrent title], [[[results queryResult] records] count]]];
 	}

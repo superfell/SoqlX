@@ -58,6 +58,7 @@
 	IBOutlet NSProgressIndicator *loginProgress;
     
     NSObject<ZKLoginControllerDelegate> *delegate;
+    NSArray *nibTopLevelObjects;
 }
 
 - (ZKSforceClient *)showModalLoginWindow:(id)sender;

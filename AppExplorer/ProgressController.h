@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Simon Fell
+// Copyright (c) 2009,2015 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -23,14 +23,13 @@
 
 
 @interface ProgressController : NSObject {
-	IBOutlet	NSWindow	*window;
-	NSString				*progressLabel;
-	double					progressValue;
+	NSWindow	*window;
+	NSString	*progressLabel;
+	double		progressValue;
 }
 
 @property (copy) NSString *progressLabel;
-@property (assign) double progressValue; 
-
--(NSWindow *)progressWindow;
+@property (assign) double progressValue;
+@property (retain) IBOutlet  NSWindow *progressWindow;
 
 @end
