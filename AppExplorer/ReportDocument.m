@@ -80,6 +80,10 @@
     });
 }
 
+NSString * tc(NSString *src) {
+    return [src length] ==0 ? @"&nbsp;" : src;
+}
+
 -(void)renderFieldTable:(NSMutableString *)s sobject:(ZKDescribeSObject *)desc {
 	NSString *blueKey = [[NSBundle mainBundle] pathForResource:@"key_b" ofType:@"png"];
 	NSString *redKey  = [[NSBundle mainBundle] pathForResource:@"key_r" ofType:@"png"];
@@ -95,9 +99,9 @@
 			[s appendFormat:@"<img src='file://%@' alt='Primary Key'>", redKey];
 		if ([f externalId])
 			[s appendFormat:@"<img src='file://%@' alt='External Id'>", blueKey];
-		[s appendFormat:@"%@</td><td>%@</td>", [f name], [f label]];
-		[s appendFormat:@"<td>%@</td>", [f descriptiveType]];
-		[s appendFormat:@"<td class='properties'>%@</td>", [f properties]];
+		[s appendFormat:@"%@</td><td>%@</td>", [f name], tc([f label])];
+		[s appendFormat:@"<td>%@</td>", tc([f descriptiveType])];
+		[s appendFormat:@"<td class='properties'>%@</td>", tc([f properties])];
 		[s appendString:@"</tr>"];
 		if ([[f calculatedFormula] length] > 0) {
 			[s appendFormat:@"<tr><td class='indent'>&nbsp;</td><td colspan='4'>Formula : %@</td></tr>", [f calculatedFormula]];
@@ -117,8 +121,8 @@
 	[s appendFormat:@"<h2>Relationships to %@</h2><table cellspacing='0' cellpadding='0'><tr><th>Object / Field</th><th>Relationship Name</th><th>Cascade Delete</th></tr>", [desc name]];
 	for (ZKChildRelationship *r in cr) {
 		[s appendFormat:@"<tr><td>%@.%@</td>", [r childSObject], [r field]];
-		[s appendFormat:@"<td>%@</td>", [r relationshipName] == nil ? @"" : [r relationshipName]];
-		[s appendFormat:@"<td>%@</td>", [r cascadeDelete] ? @"Yes" : @""];
+		[s appendFormat:@"<td>%@</td>", tc([r relationshipName])];
+		[s appendFormat:@"<td>%@</td>", tc([r cascadeDelete] ? @"Yes" : @"")];
 		[s appendString:@"</tr>"];
 	}
     [s appendString:@"</table>"];
