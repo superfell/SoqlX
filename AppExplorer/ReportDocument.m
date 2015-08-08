@@ -230,8 +230,12 @@ NSString * tc(NSString *src) {
 
 - (IBAction)saveAsPdf:(id)sender {
 	NSSavePanel *sp = [NSSavePanel savePanel];
-    [sp setAllowedFileTypes:[NSArray arrayWithObject:@"pdf"]];
+    [sp setAllowedFileTypes:@[@"pdf"]];
 	[sp setTitle:@"Save Schema Report"];
+    [sp setAllowsOtherFileTypes:YES];
+    [sp setCanSelectHiddenExtension:YES];
+    [sp setNameFieldStringValue:[self name]];
+    
 	NSWindow *window = [[[self windowControllers] objectAtIndex:0] window];
     [sp beginSheetModalForWindow:window completionHandler:^(NSInteger result) {
         [self savePanelDidEnd:sp returnCode:result contextInfo:nil];
