@@ -238,16 +238,13 @@ NSString * tc(NSString *src) {
     
 	NSWindow *window = [[[self windowControllers] objectAtIndex:0] window];
     [sp beginSheetModalForWindow:window completionHandler:^(NSInteger result) {
-        [self savePanelDidEnd:sp returnCode:result contextInfo:nil];
+        if (NSFileHandlingPanelOKButton == result) {
+            [sp orderOut:nil];
+            NSView *docView = [[[webview mainFrame] frameView] documentView];
+            NSData *pdf = [docView dataWithPDFInsideRect:[docView bounds]];
+            [pdf writeToURL:[sp URL] atomically:YES];
+        }
     }];
-}
-
-- (void)savePanelDidEnd:(NSSavePanel *)sheet returnCode:(int)returnCode contextInfo:(void  *)contextInfo {
-	if (NSFileHandlingPanelOKButton == returnCode) {
-		NSView *docView = [[[webview mainFrame] frameView] documentView];
-		NSData *pdf =  [docView dataWithPDFInsideRect:[docView bounds]];
-	    [pdf writeToURL:[sheet URL] atomically:YES];
-	}
 }
 
 @end
