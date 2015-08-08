@@ -963,7 +963,7 @@ DQ
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" id="1671">
-                        <rect key="frame" x="697.00000002181332" y="7" width="300" height="14"/>
+                        <rect key="frame" x="697.00000003281866" y="7" width="300" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="API Calls" id="1672">
                             <font key="font" metaFont="smallSystem"/>
@@ -1088,11 +1088,6 @@ DQ
                 <menuItem title="Show in browser" id="1251">
                     <connections>
                         <action selector="showSelectedIdFronRootInBrowser:" target="218" id="1263"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Delete" tag="1" id="1347">
-                    <connections>
-                        <action selector="deleteSelectedRow:" target="218" id="1349"/>
                     </connections>
                 </menuItem>
             </items>
