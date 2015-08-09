@@ -35,7 +35,6 @@
     NSMutableDictionary     *sortedDescribes;
 	NSMutableDictionary		*operations;
     NSMutableDictionary     *icons;
-	NSOperationQueue		*describeQueue;
 	
 	NSString				*filter;
 	NSArray					*filteredTypes;

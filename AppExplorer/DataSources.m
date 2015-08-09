@@ -29,6 +29,7 @@
 @interface DescribeListDataSource ()
 -(void)updateFilter;
 -(void)prefsChanged:(NSNotification *)notif;
+-(void)startBackgroundDescribes;
 @end
 
 @interface ZKDescribeField (Filtering)
@@ -48,8 +49,6 @@
 
 - (id)init {
 	self = [super init];
-	describeQueue = [[NSOperationQueue alloc] init];
-	[describeQueue setMaxConcurrentOperationCount:2];
     fieldSortOrder = [[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)] retain];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(prefsChanged:) name:NSUserDefaultsDidChangeNotification object:nil];
 	return self;
@@ -62,7 +61,6 @@
 	[operations release];
 	[describes release];
     [sortedDescribes release];
-	[describeQueue release];
 	[filter release];
 	[filteredTypes release];
 	[outlineView release];
@@ -99,7 +97,7 @@
             [outlineView reloadItem:[byname objectForKey:tn]];
         }];
     }
-    
+    [self startBackgroundDescribes];
 	[self updateFilter];
 }
 
@@ -184,14 +182,76 @@
 	ZKDescribeSObject * d = [describes objectForKey:t];
 	if (d == nil) {
 		if (![self isTypeDescribable:t]) 
-			return nil; 
+			return nil;
 		d = [sforce describeSObject:t];
-        NSArray *sortedFields = [[d fields] sortedArrayUsingDescriptors:[NSArray arrayWithObject:fieldSortOrder]];
-		[describes setObject:d forKey:t];
+        // this is always called on the main thread, can fiddle with the cache directly
+        NSArray *sortedFields = [[d fields] sortedArrayUsingDescriptors:@[fieldSortOrder]];
+        [describes setObject:d forKey:t];
         [sortedDescribes setObject:sortedFields forKey:t];
-		[self performSelectorOnMainThread:@selector(updateFilter) withObject:nil waitUntilDone:NO];
+        [self performSelectorOnMainThread:@selector(updateFilter) withObject:nil waitUntilDone:NO];
 	}
 	return d;
+}
+
+-(void)addDescribesToCache:(NSArray *)newDescribes {
+    NSMutableArray *sorted = [NSMutableArray arrayWithCapacity:[newDescribes count]];
+    for (ZKDescribeSObject * d in newDescribes) {
+        [sorted addObject:[[d fields] sortedArrayUsingDescriptors:@[fieldSortOrder]]];
+    }
+    dispatch_async(dispatch_get_main_queue(), ^() {
+        int i = 0;
+        for (ZKDescribeSObject *d in newDescribes) {
+            NSString *k = [d.name lowercaseString];
+            if ([describes objectForKey:k] == nil) {
+                [describes setObject:d forKey:k];
+                [sortedDescribes setObject:[sorted objectAtIndex:i] forKey:k];
+            }
+            i++;
+        }
+        [self updateFilter];
+    });
+}
+
+-(void)startBackgroundDescribes {
+    ZKSforceClient *client = [sforce copyWithZone:nil];
+    NSArray *toDescribe = [descGlobalSobjects allKeys];
+    const int DESC_BATCH = 6;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^() {
+        NSMutableArray *batch = [NSMutableArray arrayWithCapacity:DESC_BATCH];
+        NSArray *leftTodo = toDescribe;
+        NSArray __block *alreadyDescribed = nil;
+        int i;
+        while ([leftTodo count] > 0) {
+            [alreadyDescribed release];
+            dispatch_sync(dispatch_get_main_queue(), ^() {
+                alreadyDescribed = [[describes allKeys] retain];
+            });
+            [batch removeAllObjects];
+            for (i=[leftTodo count]-1; i >= 0; i--) {
+                NSString *item = leftTodo[i];
+                if ([alreadyDescribed containsObject:item]) {
+                    continue;
+                }
+                [batch addObject:item];
+                if ([batch count] >= DESC_BATCH) break;
+            }
+            if ([batch count] > 0) {
+                [self addDescribesToCache:[client describeSObjects:batch]];
+            }
+            leftTodo = [leftTodo subarrayWithRange:NSMakeRange(0, i+1)];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^() {
+            // sanity check we got everything
+            if ([descGlobalSobjects count] != [describes count]) {
+                NSLog(@"Background describe finished, but there are still missing describes");
+                for (NSString *k in [descGlobalSobjects allKeys]) {
+                    if ([describes objectForKey:k] == nil) {
+                        NSLog(@"\t%@", k);
+                    }
+                }
+            }
+        });
+    });
 }
 
 // for use in an outline view
