@@ -41,10 +41,12 @@
 	NSOutlineView			*outlineView;
     
     NSSortDescriptor        *fieldSortOrder;
+    int32_t                 stopBackgroundDescribes;
 }
 
 - (void)setSforce:(ZKSforceClient *)sf;
 - (void)setTypes:(ZKDescribeGlobalTheme *)t view:(NSOutlineView *)ov;
+- (void)stopBackgroundDescribe;
 
 // access to the desc cache
 - (ZKDescribeSObject *)describe:(NSString *)type;

@@ -105,7 +105,8 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 - (void)awakeFromNib {
 	[myWindow setContentBorderThickness:28.0 forEdge:NSMinYEdge]; 	
 	[myWindow setContentBorderThickness:28.0 forEdge:NSMaxYEdge]; 	
-
+    [myWindow setDelegate:self];
+    
 	// Turn on full-screen option in Lion
 	//if ([myWindow respondsToSelector:@selector(setCollectionBehavior:)]) {
 	//	[myWindow setCollectionBehavior:[myWindow collectionBehavior] | (1 << 7)];
@@ -147,6 +148,10 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[childResults release];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 	[super dealloc];
+}
+
+- (void)windowWillClose:(NSNotification *)notification {
+    [descDataSource stopBackgroundDescribe];
 }
 
 -(void)updateQueryTextFontSize:(id)sender {

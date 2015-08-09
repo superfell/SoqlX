@@ -51,6 +51,7 @@
 	self = [super init];
     fieldSortOrder = [[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)] retain];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(prefsChanged:) name:NSUserDefaultsDidChangeNotification object:nil];
+    stopBackgroundDescribes = 0;
 	return self;
 }
 
@@ -214,6 +215,8 @@
 
 -(void)startBackgroundDescribes {
     ZKSforceClient *client = [sforce copyWithZone:nil];
+    // stop race condition with the delegate going away from under us.
+    [client.delegate retain];
     NSArray *toDescribe = [descGlobalSobjects allKeys];
     const int DESC_BATCH = 6;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^() {
@@ -221,7 +224,7 @@
         NSArray *leftTodo = toDescribe;
         NSArray __block *alreadyDescribed = nil;
         int i;
-        while ([leftTodo count] > 0) {
+        while ([leftTodo count] > 0 && (OSAtomicAdd32(0, &stopBackgroundDescribes) == 0)) {
             dispatch_sync(dispatch_get_main_queue(), ^() {
                 alreadyDescribed = [[describes allKeys] retain];
             });
@@ -241,6 +244,8 @@
             [alreadyDescribed release];
         }
         dispatch_async(dispatch_get_main_queue(), ^() {
+            [client.delegate autorelease];
+            [client autorelease];
             // sanity check we got everything
             if ([descGlobalSobjects count] != [describes count]) {
                 NSLog(@"Background describe finished, but there are still missing describes");
@@ -252,6 +257,10 @@
             }
         });
     });
+}
+
+-(void)stopBackgroundDescribe {
+    OSAtomicIncrement32(&stopBackgroundDescribes);
 }
 
 // for use in an outline view
