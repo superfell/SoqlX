@@ -308,19 +308,6 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
         [descDataSource setTypes:result view:describeList];
         [self didChangeValueForKey:@"SObjects"];
     }];
-    
-    [sforce performDescribeAvailableQuickActions:nil failBlock:^(NSException *result) {
-        NSLog(@"error doing descAQA %@", result);
-    } completeBlock:^(NSArray *result) {
-        for (ZKDescribeAvailableQuickActionResult *qa in result)
-            NSLog(@"quick action %@ %@ %@", [qa label], [qa name], [qa type]);
-        [sforce performDescribeQuickActions:[result valueForKey:@"name"] failBlock:^(NSException *result) {
-            NSLog(@"error doing descAQA %@", result);
-        } completeBlock:^(NSArray *result) {
-            for (ZKDescribeQuickActionResult *r in result)
-                NSLog(@"action %@ %@", [r label], [r iconUrl]);
-        }];
-    }];
 }
 
 - (void)setSoqlString:(NSString *)str {
