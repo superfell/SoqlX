@@ -222,7 +222,6 @@
         NSArray __block *alreadyDescribed = nil;
         int i;
         while ([leftTodo count] > 0) {
-            [alreadyDescribed release];
             dispatch_sync(dispatch_get_main_queue(), ^() {
                 alreadyDescribed = [[describes allKeys] retain];
             });
@@ -239,6 +238,7 @@
                 [self addDescribesToCache:[client describeSObjects:batch]];
             }
             leftTodo = [leftTodo subarrayWithRange:NSMakeRange(0, i+1)];
+            [alreadyDescribed release];
         }
         dispatch_async(dispatch_get_main_queue(), ^() {
             // sanity check we got everything
