@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2012 Simon Fell
+// Copyright (c) 2006-2015 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -32,6 +32,7 @@
 @implementation ZKLoginController
 
 @synthesize clientId, urlOfNewServer, statusText, password, preferedApiVersion, delegate, selectedCredential;
+@synthesize tokenWindow, apiSecurityToken;
 
 static NSString *login_lastUsernameKey = @"login_lastUserName";
 static NSString *prod = @"https://www.salesforce.com";
@@ -45,6 +46,10 @@ static NSString *test = @"https://test.salesforce.com";
     if ([key isEqualToString:@"credentials"] || [key isEqualToString:@"canDeleteServer"])
         return [paths setByAddingObject:@"server"];
     return paths;
+}
+
++ (NSSet *)keyPathsForValuesAffectingHasEnteredToken {
+    return [NSSet setWithObject:@"apiSecurityToken"];
 }
 
 - (id)init {
@@ -71,6 +76,8 @@ static NSString *test = @"https://test.salesforce.com";
 	[sforce release];
 	[urlOfNewServer release];
     [nibTopLevelObjects release];
+    [tokenWindow release];
+    [apiSecurityToken release];
 	[super dealloc];
 }
 
@@ -288,6 +295,13 @@ static NSString *test = @"https://test.salesforce.com";
 		[self performLogin:&ex];
 		if (ex != nil) {
 			[self setStatusText:[ex reason]];
+            if ([[ex reason] hasPrefix:@"LOGIN_MUST_USE_SECURITY_TOKEN:"]) {
+                NSInteger mc =[NSApp runModalForWindow:tokenWindow];
+                [tokenWindow orderOut:self];
+                if (NSModalResponseStop == mc) {
+                    [self login:sender];
+                }
+            }
 			return;
 		} 
 		if (selectedCredential == nil || (![[[selectedCredential username] lowercaseString] isEqualToString:[username lowercaseString]])) {
@@ -366,6 +380,24 @@ static NSString *test = @"https://test.salesforce.com";
 	[username autorelease];
 	username = [aUsername copy];
 	[self setPasswordFromKeychain];
+}
+
+- (IBAction)loginWithToken:(id)sender {
+    self.password = [NSString stringWithFormat:@"%@%@", password, apiSecurityToken];
+    [NSApp stopModal];
+}
+
+- (IBAction)cancelToken:(id)sender {
+    [NSApp abortModal];
+}
+
+- (IBAction)showTokenHelp:(id)sender {
+    NSURL *url = [NSURL URLWithString:@"https://help.salesforce.com/apex/HTViewHelpDoc?id=user_security_token.htm"];
+    [[NSWorkspace sharedWorkspace] openURL:url];
+}
+
+- (BOOL)hasEnteredToken {
+    return [apiSecurityToken length] > 0;
 }
 
 @end

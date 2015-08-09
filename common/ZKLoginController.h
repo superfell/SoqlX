@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2012 Simon Fell
+// Copyright (c) 2006-2015 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -57,6 +57,9 @@
 	IBOutlet NSWindow	*newUrlWindow;
 	IBOutlet NSProgressIndicator *loginProgress;
     
+    NSWindow        *tokenWindow;
+    NSString        *apiSecurityToken;
+    
     NSObject<ZKLoginControllerDelegate> *delegate;
     NSArray *nibTopLevelObjects;
 }
@@ -73,6 +76,13 @@
 - (IBAction)closeAddNewServer:(id)sender;
 - (IBAction)addNewServer:(id)sender;
 - (IBAction)deleteServer:(id)sender;
+
+- (IBAction)loginWithToken:(id)sender;
+- (IBAction)cancelToken:(id)sender;
+- (IBAction)showTokenHelp:(id)sender;
+- (BOOL)hasEnteredToken;
+@property (retain) IBOutlet NSWindow *tokenWindow;
+@property (retain) NSString *apiSecurityToken;
 
 @property (retain) NSString *username;
 @property (retain) NSString *password;
