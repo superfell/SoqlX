@@ -963,7 +963,7 @@ DQ
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" id="1671">
-                        <rect key="frame" x="697.00000003281866" y="7" width="300" height="14"/>
+                        <rect key="frame" x="697.0000000438904" y="7" width="300" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="API Calls" id="1672">
                             <font key="font" metaFont="smallSystem"/>
@@ -1154,6 +1154,7 @@ DQ
         </customObject>
         <customObject id="1449" customClass="ApexController">
             <connections>
+                <outlet property="apexTextField" destination="1644" id="Kso-kq-GWX"/>
                 <outlet property="resultsController" destination="1583" id="1640"/>
                 <outlet property="textHeader" destination="1559" id="1560"/>
             </connections>

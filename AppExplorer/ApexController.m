@@ -94,12 +94,15 @@
 	[textHeader setHeaderText:@"Anonymous Apex"];
 	results = [[NSMutableArray arrayWithCapacity:20] retain];
 	[self setApex:[[NSUserDefaults standardUserDefaults] objectForKey:@"LastApexExec"]];
+    [self.apexTextField setEnabledTextCheckingTypes:0];
+    [self.apexTextField setSmartInsertDeleteEnabled:NO];
 }
 
 -(void)dealloc {
 	[apex release];
 	[results release];
 	[apexClient release];
+    self.apexTextField = nil;
 	[super dealloc];
 }
 

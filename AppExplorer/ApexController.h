@@ -60,6 +60,7 @@
 
 -(void)setSforceClient:(ZKSforceClient *)client;
 
+@property (retain) IBOutlet NSTextView *apexTextField;
 @property (retain) NSString *apex;
 
 -(NSUInteger)countOfResults;

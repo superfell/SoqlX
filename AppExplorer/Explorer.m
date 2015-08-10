@@ -106,6 +106,7 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[myWindow setContentBorderThickness:28.0 forEdge:NSMinYEdge]; 	
 	[myWindow setContentBorderThickness:28.0 forEdge:NSMaxYEdge]; 	
     [myWindow setDelegate:self];
+    [soql setEnabledTextCheckingTypes:0];
     
 	// Turn on full-screen option in Lion
 	//if ([myWindow respondsToSelector:@selector(setCollectionBehavior:)]) {
