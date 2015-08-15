@@ -47,7 +47,6 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 - (NSString *)soqlString;
 
 - (void)colorize;
-- (NSString *)parseEntityName:(NSArray *)words;
 
 - (void)describeFinished:(NSNotification *)notification;
 
@@ -56,11 +55,59 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 
 @property (retain) NSMutableArray *selectedFields;
 @property (retain) NSString *selectedObjectName;
+
+@property (retain) NSString *previouslyColorized;
+@property (retain) ZKDescribeGlobalSObject *previousColorizedDescribe;
+@end
+
+
+@interface ColorizerStyle : NSObject
+
+@property (retain) NSColor *fieldColor;
+@property (retain) NSColor *keywordColor;
+@property (retain) NSNumber *underlineStyle;
+@property (retain) NSDictionary *underlined;
+@property (retain) NSDictionary *noUnderline;
+
++(ColorizerStyle *)style;
+
+@end
+
+@implementation ColorizerStyle
+
+@synthesize fieldColor, keywordColor, underlineStyle, underlined, noUnderline;
+
+-(id)init {
+    self = [super init];
+    self.fieldColor = [NSColor colorWithCalibratedRed:0.25 green:0.25 blue:0.8 alpha: 1.0];
+    self.keywordColor = [NSColor colorWithCalibratedRed:0.8 green:0.25 blue:0.25 alpha: 1.0];
+    
+    self.underlineStyle = [NSNumber numberWithInt:(NSUnderlineStyleSingle | NSUnderlinePatternDot | NSUnderlineByWordMask)];
+    NSMutableDictionary *u = [NSMutableDictionary dictionary];
+    [u setObject:underlineStyle forKey:NSUnderlineStyleAttributeName];
+    [u setObject:[NSColor redColor] forKey:NSUnderlineColorAttributeName];
+    self.underlined = [NSDictionary dictionaryWithDictionary:u];
+    
+    NSMutableDictionary *nu = [NSMutableDictionary dictionary];
+    [nu setObject:[NSNumber numberWithInt:NSUnderlineStyleNone] forKey:NSUnderlineStyleAttributeName];
+    self.noUnderline = [NSDictionary dictionaryWithDictionary:nu];
+    return self;
+}
+
++(ColorizerStyle *)style {
+    static ColorizerStyle *instance;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        instance = [[ColorizerStyle alloc] init];
+    });
+    return instance;
+}
+
 @end
 
 @implementation Explorer
 
-@synthesize statusText, schemaViewIsActive, apiCallCountText, selectedObjectName, selectedFields;
+@synthesize statusText, schemaViewIsActive, apiCallCountText, selectedObjectName, selectedFields, previouslyColorized, previousColorizedDescribe;
 
 + (void)initialize {
 	NSMutableDictionary * defaults = [NSMutableDictionary dictionary];
@@ -147,6 +194,8 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[rootResults removeObserver:self forKeyPath:@"hasCheckedRows"];
 	[rootResults release];
 	[childResults release];
+    self.previouslyColorized = nil;
+    self.previousColorizedDescribe= nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 	[super dealloc];
 }
@@ -318,6 +367,8 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 
 - (void)setSoqlString:(NSString *)str {
 	[[soql textStorage] setAttributedString:[[[NSAttributedString alloc] initWithString:str] autorelease]];
+    self.previouslyColorized = nil;
+    self.previousColorizedDescribe = nil;
 	[self colorize];
 }
 
@@ -351,35 +402,35 @@ typedef enum SoqlParsePosition {
 	[self performSelectorOnMainThread:@selector(colorize) withObject:nil waitUntilDone:NO];
 }
 
-- (NSString *)parseEntityName:(NSArray *)words {
-	NSMutableAttributedString *w;
-	BOOL atFrom = NO;
-	NSEnumerator *e = [words objectEnumerator];
-	while (w = [e nextObject]) {
-		if (atFrom)
-			return [w string];
-		if ([[w string] caseInsensitiveCompare:@"from"] == NSOrderedSame)
-			atFrom = YES;
-	}
-	return nil;
+- (void)enumerateWordsInString:(NSString *)s withBlock:(void(^)(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop)) block {
+    [s enumerateSubstringsInRange:NSMakeRange(0, s.length)
+                          options:NSStringEnumerationByWords | NSStringEnumerationLocalized
+                       usingBlock:block];
+}
+
+- (NSString *)parseEntityName:(NSString *)soqlText {
+    __block NSString *entity = nil;
+	__block BOOL atFrom = NO;
+    [self enumerateWordsInString:soqlText withBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+        if (atFrom) {
+            entity = [substring retain];
+            *stop = YES;
+            
+        } else if (NSOrderedSame == [substring caseInsensitiveCompare:@"from"]) {
+            atFrom = YES;
+        }
+    }];
+    return [entity autorelease];
 }
 
 - (void)colorize {
-	NSColor *fieldColor = [NSColor colorWithCalibratedRed:0.25 green:0.25 blue:0.8 alpha: 1.0];
-	NSColor *keywordColor = [NSColor colorWithCalibratedRed: 0.8 green:0.25 blue:0.25 alpha: 1.0];
-
-	NSNumber *underlineStyle = [NSNumber numberWithInt:(NSUnderlineStyleSingle | NSUnderlinePatternDot | NSUnderlineByWordMask)];
-	NSMutableDictionary *underlined = [NSMutableDictionary dictionary];
-	[underlined setObject:underlineStyle forKey:NSUnderlineStyleAttributeName];
-	[underlined setObject:[NSColor redColor] forKey:NSUnderlineColorAttributeName];
-
-	NSMutableDictionary *noUnderline = [NSMutableDictionary dictionary];
-	[noUnderline setObject:[NSNumber numberWithInt:NSUnderlineStyleNone] forKey:NSUnderlineStyleAttributeName];
+    ColorizerStyle *style = [ColorizerStyle style];
 	
-	[[soql textStorage] setFont:[NSFont userFixedPitchFontOfSize:[[[NSUserDefaults standardUserDefaults] valueForKey:PREF_TEXT_SIZE] floatValue]]];
-		
-	NSArray * words = [[soql textStorage] words];
-	NSString *entity = [self parseEntityName:words];
+    NSTextStorage *soqlTextStorage = [soql textStorage];
+    NSString *soqlText = [soqlTextStorage string];
+	[soqlTextStorage setFont:[NSFont userFixedPitchFontOfSize:[[[NSUserDefaults standardUserDefaults] valueForKey:PREF_TEXT_SIZE] floatValue]]];
+	
+	NSString *entity = [self parseEntityName:soqlText];
 	ZKDescribeSObject *desc = nil;
 	if (entity != nil) {
 		if ([descDataSource hasDescribe:entity])
@@ -388,44 +439,47 @@ typedef enum SoqlParsePosition {
 			[descDataSource prioritizeDescribe:entity];
 		}
 	}
-	SoqlParsePosition p = sppStart;
-	NSMutableAttributedString *w;
-	NSEnumerator *e = [words objectEnumerator];
-	BOOL isKeyword, underline;
-	while (w = [e nextObject]) {
-		isKeyword = NO;
-		underline = NO;
-		if (p == sppStart && NSOrderedSame == [[w string] caseInsensitiveCompare:@"select"]) {
+	__block SoqlParsePosition p = sppStart;
+
+    // we can skip setting the text attributes on anything that appears before this cut off as its the same as what we did last time around.
+    NSUInteger alreadyProcessed = [soqlText commonPrefixWithString:self.previouslyColorized options:0].length;
+    // when the desribe turns up, start again
+    if (self.previousColorizedDescribe != desc)
+        alreadyProcessed = 0;
+
+    [self enumerateWordsInString:soqlText withBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+        BOOL isKeyword = NO, underline = NO;
+		if (p == sppStart && NSOrderedSame == [substring caseInsensitiveCompare:@"select"]) {
 			p = sppFields;
 			isKeyword = YES;
 		} else if (p == sppFields) {
-			if (NSOrderedSame == [[w string] caseInsensitiveCompare:@"from"]) {
+			if (NSOrderedSame == [substring caseInsensitiveCompare:@"from"]) {
 				p = sppFrom;
 				isKeyword = YES;
 			} else { 
-				if (desc != nil && [desc fieldWithName:[w string]] == nil) underline = YES;
+				if (desc != nil && [desc fieldWithName:substring] == nil) underline = YES;
 			}
 		} else if (p == sppFrom) {
-			if (NSOrderedSame == [[w string] caseInsensitiveCompare:@"where"]) {
+			if (NSOrderedSame == [substring caseInsensitiveCompare:@"where"]) {
 				p = sppWhere;
 				isKeyword = YES;
 			} else if (desc == nil) {
 				underline = YES;
 			}
 		} else if (p == sppWhere || p == sppWhereLiteral || p == sppWhereAndOr) {
-			if (NSOrderedSame == [[w string] caseInsensitiveCompare:@"not"]) {
+			if (NSOrderedSame == [substring caseInsensitiveCompare:@"not"]) {
 				p = sppWhereNot;
 				isKeyword = YES;
-			} else if ((NSOrderedSame == [[w string] caseInsensitiveCompare:@"and"]) || (NSOrderedSame == [[w string] caseInsensitiveCompare:@"or"])) {
+			} else if ((NSOrderedSame == [substring caseInsensitiveCompare:@"and"]) || (NSOrderedSame == [substring caseInsensitiveCompare:@"or"])) {
 				p = sppWhereAndOr;
 				isKeyword = YES;
 			} else {
 				p = sppWhereField;
-				if (desc != nil && [desc fieldWithName:[w string]] == nil) underline = YES;
+				if (desc != nil && [desc fieldWithName:substring] == nil) underline = YES;
 			}
 		} else if (p == sppWhereNot) {
 			p = sppWhereField;
-			if (desc != nil && [desc fieldWithName:[w string]] == nil) underline = YES;
+			if (desc != nil && [desc fieldWithName:substring] == nil) underline = YES;
 		} else if (p == sppWhereField) {
 			p = sppWhereOperator;
 			isKeyword = YES;
@@ -434,9 +488,15 @@ typedef enum SoqlParsePosition {
 		} else if (p == sppWhereLiteral) {
 			p = sppWhere;
 		}
-		[w addAttributes:underline ? underlined : noUnderline range:NSMakeRange(0, [w length])];
-		[w addAttribute:NSForegroundColorAttributeName value:isKeyword ? keywordColor : fieldColor range:NSMakeRange(0, [w length])];
-	}
+
+        if ((substringRange.length + substringRange.location) >= alreadyProcessed) {
+            // These 2 calls are the expensive part of this, so only do them once we past the comon prefix of what we processed last time [as that won't change]
+            [soqlTextStorage addAttributes:underline ? style.underlined : style.noUnderline range:substringRange];
+            [soqlTextStorage addAttribute:NSForegroundColorAttributeName value:isKeyword ? style.keywordColor : style.fieldColor range:substringRange];
+        }
+    }];
+    self.previouslyColorized = [NSString stringWithString:soqlText];
+    self.previousColorizedDescribe = desc;
 }
 
 -(NSString *)removeSuffix:(NSString *)suffix from:(NSString *)src {
