@@ -37,6 +37,7 @@
 
 static NSString *schemaTabId = @"schema";
 static CGFloat MIN_PANE_SIZE = 128.0f;
+static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
 @interface Explorer ()
 - (IBAction)initUi:(id)sender;
@@ -182,9 +183,13 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(describeFinished:) name:DescribeDidFinish object:nil];
     
     [queryListController setDelegate:self];
+    [queryListController addObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE options:NSKeyValueObservingOptionNew context:nil];
+    [detailsController addObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (void)dealloc {
+    [detailsController removeObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE];
+    [queryListController removeObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE];
     [selectedFields release];
     [selectedObjectName release];
 	[sforce release];
@@ -659,7 +664,16 @@ typedef enum SoqlParsePosition {
 	if (object == rootResults) {
 		[self willChangeValueForKey:@"hasSelectedForDelete"];
 		[self didChangeValueForKey:@"hasSelectedForDelete"];
-	}
+	} else if (object == detailsController) {
+        [self.detailsRecentSelector setSelected:[[change objectForKey:NSKeyValueChangeNewKey] boolValue] forSegment:0];
+    } else if (object == queryListController) {
+        [self.detailsRecentSelector setSelected:[[change objectForKey:NSKeyValueChangeNewKey] boolValue] forSegment:1];
+    }
+}
+
+- (IBAction)updateDetailsRecentSelection:(id)sender {
+    [detailsController setWindowVisible:[sender isSelectedForSegment:0]];
+    [queryListController setWindowVisible:[sender isSelectedForSegment:1]];
 }
 
 - (IBAction)deleteCheckedRows:(id)sender {

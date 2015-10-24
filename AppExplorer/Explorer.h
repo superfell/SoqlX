@@ -91,10 +91,13 @@
 - (IBAction)deleteSelectedRow:(id)sender;
 - (IBAction)deleteCheckedRows:(id)sender;
 - (IBAction)filterSObjectListView:(id)sender;
+- (IBAction)updateDetailsRecentSelection:(id)sender;
 
 @property (retain) NSString *statusText;
 @property (retain) NSString *apiCallCountText;
 @property (assign) BOOL schemaViewIsActive;
+
+@property (retain) IBOutlet NSSegmentedControl *detailsRecentSelector;
 
 - (BOOL)isLoggedIn;
 - (BOOL)hasSelectedForDelete;
