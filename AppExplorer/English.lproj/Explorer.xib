@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1080" identifier="macosx"/>
+        <deployment version="1060" identifier="macosx"/>
         <development version="6300" identifier="xcode"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9059"/>
     </dependencies>
@@ -19,7 +19,7 @@
                 <outlet property="childTableView" destination="1232" id="1238"/>
                 <outlet property="describeList" destination="1387" id="1395"/>
                 <outlet property="detailsController" destination="887" id="893"/>
-                <outlet property="detailsRecentSelector" destination="50h-Ye-RcN" id="7K4-aX-zEJ"/>
+                <outlet property="detailsRecentSelector" destination="87x-3E-Ucd" id="ee2-SB-Qdq"/>
                 <outlet property="myWindow" destination="290" id="316"/>
                 <outlet property="progress" destination="1248" id="1249"/>
                 <outlet property="queryListController" destination="1264" id="1336"/>
@@ -30,7 +30,6 @@
                 <outlet property="soqlHeader" destination="928" id="946"/>
                 <outlet property="soqlSchemaTabs" destination="924" id="947"/>
                 <outlet property="soqlTextSplitView" destination="1227" id="1240"/>
-                <outlet property="tabSegmentControl" destination="592" id="cmQ-y0-XQD"/>
                 <outlet property="vertSplitView" destination="963" id="993"/>
             </connections>
         </customObject>
@@ -44,6 +43,22 @@
                 <rect key="frame" x="0.0" y="0.0" width="1001" height="751"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
+                    <segmentedControl verticalHuggingPriority="750" id="592">
+                        <rect key="frame" x="722" y="730" width="154" height="19"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                        <animations/>
+                        <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="automatic" trackingMode="selectOne" id="1197">
+                            <font key="font" metaFont="smallSystem"/>
+                            <segments>
+                                <segment label="Query" imageScaling="none" width="50" selected="YES"/>
+                                <segment label="Schema" imageScaling="none" width="50" tag="1"/>
+                                <segment label="Apex" width="50" tag="2"/>
+                            </segments>
+                        </segmentedCell>
+                        <connections>
+                            <action selector="takeSelectedTabViewItemFromSender:" target="924" id="960"/>
+                        </connections>
+                    </segmentedControl>
                     <textField verticalHuggingPriority="750" id="595">
                         <rect key="frame" x="40" y="6" width="627" height="16"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -194,6 +209,44 @@
                                                                             <binding destination="218" name="enabled" keyPath="isLoggedIn" id="959"/>
                                                                         </connections>
                                                                     </button>
+                                                                    <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="929">
+                                                                        <rect key="frame" x="0.0" y="35" width="837" height="71"/>
+                                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                                        <clipView key="contentView" id="9B8-Qx-eLR">
+                                                                            <rect key="frame" x="0.0" y="0.0" width="837" height="71"/>
+                                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                                            <subviews>
+                                                                                <textView importsGraphics="NO" allowsUndo="YES" usesRuler="YES" usesFontPanel="YES" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="930">
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="837" height="71"/>
+                                                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                                                                    <animations/>
+                                                                                    <color key="backgroundColor" red="0.90196078999999996" green="0.90196078999999996" blue="0.90196078999999996" alpha="1" colorSpace="calibratedRGB"/>
+                                                                                    <size key="minSize" width="837" height="71"/>
+                                                                                    <size key="maxSize" width="1674" height="10000000"/>
+                                                                                    <color key="insertionPointColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                                                    <size key="minSize" width="837" height="71"/>
+                                                                                    <size key="maxSize" width="1674" height="10000000"/>
+                                                                                    <connections>
+                                                                                        <outlet property="delegate" destination="218" id="952"/>
+                                                                                        <outlet property="menu" destination="iz2-fO-orK" id="o9T-J1-E2J"/>
+                                                                                    </connections>
+                                                                                </textView>
+                                                                            </subviews>
+                                                                            <animations/>
+                                                                            <color key="backgroundColor" red="0.90196078999999996" green="0.90196078999999996" blue="0.90196078999999996" alpha="1" colorSpace="calibratedRGB"/>
+                                                                        </clipView>
+                                                                        <animations/>
+                                                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" controlSize="small" horizontal="YES" id="1215">
+                                                                            <rect key="frame" x="-100" y="-100" width="87" height="18"/>
+                                                                            <autoresizingMask key="autoresizingMask"/>
+                                                                            <animations/>
+                                                                        </scroller>
+                                                                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" controlSize="small" horizontal="NO" id="1214">
+                                                                            <rect key="frame" x="-22" y="1" width="11" height="88"/>
+                                                                            <autoresizingMask key="autoresizingMask"/>
+                                                                            <animations/>
+                                                                        </scroller>
+                                                                    </scrollView>
                                                                     <customView id="928" customClass="StandAloneTableHeaderView">
                                                                         <rect key="frame" x="0.0" y="106" width="837" height="17"/>
                                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
@@ -994,35 +1047,19 @@ DQ
                             </binding>
                         </connections>
                     </textField>
-                    <segmentedControl verticalHuggingPriority="750" id="50h-Ye-RcN">
-                        <rect key="frame" x="888" y="729" width="109" height="19"/>
+                    <segmentedControl verticalHuggingPriority="750" id="87x-3E-Ucd">
+                        <rect key="frame" x="882" y="730" width="113" height="19"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                         <animations/>
-                        <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="automatic" trackingMode="selectAny" id="kAj-9P-czC">
+                        <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="automatic" trackingMode="selectAny" id="aCP-ec-ph2">
                             <font key="font" metaFont="smallSystem"/>
                             <segments>
-                                <segment label="Details" imageScaling="none"/>
-                                <segment label="Recent" imageScaling="none" tag="1"/>
+                                <segment label="Details" imageScaling="none" width="55"/>
+                                <segment label="Recent" imageScaling="none" width="55" tag="1"/>
                             </segments>
                         </segmentedCell>
                         <connections>
-                            <action selector="updateDetailsRecentSelection:" target="218" id="HsV-Dx-6Rc"/>
-                        </connections>
-                    </segmentedControl>
-                    <segmentedControl verticalHuggingPriority="750" id="592">
-                        <rect key="frame" x="712" y="728" width="170" height="19"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
-                        <animations/>
-                        <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="automatic" trackingMode="selectOne" id="1197">
-                            <font key="font" metaFont="smallSystem"/>
-                            <segments>
-                                <segment label="Query" imageScaling="none" width="60" selected="YES"/>
-                                <segment label="Schema" imageScaling="none" width="60" tag="1"/>
-                                <segment label="Apex" imageScaling="none" width="46" tag="2"/>
-                            </segments>
-                        </segmentedCell>
-                        <connections>
-                            <action selector="takeSelectedTabViewItemFromSender:" target="924" id="960"/>
+                            <action selector="updateDetailsRecentSelection:" target="218" id="zwO-Op-Wk1"/>
                         </connections>
                     </segmentedControl>
                 </subviews>
@@ -1033,44 +1070,6 @@ DQ
                 <outlet property="menu" destination="1257" id="1259"/>
             </connections>
         </window>
-        <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="929">
-            <rect key="frame" x="0.0" y="0.0" width="837" height="71"/>
-            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-            <clipView key="contentView" id="9B8-Qx-eLR">
-                <rect key="frame" x="0.0" y="0.0" width="837" height="71"/>
-                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                <subviews>
-                    <textView importsGraphics="NO" allowsUndo="YES" usesRuler="YES" usesFontPanel="YES" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="930">
-                        <rect key="frame" x="0.0" y="0.0" width="837" height="71"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                        <animations/>
-                        <color key="backgroundColor" red="0.90196078999999996" green="0.90196078999999996" blue="0.90196078999999996" alpha="1" colorSpace="calibratedRGB"/>
-                        <size key="minSize" width="837" height="71"/>
-                        <size key="maxSize" width="1674" height="10000000"/>
-                        <color key="insertionPointColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                        <size key="minSize" width="837" height="71"/>
-                        <size key="maxSize" width="1674" height="10000000"/>
-                        <connections>
-                            <outlet property="delegate" destination="218" id="952"/>
-                            <outlet property="menu" destination="iz2-fO-orK" id="o9T-J1-E2J"/>
-                        </connections>
-                    </textView>
-                </subviews>
-                <animations/>
-                <color key="backgroundColor" red="0.90196078999999996" green="0.90196078999999996" blue="0.90196078999999996" alpha="1" colorSpace="calibratedRGB"/>
-            </clipView>
-            <animations/>
-            <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" controlSize="small" horizontal="YES" id="1215">
-                <rect key="frame" x="-100" y="-100" width="87" height="18"/>
-                <autoresizingMask key="autoresizingMask"/>
-                <animations/>
-            </scroller>
-            <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" controlSize="small" horizontal="NO" id="1214">
-                <rect key="frame" x="-22" y="1" width="11" height="88"/>
-                <autoresizingMask key="autoresizingMask"/>
-                <animations/>
-            </scroller>
-        </scrollView>
         <userDefaultsController representsSharedInstance="YES" id="354" userLabel="Shared Defaults"/>
         <customObject id="560" userLabel="SchemaController" customClass="SchemaController">
             <connections>
