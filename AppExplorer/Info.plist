@@ -9,7 +9,7 @@
 	<key>CFBundleIconFile</key>
 	<string>sf</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.pocketsoap.osx.SoqlXplorer</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -19,7 +19,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>2.3.1</string>
+	<string>2.4</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.developer-tools</string>
 	<key>LSMinimumSystemVersion</key>
@@ -30,9 +30,13 @@
 	<string>NSApplication</string>
 	<key>SUFeedURL</key>
 	<string>http://www.pocketsoap.com/osx/soqlx/appcast.xml</string>
-	<key>ZKHelpUrl</key>
-	<string>http://www.pocketsoap.com/osx/soqlx/help/</string>
 	<key>SUPublicDSAKeyFile</key>
 	<string>dsa_pub.pem</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>MacOSX</string>
+	</array>
+	<key>ZKHelpUrl</key>
+	<string>http://www.pocketsoap.com/osx/soqlx/help/</string>
 </dict>
 </plist>
