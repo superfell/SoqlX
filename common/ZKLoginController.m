@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2015 Simon Fell
+// Copyright (c) 2006-2016 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -56,7 +56,7 @@ static NSString *test = @"https://test.salesforce.com";
 	self = [super init];
 	server = [[[NSUserDefaults standardUserDefaults] objectForKey:@"server"] copy];
 	[self setUsername:[[NSUserDefaults standardUserDefaults] objectForKey:login_lastUsernameKey]];
-	preferedApiVersion = 34;
+	preferedApiVersion = 36;
 	return self;
 }
 
