@@ -192,7 +192,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 - (void)dealloc {
     [detailsController removeObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE];
     [detailsController autorelease];
-    [queryListController setDelegate:nil];
     [queryListController removeObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE];
     [queryListController release];
     [selectedFields release];
