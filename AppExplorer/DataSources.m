@@ -218,12 +218,13 @@
     // stop race condition with the delegate going away from under us.
     [client.delegate retain];
     NSArray *toDescribe = [descGlobalSobjects allKeys];
-    const int DESC_BATCH = 6;
+    const int DEFAULT_DESC_BATCH = 16;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^() {
-        NSMutableArray *batch = [NSMutableArray arrayWithCapacity:DESC_BATCH];
+        NSMutableArray *batch = [NSMutableArray arrayWithCapacity:DEFAULT_DESC_BATCH];
         NSArray *leftTodo = toDescribe;
         NSArray __block *alreadyDescribed = nil;
         int i;
+        int batchSize = DEFAULT_DESC_BATCH;
         while ([leftTodo count] > 0 && (OSAtomicAdd32(0, &stopBackgroundDescribes) == 0)) {
             dispatch_sync(dispatch_get_main_queue(), ^() {
                 alreadyDescribed = [[describes allKeys] retain];
@@ -235,10 +236,17 @@
                     continue;
                 }
                 [batch addObject:item];
-                if ([batch count] >= DESC_BATCH) break;
+                if ([batch count] >= batchSize) break;
             }
             if ([batch count] > 0) {
-                [self addDescribesToCache:[client describeSObjects:batch]];
+                @try {
+                    [self addDescribesToCache:[client describeSObjects:batch]];
+                    batchSize = MIN(DEFAULT_DESC_BATCH, MAX(2, batchSize * 3/2));
+                } @catch (NSException *ex) {
+                    NSLog(@"Failed to describe %@: %@", batch, ex);
+                    batchSize = MAX(1, batchSize / 2);
+                    continue;
+                }
             }
             leftTodo = [leftTodo subarrayWithRange:NSMakeRange(0, i+1)];
             [alreadyDescribed release];
@@ -333,7 +341,7 @@
 	NSMutableArray *t = [NSMutableArray arrayWithObjects:@"Name", @"Label", @"PluralLabel", @"Key Prefix", @"Custom", 
 				@"Createable", @"Updateable", @"Activateable", @"Deletable", @"Undeletable", 
 				@"Mergeable", @"Queryable", @"Retrieveable", @"Searchable", @"Layoutable",
-				@"Replicateable", @"Triggerable", @"URL for Edit", @"URL for Detail", @"URL for New", nil];
+				@"Replicateable", @"Triggerable", @"MRU Enabled", @"URL for Edit", @"URL for Detail", @"URL for New", nil];
 	NSArray *cr = [s childRelationships];
 	if ([cr count] > 0) {
 		NSString *sectionTitle = [NSString stringWithFormat:@"Relationships to %@", [sobject name]];
@@ -369,7 +377,7 @@
 	SEL selectors[] = { @selector(name), @selector(label), @selector(labelPlural), @selector(keyPrefix), @selector(custom),			
 						@selector(createable), @selector(updateable), @selector(activateable), @selector(deletable), @selector(undeletable),
 						@selector(mergeable), @selector(queryable), @selector(retrieveable), @selector(searchable), @selector(layoutable),
-						@selector(replicateable), @selector(triggerable), @selector(urlEdit), @selector(urlDetail), @selector(urlNew) };
+						@selector(replicateable), @selector(triggerable), @selector(mruEnabled), @selector(urlEdit), @selector(urlDetail), @selector(urlNew) };
 
 	int numSelectors = sizeof(selectors)/sizeof(*selectors);
 	
@@ -399,7 +407,7 @@
 					@"Length", @"Digits", @"Scale", @"Precision", @"Byte Length",
 					@"Createable", @"Updatable", @"Cascade Delete", @"Restricted Delete",
                     @"Default On Create", @"Calculated", @"AutoNumber",
-					@"Unique", @"Case Sensitive", @"Name Pointing", @"Sortable", @"Groupable", @"Permissionable",
+					@"Unique", @"Case Sensitive", @"Name Pointing", @"Sortable", @"Groupable", @"Aggregatable", @"Permissionable",
 					@"External Id", @"ID Lookup", @"Filterable", @"HTML Formatted", @"Name Field", @"Nillable", 
 					@"Name Pointing", @"Extra TypeInfo", @"Reference To", @"Relationship Name",
 					@"Dependent Picklist", @"Controller Name", @"Restricted Picklist", @"Query By Distance",
@@ -430,7 +438,7 @@
 						@selector(length), @selector(digits), @selector(scale), @selector(precision), @selector(byteLength),			
 						@selector(createable), @selector(updateable), @selector(cascadeDelete), @selector(restrictedDelete),
                         @selector(defaultedOnCreate), @selector(calculated), @selector(autoNumber),
-						@selector(unique), @selector(caseSensitive), @selector(namePointing), @selector(sortable), @selector(groupable), @selector(permissionable),
+						@selector(unique), @selector(caseSensitive), @selector(namePointing), @selector(sortable), @selector(groupable), @selector(aggregatable), @selector(permissionable),
 						@selector(externalId), @selector(idLookup), @selector(filterable), @selector(htmlFormatted), @selector(nameField), @selector(nillable),
 						@selector(namePointing), @selector(extraTypeInfo), @selector(referenceTo), @selector(relationshipName),
 						@selector(dependentPicklist), @selector(controllerName), @selector(restrictedPicklist), @selector(queryByDistance),
