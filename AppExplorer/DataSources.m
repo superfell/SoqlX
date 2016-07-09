@@ -21,7 +21,6 @@
 
 #import "DataSources.h"
 #import "zkSforce.h"
-#import "DescribeOperation.h"
 #import "HighlightTextFieldCell.h"
 #import "ZKDescribeThemeItem+ZKFindResource.h"
 #import "Prefs.h"

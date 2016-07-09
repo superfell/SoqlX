@@ -258,7 +258,6 @@
 		F4D7836B15D8814C00D00BB9 /* ZKDescribe_Reporting.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D7836A15D8814C00D00BB9 /* ZKDescribe_Reporting.m */; };
 		F4D9DD060AD8A1190065EA2D /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4D9DD050AD8A1190065EA2D /* Sparkle.framework */; };
 		F4D9DD1D0AD8A1840065EA2D /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = F4D9DD050AD8A1190065EA2D /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		F4DAAC340D31E812009C9C09 /* DescribeOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DAAC330D31E812009C9C09 /* DescribeOperation.m */; };
 		F4DD944B0AFEEC9400B0E3AC /* SchemaView.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DD94490AFEEC9400B0E3AC /* SchemaView.m */; };
 		F4DD94540AFEED9500B0E3AC /* SchemaController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DD94520AFEED9500B0E3AC /* SchemaController.m */; };
 		F4E11E361820AFD5001D18C6 /* ZKLimitInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E11E331820AFD5001D18C6 /* ZKLimitInfo.m */; };
@@ -776,8 +775,6 @@
 		F4D7836915D8814C00D00BB9 /* ZKDescribe_Reporting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKDescribe_Reporting.h; sourceTree = "<group>"; };
 		F4D7836A15D8814C00D00BB9 /* ZKDescribe_Reporting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZKDescribe_Reporting.m; sourceTree = "<group>"; };
 		F4D9DD050AD8A1190065EA2D /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
-		F4DAAC320D31E812009C9C09 /* DescribeOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DescribeOperation.h; sourceTree = "<group>"; };
-		F4DAAC330D31E812009C9C09 /* DescribeOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DescribeOperation.m; sourceTree = "<group>"; };
 		F4DD94480AFEEC9400B0E3AC /* SchemaView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchemaView.h; sourceTree = "<group>"; };
 		F4DD94490AFEEC9400B0E3AC /* SchemaView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SchemaView.m; sourceTree = "<group>"; };
 		F4DD94510AFEED9500B0E3AC /* SchemaController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SchemaController.h; sourceTree = "<group>"; };
@@ -831,8 +828,6 @@
 				F4B8AFC518A8540800FE114F /* IconProvider.h */,
 				F413C6520AACABD5000A8CDC /* DataSources.h */,
 				F413C6530AACABD5000A8CDC /* DataSources.m */,
-				F4DAAC320D31E812009C9C09 /* DescribeOperation.h */,
-				F4DAAC330D31E812009C9C09 /* DescribeOperation.m */,
 				F4D6E1870BD70DA200813881 /* EditableQueryResultWrapper.h */,
 				F4D6E1880BD70DA200813881 /* EditableQueryResultWrapper.m */,
 				F4CF71F20D4704EE001001F2 /* QueryResultTable.h */,
@@ -1540,7 +1535,6 @@
 				F4CD3DBA0B8572DB00084479 /* credential.m in Sources */,
 				F4D6E18A0BD70DA200813881 /* EditableQueryResultWrapper.m in Sources */,
 				F4A62E2F0D31AC6300D7EACA /* NSView_additions.m in Sources */,
-				F4DAAC340D31E812009C9C09 /* DescribeOperation.m in Sources */,
 				F4CF71F40D4704EE001001F2 /* QueryResultTable.m in Sources */,
 				F4CF73E80D49BDDB001001F2 /* QueryResultCell.m in Sources */,
 				F4F75D940D4EFCEE00608927 /* QueryTextListView.m in Sources */,
