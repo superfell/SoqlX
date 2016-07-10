@@ -432,8 +432,14 @@ typedef enum SoqlParsePosition {
 	
     NSTextStorage *soqlTextStorage = [soql textStorage];
     NSString *soqlText = [soqlTextStorage string];
-	[soqlTextStorage setFont:[NSFont userFixedPitchFontOfSize:[[[NSUserDefaults standardUserDefaults] valueForKey:PREF_TEXT_SIZE] floatValue]]];
-	
+    float fontSize = [[[NSUserDefaults standardUserDefaults] valueForKey:PREF_TEXT_SIZE] floatValue];
+    NSFont *font = [NSFont userFixedPitchFontOfSize:fontSize];
+    if (font == nil) {
+        NSLog(@"userFixedPitchFontOfSize:%f returned nil!", fontSize);
+    } else {
+        [soqlTextStorage setFont:font];
+    }
+    
 	NSString *entity = [self parseEntityName:soqlText];
 	ZKDescribeSObject *desc = nil;
 	if (entity != nil) {
