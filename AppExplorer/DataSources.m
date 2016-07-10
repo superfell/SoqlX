@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2014 Simon Fell
+// Copyright (c) 2006,2014,2016 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -31,8 +31,9 @@
 -(void)startBackgroundDescribes;
 @end
 
-@interface ZKDescribeField (Filtering)
+@interface ZKDescribeField (ZKDataSourceHelpers)
 -(BOOL)fieldMatchesFilter:(NSString *)filter;
+-(NSString *)defaultValueAsString;
 @end
 
 @implementation ZKDescribeField (Filtering)
@@ -40,6 +41,11 @@
 -(BOOL)fieldMatchesFilter:(NSString *)filter {
 	if (filter == nil) return NO;
 	return [[self name] rangeOfString:filter options:NSCaseInsensitiveSearch].location != NSNotFound;
+}
+
+-(NSString *)defaultValueAsString {
+    NSObject *dv = [[self defaultValue] value];
+    return dv == nil ? @"" : [dv description];
 }
 
 @end
@@ -239,7 +245,8 @@
             }
             if ([batch count] > 0) {
                 @try {
-                    [self addDescribesToCache:[client describeSObjects:batch]];
+                    NSArray *res = [client describeSObjects:batch];
+                    [self addDescribesToCache:res];
                     batchSize = MIN(DEFAULT_DESC_BATCH, MAX(2, batchSize * 3/2));
                 } @catch (NSException *ex) {
                     NSLog(@"Failed to describe %@: %@", batch, ex);
@@ -404,7 +411,7 @@
 	field = [f retain];
 	titles = [[NSArray arrayWithObjects:@"Name", @"Label", @"Type", @"Custom", @"Help Text",
 					@"Length", @"Digits", @"Scale", @"Precision", @"Byte Length",
-					@"Createable", @"Updatable", @"Cascade Delete", @"Restricted Delete",
+					@"Default Value", @"Createable", @"Updatable", @"Cascade Delete", @"Restricted Delete",
                     @"Default On Create", @"Calculated", @"AutoNumber",
 					@"Unique", @"Case Sensitive", @"Name Pointing", @"Sortable", @"Groupable", @"Aggregatable", @"Permissionable",
 					@"External Id", @"ID Lookup", @"Filterable", @"HTML Formatted", @"Name Field", @"Nillable", 
@@ -435,7 +442,7 @@
 
 	SEL selectors[] = { @selector(name), @selector(label), @selector(type), @selector(custom), @selector(inlineHelpText),
 						@selector(length), @selector(digits), @selector(scale), @selector(precision), @selector(byteLength),			
-						@selector(createable), @selector(updateable), @selector(cascadeDelete), @selector(restrictedDelete),
+						@selector(defaultValueAsString), @selector(createable), @selector(updateable), @selector(cascadeDelete), @selector(restrictedDelete),
                         @selector(defaultedOnCreate), @selector(calculated), @selector(autoNumber),
 						@selector(unique), @selector(caseSensitive), @selector(namePointing), @selector(sortable), @selector(groupable), @selector(aggregatable), @selector(permissionable),
 						@selector(externalId), @selector(idLookup), @selector(filterable), @selector(htmlFormatted), @selector(nameField), @selector(nillable),
@@ -473,3 +480,4 @@
 }
 
 @end
+
