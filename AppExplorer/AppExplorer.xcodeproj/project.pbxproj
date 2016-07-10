@@ -225,6 +225,7 @@
 		F4B58B421D31C14800D62683 /* ZKSearchResultsMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = F4B58B381D31C14800D62683 /* ZKSearchResultsMetadata.m */; };
 		F4B58B431D31C14800D62683 /* ZKSimpleTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = F4B58B3A1D31C14800D62683 /* ZKSimpleTypes.m */; };
 		F4B58B441D31C14800D62683 /* ZKXsdAnyType.m in Sources */ = {isa = PBXBuildFile; fileRef = F4B58B3C1D31C14800D62683 /* ZKXsdAnyType.m */; };
+		F4B58B471D31D21200D62683 /* ZKTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = F4B58B461D31D21200D62683 /* ZKTextView.m */; };
 		F4B8DFE80B61EB8900DDD00A /* report.css in Resources */ = {isa = PBXBuildFile; fileRef = F4B8DFE70B61EB8900DDD00A /* report.css */; };
 		F4B8DFF60B61F4B900DDD00A /* key_b.png in Resources */ = {isa = PBXBuildFile; fileRef = F4B8DFF40B61F4B900DDD00A /* key_b.png */; };
 		F4B8DFF70B61F4B900DDD00A /* key_r.png in Resources */ = {isa = PBXBuildFile; fileRef = F4B8DFF50B61F4B900DDD00A /* key_r.png */; };
@@ -721,6 +722,8 @@
 		F4B58B3A1D31C14800D62683 /* ZKSimpleTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKSimpleTypes.m; path = ../zksforce/zkSforce/ZKSimpleTypes.m; sourceTree = "<group>"; };
 		F4B58B3B1D31C14800D62683 /* ZKXsdAnyType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKXsdAnyType.h; path = ../zksforce/zkSforce/ZKXsdAnyType.h; sourceTree = "<group>"; };
 		F4B58B3C1D31C14800D62683 /* ZKXsdAnyType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKXsdAnyType.m; path = ../zksforce/zkSforce/ZKXsdAnyType.m; sourceTree = "<group>"; };
+		F4B58B451D31D21200D62683 /* ZKTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKTextView.h; sourceTree = "<group>"; };
+		F4B58B461D31D21200D62683 /* ZKTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZKTextView.m; sourceTree = "<group>"; };
 		F4B8AFC518A8540800FE114F /* IconProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconProvider.h; sourceTree = "<group>"; };
 		F4B8DFE70B61EB8900DDD00A /* report.css */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = report.css; path = templates/report.css; sourceTree = "<group>"; };
 		F4B8DFF40B61F4B900DDD00A /* key_b.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = key_b.png; path = templates/key_b.png; sourceTree = "<group>"; };
@@ -969,6 +972,8 @@
 				F4FAFB650F68CAFD00ECC9BB /* HighlightTextFieldCell.m */,
 				F4B461FD0F79EB850099C434 /* FieldResizer.h */,
 				F4B461FE0F79EB850099C434 /* FieldResizer.m */,
+				F4B58B451D31D21200D62683 /* ZKTextView.h */,
+				F4B58B461D31D21200D62683 /* ZKTextView.m */,
 			);
 			name = "UI Widgets";
 			sourceTree = "<group>";
@@ -1749,6 +1754,7 @@
 				F4BB7FAC18B0314100444797 /* ZKDescribeApprovalLayoutResult.m in Sources */,
 				F42F291E1C757633002C9B76 /* ZKVisualforcePage.m in Sources */,
 				F4BB7FAD18B0314100444797 /* ZKLocation.m in Sources */,
+				F4B58B471D31D21200D62683 /* ZKTextView.m in Sources */,
 				F425FAD01A33A04C0055D8B8 /* ZKListViewRecordColumn.m in Sources */,
 				F4BB7FAE18B0314100444797 /* ZKQuickActionTemplateResult.m in Sources */,
 				F45B37301B71BD7F00206510 /* ZKAnalyticsCloudComponent.m in Sources */,
