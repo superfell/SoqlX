@@ -347,7 +347,8 @@
 	NSMutableArray *t = [NSMutableArray arrayWithObjects:@"Name", @"Label", @"PluralLabel", @"Key Prefix", @"Custom", 
 				@"Createable", @"Updateable", @"Activateable", @"Deletable", @"Undeletable", 
 				@"Mergeable", @"Queryable", @"Retrieveable", @"Searchable", @"Layoutable",
-				@"Replicateable", @"Triggerable", @"MRU Enabled", @"URL for Edit", @"URL for Detail", @"URL for New", nil];
+				@"Replicateable", @"Triggerable", @"MRU Enabled", @"Has Subtypes",
+                @"URL for Edit", @"URL for Detail", @"URL for New", nil];
 	NSArray *cr = [s childRelationships];
 	if ([cr count] > 0) {
 		NSString *sectionTitle = [NSString stringWithFormat:@"Relationships to %@", [sobject name]];
@@ -383,7 +384,8 @@
 	SEL selectors[] = { @selector(name), @selector(label), @selector(labelPlural), @selector(keyPrefix), @selector(custom),			
 						@selector(createable), @selector(updateable), @selector(activateable), @selector(deletable), @selector(undeletable),
 						@selector(mergeable), @selector(queryable), @selector(retrieveable), @selector(searchable), @selector(layoutable),
-						@selector(replicateable), @selector(triggerable), @selector(mruEnabled), @selector(urlEdit), @selector(urlDetail), @selector(urlNew) };
+						@selector(replicateable), @selector(triggerable), @selector(mruEnabled), @selector(hasSubtypes),
+                        @selector(urlEdit), @selector(urlDetail), @selector(urlNew) };
 
 	int numSelectors = sizeof(selectors)/sizeof(*selectors);
 	
@@ -415,7 +417,7 @@
                     @"Default On Create", @"Calculated", @"AutoNumber",
 					@"Unique", @"Case Sensitive", @"Name Pointing", @"Sortable", @"Groupable", @"Aggregatable", @"Permissionable",
 					@"External Id", @"ID Lookup", @"Filterable", @"HTML Formatted", @"Name Field", @"Nillable", 
-					@"Name Pointing", @"Extra TypeInfo", @"Reference To", @"Relationship Name",
+					@"Compound FieldName", @"Name Pointing", @"Extra TypeInfo", @"Reference To", @"Relationship Name",
 					@"Dependent Picklist", @"Controller Name", @"Restricted Picklist", @"Query By Distance",
 					@"Value Formula", @"Default Formula", @"Relationship Order (CJOs)", @"Write Requires Read on Master (CJOs)", @"Display Location in Decimal", nil] retain];
 	return self;
@@ -446,7 +448,7 @@
                         @selector(defaultedOnCreate), @selector(calculated), @selector(autoNumber),
 						@selector(unique), @selector(caseSensitive), @selector(namePointing), @selector(sortable), @selector(groupable), @selector(aggregatable), @selector(permissionable),
 						@selector(externalId), @selector(idLookup), @selector(filterable), @selector(htmlFormatted), @selector(nameField), @selector(nillable),
-						@selector(namePointing), @selector(extraTypeInfo), @selector(referenceTo), @selector(relationshipName),
+						@selector(compoundFieldName), @selector(namePointing), @selector(extraTypeInfo), @selector(referenceTo), @selector(relationshipName),
 						@selector(dependentPicklist), @selector(controllerName), @selector(restrictedPicklist), @selector(queryByDistance),
 						@selector(calculatedFormula), @selector(defaultValueFormula), @selector(relationshipOrder), @selector(writeRequiresMasterRead), @selector(displayLocationInDecimal) };
 	

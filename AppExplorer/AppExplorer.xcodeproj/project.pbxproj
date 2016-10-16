@@ -46,6 +46,7 @@
 		F42F291C1C757633002C9B76 /* ZKRenderEmailTemplateResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F42F290D1C757633002C9B76 /* ZKRenderEmailTemplateResult.m */; };
 		F42F291D1C757633002C9B76 /* ZKScopeInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F42F290F1C757633002C9B76 /* ZKScopeInfo.m */; };
 		F42F291E1C757633002C9B76 /* ZKVisualforcePage.m in Sources */ = {isa = PBXBuildFile; fileRef = F42F29111C757633002C9B76 /* ZKVisualforcePage.m */; };
+		F4314F611DB403E500760456 /* ZKFindDuplicatesResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4314F601DB403E500760456 /* ZKFindDuplicatesResult.m */; };
 		F44FC9DD0E1EB5D600B5F70C /* querySavePanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = F44FC9DC0E1EB5D600B5F70C /* querySavePanel.xib */; };
 		F44FC9E10E1EB69D00B5F70C /* ResultsSaver.m in Sources */ = {isa = PBXBuildFile; fileRef = F44FC9E00E1EB69D00B5F70C /* ResultsSaver.m */; };
 		F454D163126785EA00DC16D9 /* ApexController.m in Sources */ = {isa = PBXBuildFile; fileRef = F454D162126785EA00DC16D9 /* ApexController.m */; };
@@ -365,6 +366,8 @@
 		F42F290F1C757633002C9B76 /* ZKScopeInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKScopeInfo.m; path = ../zksforce/zkSforce/ZKScopeInfo.m; sourceTree = "<group>"; };
 		F42F29101C757633002C9B76 /* ZKVisualforcePage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKVisualforcePage.h; path = ../zksforce/zkSforce/ZKVisualforcePage.h; sourceTree = "<group>"; };
 		F42F29111C757633002C9B76 /* ZKVisualforcePage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKVisualforcePage.m; path = ../zksforce/zkSforce/ZKVisualforcePage.m; sourceTree = "<group>"; };
+		F4314F5F1DB403E500760456 /* ZKFindDuplicatesResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKFindDuplicatesResult.h; path = ../zksforce/zkSforce/ZKFindDuplicatesResult.h; sourceTree = "<group>"; };
+		F4314F601DB403E500760456 /* ZKFindDuplicatesResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKFindDuplicatesResult.m; path = ../zksforce/zkSforce/ZKFindDuplicatesResult.m; sourceTree = "<group>"; };
 		F44167E611FE8F100068AF1B /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		F44FC9DC0E1EB5D600B5F70C /* querySavePanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = querySavePanel.xib; sourceTree = "<group>"; };
 		F44FC9DF0E1EB69D00B5F70C /* ResultsSaver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResultsSaver.h; sourceTree = "<group>"; };
@@ -1002,6 +1005,8 @@
 		F45DE02D0AABC00A00ED0BA0 /* Sforce */ = {
 			isa = PBXGroup;
 			children = (
+				F4314F5F1DB403E500760456 /* ZKFindDuplicatesResult.h */,
+				F4314F601DB403E500760456 /* ZKFindDuplicatesResult.m */,
 				F4B58B2D1D31C14800D62683 /* ZKDescribeSearchableEntityResult.h */,
 				F4B58B2E1D31C14800D62683 /* ZKDescribeSearchableEntityResult.m */,
 				F4B58B2F1D31C14800D62683 /* ZKDescribeVisualForceResult.h */,
@@ -1646,6 +1651,7 @@
 				F454E1F6184C3B990083AEA8 /* ZKDataCategoryGroupSobjectTypePair.m in Sources */,
 				F454E1F7184C3B990083AEA8 /* ZKDebuggingHeader.m in Sources */,
 				F454E1F8184C3B990083AEA8 /* ZKDeletedRecord.m in Sources */,
+				F4314F611DB403E500760456 /* ZKFindDuplicatesResult.m in Sources */,
 				F454E1F9184C3B990083AEA8 /* ZKDeleteResult.m in Sources */,
 				F454E1FA184C3B990083AEA8 /* ZKDescribeAppMenuItem.m in Sources */,
 				F454E1FB184C3B990083AEA8 /* ZKDescribeAppMenuResult.m in Sources */,
