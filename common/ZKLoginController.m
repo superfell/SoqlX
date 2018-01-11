@@ -241,7 +241,7 @@ static NSString *test = @"https://test.salesforce.com";
 }
 
 - (void)promptAndAddToKeychain {
-	[self showAlertSheetWithMessageText:@"Crete Keychain entry with new username & password?" 
+	[self showAlertSheetWithMessageText:@"Create Keychain entry with new username & password?" 
 				defaultButton:@"Create Keychain Entry" 
 				altButton:@"No thanks" 
 				otherButton:nil 
