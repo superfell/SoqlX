@@ -22,9 +22,9 @@
 #import <Cocoa/Cocoa.h>
 #import "ZKQueryResult.h"
 
-NSString *DELETE_COLUMN_IDENTIFIER;
-NSString *ERROR_COLUMN_IDENTIFIER;
-NSArray  *ALL_APP_COLUMN_IDENTIFIERS;
+extern NSString *DELETE_COLUMN_IDENTIFIER;
+extern NSString *ERROR_COLUMN_IDENTIFIER;
+extern NSArray  *ALL_APP_COLUMN_IDENTIFIERS;
 
 @class ZKSObject;
 
