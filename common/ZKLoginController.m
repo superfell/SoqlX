@@ -56,7 +56,7 @@ static NSString *test = @"https://test.salesforce.com";
 	self = [super init];
 	server = [[[NSUserDefaults standardUserDefaults] objectForKey:@"server"] copy];
 	[self setUsername:[[NSUserDefaults standardUserDefaults] objectForKey:login_lastUsernameKey]];
-	preferedApiVersion = 41;
+	preferedApiVersion = 42;
 	return self;
 }
 

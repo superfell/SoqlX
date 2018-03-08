@@ -182,6 +182,8 @@
 		F494FA4A0F7EFE22001216EC /* RRLuminanceFromRGBComponents.m in Sources */ = {isa = PBXBuildFile; fileRef = F494FA460F7EFE22001216EC /* RRLuminanceFromRGBComponents.m */; };
 		F49741F00D554DB500DD77F4 /* QueryListController.m in Sources */ = {isa = PBXBuildFile; fileRef = F49741EF0D554DB500DD77F4 /* QueryListController.m */; };
 		F4A62E2F0D31AC6300D7EACA /* NSView_additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A62E2E0D31AC6300D7EACA /* NSView_additions.m */; };
+		F4A9CE7A2050F93F000FAB0B /* ZKDeleteByExampleResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A9CE772050F93F000FAB0B /* ZKDeleteByExampleResult.m */; };
+		F4A9CE7B2050F93F000FAB0B /* ZKEntitySearchPromotionMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A9CE792050F93F000FAB0B /* ZKEntitySearchPromotionMetadata.m */; };
 		F4AC556715996D8500F5CA45 /* zkApexClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F4AC555A15996D8500F5CA45 /* zkApexClient.m */; };
 		F4AC556815996D8500F5CA45 /* ZKCodeCoverageResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4AC555C15996D8500F5CA45 /* ZKCodeCoverageResult.m */; };
 		F4AC556915996D8500F5CA45 /* ZKCodeLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = F4AC555E15996D8500F5CA45 /* ZKCodeLocation.m */; };
@@ -644,6 +646,10 @@
 		F49741EF0D554DB500DD77F4 /* QueryListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QueryListController.m; sourceTree = "<group>"; };
 		F4A62E2D0D31AC6300D7EACA /* NSView_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSView_additions.h; sourceTree = "<group>"; };
 		F4A62E2E0D31AC6300D7EACA /* NSView_additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSView_additions.m; sourceTree = "<group>"; };
+		F4A9CE762050F93F000FAB0B /* ZKDeleteByExampleResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKDeleteByExampleResult.h; path = ../zksforce/zkSforce/ZKDeleteByExampleResult.h; sourceTree = "<group>"; };
+		F4A9CE772050F93F000FAB0B /* ZKDeleteByExampleResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKDeleteByExampleResult.m; path = ../zksforce/zkSforce/ZKDeleteByExampleResult.m; sourceTree = "<group>"; };
+		F4A9CE782050F93F000FAB0B /* ZKEntitySearchPromotionMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKEntitySearchPromotionMetadata.h; path = ../zksforce/zkSforce/ZKEntitySearchPromotionMetadata.h; sourceTree = "<group>"; };
+		F4A9CE792050F93F000FAB0B /* ZKEntitySearchPromotionMetadata.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKEntitySearchPromotionMetadata.m; path = ../zksforce/zkSforce/ZKEntitySearchPromotionMetadata.m; sourceTree = "<group>"; };
 		F4AC555915996D8500F5CA45 /* zkApexClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zkApexClient.h; path = ../apexforce/zkApexClient.h; sourceTree = "<group>"; };
 		F4AC555A15996D8500F5CA45 /* zkApexClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = zkApexClient.m; path = ../apexforce/zkApexClient.m; sourceTree = "<group>"; };
 		F4AC555B15996D8500F5CA45 /* ZKCodeCoverageResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKCodeCoverageResult.h; path = ../apexforce/ZKCodeCoverageResult.h; sourceTree = "<group>"; };
@@ -1029,6 +1035,10 @@
 		F45DE02D0AABC00A00ED0BA0 /* Sforce */ = {
 			isa = PBXGroup;
 			children = (
+				F4A9CE762050F93F000FAB0B /* ZKDeleteByExampleResult.h */,
+				F4A9CE772050F93F000FAB0B /* ZKDeleteByExampleResult.m */,
+				F4A9CE782050F93F000FAB0B /* ZKEntitySearchPromotionMetadata.h */,
+				F4A9CE792050F93F000FAB0B /* ZKEntitySearchPromotionMetadata.m */,
 				F4065BC01EE4CB7200E70970 /* ZKChangeOwnPasswordResult.h */,
 				F4065BC11EE4CB7200E70970 /* ZKChangeOwnPasswordResult.m */,
 				F4065BC21EE4CB7200E70970 /* ZKDescribeLayoutSaveOption.h */,
@@ -1513,7 +1523,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0720;
+				LastUpgradeCheck = 0820;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "AppExplorer" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1701,9 +1711,11 @@
 				F454E1FA184C3B990083AEA8 /* ZKDescribeAppMenuItem.m in Sources */,
 				F454E1FB184C3B990083AEA8 /* ZKDescribeAppMenuResult.m in Sources */,
 				F454E1FC184C3B990083AEA8 /* ZKDescribeAvailableQuickActionResult.m in Sources */,
+				F4A9CE7A2050F93F000FAB0B /* ZKDeleteByExampleResult.m in Sources */,
 				F454E1FD184C3B990083AEA8 /* ZKDescribeColor.m in Sources */,
 				F454E1FE184C3B990083AEA8 /* ZKDescribeColumn.m in Sources */,
 				F454E1FF184C3B990083AEA8 /* ZKDescribeCompactLayout.m in Sources */,
+				F4A9CE7B2050F93F000FAB0B /* ZKEntitySearchPromotionMetadata.m in Sources */,
 				F454E200184C3B990083AEA8 /* ZKDescribeCompactLayoutsResult.m in Sources */,
 				F454E201184C3B990083AEA8 /* ZKDescribeComponentInstance.m in Sources */,
 				F48B6B9B1969ED7D00496C82 /* ZKFilteredLookupInfo.m in Sources */,
@@ -1915,14 +1927,29 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = AppExplorer_Prefix.pch;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
@@ -1934,13 +1961,28 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = AppExplorer_Prefix.pch;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
