@@ -33,6 +33,6 @@
 @interface SearchQueryResult : ZKQueryResult <IsSearchQueryResult> {
 }
 
-+(id)searchQueryResults:(NSArray *)searchResults;
++(instancetype)searchQueryResults:(NSArray *)searchResults;
 
 @end

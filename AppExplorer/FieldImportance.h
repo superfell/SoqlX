@@ -24,6 +24,6 @@
 #import "SObjectViewMode.h"
 
 @interface ZKDescribeField (FieldImportance)
--(int)importance;
+@property (readonly) int importance;
 -(BOOL)shouldDisplayInMode:(SObjectBoxViewMode)mode;
 @end

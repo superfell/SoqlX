@@ -32,95 +32,95 @@
 
 @synthesize visible;
 
-- (id)initWithFrame:(NSRect)frame view:(SchemaView *)v andStyle:(pmButtonStyle)s {
-	self = [super init];
-	view = [v retain];
-	rect = frame;
-	style = s;
-	visible = YES;
-	[self setTrackingRect];
-	return self;
+- (instancetype)initWithFrame:(NSRect)frame view:(SchemaView *)v andStyle:(pmButtonStyle)s {
+    self = [super init];
+    view = [v retain];
+    rect = frame;
+    style = s;
+    visible = YES;
+    [self setTrackingRect];
+    return self;
 }
 
 -(void)dealloc {
-	[self clearTrackingRect];
-	[view release];
-	[super dealloc];
+    [self clearTrackingRect];
+    [view release];
+    [super dealloc];
 }
 
 -(NSPoint)origin {
-	return rect.origin;
+    return rect.origin;
 }
 
 -(void)setOrigin:(NSPoint)aPoint {
-	rect.origin = aPoint;
-	[self resetTrackingRect];
+    rect.origin = aPoint;
+    [self resetTrackingRect];
 }
 
 -(pmButtonState)state {
-	return state;
+    return state;
 }
 
 -(void)setState:(pmButtonState)newState {
     if (state == newState) return;
-	state = newState;
+    state = newState;
     [view setNeedsDisplayInRect:rect];
 }
 
 -(void)setTarget:(id)aTarget andAction:(SEL)anAction {
-	// we explicity don't retain this to stop a ref counting loop.
-	target = aTarget;
-	action = anAction;
+    // we explicity don't retain this to stop a ref counting loop.
+    target = aTarget;
+    action = anAction;
 }
 
 - (void)resetTrackingRect {
-	[self clearTrackingRect];
-	[self setTrackingRect];
+    [self clearTrackingRect];
+    [self setTrackingRect];
 }
 
 -(void)clearTrackingRect {
-	[view removeTrackingRect:tagRect];
-	tagRect = 0;	
+    [view removeTrackingRect:tagRect];
+    tagRect = 0;    
 }
 
 -(void)setTrackingRect {
-	tagRect = [view addTrackingRect:rect owner:self];
-	[self setState:[view mousePointerIsInsideRect:rect] ? pmInside : pmOutside];
+    tagRect = [view addTrackingRect:rect owner:self];
+    [self setState:[view mousePointerIsInsideRect:rect] ? pmInside : pmOutside];
 }
 
 -(void)mouseEntered:(NSEvent *)event {
-	[self setState:pmInside];
+    [self setState:pmInside];
 }
 
 -(void)mouseExited:(NSEvent *)event {
-	[self setState:pmOutside];
+    [self setState:pmOutside];
 }
 
 -(void)mouseDown:(NSEvent *)event {
-	[self setState:pmDown];
+    [self setState:pmDown];
 }
 
 -(void)mouseUp:(NSEvent *)event {
-	if (state != pmDown) return;
-	[self setState:pmInside];
-	[target performSelector:action];
+    if (state != pmDown) return;
+    [self setState:pmInside];
+    [target performSelector:action];
 }
 
 -(void)drawRect:(NSRect)dirtyRect
 {
-	if (!visible) return;
-	if (state != pmOutside)
-		[[NSColor blackColor] set];
-	else 
-		[[NSColor whiteColor] set];
-	NSFrameRect(rect);
-	if (state == pmDown)
-		[[NSColor blackColor] set];
-	else
-		[[NSColor whiteColor] set];
-	NSRectFill(NSInsetRect(rect,2,rect.size.height/2-1));
-	if (style == pmPlusButton) 
-		NSRectFill(NSInsetRect(rect,rect.size.width/2-1,2));
+    if (!visible) return;
+    if (state != pmOutside)
+        [[NSColor blackColor] set];
+    else 
+        [[NSColor whiteColor] set];
+    NSFrameRect(rect);
+    if (state == pmDown)
+        [[NSColor blackColor] set];
+    else
+        [[NSColor whiteColor] set];
+    NSRectFill(NSInsetRect(rect,2,rect.size.height/2-1));
+    if (style == pmPlusButton) 
+        NSRectFill(NSInsetRect(rect,rect.size.width/2-1,2));
 }
 
 

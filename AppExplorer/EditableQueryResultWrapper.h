@@ -33,51 +33,48 @@ extern NSArray  *ALL_APP_COLUMN_IDENTIFIERS;
 @end
 
 @interface EditableQueryResultWrapper : NSObject<NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate> {
-	NSObject<EditableQueryResultWrapperDelegate>	*delegate;
-	ZKQueryResult	*result;
-	BOOL			editable;
-	NSCell			*imageCell;
-	NSMutableSet		*checkedRows;
-	NSMutableDictionary *rowErrors;
+    NSObject<EditableQueryResultWrapperDelegate>    *delegate;
+    ZKQueryResult    *result;
+    BOOL            editable;
+    NSCell            *imageCell;
+    NSMutableSet        *checkedRows;
+    NSMutableDictionary *rowErrors;
 }
 
-- (id)initWithQueryResult:(ZKQueryResult *)qr;
+- (instancetype)initWithQueryResult:(ZKQueryResult *)qr NS_DESIGNATED_INITIALIZER;
 
-- (ZKQueryResult *)queryResult;
-- (void)setQueryResult:(ZKQueryResult *)newResults;
+@property (copy) ZKQueryResult *queryResult;
 
-- (BOOL)editable;
-- (void)setEditable:(BOOL)newAllowEdit;
+@property  BOOL editable;
 
-- (NSObject<EditableQueryResultWrapperDelegate> *)delegate;
-- (void)setDelegate:(NSObject<EditableQueryResultWrapperDelegate> *)aValue;
+@property (assign) NSObject<EditableQueryResultWrapperDelegate> *delegate;
 
-- (BOOL)hasCheckedRows;
-- (int)numCheckedRows;
-- (NSSet *)indexesOfCheckedRows;
+@property (readonly) BOOL hasCheckedRows;
+@property (readonly) int numCheckedRows;
+@property (readonly, copy) NSSet *indexesOfCheckedRows;
 - (void)setChecked:(BOOL)checked onRowWithIndex:(NSNumber *)index;
 
-- (BOOL)hasErrors;
+@property (readonly) BOOL hasErrors;
 - (void)clearErrors;
 - (void)addError:(NSString *)errMsg forRowIndex:(NSNumber *)index;
 
 - (BOOL)allowEdit:(NSTableColumn *)aColumn;
 
 // if you want to make inplace edits to the rows, then create a mutating context, make your changes, then finally call update.
-- (id)createMutatingRowsContext;
+@property (readonly, strong) id createMutatingRowsContext;
 - (void)remmoveRowAtIndex:(int)index context:(id)mutatingContext;
 - (void)updateRowsFromContext:(id)context;
 
 // pass through to QueryResult
-- (int)size;
-- (BOOL)done;
-- (NSString *)queryLocator;
-- (NSArray *)records;
+@property (readonly) int size;
+@property (readonly) BOOL done;
+@property (readonly, copy) NSString *queryLocator;
+@property (readonly, copy) NSArray *records;
 // make it compaitble with the data source for a table
 - (int)numberOfRowsInTableView:(NSTableView *)v;
 - (id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(int)rowIdx;
 @end
 
 @interface EditableQueryResultWrapper (TableColumns)
--(NSArray *)allSystemColumnIdentifiers;
+@property (readonly, copy) NSArray *allSystemColumnIdentifiers;
 @end

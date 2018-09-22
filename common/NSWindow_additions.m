@@ -25,14 +25,14 @@
 @implementation NSWindow (Fade)
 
 -(IBAction)displayOrCloseWindow:(id)sender {
-	if ([self alphaValue] > 0) {
-		[[self animator] setAlphaValue:0.0];
-		[self performSelector:@selector(close) withObject:nil afterDelay:[[NSAnimationContext currentContext] duration]];
-	} else {
-		[[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
-		[self makeKeyAndOrderFront:self];
-		[[self animator] setAlphaValue:1.0];
-	}
+    if (self.alphaValue > 0) {
+        [self animator].alphaValue = 0.0;
+        [self performSelector:@selector(close) withObject:nil afterDelay:[NSAnimationContext currentContext].duration];
+    } else {
+        [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
+        [self makeKeyAndOrderFront:self];
+        [self animator].alphaValue = 1.0;
+    }
 }
 
 @end
@@ -40,13 +40,13 @@
 @implementation NSPanel (Fade)
 
 -(void)displayOrClosePanel:(id)sender forMainWindow:(NSWindow *)mainWindow {
-	if ([self alphaValue] > 0) {
-		[[self animator] setAlphaValue:0.0];
-		[self performSelector:@selector(close) withObject:nil afterDelay:[[NSAnimationContext currentContext] duration]];
-	} else {
+    if (self.alphaValue > 0) {
+        [self animator].alphaValue = 0.0;
+        [self performSelector:@selector(close) withObject:nil afterDelay:[NSAnimationContext currentContext].duration];
+    } else {
         [self orderFront:self];
-		[[self animator] setAlphaValue:1.0];
-	}
+        [self animator].alphaValue = 1.0;
+    }
 }
 
 @end

@@ -27,16 +27,16 @@ NSData *theData;
 @implementation SchemaProtocol
 
 + (void)setData:(NSData *)data {
-	theData = [data retain];
+    theData = [data retain];
 }
 
 + (void)initialize {
-	[NSURLProtocol registerClass:[SchemaProtocol class]];
+    [NSURLProtocol registerClass:[SchemaProtocol class]];
 }
 
 + (BOOL)canInitWithRequest:(NSURLRequest *)theRequest
 {
-    return ([[[theRequest URL] scheme] caseInsensitiveCompare: SchemaProtocolSchema] == NSOrderedSame);
+    return ([theRequest.URL.scheme caseInsensitiveCompare: SchemaProtocolSchema] == NSOrderedSame);
 }
 
 +(NSURLRequest *)canonicalRequestForRequest:(NSURLRequest *)request
@@ -46,16 +46,16 @@ NSData *theData;
 
 - (void)startLoading
 {
-    id<NSURLProtocolClient> client = [self client];
-    NSURLRequest *request = [self request];
-	
-	NSURLResponse *response = [[NSURLResponse alloc] initWithURL:[request URL] MIMEType:@"image/tiff" expectedContentLength:-1 textEncodingName:nil];
-	[client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
-	[client URLProtocol:self didLoadData:theData];
-	[client URLProtocolDidFinishLoading:self];
-	[response release];
-	[theData release];
-	theData = nil;
+    id<NSURLProtocolClient> client = self.client;
+    NSURLRequest *request = self.request;
+    
+    NSURLResponse *response = [[NSURLResponse alloc] initWithURL:request.URL MIMEType:@"image/tiff" expectedContentLength:-1 textEncodingName:nil];
+    [client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
+    [client URLProtocol:self didLoadData:theData];
+    [client URLProtocolDidFinishLoading:self];
+    [response release];
+    [theData release];
+    theData = nil;
 }
 
 - (void)stopLoading

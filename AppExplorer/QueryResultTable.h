@@ -28,13 +28,13 @@
 @class EditableQueryResultWrapper;
 
 @interface QueryResultTable : NSObject {
-	id							delegate;
-	NSTableView					*table;
-	ZKQueryResult				*queryResult;
-	EditableQueryResultWrapper	*wrapper;
+    id                            delegate;
+    NSTableView                    *table;
+    ZKQueryResult                *queryResult;
+    EditableQueryResultWrapper    *wrapper;
 }
 
-- (id)initForTableView:(NSTableView *)view;
+- (instancetype)initForTableView:(NSTableView *)view NS_DESIGNATED_INITIALIZER;
 
 - (void)removeRowAtIndex:(int)row;
 
@@ -43,7 +43,7 @@
 @property (retain) ZKQueryResult *queryResult;
 @property (assign) id delegate;
 
--(BOOL)hasCheckedRows;
+@property (readonly) BOOL hasCheckedRows;
 -(void)showHideErrorColumn;
--(void)replaceQueryResult:(ZKQueryResult *)queryResult;	// this is like setQR, except it doesn't reset everything
+-(void)replaceQueryResult:(ZKQueryResult *)queryResult;    // this is like setQR, except it doesn't reset everything
 @end

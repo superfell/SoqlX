@@ -32,50 +32,50 @@
 @end
 
 @interface QueryColumn : NSObject {
-	NSString		*name;
-	NSMutableArray	*childCols; // of QueryColumn
+    NSString        *name;
+    NSMutableArray    *childCols; // of QueryColumn
 }
 @end
 
 @implementation QueryColumn
--(id)initWithName:(NSString *)n {
-	self = [super init];
-	name = [n copy];
-	childCols = nil;
-	return self;
+-(instancetype)initWithName:(NSString *)n {
+    self = [super init];
+    name = [n copy];
+    childCols = nil;
+    return self;
 }
 
 -(void)dealloc {
-	[name release];
-	[childCols release];
-	[super dealloc];
+    [name release];
+    [childCols release];
+    [super dealloc];
 }
 
 +(QueryColumn *)columnWithName:(NSString *)name {
-	return [[[QueryColumn alloc] initWithName:name] autorelease];
+    return [[[QueryColumn alloc] initWithName:name] autorelease];
 }
 
 -(NSString *)name {
-	return name;
+    return name;
 }
 
 -(BOOL)isEqual:(id)anObject {
-	return [name isEqualToString:[anObject name]];
+    return [name isEqualToString:[anObject name]];
 }
 
 -(void)addChildCol:(QueryColumn *)c {
-	if (childCols == nil) {
-		childCols = [[NSMutableArray array] retain];
-		[childCols addObject:c];
-		return;
-	}
-	if (![childCols containsObject:c])
-		[childCols addObject:c];
+    if (childCols == nil) {
+        childCols = [[NSMutableArray array] retain];
+        [childCols addObject:c];
+        return;
+    }
+    if (![childCols containsObject:c])
+        [childCols addObject:c];
 }
 
 -(void)addChildCols:(NSArray *)cols {
-	for (QueryColumn *c in cols)
-		[self addChildCol:c];
+    for (QueryColumn *c in cols)
+        [self addChildCol:c];
 }
 
 -(void)addChildColWithNames:(NSArray *)childNames {
@@ -85,15 +85,15 @@
 }
 
 -(NSArray *)allNames {
-	if (childCols == nil) return [NSArray arrayWithObject:name];
-	NSMutableArray *c = [NSMutableArray arrayWithCapacity:[childCols count]];
-	for (QueryColumn *qc in childCols)
-		[c addObjectsFromArray:[qc allNames]];
-	return c;
+    if (childCols == nil) return @[name];
+    NSMutableArray *c = [NSMutableArray arrayWithCapacity:childCols.count];
+    for (QueryColumn *qc in childCols)
+        [c addObjectsFromArray:[qc allNames]];
+    return c;
 }
 
 -(BOOL)hasChildNames {
-	return childCols != nil;
+    return childCols != nil;
 }
 
 @end
@@ -102,109 +102,109 @@
 
 @synthesize table, delegate;
 
-- (id)initForTableView:(NSTableView *)view {
-	self = [super init];
-	table = view;
-	return self;
+- (instancetype)initForTableView:(NSTableView *)view {
+    self = [super init];
+    table = view;
+    return self;
 }
 
 - (void)dealloc {
-	[queryResult release];
-	[wrapper removeObserver:self forKeyPath:@"hasCheckedRows"];
-	[wrapper release];
-	[super dealloc];
+    [queryResult release];
+    [wrapper removeObserver:self forKeyPath:@"hasCheckedRows"];
+    [wrapper release];
+    [super dealloc];
 }
 
 - (ZKQueryResult *)queryResult {
-	return queryResult;
+    return queryResult;
 }
 
 - (EditableQueryResultWrapper *)wrapper {
-	return wrapper;
+    return wrapper;
 }
 
 -(BOOL)hasCheckedRows {
-	return [wrapper hasCheckedRows];
+    return [wrapper hasCheckedRows];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-	if (object == wrapper) {
-		[self willChangeValueForKey:@"hasCheckedRows"];
-		[self didChangeValueForKey:@"hasCheckedRows"];
-	}
+    if (object == wrapper) {
+        [self willChangeValueForKey:@"hasCheckedRows"];
+        [self didChangeValueForKey:@"hasCheckedRows"];
+    }
 }
 
 - (void)updateTable {
-	[wrapper setDelegate:delegate];
-	[table setDelegate:wrapper];
-	[table setDataSource:wrapper];
-	[self showHideErrorColumn];
-	[table reloadData];
+    [wrapper setDelegate:delegate];
+    table.delegate = wrapper;
+    table.dataSource = wrapper;
+    [self showHideErrorColumn];
+    [table reloadData];
 }
 
 -(void)showHideErrorColumn {
-	NSTableColumn *ec = [table tableColumnWithIdentifier:ERROR_COLUMN_IDENTIFIER];
-	BOOL hasErrors = [wrapper hasErrors];
-	[ec setHidden:!hasErrors];
+    NSTableColumn *ec = [table tableColumnWithIdentifier:ERROR_COLUMN_IDENTIFIER];
+    BOOL hasErrors = [wrapper hasErrors];
+    ec.hidden = !hasErrors;
 }
 
 - (void)setQueryResult:(ZKQueryResult *)qr {
-	if (qr == queryResult) return;
-	[wrapper removeObserver:self forKeyPath:@"hasCheckedRows"];
-	[self willChangeValueForKey:@"hasCheckedRows"];
-	[wrapper autorelease];
-	[queryResult autorelease];
-	queryResult = [qr retain];
-	wrapper = [[EditableQueryResultWrapper alloc] initWithQueryResult:qr];
-	[self didChangeValueForKey:@"hasCheckedRows"];
-	[wrapper addObserver:self forKeyPath:@"hasCheckedRows" options:0 context:nil];
-	int idxToDelete=0;
-	while ([table numberOfColumns] > 2) {
-		NSString *colId = [[[table tableColumns] objectAtIndex:idxToDelete] identifier]; 
-		if ([colId isEqualToString:DELETE_COLUMN_IDENTIFIER] || [colId isEqualToString:ERROR_COLUMN_IDENTIFIER]) {
-			idxToDelete++;
-			continue;
-		}
-		[table removeTableColumn:[[table tableColumns] objectAtIndex:idxToDelete]];
-	}
-	NSArray *cols = [self createTableColumns:qr];
-	[wrapper setEditable:[cols containsObject:@"Id"]];
-	[self updateTable];
+    if (qr == queryResult) return;
+    [wrapper removeObserver:self forKeyPath:@"hasCheckedRows"];
+    [self willChangeValueForKey:@"hasCheckedRows"];
+    [wrapper autorelease];
+    [queryResult autorelease];
+    queryResult = [qr retain];
+    wrapper = [[EditableQueryResultWrapper alloc] initWithQueryResult:qr];
+    [self didChangeValueForKey:@"hasCheckedRows"];
+    [wrapper addObserver:self forKeyPath:@"hasCheckedRows" options:0 context:nil];
+    int idxToDelete=0;
+    while (table.numberOfColumns > 2) {
+        NSString *colId = table.tableColumns[idxToDelete].identifier; 
+        if ([colId isEqualToString:DELETE_COLUMN_IDENTIFIER] || [colId isEqualToString:ERROR_COLUMN_IDENTIFIER]) {
+            idxToDelete++;
+            continue;
+        }
+        [table removeTableColumn:table.tableColumns[idxToDelete]];
+    }
+    NSArray *cols = [self createTableColumns:qr];
+    [wrapper setEditable:[cols containsObject:@"Id"]];
+    [self updateTable];
 }
 
 -(void)replaceQueryResult:(ZKQueryResult *)qr {
-	[queryResult autorelease];
-	queryResult = [qr retain];
-	[wrapper setQueryResult:queryResult];
-	[self showHideErrorColumn];
-	[table reloadData];
+    [queryResult autorelease];
+    queryResult = [qr retain];
+    [wrapper setQueryResult:queryResult];
+    [self showHideErrorColumn];
+    [table reloadData];
 }
 
 - (void)removeRowAtIndex:(int)row {
-	if (row >= [[wrapper records] count]) return;
-	id ctx = [wrapper createMutatingRowsContext];
-	[wrapper remmoveRowAtIndex:row context:ctx];
-	[wrapper updateRowsFromContext:ctx];
-	[self updateTable];
+    if (row >= [wrapper records].count) return;
+    id ctx = [wrapper createMutatingRowsContext];
+    [wrapper remmoveRowAtIndex:row context:ctx];
+    [wrapper updateRowsFromContext:ctx];
+    [self updateTable];
 }
 
 - (NSTableColumn *)createTableColumnWithIdentifier:(NSString *)identifier label:(NSString *)label {
     NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:identifier];
-    [[col headerCell] setStringValue:label];
+    col.headerCell.stringValue = label;
     [col setEditable:YES];
-    [col setResizingMask:NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask];
+    col.resizingMask = NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask;
     if ([identifier hasSuffix:@"Id"])
-        [col setWidth:165];
+        col.width = 165;
     return [col autorelease];
 }
 
 - (NSArray *)createTableColumns:(ZKQueryResult *)qr {
-	NSArray *cols = [self buildColumnListFromQueryResult:qr];
-	for (NSString *colName in cols) {
-		NSTableColumn *col = [self createTableColumnWithIdentifier:colName label:colName];
-		[table addTableColumn:col];
-	}
-	return cols;
+    NSArray *cols = [self buildColumnListFromQueryResult:qr];
+    for (NSString *colName in cols) {
+        NSTableColumn *col = [self createTableColumnWithIdentifier:colName label:colName];
+        [table addTableColumn:col];
+    }
+    return cols;
 }
 
 // looks to see if the queryColumn already exists in the columns collection, its returned if it is
@@ -216,63 +216,63 @@
         [columns addObject:qc];
         return qc;
     }
-    return [columns objectAtIndex:idx];
+    return columns[idx];
 }
 
 - (BOOL)addColumnsFromSObject:(ZKSObject *)row withPrefix:(NSString *)prefix toList:(NSMutableArray *)columns {
-	BOOL seenNull = NO;
-	
-	for (NSString *fn in [row orderedFieldNames]) {
-		NSObject *val = [row fieldValue:fn];
-		if (val == nil || val == [NSNull null]) {
-			seenNull = YES;
-		}
-		NSString *fullName = [prefix length] > 0 ? [NSString stringWithFormat:@"%@.%@", prefix, fn] : fn;
-		QueryColumn *qc = [self getOrAddQueryColumn:[QueryColumn columnWithName:fullName] fromList:columns];
+    BOOL seenNull = NO;
+    
+    for (NSString *fn in [row orderedFieldNames]) {
+        NSObject *val = [row fieldValue:fn];
+        if (val == nil || val == [NSNull null]) {
+            seenNull = YES;
+        }
+        NSString *fullName = prefix.length > 0 ? [NSString stringWithFormat:@"%@.%@", prefix, fn] : fn;
+        QueryColumn *qc = [self getOrAddQueryColumn:[QueryColumn columnWithName:fullName] fromList:columns];
         if ([val isKindOfClass:[ZKAddress class]]) {
             if (![qc hasChildNames])
-                [qc addChildColWithNames:[NSArray arrayWithObjects:@"street", @"city", @"state", @"stateCode", @"country", @"countryCode", @"postalCode", @"longitude", @"latitude", nil]];
+                [qc addChildColWithNames:@[@"street", @"city", @"state", @"stateCode", @"country", @"countryCode", @"postalCode", @"longitude", @"latitude"]];
 
         } else if ([val isKindOfClass:[ZKLocation class]]) {
             if (![qc hasChildNames])
-                [qc addChildColWithNames:[NSArray arrayWithObjects:@"longitude", @"latitude", nil]];
+                [qc addChildColWithNames:@[@"longitude", @"latitude"]];
 
-		} else if ([val isKindOfClass:[ZKSObject class]]) {
-			if (![qc hasChildNames]) {
-				NSMutableArray *relatedColumns = [NSMutableArray array];
-				seenNull |= [self addColumnsFromSObject:(ZKSObject *)val withPrefix:fullName toList:relatedColumns];
-				[qc addChildCols:relatedColumns];
-			}
-		}
-	}
-	return seenNull;
+        } else if ([val isKindOfClass:[ZKSObject class]]) {
+            if (![qc hasChildNames]) {
+                NSMutableArray *relatedColumns = [NSMutableArray array];
+                seenNull |= [self addColumnsFromSObject:(ZKSObject *)val withPrefix:fullName toList:relatedColumns];
+                [qc addChildCols:relatedColumns];
+            }
+        }
+    }
+    return seenNull;
 }
 
 - (NSArray *)buildColumnListFromQueryResult:(ZKQueryResult *)qr {
-	NSMutableArray *columns = [NSMutableArray array];
+    NSMutableArray *columns = [NSMutableArray array];
     NSMutableSet *processedTypes = [NSMutableSet set];
     BOOL isSearchResult = [qr conformsToProtocol:@protocol(IsSearchQueryResult)];
     
-	for (ZKSObject *row in [qr records]) {
+    for (ZKSObject *row in [qr records]) {
         // in the case we're looking at search results, we need to get columns for each distinct type.
         if ([processedTypes containsObject:[row type]]) continue;
         
-		// if we didn't see any null columns, then there's no need to look at any further rows.
-		if (![self addColumnsFromSObject:row withPrefix:nil toList:columns]) {
+        // if we didn't see any null columns, then there's no need to look at any further rows.
+        if (![self addColumnsFromSObject:row withPrefix:nil toList:columns]) {
             if (!isSearchResult) break; // all done.
-			[processedTypes addObject:[row type]];
+            [processedTypes addObject:[row type]];
         }
-	}
-	// now flatten the queryColumns into a set of real columns
-	NSMutableArray *colNames = [NSMutableArray arrayWithCapacity:[columns count] + 1];
+    }
+    // now flatten the queryColumns into a set of real columns
+    NSMutableArray *colNames = [NSMutableArray arrayWithCapacity:columns.count + 1];
 
     if (isSearchResult)
         [table addTableColumn:[self createTableColumnWithIdentifier:@"SObject__Type" label:@"Type"]];
     
-	for (QueryColumn *qc in columns)
-		[colNames addObjectsFromArray:[qc allNames]];
-		
-	return colNames;
+    for (QueryColumn *qc in columns)
+        [colNames addObjectsFromArray:[qc allNames]];
+        
+    return colNames;
 }
 
 @end

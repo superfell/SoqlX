@@ -25,34 +25,34 @@
 
 typedef enum pmButtonState
 {
-	pmOutside,
-	pmInside,
-	pmDown
+    pmOutside,
+    pmInside,
+    pmDown
 } pmButtonState;
 
 typedef enum pmButtonStyle
 {
-	pmPlusButton,
-	pmMinusButton
+    pmPlusButton,
+    pmMinusButton
 } pmButtonStyle;
 
 @interface PlusMinusWidget : NSObject {
-	SchemaView			*view;
-	NSRect				rect;
-	pmButtonState		state;
-	pmButtonStyle		style;
-	BOOL				visible;
-	NSTrackingRectTag	tagRect;
-	id					target;
-	SEL					action;	
+    SchemaView            *view;
+    NSRect                rect;
+    pmButtonState        state;
+    pmButtonStyle        style;
+    BOOL                visible;
+    NSTrackingRectTag    tagRect;
+    id                    target;
+    SEL                    action;    
 }
 
--(id)initWithFrame:(NSRect)frame view:(SchemaView *)v andStyle:(pmButtonStyle)s;
+-(instancetype)initWithFrame:(NSRect)frame view:(SchemaView *)v andStyle:(pmButtonStyle)s NS_DESIGNATED_INITIALIZER;
 
 @property (assign) BOOL visible;
 @property (assign) NSPoint origin;
 
--(pmButtonState)state;
+@property (readonly) pmButtonState state;
 -(void)setTarget:(id)target andAction:(SEL)action;
 
 -(void)resetTrackingRect;

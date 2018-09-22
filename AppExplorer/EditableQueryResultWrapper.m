@@ -27,195 +27,195 @@ NSString *DELETE_COLUMN_IDENTIFIER = @"row__delete";
 NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
 
 @interface EQRWMutating : NSObject {
-	NSMutableArray *rows;
-	NSMutableArray *checkMarks;
-	NSMutableArray *errors;
+    NSMutableArray *rows;
+    NSMutableArray *checkMarks;
+    NSMutableArray *errors;
 }
--(id)initWithRows:(NSArray *)rows errors:(NSDictionary *)errors checkMarks:(NSSet *)checks;
+-(instancetype)initWithRows:(NSArray *)rows errors:(NSDictionary *)errors checkMarks:(NSSet *)checks NS_DESIGNATED_INITIALIZER;
 -(void)removeRowAtIndex:(int)index;
--(NSArray *)rows;
--(NSArray *)checkMarks;
--(NSArray *)errors;
+@property (readonly, copy) NSArray *rows;
+@property (readonly, copy) NSArray *checkMarks;
+@property (readonly, copy) NSArray *errors;
 @end
 
 @implementation EQRWMutating 
 
--(id)initWithRows:(NSArray *)r errors:(NSDictionary *)err checkMarks:(NSSet *)checks {
-	self = [super init];
-	rows = [[NSMutableArray arrayWithArray:r] retain];
-	checkMarks = [[NSMutableArray arrayWithCapacity:[rows count]] retain];
-	errors = [[NSMutableArray arrayWithCapacity:[rows count]] retain];
-	for (int i =0; i < [rows count]; i++) {
-		[checkMarks addObject:[NSNumber numberWithBool:FALSE]];
-		[errors addObject:[NSNull null]];
-	}
-	for (NSNumber *n in checks) 
-		[checkMarks replaceObjectAtIndex:[n intValue] withObject:[NSNumber numberWithBool:TRUE]];
-	
-	for (NSNumber *n in [err allKeys])
-		[errors replaceObjectAtIndex:[n intValue] withObject:[err objectForKey:n]];
-	return self;
+-(instancetype)initWithRows:(NSArray *)r errors:(NSDictionary *)err checkMarks:(NSSet *)checks {
+    self = [super init];
+    rows = [[NSMutableArray arrayWithArray:r] retain];
+    checkMarks = [[NSMutableArray arrayWithCapacity:rows.count] retain];
+    errors = [[NSMutableArray arrayWithCapacity:rows.count] retain];
+    for (int i =0; i < rows.count; i++) {
+        [checkMarks addObject:[NSNumber numberWithBool:FALSE]];
+        [errors addObject:[NSNull null]];
+    }
+    for (NSNumber *n in checks) 
+        checkMarks[n.intValue] = [NSNumber numberWithBool:TRUE];
+    
+    for (NSNumber *n in err.allKeys)
+        errors[n.intValue] = err[n];
+    return self;
 }
 
 -(void)dealloc {
-	[rows release];
-	[checkMarks release];
-	[errors release];
-	[super dealloc];
+    [rows release];
+    [checkMarks release];
+    [errors release];
+    [super dealloc];
 }
 
 -(void)removeRowAtIndex:(int)index {
-	[rows removeObjectAtIndex:index];
-	[checkMarks removeObjectAtIndex:index];
-	[errors removeObjectAtIndex:index];
+    [rows removeObjectAtIndex:index];
+    [checkMarks removeObjectAtIndex:index];
+    [errors removeObjectAtIndex:index];
 }
 
 -(NSArray *)rows {
-	return rows;
+    return rows;
 }
 
 -(NSArray *)checkMarks {
-	return checkMarks;
+    return checkMarks;
 }
 
 -(NSArray *)errors {
-	return errors;
+    return errors;
 }
 
 @end
 
 @implementation EditableQueryResultWrapper
 
-- (id)initWithQueryResult:(ZKQueryResult *)qr {
-	self = [super init];
-	result = [qr retain];
-	editable = NO;
-	imageCell = [[QueryResultCell alloc] initTextCell:@""];
-	checkedRows = [[NSMutableSet alloc] init];
-	rowErrors = [[NSMutableDictionary alloc] init];
-	return self;
+- (instancetype)initWithQueryResult:(ZKQueryResult *)qr {
+    self = [super init];
+    result = [qr retain];
+    editable = NO;
+    imageCell = [[QueryResultCell alloc] initTextCell:@""];
+    checkedRows = [[NSMutableSet alloc] init];
+    rowErrors = [[NSMutableDictionary alloc] init];
+    return self;
 }
 
 - (void)dealloc {
-	[result release];
-	[imageCell release];
-	[checkedRows release];
-	[rowErrors release];
-	[super dealloc];
+    [result release];
+    [imageCell release];
+    [checkedRows release];
+    [rowErrors release];
+    [super dealloc];
 }
 
 - (id)createMutatingRowsContext {
-	EQRWMutating *c = [[EQRWMutating alloc] initWithRows:[result records] errors:rowErrors checkMarks:checkedRows];
-	return [c autorelease];
+    EQRWMutating *c = [[EQRWMutating alloc] initWithRows:[result records] errors:rowErrors checkMarks:checkedRows];
+    return [c autorelease];
 }
 
 - (void)remmoveRowAtIndex:(int)index context:(id)mutatingContext {
-	[(EQRWMutating *)mutatingContext removeRowAtIndex:index];
+    [(EQRWMutating *)mutatingContext removeRowAtIndex:index];
 }
 
 - (void)updateRowsFromContext:(id)context {
-	EQRWMutating *ctx = (EQRWMutating *)context;
-	NSArray *rows = [ctx rows];
-	[self clearErrors];
-	int r = 0;
-	for (id err in [ctx errors]) {
-		if (err != [NSNull null])
-			[self addError:(NSString *)err forRowIndex:[NSNumber numberWithInt:r]];
-		++r;
-	}
-	r = 0;
-	[self willChangeValueForKey:@"hasCheckedRows"];
-	[checkedRows removeAllObjects];
-	for (NSNumber *c in [ctx checkMarks]) {
-		if ([c boolValue]) 
-			[checkedRows addObject:[NSNumber numberWithInt:r]];
-		++r;
-	}
-	[self didChangeValueForKey:@"hasCheckedRows"];
-	
-	int rowCountDiff = [[result records] count] - [rows count];
-	ZKQueryResult *nr = [[[ZKQueryResult alloc] initWithRecords:rows size:[result size] - rowCountDiff done:[result done] queryLocator:[result queryLocator]] autorelease];
-	[self setQueryResult:nr];
+    EQRWMutating *ctx = (EQRWMutating *)context;
+    NSArray *rows = [ctx rows];
+    [self clearErrors];
+    int r = 0;
+    for (id err in [ctx errors]) {
+        if (err != [NSNull null])
+            [self addError:(NSString *)err forRowIndex:@(r)];
+        ++r;
+    }
+    r = 0;
+    [self willChangeValueForKey:@"hasCheckedRows"];
+    [checkedRows removeAllObjects];
+    for (NSNumber *c in [ctx checkMarks]) {
+        if (c.boolValue) 
+            [checkedRows addObject:@(r)];
+        ++r;
+    }
+    [self didChangeValueForKey:@"hasCheckedRows"];
+    
+    int rowCountDiff = [result records].count - rows.count;
+    ZKQueryResult *nr = [[[ZKQueryResult alloc] initWithRecords:rows size:[result size] - rowCountDiff done:[result done] queryLocator:[result queryLocator]] autorelease];
+    [self setQueryResult:nr];
 }
 
 -(NSArray *)allSystemColumnIdentifiers {
-	return [NSArray arrayWithObjects:DELETE_COLUMN_IDENTIFIER, ERROR_COLUMN_IDENTIFIER, nil];
+    return @[DELETE_COLUMN_IDENTIFIER, ERROR_COLUMN_IDENTIFIER];
 }
 
 - (void)setQueryResult:(ZKQueryResult *)newResults {
-	if (result == newResults) return;
-	[result autorelease];
-	result = [newResults retain];
+    if (result == newResults) return;
+    [result autorelease];
+    result = [newResults retain];
 }
 
 - (ZKQueryResult *)queryResult {
-	return result;
+    return result;
 }
 
 - (BOOL)editable {
-	return editable;
+    return editable;
 }
 
 - (void)setEditable:(BOOL)newAllowEdit {
-	editable = newAllowEdit;
+    editable = newAllowEdit;
 }
 
 - (NSObject<EditableQueryResultWrapperDelegate> *)delegate {
-	return delegate;
+    return delegate;
 }
 
 - (void)setDelegate:(NSObject<EditableQueryResultWrapperDelegate> *)aValue {
-	delegate = aValue;
+    delegate = aValue;
 }
 
 - (BOOL)hasCheckedRows {
-	return [checkedRows count] > 0;
+    return checkedRows.count > 0;
 }
 
 - (BOOL)hasErrors {
-	return [rowErrors count] > 0;
+    return rowErrors.count > 0;
 }
 
 - (void)clearErrors {
-	[rowErrors removeAllObjects];
+    [rowErrors removeAllObjects];
 }
 
 - (void)addError:(NSString *)errMsg forRowIndex:(NSNumber *)index {
-	[rowErrors setObject:errMsg forKey:index];
+    rowErrors[index] = errMsg;
 }
 
 - (int)size {
-	return [result size];
+    return [result size];
 }
 
 - (BOOL)done {
-	return [result done];
+    return [result done];
 }
 
 - (NSString *)queryLocator {
-	return [result queryLocator];
+    return [result queryLocator];
 }
 
 - (NSArray *)records {
-	return [result records];
+    return [result records];
 }
 
 - (int)numberOfRowsInTableView:(NSTableView *)v {
-	return [result numberOfRowsInTableView:v];
+    return [result numberOfRowsInTableView:v];
 }
 
 - (id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(int)rowIdx {
-	if ([[tc identifier] isEqualToString:DELETE_COLUMN_IDENTIFIER]) 
-		return [NSNumber numberWithBool:[checkedRows containsObject:[NSNumber numberWithInt:rowIdx]]];
-	if ([[tc identifier] isEqualToString:ERROR_COLUMN_IDENTIFIER])
-		return [rowErrors objectForKey:[NSNumber numberWithInt:rowIdx]];
-	return [result tableView:view objectValueForTableColumn:tc row:rowIdx];
+    if ([tc.identifier isEqualToString:DELETE_COLUMN_IDENTIFIER]) 
+        return @([checkedRows containsObject:@(rowIdx)]);
+    if ([tc.identifier isEqualToString:ERROR_COLUMN_IDENTIFIER])
+        return rowErrors[@(rowIdx)];
+    return [result tableView:view objectValueForTableColumn:tc row:rowIdx];
 }
 
 - (BOOL)allowEdit:(NSTableColumn *)aColumn {
-	if (!editable) return NO;
-	if ([[aColumn identifier] isEqualToString:ERROR_COLUMN_IDENTIFIER]) return NO;
-	return [[aColumn identifier] rangeOfString:@"."].location == NSNotFound;
+    if (!editable) return NO;
+    if ([aColumn.identifier isEqualToString:ERROR_COLUMN_IDENTIFIER]) return NO;
+    return [aColumn.identifier rangeOfString:@"."].location == NSNotFound;
 }
 
 - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor {
@@ -229,40 +229,40 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
 }
 
 - (void)setChecksOnAllRows:(BOOL)checked {
-	[self willChangeValueForKey:@"hasCheckedRows"];
-	if (checked) {
-		int rows = [[result records] count];
-		for (int i = 0; i < rows; i++)
-			[checkedRows addObject:[NSNumber numberWithInt:i]];
-	} else {
-		[checkedRows removeAllObjects];
-	}
-	[self didChangeValueForKey:@"hasCheckedRows"];
+    [self willChangeValueForKey:@"hasCheckedRows"];
+    if (checked) {
+        int rows = [result records].count;
+        for (int i = 0; i < rows; i++)
+            [checkedRows addObject:@(i)];
+    } else {
+        [checkedRows removeAllObjects];
+    }
+    [self didChangeValueForKey:@"hasCheckedRows"];
 }
 
 - (void)setChecked:(BOOL)checked onRowWithIndex:(NSNumber *)index {
-	BOOL dcv = [checkedRows count] < 2;
-	if (dcv) [self willChangeValueForKey:@"hasCheckedRows"];
-	if (checked)
-		[checkedRows addObject:index];
-	else
-		[checkedRows removeObject:index];
-	if (dcv) [self didChangeValueForKey:@"hasCheckedRows"];
+    BOOL dcv = checkedRows.count < 2;
+    if (dcv) [self willChangeValueForKey:@"hasCheckedRows"];
+    if (checked)
+        [checkedRows addObject:index];
+    else
+        [checkedRows removeObject:index];
+    if (dcv) [self didChangeValueForKey:@"hasCheckedRows"];
 }
 
 - (int)numCheckedRows {
-	return [checkedRows count];
+    return checkedRows.count;
 }
 
 - (NSSet *)indexesOfCheckedRows {
-	return checkedRows;
+    return checkedRows;
 }
 
 - (void)tableView:(NSTableView *)tableView didClickTableColumn:(NSTableColumn *)tableColumn {
-	if ([[tableColumn identifier] isEqualToString:DELETE_COLUMN_IDENTIFIER]) {
-		[self setChecksOnAllRows:![self hasCheckedRows]];
-		[tableView reloadData];
-	}
+    if ([tableColumn.identifier isEqualToString:DELETE_COLUMN_IDENTIFIER]) {
+        [self setChecksOnAllRows:![self hasCheckedRows]];
+        [tableView reloadData];
+    }
 }
 
 - (void)tableView:(NSTableView *)aTableView
@@ -270,29 +270,29 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
     forTableColumn:(NSTableColumn *)aTableColumn
     row:(NSInteger)rowIndex
 {
-	BOOL allow = [self allowEdit:aTableColumn];
-	if (!allow) return;
-	if ([[aTableColumn identifier] isEqualToString:@"Id"]) 
-		return;	// Id column is not really editable
+    BOOL allow = [self allowEdit:aTableColumn];
+    if (!allow) return;
+    if ([aTableColumn.identifier isEqualToString:@"Id"]) 
+        return;    // Id column is not really editable
 
-	BOOL isDelete = [[aTableColumn identifier] isEqualToString:DELETE_COLUMN_IDENTIFIER];
-	if (isDelete) {
-		NSNumber *r = [NSNumber numberWithInt:rowIndex];
-		BOOL currentState = [checkedRows containsObject:r];
-		[self setChecked:!currentState onRowWithIndex:r]; 
-	} else {
-		if (delegate != nil && [delegate respondsToSelector:@selector(dataChangedOnObject:field:value:)]) {
-			[delegate dataChangedOnObject:[[result records] objectAtIndex:rowIndex] field:[aTableColumn identifier] value:anObject];
-		}
-	}
+    BOOL isDelete = [aTableColumn.identifier isEqualToString:DELETE_COLUMN_IDENTIFIER];
+    if (isDelete) {
+        NSNumber *r = [NSNumber numberWithInt:rowIndex];
+        BOOL currentState = [checkedRows containsObject:r];
+        [self setChecked:!currentState onRowWithIndex:r]; 
+    } else {
+        if (delegate != nil && [delegate respondsToSelector:@selector(dataChangedOnObject:field:value:)]) {
+            [delegate dataChangedOnObject:[result records][rowIndex] field:aTableColumn.identifier value:anObject];
+        }
+    }
 }
 
 - (NSCell *)tableView:(NSTableView *)tableView dataCellForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
-	if (tableColumn == nil) return nil;
-	id v = [result tableView:tableView objectValueForTableColumn:tableColumn row:row];
-	if ([v isKindOfClass:[ZKQueryResult class]]) 
-		return imageCell;
-	return [tableColumn dataCellForRow:row];
+    if (tableColumn == nil) return nil;
+    id v = [result tableView:tableView objectValueForTableColumn:tableColumn row:row];
+    if ([v isKindOfClass:[ZKQueryResult class]]) 
+        return imageCell;
+    return [tableColumn dataCellForRow:row];
 }
 
 @end

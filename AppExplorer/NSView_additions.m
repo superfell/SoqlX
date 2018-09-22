@@ -26,13 +26,13 @@
 
 
 - (BOOL)mousePointerIsInsideRect:(NSRect)rect {
-	NSPoint loc = [self convertPoint:[[self window] mouseLocationOutsideOfEventStream] fromView:nil];
-	return NSPointInRect(loc, rect);
+    NSPoint loc = [self convertPoint:self.window.mouseLocationOutsideOfEventStream fromView:nil];
+    return NSPointInRect(loc, rect);
 }
 
 // addTrackingRect helper that calculates whether we're inside the rect or not
 - (NSTrackingRectTag)addTrackingRect:(NSRect)rect owner:(id)owner {
-	return [self addTrackingRect:rect owner:owner userData:nil assumeInside:[self mousePointerIsInsideRect:rect]];
+    return [self addTrackingRect:rect owner:owner userData:nil assumeInside:[self mousePointerIsInsideRect:rect]];
 }
 
 @end

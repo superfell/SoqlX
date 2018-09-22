@@ -27,25 +27,24 @@
 @class Explorer;
 
 @interface SchemaView : NSView {
-	SObjectBox				*centralBox;
-	DescribeListDataSource  *describes;
-	NSMutableDictionary		*relatedBoxes;	// (SObjectBox keyed by SObject name)
-	NSArray					*foreignKeys;	// (of SObject box)
-	NSArray					*children;		// (of SObject box)
-	
-	NSColor					*primaryColor;
-	NSColor					*foreignKeyColor;
-	NSColor					*childRelColor;
-	BOOL					isPrinting;
-	IBOutlet Explorer		*primaryController;
+    SObjectBox                *centralBox;
+    DescribeListDataSource  *describes;
+    NSMutableDictionary        *relatedBoxes;    // (SObjectBox keyed by SObject name)
+    NSArray                    *foreignKeys;    // (of SObject box)
+    NSArray                    *children;        // (of SObject box)
+    
+    NSColor                    *primaryColor;
+    NSColor                    *foreignKeyColor;
+    NSColor                    *childRelColor;
+    BOOL                    isPrinting;
+    IBOutlet Explorer        *primaryController;
 }
 
 @property (retain) DescribeListDataSource *describesDataSource;
 
-- (ZKDescribeSObject *)centralSObject;
-- (void)setCentralSObject:(ZKDescribeSObject *)s;
+@property (strong) ZKDescribeSObject *centralSObject;
 - (void)setCentralSObject:(ZKDescribeSObject *)s withRipplePoint:(NSPoint)ripple;
-- (SObjectBox *)centralBox;
+@property (readonly, strong) SObjectBox *centralBox;
 
 - (void)layoutBoxes;
 - (BOOL)mousePointerIsInsideRect:(NSRect)rect;

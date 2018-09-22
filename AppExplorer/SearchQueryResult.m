@@ -25,14 +25,14 @@
 
 @implementation SearchQueryResult
 
-+(id)searchQueryResults:(NSArray *)searchResults {
-    return [[[SearchQueryResult alloc] initWithRecords:searchResults size:[searchResults count] done:TRUE queryLocator:nil] autorelease];
++(instancetype)searchQueryResults:(NSArray *)searchResults {
+    return [[[SearchQueryResult alloc] initWithRecords:searchResults size:searchResults.count done:TRUE queryLocator:nil] autorelease];
 }
 
 - (id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(int)rowIdx {
     // handle the SObject__Type column used in search results.
-    if ([[tc identifier] isEqualToString:@"SObject__Type"]) {
-        ZKSObject *r = [records objectAtIndex:rowIdx];
+    if ([tc.identifier isEqualToString:@"SObject__Type"]) {
+        ZKSObject *r = records[rowIdx];
         return [r type];
     }
     return [super tableView:view objectValueForTableColumn:tc row:rowIdx];

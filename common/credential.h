@@ -24,9 +24,9 @@
 
 
 @interface Credential : NSObject {
-	NSString			*server;
-	NSString			*username;
-	SecKeychainItemRef	keychainItem;
+    NSString            *server;
+    NSString            *username;
+    SecKeychainItemRef    keychainItem;
 }
 
 + (NSArray *)credentialsForServer:(NSString *)protocolAndServer;
@@ -35,26 +35,21 @@
 + (id)forServer:(NSString *)server username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem;
 + (id)createCredentialForServer:(NSString *)protocolAndServer username:(NSString *)un password:(NSString *)pwd;
 
-- (id)initForServer:(NSString *)server username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem;
+- (instancetype)initForServer:(NSString *)server username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem NS_DESIGNATED_INITIALIZER;
 
-- (NSString *)server;
-- (NSString *)username;
-- (NSString *)password;
-- (NSString *)comment;
-- (NSString *)creator;
-- (BOOL)canReadPasswordWithoutPrompt;
+@property (copy) NSString *server;
+@property (copy) NSString *username;
+@property (copy) NSString *password;
+@property (copy) NSString *comment;
+@property (copy) NSString *creator;
+@property (readonly) BOOL canReadPasswordWithoutPrompt;
 
-- (void)setServer:(NSString *)newServer;
-- (void)setUsername:(NSString *)newUsername;
-- (void)setPassword:(NSString *)newPassword;
-- (void)setComment:(NSString *)newComment;
-- (void)setCreator:(NSString *)newCreator;
 
 - (void)removeFromKeychain;
 - (OSStatus)update:(NSString *)username password:(NSString *)password;
 @end
 
 @interface NSURL (ZKKeychain)
-- (SecProtocolType)SecProtocolType;
-- (CFTypeRef)SecAttrProtocol;
+@property (readonly) SecProtocolType SecProtocolType;
+@property (readonly) CFTypeRef SecAttrProtocol;
 @end

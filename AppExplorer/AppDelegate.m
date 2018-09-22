@@ -26,7 +26,7 @@
 
 @implementation AppDelegate
 
--(id)init {
+-(instancetype)init {
     self = [super init];
     windowControllers = [[NSMutableArray alloc] init];
     return self;
@@ -38,25 +38,25 @@
 }
 
 - (IBAction)launchHelp:(id)sender {
-	NSString *help = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"ZKHelpUrl"];
-	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:help]];
+    NSString *help = [NSBundle mainBundle].infoDictionary[@"ZKHelpUrl"];
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:help]];
 }
 
 // If the version of the app has changed, then reset any pref setting that is overriding the API version from
 // the default (as a new version likely means we've moved API versions anyway)
 -(void)resetApiVersionOverrideIfAppVersionChanged {
-	NSDictionary *plist = [[NSBundle mainBundle] infoDictionary];
-	NSString * currentVersionString = [plist objectForKey:@"CFBundleVersion"];
-	float currentVersion = currentVersionString == nil ? 0.0f : [currentVersionString floatValue];
-	float lastRun = [[NSUserDefaults standardUserDefaults] floatForKey:@"LastAppVersionRun"];
-	if (currentVersion > lastRun) {
-		[[NSUserDefaults standardUserDefaults] removeObjectForKey:@"zkApiVersion"];
-		[[NSUserDefaults standardUserDefaults] setFloat:currentVersion forKey:@"LastAppVersionRun"];
-	}
+    NSDictionary *plist = [NSBundle mainBundle].infoDictionary;
+    NSString * currentVersionString = plist[@"CFBundleVersion"];
+    float currentVersion = currentVersionString == nil ? 0.0f : currentVersionString.floatValue;
+    float lastRun = [[NSUserDefaults standardUserDefaults] floatForKey:@"LastAppVersionRun"];
+    if (currentVersion > lastRun) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"zkApiVersion"];
+        [[NSUserDefaults standardUserDefaults] setFloat:currentVersion forKey:@"LastAppVersionRun"];
+    }
 }
 
 -(void)applicationDidFinishLaunching:(NSNotification *)notification {
-	[self resetApiVersionOverrideIfAppVersionChanged];
+    [self resetApiVersionOverrideIfAppVersionChanged];
     [self openNewWindow:self];
     
     // If the updater is going to restart the app, we need to close the login sheet if its currently open.
@@ -81,7 +81,7 @@
 
 @implementation SoqlXWindowController
 
--(id)initWithWindowControllers:(NSMutableArray *)c {
+-(instancetype)initWithWindowControllers:(NSMutableArray *)c {
     self = [super initWithWindowNibName:@"Explorer"];
     controllers = [c retain];
     [c addObject:self];
@@ -94,12 +94,12 @@
 }
 
 -(void)closeLoginPanelIfOpen:(id)sender {
-    Explorer *e = (Explorer *)[[self window] delegate];
+    Explorer *e = (Explorer *)self.window.delegate;
     [e closeLoginPanelIfOpen:sender];
 }
 
 -(void)windowDidLoad {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowWillClose:) name:NSWindowWillCloseNotification object:[self window]];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowWillClose:) name:NSWindowWillCloseNotification object:self.window];
 }
 
 -(void)windowWillClose:(id)sender {

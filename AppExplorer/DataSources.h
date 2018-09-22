@@ -28,17 +28,17 @@
 @class ZKDescribeGlobalTheme;
 
 @interface DescribeListDataSource : NSObject<NSOutlineViewDataSource, NSOutlineViewDelegate, IconProvider> {
-	NSArray					*types;
-	NSDictionary			*descGlobalSobjects;
-	ZKSforceClient			*sforce;
-	NSMutableDictionary		*describes;
+    NSArray                    *types;
+    NSDictionary            *descGlobalSobjects;
+    ZKSforceClient            *sforce;
+    NSMutableDictionary        *describes;
     NSMutableDictionary     *sortedDescribes;
-	NSMutableDictionary		*operations;
+    NSMutableDictionary        *operations;
     NSMutableDictionary     *icons;
-	
-	NSString				*filter;
-	NSArray					*filteredTypes;
-	NSOutlineView			*outlineView;
+    
+    NSString                *filter;
+    NSArray                    *filteredTypes;
+    NSOutlineView            *outlineView;
     
     NSSortDescriptor        *fieldSortOrder;
     int32_t                 stopBackgroundDescribes;
@@ -56,8 +56,7 @@
 - (NSImage *)iconForType:(NSString *)sobjectName;
 
 // filter the view
-- (NSString *)filter;
-- (void)setFilter:(NSString *)filterValue;
+@property (copy) NSString *filter;
 
 // for use in a table view
 - (int)numberOfRowsInTableView:(NSTableView *)v;
@@ -69,16 +68,16 @@
 - (id)outlineView:(NSOutlineView *)outlineView child:(int)index ofItem:(id)item;
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item;
 
-- (NSArray *)SObjects;
+@property (readonly, copy) NSArray *SObjects;
 @end;
 
 
 @interface SObjectDataSource : NSObject<NSTableViewDataSource> {
-	ZKDescribeSObject	*sobject;
-	NSArray				*titles;
+    ZKDescribeSObject    *sobject;
+    NSArray                *titles;
 }
 
-- (id)initWithDescribe:(ZKDescribeSObject *)s;
+- (instancetype)initWithDescribe:(ZKDescribeSObject *)s NS_DESIGNATED_INITIALIZER;
 // for use in a table view
 - (int)numberOfRowsInTableView:(NSTableView *)v;
 - (id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(int)rowIdx;
@@ -86,10 +85,10 @@
 @end;
 
 @interface SObjectFieldDataSource : NSObject<NSTableViewDataSource> {
-	ZKDescribeField		*field;
-	NSArray				*titles;
+    ZKDescribeField        *field;
+    NSArray                *titles;
 }
-- (id)initWithDescribe:(ZKDescribeField *)f;
+- (instancetype)initWithDescribe:(ZKDescribeField *)f NS_DESIGNATED_INITIALIZER;
 // for use in a table view
 - (int)numberOfRowsInTableView:(NSTableView *)v;
 - (id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(int)rowIdx;

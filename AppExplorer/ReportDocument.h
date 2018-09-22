@@ -26,22 +26,22 @@
 @class SchemaView;
 
 @interface ReportDocument : NSDocument {
-    IBOutlet WebView				*webview;
-	IBOutlet SchemaView				*schemaView;
-	IBOutlet NSTabView				*tabview;
-	IBOutlet NSProgressIndicator	*progress;
-	
-	NSString 			*sobjectType;
-	int					totalObjects;
-	int					describesDone;
-	BOOL				enabledButtons;
+    IBOutlet WebView                *webview;
+    IBOutlet SchemaView                *schemaView;
+    IBOutlet NSTabView                *tabview;
+    IBOutlet NSProgressIndicator    *progress;
+    
+    NSString             *sobjectType;
+    int                    totalObjects;
+    int                    describesDone;
+    BOOL                enabledButtons;
 }
 
 - (IBAction)copy:(id)sender;
 - (IBAction)print:(id)sender;
 - (IBAction)saveAsPdf:(id)sender;
 
-- (NSString *)name;
+@property (readonly, copy) NSString *name;
 - (void)setSObjectType:(NSString *)type andDataSource:(DescribeListDataSource *)newDataSource;
 
 @property (assign) int totalObjects;

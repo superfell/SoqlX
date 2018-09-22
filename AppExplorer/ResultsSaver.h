@@ -26,11 +26,11 @@
 @class ZKQueryResult;
 
 @interface BufferedWriter : NSObject {
-	NSOutputStream	*stream;
-	NSMutableData	*buffer;
-	NSUInteger		capacity;
+    NSOutputStream    *stream;
+    NSMutableData    *buffer;
+    NSUInteger        capacity;
 }
--(id)initOnStream:(NSOutputStream *)s;
+-(instancetype)initOnStream:(NSOutputStream *)s;
 
 -(void)write:(const uint8_t *)data maxLength:(uint)len;
 -(void)flush:(BOOL)ensureFullyFlushed;
@@ -44,24 +44,24 @@
 @end
 
 @interface ResultsSaver : NSObject {
-    NSWindow		*progressWindow;
-	NSView			*optionsView;
-	NSButtonCell	*buttonAll;
-	NSButtonCell	*buttonCurrent;
-	
-	BOOL				saveAll;
-	NSOperationQueue	*queryQueue;
-	NSOperationQueue	*saveQueue;
-	BufferedWriter		*stream;
-	ZKSforceClient		*client;
-	QueryResultTable	*results;
-	NSURL               *filename;
-	NSDate				*started;
-	
-	NSUInteger			rowsWritten;
+    NSWindow        *progressWindow;
+    NSView            *optionsView;
+    NSButtonCell    *buttonAll;
+    NSButtonCell    *buttonCurrent;
+    
+    BOOL                saveAll;
+    NSOperationQueue    *queryQueue;
+    NSOperationQueue    *saveQueue;
+    BufferedWriter        *stream;
+    ZKSforceClient        *client;
+    QueryResultTable    *results;
+    NSURL               *filename;
+    NSDate                *started;
+    
+    NSUInteger            rowsWritten;
 }
 
--(id)initWithResults:(QueryResultTable *)res client:(ZKSforceClient *)c;
+-(instancetype)initWithResults:(QueryResultTable *)res client:(ZKSforceClient *)c NS_DESIGNATED_INITIALIZER;
 
 -(void)save:(NSWindow *)parentWindow;
 

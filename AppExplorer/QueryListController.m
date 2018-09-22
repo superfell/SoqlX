@@ -28,7 +28,7 @@ static NSString *RECENT_SHOWN = @"recentQueriesVisible";
 
 -(void)awakeFromNib {
     [super awakeFromNib];
-	[panelWindow setContentBorderThickness:28.0 forEdge:NSMinYEdge];
+    [panelWindow setContentBorderThickness:28.0 forEdge:NSMinYEdge];
 }
 
 -(NSString *)windowVisiblePrefName {
@@ -36,23 +36,23 @@ static NSString *RECENT_SHOWN = @"recentQueriesVisible";
 }
 
 - (void)addQuery:(NSString *)soql {
-	soql = [soql stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-	if ([view upsertHead:soql]) {
+    soql = [soql stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    if ([view upsertHead:soql]) {
         // save the current list of recent queries
-		NSMutableArray *q = [NSMutableArray arrayWithCapacity:[[view items] count]];
-		for (QueryTextListViewItem *i in [view items]) 
-			[q addObject:[i text]];
-			
-		[[NSUserDefaults standardUserDefaults] setObject:q forKey:[self prefName:RECENT_QUERIES]];
-	}
+        NSMutableArray *q = [NSMutableArray arrayWithCapacity:[view items].count];
+        for (QueryTextListViewItem *i in [view items]) 
+            [q addObject:i.text];
+            
+        [[NSUserDefaults standardUserDefaults] setObject:q forKey:[self prefName:RECENT_QUERIES]];
+    }
 }
 
 -(void)setDelegate:(id<QueryTextListViewDelegate>)delegate {
-    [view setDelegate:delegate];
+    view.delegate = delegate;
 }
 
 -(id<QueryTextListViewDelegate>)delegate {
-    return [view delegate];
+    return view.delegate;
 }
 
 -(void)loadSavedItems {
@@ -66,7 +66,7 @@ static NSString *RECENT_SHOWN = @"recentQueriesVisible";
             [def removeObjectForKey:RECENT_QUERIES];
         }
     }
-	if (saved != nil)
+    if (saved != nil)
         [view setInitialItems:saved];
 }
     

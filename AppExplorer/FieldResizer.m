@@ -25,10 +25,10 @@
 @implementation FieldResizer
 
 -(void)splitViewDidResizeSubviews:(NSNotification *)aNotification {
-	double newWidth = [[[splitter subviews] objectAtIndex:0] frame].size.width;
-	NSRect f = [field frame];
-	f.size.width = newWidth - f.origin.x;
-	[field setFrameSize:f.size];
+    double newWidth = splitter.subviews[0].frame.size.width;
+    NSRect f = field.frame;
+    f.size.width = newWidth - f.origin.x;
+    [field setFrameSize:f.size];
 }
 
 @end

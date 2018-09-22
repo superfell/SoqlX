@@ -44,23 +44,23 @@ static NSString *SHOWING_DETAILS = @"details";
 }
 
 -(NSString *)title {
-	if ([self dataSource] == nil) return @"Details";
-	return [[self dataSource] description];
+    if ([self dataSource] == nil) return @"Details";
+    return [self dataSource].description;
 }
 
 -(NSObject *)dataSource {
-	return [detailsTable dataSource];
+    return detailsTable.dataSource;
 }
 
 -(void)setDataSource:(NSObject<NSTableViewDataSource> *)aValue {
     [dataSourceRef autorelease];
     dataSourceRef = [aValue retain];
-	[detailsTable setDataSource:aValue];
+    detailsTable.dataSource = aValue;
 }
 
 - (void)setIcon:(NSImage *)image {
-    [[detailsTable window] setRepresentedURL:[NSURL fileURLWithPath:self.title]];
-    [[[detailsTable window] standardWindowButton:NSWindowDocumentIconButton] setImage:image];
+    detailsTable.window.representedURL = [NSURL fileURLWithPath:self.title];
+    [detailsTable.window standardWindowButton:NSWindowDocumentIconButton].image = image;
 }
 
 - (IBAction) copy:(id)sender {

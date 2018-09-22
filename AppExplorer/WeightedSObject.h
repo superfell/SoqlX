@@ -22,15 +22,15 @@
 #import <Cocoa/Cocoa.h>
 
 @interface WeightedSObject : NSObject {
-	NSString			*sobject;
-	NSMutableIndexSet	*weight;
+    NSString            *sobject;
+    NSMutableIndexSet    *weight;
 }
 
-+ (id)weightedSObjectForSObject:(NSString *)sobjectName;
++ (instancetype)weightedSObjectForSObject:(NSString *)sobjectName;
 
-- (id)initForSObject:(NSString *)sobjectName;
-- (NSString *)sobject;
+- (instancetype)initForSObject:(NSString *)sobjectName NS_DESIGNATED_INITIALIZER;
+@property (readonly, copy) NSString *sobject;
 - (void)addWeight:(uint)index;
-- (NSIndexSet *)weights;
+@property (readonly, copy) NSIndexSet *weights;
 - (NSComparisonResult)compare:(WeightedSObject *)other;
 @end

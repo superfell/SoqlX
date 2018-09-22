@@ -31,7 +31,7 @@
 
 @interface SchemaView ()
 - (NSArray *)childSObjectsSkipping:(NSArray *)toSkip;
-- (NSArray *)foreignKeySObjects;
+@property (readonly, copy) NSArray *foreignKeySObjects;
 - (NSArray *)createSObjectBoxes:(NSArray *)sobjects withColor:(NSColor *)aColor;
 @end
 
@@ -42,19 +42,19 @@
 
 @implementation NSBezierPath (Intersections)
 - (float)xIntersectionForY:(float)y {
-	NSPoint point[3];
-	NSPoint startPos;
-	[self elementAtIndex:0 associatedPoints:point];
-	startPos = point[0];
-	int idx;
-	for (idx = 1; idx < [self elementCount]; idx++) {
-		[self elementAtIndex:idx associatedPoints:point];
-		if ((y >= startPos.y) && (y <= point[0].y)) {
-			return startPos.x + (((y - startPos.y) / (point[0].y - startPos.y)) * (point[0].x - startPos.x));
-		}
-		startPos = point[0];
-	}
-	return startPos.x;
+    NSPoint point[3];
+    NSPoint startPos;
+    [self elementAtIndex:0 associatedPoints:point];
+    startPos = point[0];
+    int idx;
+    for (idx = 1; idx < self.elementCount; idx++) {
+        [self elementAtIndex:idx associatedPoints:point];
+        if ((y >= startPos.y) && (y <= point[0].y)) {
+            return startPos.x + (((y - startPos.y) / (point[0].y - startPos.y)) * (point[0].x - startPos.x));
+        }
+        startPos = point[0];
+    }
+    return startPos.x;
 }
 @end
 
@@ -65,92 +65,92 @@
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-	[centralBox release];
-	[describes release];
-	[relatedBoxes release];
-	[foreignKeys release];
-	[children release];
-	[primaryColor release];
-	[foreignKeyColor release];
-	[childRelColor release];
-	[super dealloc];
+    [centralBox release];
+    [describes release];
+    [relatedBoxes release];
+    [foreignKeys release];
+    [children release];
+    [primaryColor release];
+    [foreignKeyColor release];
+    [childRelColor release];
+    [super dealloc];
 }
 
 // Printing
 - (void)print:(id)sender {
-	isPrinting = YES;
+    isPrinting = YES;
     NSPrintOperation *pop = [NSPrintOperation printOperationWithView:self];
-	[[pop printInfo] setVerticalPagination:NSFitPagination];
-	[[pop printInfo] setHorizontalPagination:NSFitPagination];
-	[pop runOperation];
-	isPrinting = NO;
+    pop.printInfo.verticalPagination = NSFitPagination;
+    pop.printInfo.horizontalPagination = NSFitPagination;
+    [pop runOperation];
+    isPrinting = NO;
 }
 
 // NSView
-- (id)initWithFrame:(NSRect)frame {
+- (instancetype)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-		primaryColor = [[NSColor purpleColor] retain];
-		foreignKeyColor = [[NSColor colorWithCalibratedRed:0.3 green:0.3 blue:0.8 alpha:1.0] retain];
-		childRelColor = [[NSColor orangeColor] retain];
-		isPrinting = NO;
-		
-		NSSize sz = NSMakeSize(200, 100);
-		NSPoint pt = NSMakePoint(NSMidX(frame) - sz.width/2, NSMidY(frame) - sz.height/2);
-		NSRect rect = NSMakeRect(pt.x, pt.y, sz.width,sz.height);
-		centralBox = [[SObjectBox alloc] initWithFrame:rect andView:self];
-		[centralBox setColor:primaryColor];
-		[[self superview] setPostsBoundsChangedNotifications: YES];
-		[[NSNotificationCenter defaultCenter] addObserver:self
-		        	selector: @selector(boundsDidChangeNotification:)
-		        	name: NSViewBoundsDidChangeNotification
-		        	object: [self superview]];
+        primaryColor = [[NSColor purpleColor] retain];
+        foreignKeyColor = [[NSColor colorWithCalibratedRed:0.3 green:0.3 blue:0.8 alpha:1.0] retain];
+        childRelColor = [[NSColor orangeColor] retain];
+        isPrinting = NO;
+        
+        NSSize sz = NSMakeSize(200, 100);
+        NSPoint pt = NSMakePoint(NSMidX(frame) - sz.width/2, NSMidY(frame) - sz.height/2);
+        NSRect rect = NSMakeRect(pt.x, pt.y, sz.width,sz.height);
+        centralBox = [[SObjectBox alloc] initWithFrame:rect andView:self];
+        centralBox.color = primaryColor;
+        [self.superview setPostsBoundsChangedNotifications: YES];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                    selector: @selector(boundsDidChangeNotification:)
+                    name: NSViewBoundsDidChangeNotification
+                    object: self.superview];
     }
     return self;
 }
 
 - (void) boundsDidChangeNotification:(NSNotification *)notification {
-	[centralBox resetTrackingRect];
-	[foreignKeys makeObjectsPerformSelector:@selector(resetTrackingRect)];
-	[children makeObjectsPerformSelector:@selector(resetTrackingRect)];
+    [centralBox resetTrackingRect];
+    [foreignKeys makeObjectsPerformSelector:@selector(resetTrackingRect)];
+    [children makeObjectsPerformSelector:@selector(resetTrackingRect)];
 } 
 
 - (void)drawRelationshipLine:(SObjectBox *)relBox fieldNameOnPrimarySObject:(NSString *)primaryField fieldNameOnRelatedSObject:(NSString *)secondaryField withColor:(NSColor *)aColor {
-	NSBezierPath *path = [NSBezierPath bezierPath];
-	NSRect primary   = [centralBox rectOfFieldPaddedToEdges:primaryField];
-	if (NSIsEmptyRect(primary)) primary = [centralBox rectOfFieldPaddedToEdges:@"Id"];
-	NSRect secondary = [relBox rectOfFieldPaddedToEdges:secondaryField];
-	if (NSIsEmptyRect(secondary)) secondary = [relBox rectOfFieldPaddedToEdges:@"Id"];
-	int offset1, offset2;
-	NSPoint startPoint, endPoint;
-	if (relBox == centralBox) {
-		startPoint = NSMakePoint(NSMinX(primary), NSMidY(primary));
-		endPoint = NSMakePoint(NSMinX(secondary), NSMidY(secondary));
-		offset1 = -75;
-		offset2 = -75;
-		// self references always use the color of the self referencing entity
-		aColor = [relBox color];
-	} else if (NSMaxX(primary) < NSMinX(secondary)) {
-		startPoint = NSMakePoint(NSMaxX(primary), NSMidY(primary));
-		endPoint = NSMakePoint(NSMinX(secondary), NSMidY(secondary));
-		offset1 = 50;
-		offset2 = -50;
-	} else {
-		startPoint = NSMakePoint(NSMinX(primary), NSMidY(primary));
-		endPoint = NSMakePoint(NSMaxX(secondary), NSMidY(secondary));
-		offset1 = -50;
-		offset2 = 50;
-	}
-	//[path setLineWidth:1.0];
-	if ([relBox isHighlighted]) {
-		//[path setLineWidth:3.0];
-		[[aColor shadowWithLevel:0.3] set];
-	} else {
-		[aColor set];
-	}
-	[path moveToPoint:startPoint];
-	[path curveToPoint:endPoint controlPoint1:NSMakePoint(startPoint.x+offset1, startPoint.y) controlPoint2:NSMakePoint(endPoint.x+offset2, endPoint.y)];
-	[path stroke];
+    NSBezierPath *path = [NSBezierPath bezierPath];
+    NSRect primary   = [centralBox rectOfFieldPaddedToEdges:primaryField];
+    if (NSIsEmptyRect(primary)) primary = [centralBox rectOfFieldPaddedToEdges:@"Id"];
+    NSRect secondary = [relBox rectOfFieldPaddedToEdges:secondaryField];
+    if (NSIsEmptyRect(secondary)) secondary = [relBox rectOfFieldPaddedToEdges:@"Id"];
+    int offset1, offset2;
+    NSPoint startPoint, endPoint;
+    if (relBox == centralBox) {
+        startPoint = NSMakePoint(NSMinX(primary), NSMidY(primary));
+        endPoint = NSMakePoint(NSMinX(secondary), NSMidY(secondary));
+        offset1 = -75;
+        offset2 = -75;
+        // self references always use the color of the self referencing entity
+        aColor = relBox.color;
+    } else if (NSMaxX(primary) < NSMinX(secondary)) {
+        startPoint = NSMakePoint(NSMaxX(primary), NSMidY(primary));
+        endPoint = NSMakePoint(NSMinX(secondary), NSMidY(secondary));
+        offset1 = 50;
+        offset2 = -50;
+    } else {
+        startPoint = NSMakePoint(NSMinX(primary), NSMidY(primary));
+        endPoint = NSMakePoint(NSMaxX(secondary), NSMidY(secondary));
+        offset1 = -50;
+        offset2 = 50;
+    }
+    //[path setLineWidth:1.0];
+    if ([relBox isHighlighted]) {
+        //[path setLineWidth:3.0];
+        [[aColor shadowWithLevel:0.3] set];
+    } else {
+        [aColor set];
+    }
+    [path moveToPoint:startPoint];
+    [path curveToPoint:endPoint controlPoint1:NSMakePoint(startPoint.x+offset1, startPoint.y) controlPoint2:NSMakePoint(endPoint.x+offset2, endPoint.y)];
+    [path stroke];
 }
 
 -(void)drawRect:(NSRect)dirtyRect {
@@ -159,214 +159,212 @@
 }
 
 - (void)drawBackground:(NSRect)rect {
-	if (isPrinting) return;
-	[[NSColor whiteColor] set];
-	NSRectFill(rect);
+    if (isPrinting) return;
+    [[NSColor whiteColor] set];
+    NSRectFill(rect);
 }
 
 -(void)drawSelectAnSObject {
-	NSRect b = [self bounds];
-	float bx = 250, by = 40;
-	NSRect box = NSMakeRect(b.origin.x + (b.size.width-bx)/2, b.origin.y+(b.size.height-by)/2 , bx, by);
-	NSString *txt= @"Please select an SObject";
-	NSBezierPath *p = [NSBezierPath bezierPathWithRoundedRect:box xRadius:10 yRadius:10];
+    NSRect b = self.bounds;
+    float bx = 250, by = 40;
+    NSRect box = NSMakeRect(b.origin.x + (b.size.width-bx)/2, b.origin.y+(b.size.height-by)/2 , bx, by);
+    NSString *txt= @"Please select an SObject";
+    NSBezierPath *p = [NSBezierPath bezierPathWithRoundedRect:box xRadius:10 yRadius:10];
 
     NSGraphicsContext *nsContext = [NSGraphicsContext currentContext];
     [nsContext saveGraphicsState];
     [p addClip];
-	
-	RRGlossCausticShader *shader = [[[RRGlossCausticShader alloc] init] autorelease];
-	[shader setNoncausticColor:[NSColor colorWithCalibratedRed:0.1 green:0.1 blue:1 alpha:1]];
-	[shader update];
-	[shader drawShadingFromPoint:NSMakePoint(NSMinX(box), NSMaxY(box)) toPoint:NSMakePoint(NSMinX(box), NSMinY(box)) inContext:[nsContext graphicsPort]];
+    
+    RRGlossCausticShader *shader = [[[RRGlossCausticShader alloc] init] autorelease];
+    [shader setNoncausticColor:[NSColor colorWithCalibratedRed:0.1 green:0.1 blue:1 alpha:1]];
+    [shader update];
+    [shader drawShadingFromPoint:NSMakePoint(NSMinX(box), NSMaxY(box)) toPoint:NSMakePoint(NSMinX(box), NSMinY(box)) inContext:nsContext.graphicsPort];
 
     [nsContext restoreGraphicsState];
 
     NSMutableParagraphStyle *st = [[[NSMutableParagraphStyle alloc] init] autorelease];
     [st setParagraphStyle:[NSParagraphStyle defaultParagraphStyle]];
-	[st setAlignment:NSCenterTextAlignment];
-	NSDictionary *a = [NSDictionary dictionaryWithObjectsAndKeys:
-		[NSColor whiteColor], NSForegroundColorAttributeName,
-		[NSFont boldSystemFontOfSize:14], NSFontAttributeName,
-		st, NSParagraphStyleAttributeName,
-		nil];
-	NSSize sz = [txt sizeWithAttributes:a];
-	box.origin.y = NSMidY(box) - (sz.height/2);
-	box.size.height = sz.height;
-	[txt drawInRect:box withAttributes:a];
+    st.alignment = NSCenterTextAlignment;
+    NSDictionary *a = @{NSForegroundColorAttributeName: [NSColor whiteColor],
+        NSFontAttributeName: [NSFont boldSystemFontOfSize:14],
+        NSParagraphStyleAttributeName: st};
+    NSSize sz = [txt sizeWithAttributes:a];
+    box.origin.y = NSMidY(box) - (sz.height/2);
+    box.size.height = sz.height;
+    [txt drawInRect:box withAttributes:a];
 }
 
 - (void)drawForeground:(NSRect)rect {
-	if ([centralBox sobject] == nil) {
-		[self drawSelectAnSObject];
-		return;
-	}
+    if (centralBox.sobject == nil) {
+        [self drawSelectAnSObject];
+        return;
+    }
     for (ZKDescribeField *field in [centralBox fieldsToDisplay]) {
-		NSArray *refs = [field referenceTo];
-		for (NSString *refSObjectName in refs) {
-			SObjectBox *refBox = [relatedBoxes objectForKey:refSObjectName];
-			if ((refBox == nil) && [refSObjectName isEqualTo:[[centralBox sobject] name]])
-				refBox = centralBox;
-			[self drawRelationshipLine:refBox fieldNameOnPrimarySObject:[field name] fieldNameOnRelatedSObject:@"Id" withColor:foreignKeyColor];
-		}
-	}
-	for (ZKChildRelationship *cr in [[centralBox sobject] childRelationships]) {
-		SObjectBox *refBox = [relatedBoxes objectForKey:[cr childSObject]];
-		if (refBox == nil) continue;
-		[self drawRelationshipLine:refBox fieldNameOnPrimarySObject:@"Id" fieldNameOnRelatedSObject:[cr field] withColor:childRelColor];
-	}
+        NSArray *refs = field.referenceTo;
+        for (NSString *refSObjectName in refs) {
+            SObjectBox *refBox = relatedBoxes[refSObjectName];
+            if ((refBox == nil) && [refSObjectName isEqualTo:centralBox.sobject.name])
+                refBox = centralBox;
+            [self drawRelationshipLine:refBox fieldNameOnPrimarySObject:field.name fieldNameOnRelatedSObject:@"Id" withColor:foreignKeyColor];
+        }
+    }
+    for (ZKChildRelationship *cr in centralBox.sobject.childRelationships) {
+        SObjectBox *refBox = relatedBoxes[cr.childSObject];
+        if (refBox == nil) continue;
+        [self drawRelationshipLine:refBox fieldNameOnPrimarySObject:@"Id" fieldNameOnRelatedSObject:cr.field withColor:childRelColor];
+    }
 
-	[centralBox drawRect:rect];
-	for (SObjectBox *box in foreignKeys)
-		[box drawRect:rect];
-	for (SObjectBox *box in children)  
-		[box drawRect:rect];
+    [centralBox drawRect:rect];
+    for (SObjectBox *box in foreignKeys)
+        [box drawRect:rect];
+    for (SObjectBox *box in children)  
+        [box drawRect:rect];
 }
 
 // NSView
 - (void)resizeWithOldSuperviewSize:(NSSize)oldBoundsSize {
-	[super resizeWithOldSuperviewSize:oldBoundsSize];
-	[self layoutBoxes];
+    [super resizeWithOldSuperviewSize:oldBoundsSize];
+    [self layoutBoxes];
 }
 
 typedef enum ArcPositionStyle {
-	leftHandSide,
-	rightHandSide
+    leftHandSide,
+    rightHandSide
 } ArcPositionStyle;
 
 static const float minSpacerSize = 5.0f;
 
 - (void)getHeightOfboxes:(NSArray *)boxes totalHeight:(float *)totalHeight heightWithSpacers:(float *)withSpacers {
-	float height = 0;
+    float height = 0;
     for (SObjectBox *box in boxes) {
-		height += [box size].height;
-	}
-	*totalHeight = height;
-	*withSpacers = height + (minSpacerSize * ([boxes count]+2)) + 75; 
+        height += [box size].height;
+    }
+    *totalHeight = height;
+    *withSpacers = height + (minSpacerSize * (boxes.count+2)) + 75; 
 }
 
 - (float)layoutBoxesOnArc:(NSArray *)boxes position:(ArcPositionStyle)positionStyle {
-	float totalSize, totalSizeWithSpacers;
-	[self getHeightOfboxes:boxes totalHeight:&totalSize heightWithSpacers:&totalSizeWithSpacers];
-	NSSize visibleSize = [[self superview] frame].size;
-	if (totalSizeWithSpacers >= visibleSize.height) {
-		visibleSize.height = totalSizeWithSpacers;
-	} 
-	NSRect bounds = [self bounds];
-	bounds.size.height = visibleSize.height;
-	float arcStartX = NSMidX(bounds) /2 * (positionStyle == leftHandSide ? 1 : 3);
-	float arcOuterX = NSMidX(bounds) /6 * (positionStyle == leftHandSide ? 1 : 11);
-	float spacerSize = MAX(minSpacerSize, (bounds.size.height - totalSize) / (1+[boxes count]));
-	NSPoint startingPos = NSMakePoint(arcStartX, spacerSize);
-	NSBezierPath *path = [NSBezierPath bezierPath];
-	[path moveToPoint:startingPos];
-	NSPoint controlPoint = NSMakePoint(arcOuterX, NSMidY(bounds));
-	[path curveToPoint:NSMakePoint(arcStartX, bounds.size.height - spacerSize) controlPoint1:controlPoint controlPoint2:controlPoint];
-	NSBezierPath *flatPath = [path bezierPathByFlatteningPath];
+    float totalSize, totalSizeWithSpacers;
+    [self getHeightOfboxes:boxes totalHeight:&totalSize heightWithSpacers:&totalSizeWithSpacers];
+    NSSize visibleSize = self.superview.frame.size;
+    if (totalSizeWithSpacers >= visibleSize.height) {
+        visibleSize.height = totalSizeWithSpacers;
+    } 
+    NSRect bounds = self.bounds;
+    bounds.size.height = visibleSize.height;
+    float arcStartX = NSMidX(bounds) /2 * (positionStyle == leftHandSide ? 1 : 3);
+    float arcOuterX = NSMidX(bounds) /6 * (positionStyle == leftHandSide ? 1 : 11);
+    float spacerSize = MAX(minSpacerSize, (bounds.size.height - totalSize) / (1+[boxes count]));
+    NSPoint startingPos = NSMakePoint(arcStartX, spacerSize);
+    NSBezierPath *path = [NSBezierPath bezierPath];
+    [path moveToPoint:startingPos];
+    NSPoint controlPoint = NSMakePoint(arcOuterX, NSMidY(bounds));
+    [path curveToPoint:NSMakePoint(arcStartX, bounds.size.height - spacerSize) controlPoint1:controlPoint controlPoint2:controlPoint];
+    NSBezierPath *flatPath = path.bezierPathByFlatteningPath;
     for (SObjectBox *box in boxes) {
-		NSSize boxSize = [box size];
-		[box setOrigin:NSMakePoint(startingPos.x - (boxSize.width/2), startingPos.y)];
-		startingPos.y += boxSize.height + spacerSize; 
-		startingPos.x = [flatPath xIntersectionForY:startingPos.y+(boxSize.height/2)];
-	}
-	return visibleSize.height;
+        NSSize boxSize = [box size];
+        box.origin = NSMakePoint(startingPos.x - (boxSize.width/2), startingPos.y);
+        startingPos.y += boxSize.height + spacerSize; 
+        startingPos.x = [flatPath xIntersectionForY:startingPos.y+(boxSize.height/2)];
+    }
+    return visibleSize.height;
 }
 
 - (void)layoutBoxes {
-	NSSize cb = [centralBox size];
-	NSSize visibleSize = [[self superview] frame].size;
-	if (cb.height + (minSpacerSize*2) > visibleSize.height) {
-		visibleSize.height = cb.height + (minSpacerSize*2);
-	} 
-	visibleSize.height = MAX(visibleSize.height, [self layoutBoxesOnArc:foreignKeys position:leftHandSide]);
-	visibleSize.height = MAX(visibleSize.height, [self layoutBoxesOnArc:children position:rightHandSide]);
-	[self setFrameSize:visibleSize];
-	NSRect bounds = [self bounds];
-	[centralBox setOrigin:NSMakePoint(NSMidX(bounds) - (cb.width/2), NSMidY(bounds) - (cb.height/2))];
+    NSSize cb = [centralBox size];
+    NSSize visibleSize = self.superview.frame.size;
+    if (cb.height + (minSpacerSize*2) > visibleSize.height) {
+        visibleSize.height = cb.height + (minSpacerSize*2);
+    } 
+    visibleSize.height = MAX(visibleSize.height, [self layoutBoxesOnArc:foreignKeys position:leftHandSide]);
+    visibleSize.height = MAX(visibleSize.height, [self layoutBoxesOnArc:children position:rightHandSide]);
+    [self setFrameSize:visibleSize];
+    NSRect bounds = self.bounds;
+    centralBox.origin = NSMakePoint(NSMidX(bounds) - (cb.width/2), NSMidY(bounds) - (cb.height/2));
     [self setNeedsDisplay:YES];
 }
 
 // SchemaView
 - (ZKDescribeSObject *)centralSObject {
-	return [centralBox sobject];
+    return centralBox.sobject;
 }
 
 - (void)addReferencedSObjectsFromArray:(NSArray *)fields results:(NSMutableDictionary *)results trackWeights:(BOOL)trackWeights {
-	uint weightIndex = 0;
-	for (ZKDescribeField *field in fields) {
-		if ([[field referenceTo] count] == 0) continue;
-        for (NSString *refSObject in [field referenceTo]) {
-			if ([refSObject isEqualTo:[[centralBox sobject] name]]) continue;
-			WeightedSObject *weight = [results objectForKey:refSObject];
-			if (weight == nil) {
-				weight = [WeightedSObject weightedSObjectForSObject:refSObject];
-				[results setObject:weight forKey:refSObject];
-			}
-			if (trackWeights)
-				[weight addWeight:weightIndex];
-		}
-		++weightIndex;
-	}
+    uint weightIndex = 0;
+    for (ZKDescribeField *field in fields) {
+        if (field.referenceTo.count == 0) continue;
+        for (NSString *refSObject in field.referenceTo) {
+            if ([refSObject isEqualTo:centralBox.sobject.name]) continue;
+            WeightedSObject *weight = results[refSObject];
+            if (weight == nil) {
+                weight = [WeightedSObject weightedSObjectForSObject:refSObject];
+                results[refSObject] = weight;
+            }
+            if (trackWeights)
+                [weight addWeight:weightIndex];
+        }
+        ++weightIndex;
+    }
 }
 
 - (NSArray *)foreignKeySObjects {
-	NSMutableDictionary *orderedWeights = [NSMutableDictionary dictionary];
-	[self addReferencedSObjectsFromArray:[centralBox fieldsToDisplay] results:orderedWeights trackWeights:YES];
-	[self addReferencedSObjectsFromArray:[[centralBox sobject] fields] results:orderedWeights trackWeights:NO];
-	return [orderedWeights keysSortedByValueUsingSelector:@selector(compare:)];
+    NSMutableDictionary *orderedWeights = [NSMutableDictionary dictionary];
+    [self addReferencedSObjectsFromArray:[centralBox fieldsToDisplay] results:orderedWeights trackWeights:YES];
+    [self addReferencedSObjectsFromArray:centralBox.sobject.fields results:orderedWeights trackWeights:NO];
+    return [orderedWeights keysSortedByValueUsingSelector:@selector(compare:)];
 }
 
 // all SObjects that have a FK to the central sobject, except those in the toSkip array
 - (NSArray *)childSObjectsSkipping:(NSArray *)toSkip {
-	NSMutableArray *orderedRefs = [NSMutableArray array];
-	NSMutableSet * refs = [NSMutableSet setWithArray:toSkip];
-    for (ZKChildRelationship *cr in [[centralBox sobject] childRelationships]) {
-		if ([refs containsObject:[cr childSObject]]) continue;
-		if ([[cr childSObject] isEqualTo:[[centralBox sobject] name]]) continue;
-		[refs addObject:[cr childSObject]];
-		[orderedRefs addObject:[cr childSObject]];
-	}
-	return orderedRefs;
+    NSMutableArray *orderedRefs = [NSMutableArray array];
+    NSMutableSet * refs = [NSMutableSet setWithArray:toSkip];
+    for (ZKChildRelationship *cr in centralBox.sobject.childRelationships) {
+        if ([refs containsObject:cr.childSObject]) continue;
+        if ([cr.childSObject isEqualTo:centralBox.sobject.name]) continue;
+        [refs addObject:cr.childSObject];
+        [orderedRefs addObject:cr.childSObject];
+    }
+    return orderedRefs;
 }
 
 - (NSArray *)createSObjectBoxes:(NSArray *)sobjects withColor:(NSColor *)aColor {
-	NSRect frame = [self frame];
-	NSSize sz = NSMakeSize(100,100);
-	NSRect relRect = NSMakeRect(frame.origin.x, frame.origin.y, sz.width, sz.height);
-	NSMutableArray *createdBoxes = [NSMutableArray array];
+    NSRect frame = self.frame;
+    NSSize sz = NSMakeSize(100,100);
+    NSRect relRect = NSMakeRect(frame.origin.x, frame.origin.y, sz.width, sz.height);
+    NSMutableArray *createdBoxes = [NSMutableArray array];
     for (NSString *objName in sobjects) {
-		ZKDescribeSObject *desc = [describes describe:objName];
-		SObjectBox *b = [[SObjectBox alloc] initWithFrame:relRect andView:self];
-		[b setSobject:desc];
-		[b setIncludeFksTo:[centralBox sobject]];
-		[b setViewMode:vmTitleOnly];
-		[b setColor:aColor];
-        [b setIconProvider:describes];
-		relRect.origin.y += sz.height;
-		[relatedBoxes setObject:b forKey:objName];
-		[createdBoxes addObject:b];
-		[b release];
-	}	
-	return createdBoxes;
+        ZKDescribeSObject *desc = [describes describe:objName];
+        SObjectBox *b = [[SObjectBox alloc] initWithFrame:relRect andView:self];
+        b.sobject = desc;
+        b.includeFksTo = centralBox.sobject;
+        b.viewMode = vmTitleOnly;
+        b.color = aColor;
+        b.iconProvider = describes;
+        relRect.origin.y += sz.height;
+        relatedBoxes[objName] = b;
+        [createdBoxes addObject:b];
+        [b release];
+    }    
+    return createdBoxes;
 }
 
 -(void)setCentralSObjectImpl:(ZKDescribeSObject *)s {
-	[centralBox setSobject:s];
-    [centralBox setIconProvider:describes];
-	[relatedBoxes release];
-	relatedBoxes = [[NSMutableDictionary alloc] init];
-	NSArray *fkSObjects = [self foreignKeySObjects];
-	[foreignKeys release];
-	foreignKeys = [[self createSObjectBoxes:fkSObjects withColor:foreignKeyColor] retain];
-	[children release];
-	children = [[self createSObjectBoxes:[self childSObjectsSkipping:fkSObjects] withColor:childRelColor] retain];
-	[self layoutBoxes];
+    centralBox.sobject = s;
+    centralBox.iconProvider = describes;
+    [relatedBoxes release];
+    relatedBoxes = [[NSMutableDictionary alloc] init];
+    NSArray *fkSObjects = [self foreignKeySObjects];
+    [foreignKeys release];
+    foreignKeys = [[self createSObjectBoxes:fkSObjects withColor:foreignKeyColor] retain];
+    [children release];
+    children = [[self createSObjectBoxes:[self childSObjectsSkipping:fkSObjects] withColor:childRelColor] retain];
+    [self layoutBoxes];
 }
 
 - (void)setCentralSObject:(ZKDescribeSObject *)s {
-	NSRect f = [self visibleRect];
-	NSPoint center = NSMakePoint(NSMidX(f), NSMidY(f));
-	[self setCentralSObject:s withRipplePoint:center];
+    NSRect f = self.visibleRect;
+    NSPoint center = NSMakePoint(NSMidX(f), NSMidY(f));
+    [self setCentralSObject:s withRipplePoint:center];
 }
 
 -(void)asyncLoadDescribes:(ZKDescribeSObject *)type withRipplePoint:(NSPoint)ripple {
@@ -381,69 +379,69 @@ static const float minSpacerSize = 5.0f;
 }
 
 - (void)setCentralSObject:(ZKDescribeSObject *)s withRipplePoint:(NSPoint)ripple {
-    if (![describes hasAllDescribesRelatedTo:[s name]]) {
+    if (![describes hasAllDescribesRelatedTo:s.name]) {
         [primaryController updateProgress:YES];
-        [primaryController setStatusText:[NSString stringWithFormat:@"describing schema for %@", [s name]]];
+        primaryController.statusText = [NSString stringWithFormat:@"describing schema for %@", s.name];
         [self asyncLoadDescribes:s withRipplePoint:ripple];
         return;
     }
 
-	[primaryController updateProgress:NO];
-	[primaryController setStatusText:[s name]];
-	[self setCentralSObjectImpl:s];
-	[self setNeedsDisplay:YES];
+    [primaryController updateProgress:NO];
+    primaryController.statusText = s.name;
+    [self setCentralSObjectImpl:s];
+    [self setNeedsDisplay:YES];
 }
 
 -(BOOL)delegateMouseDown:(NSArray *)boxes withEvent:(NSEvent *)event{
-	for (SObjectBox *box in boxes) {
-		if ([box isHighlighted]) {
-			[box mouseDown:event];
-			return YES;
-		}
-	}
-	return NO;
+    for (SObjectBox *box in boxes) {
+        if ([box isHighlighted]) {
+            [box mouseDown:event];
+            return YES;
+        }
+    }
+    return NO;
 }
 
 -(BOOL)delegateMouseUp:(NSArray *)boxes withEvent:(NSEvent *)event{
     for (SObjectBox *box in boxes) {
-		if ([box isHighlighted]) {
-			[box mouseUp:event];
-			return YES;
-		}
-	}
-	return NO;
+        if ([box isHighlighted]) {
+            [box mouseUp:event];
+            return YES;
+        }
+    }
+    return NO;
 }
 
 - (void)mouseDown:(NSEvent *)event {
-	if ([centralBox isHighlighted])
-		[centralBox mouseDown:event];
-	else if (![self delegateMouseDown:children withEvent:event])
-		[self delegateMouseDown:foreignKeys withEvent:event];
+    if ([centralBox isHighlighted])
+        [centralBox mouseDown:event];
+    else if (![self delegateMouseDown:children withEvent:event])
+        [self delegateMouseDown:foreignKeys withEvent:event];
 }
 
 -(void)mouseUp:(NSEvent *)event {
-	if ([centralBox isHighlighted]) 
-		[centralBox mouseUp:event];
-	else if (![self delegateMouseUp:children withEvent:event])
-		[self delegateMouseUp:foreignKeys withEvent:event];
+    if ([centralBox isHighlighted]) 
+        [centralBox mouseUp:event];
+    else if (![self delegateMouseUp:children withEvent:event])
+        [self delegateMouseUp:foreignKeys withEvent:event];
 }
 
 - (BOOL)mousePointerIsInsideRect:(NSRect)rect {
-	NSPoint loc = [self convertPoint:[[self window] mouseLocationOutsideOfEventStream] fromView:nil];
-	return NSPointInRect(loc, rect);
+    NSPoint loc = [self convertPoint:self.window.mouseLocationOutsideOfEventStream fromView:nil];
+    return NSPointInRect(loc, rect);
 }
 
 // addTrackingRect helper that calculates whether we're inside the rect or not
 - (NSTrackingRectTag)addTrackingRect:(NSRect)rect owner:(id)owner {
-	return [self addTrackingRect:rect owner:owner userData:nil assumeInside:[self mousePointerIsInsideRect:rect]];
+    return [self addTrackingRect:rect owner:owner userData:nil assumeInside:[self mousePointerIsInsideRect:rect]];
 }
 
 -(BOOL)isOpaque {
-	return YES;
+    return YES;
 }
 
 - (SObjectBox *)centralBox {
-	return centralBox;
+    return centralBox;
 }
 
 @end

@@ -39,36 +39,36 @@
 
 @interface Explorer : NSObject<EditableQueryResultWrapperDelegate, NSWindowDelegate, NSTabViewDelegate, QueryTextListViewDelegate, ZKLoginControllerDelegate, ZKBaseClientDelegate>
 {
-	// old world order, needs modernizing
-    IBOutlet NSOutlineView			*describeList;
-    IBOutlet NSTableView			*rootTableView;
-	IBOutlet NSTableView			*childTableView;
-    IBOutlet NSTextView			    *soql;	
-	IBOutlet NSMenu                 *soqlContextMenu;
-	IBOutlet NSProgressIndicator	*progress;
-	IBOutlet NSWindow				*myWindow;
-	IBOutlet NSTabView				*soqlSchemaTabs;
-	IBOutlet NSSplitView			*vertSplitView;
-	IBOutlet NSSplitView			*soqlTextSplitView;
-	IBOutlet StandAloneTableHeaderView	*soqlHeader;
-	
-	ZKSforceClient					*sforce;
-	DescribeListDataSource			*descDataSource;
+    // old world order, needs modernizing
+    IBOutlet NSOutlineView            *describeList;
+    IBOutlet NSTableView            *rootTableView;
+    IBOutlet NSTableView            *childTableView;
+    IBOutlet NSTextView                *soql;    
+    IBOutlet NSMenu                 *soqlContextMenu;
+    IBOutlet NSProgressIndicator    *progress;
+    IBOutlet NSWindow                *myWindow;
+    IBOutlet NSTabView                *soqlSchemaTabs;
+    IBOutlet NSSplitView            *vertSplitView;
+    IBOutlet NSSplitView            *soqlTextSplitView;
+    IBOutlet StandAloneTableHeaderView    *soqlHeader;
+    
+    ZKSforceClient                    *sforce;
+    DescribeListDataSource            *descDataSource;
 
-	QueryResultTable				*rootResults;
-	QueryResultTable				*childResults;
-	CGFloat							uncollapsedDividerPosition;
-	
-	ZKLoginController 				*loginController;
-	IBOutlet SchemaController		*schemaController;
-	IBOutlet DetailsController		*detailsController;
-	IBOutlet QueryListController	*queryListController;
-	IBOutlet ApexController			*apexController;
-	
-	// new world order, uses binding
-	NSString						*statusText;
+    QueryResultTable                *rootResults;
+    QueryResultTable                *childResults;
+    CGFloat                            uncollapsedDividerPosition;
+    
+    ZKLoginController                 *loginController;
+    IBOutlet SchemaController        *schemaController;
+    IBOutlet DetailsController        *detailsController;
+    IBOutlet QueryListController    *queryListController;
+    IBOutlet ApexController            *apexController;
+    
+    // new world order, uses binding
+    NSString                        *statusText;
     NSString                        *apiCallCountText;
-	BOOL							schemaViewIsActive;
+    BOOL                            schemaViewIsActive;
     
     // generate query with specific fields by doubleclicking
     NSMutableArray                  *selectedFields;
@@ -99,12 +99,12 @@
 
 @property (retain) IBOutlet NSSegmentedControl *detailsRecentSelector;
 
-- (BOOL)isLoggedIn;
-- (BOOL)hasSelectedForDelete;
-- (BOOL)canQueryMore;
-- (NSArray *)SObjects;
-- (DescribeListDataSource *)describeDataSource;
-- (ZKDescribeSObject *)selectedSObject;
+@property (getter=isLoggedIn, readonly) BOOL loggedIn;
+@property (readonly) BOOL hasSelectedForDelete;
+@property (readonly) BOOL canQueryMore;
+@property (readonly, copy) NSArray *SObjects;
+@property (readonly, strong) DescribeListDataSource *describeDataSource;
+@property (readonly, strong) ZKDescribeSObject *selectedSObject;
 - (void)updateProgress:(BOOL)show;
 
 - (void)dataChangedOnObject:(ZKSObject *)anObject field:(NSString *)fieldName value:(id)newValue;

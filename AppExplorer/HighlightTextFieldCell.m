@@ -27,48 +27,48 @@
 @synthesize zkTextXOffset, zkImage, zkStandout;
 
 -(void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView {
-	NSRect tf = cellFrame;
-	tf.origin.x += 5.0;
-	tf.size.width -= 7.0;
-	NSMutableDictionary *a = [NSMutableDictionary dictionary];
-    if ([self font] != nil)
-        [a setObject:[self font] forKey:NSFontAttributeName];
-    if ([self textColor] != nil)
-        [a setObject:[self textColor] forKey:NSForegroundColorAttributeName];
+    NSRect tf = cellFrame;
+    tf.origin.x += 5.0;
+    tf.size.width -= 7.0;
+    NSMutableDictionary *a = [NSMutableDictionary dictionary];
+    if (self.font != nil)
+        a[NSFontAttributeName] = self.font;
+    if (self.textColor != nil)
+        a[NSForegroundColorAttributeName] = self.textColor;
     
-	NSString *v = [self stringValue];
-	NSSize txtSize = [v sizeWithAttributes:a];
+    NSString *v = self.stringValue;
+    NSSize txtSize = [v sizeWithAttributes:a];
 
     NSRect imagef = tf;
     tf.origin.x += zkTextXOffset;
     tf.size.width -= zkTextXOffset;
 
-	if (zkStandout && ![self isHighlighted]) {
-		[[NSColor lightGrayColor] setStroke];
-		NSRect bg = NSMakeRect(tf.origin.x, tf.origin.y, txtSize.width + 18, fmin(txtSize.height+18, tf.size.height));
-		NSBezierPath *p = [NSBezierPath bezierPathWithRoundedRect:bg xRadius:8 yRadius:8];
-		
-		// Draw gradient background
-		NSGraphicsContext *nsContext = [NSGraphicsContext currentContext];
-		[nsContext saveGraphicsState];
-		[p addClip];
-		NSColor *gStartColor = [[NSColor yellowColor] blendedColorWithFraction:0.1 ofColor:[NSColor whiteColor]];
-		NSColor *gEndColor   = [[NSColor yellowColor] blendedColorWithFraction:0.6 ofColor:[NSColor whiteColor]];
-		NSGradient *gradient = [[NSGradient alloc] initWithStartingColor:gStartColor endingColor:gEndColor];
-		[gradient drawInRect:[p bounds] angle:90];
-		[nsContext restoreGraphicsState];
-		[gradient release];
-	
-		[p stroke];
-		tf = NSInsetRect(tf, 9, 0);
-	}
-	
+    if (zkStandout && !self.highlighted) {
+        [[NSColor lightGrayColor] setStroke];
+        NSRect bg = NSMakeRect(tf.origin.x, tf.origin.y, txtSize.width + 18, fmin(txtSize.height+18, tf.size.height));
+        NSBezierPath *p = [NSBezierPath bezierPathWithRoundedRect:bg xRadius:8 yRadius:8];
+        
+        // Draw gradient background
+        NSGraphicsContext *nsContext = [NSGraphicsContext currentContext];
+        [nsContext saveGraphicsState];
+        [p addClip];
+        NSColor *gStartColor = [[NSColor yellowColor] blendedColorWithFraction:0.1 ofColor:[NSColor whiteColor]];
+        NSColor *gEndColor   = [[NSColor yellowColor] blendedColorWithFraction:0.6 ofColor:[NSColor whiteColor]];
+        NSGradient *gradient = [[NSGradient alloc] initWithStartingColor:gStartColor endingColor:gEndColor];
+        [gradient drawInRect:p.bounds angle:90];
+        [nsContext restoreGraphicsState];
+        [gradient release];
+    
+        [p stroke];
+        tf = NSInsetRect(tf, 9, 0);
+    }
+    
     if (zkImage != nil) {
         imagef.size = zkImage.size;
         [zkImage drawInRect:imagef fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0 respectFlipped:YES hints:nil];
     }
-	tf.origin.y += (NSHeight(tf) - txtSize.height) / 2;
-	[[self stringValue] drawWithRect:tf options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingTruncatesLastVisibleLine attributes:a];
+    tf.origin.y += (NSHeight(tf) - txtSize.height) / 2;
+    [self.stringValue drawWithRect:tf options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingTruncatesLastVisibleLine attributes:a];
 }
 
 @end

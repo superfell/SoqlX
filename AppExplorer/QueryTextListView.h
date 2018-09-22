@@ -34,8 +34,8 @@
 // This is a listview of items where each item is a string
 // each item is managed by a QueryTextListViewItem
 @interface QueryTextListView : NSView {
-	NSMutableArray                  *items;
-	NSDictionary                    *textAttributes;
+    NSMutableArray                  *items;
+    NSDictionary                    *textAttributes;
     id<QueryTextListViewDelegate>   delegate;
 }
 
@@ -49,7 +49,7 @@
 -(BOOL)upsertHead:(NSString *)text;
 
 // The current list of QueryTextListViewItems in the list view.
--(NSArray *)items;
+@property (readonly, copy) NSArray *items;
 
 @property (assign, nonatomic) id<QueryTextListViewDelegate> delegate;
 
@@ -57,22 +57,22 @@
 
 // The view/container for a single item in the list.
 @interface QueryTextListViewItem : NSView {
-	NSString		*text;
-	NSDictionary	*textAttributes;
-	CGFloat			verticalPad;
-	NSRect			textRect;
-	NSColor			*backgroundColor;
+    NSString        *text;
+    NSDictionary    *textAttributes;
+    CGFloat            verticalPad;
+    NSRect            textRect;
+    NSColor            *backgroundColor;
 
-	NSTrackingArea	*trackingArea;
-	BOOL			highlighted;
+    NSTrackingArea    *trackingArea;
+    BOOL            highlighted;
     
     QueryTextListView *listView;
 }
 
--(id)initWithFrame:(NSRect)f attributes:(NSDictionary*)attributes listView:(QueryTextListView *)lv;
+-(instancetype)initWithFrame:(NSRect)f attributes:(NSDictionary*)attributes listView:(QueryTextListView *)lv NS_DESIGNATED_INITIALIZER;
 
 @property (retain) NSString *text;
-@property (retain) NSColor	*backgroundColor;
+@property (retain) NSColor    *backgroundColor;
 
 -(void)setFrameWidth:(CGFloat)w;
 

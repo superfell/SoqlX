@@ -53,8 +53,8 @@
 @implementation BaseWindowToggleController
 
 -(void)awakeFromNib {
-	[panelWindow setAlphaValue:0.0];
-    [panelWindow setDelegate:self];
+    panelWindow.alphaValue = 0.0;
+    panelWindow.delegate = self;
     visible = NO;
     terminating = NO;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillTerminate:) name:NSApplicationWillTerminateNotification object:nil];
@@ -94,8 +94,8 @@
     [self willChangeValueForKey:@"windowVisible"];
     [self setWindowVisible:NO updateWindow:NO];
     [self didChangeValueForKey:@"windowVisible"];
-	[[panelWindow animator] setAlphaValue:0.0];
-    [[panelWindow parentWindow] removeChildWindow:panelWindow];
+    [panelWindow animator].alphaValue = 0.0;
+    [panelWindow.parentWindow removeChildWindow:panelWindow];
 }
 
 -(void)onPrefsPrefixSet:(NSString *)pp {
