@@ -32,10 +32,6 @@
     return self;
 }
 
--(void)dealloc {
-    [windowControllers release];
-    [super dealloc];
-}
 
 - (IBAction)launchHelp:(id)sender {
     NSString *help = [NSBundle mainBundle].infoDictionary[@"ZKHelpUrl"];
@@ -64,7 +60,7 @@
 }
 
 -(void)openNewWindow:(id)sender {
-    NSWindowController *controller = [[[SoqlXWindowController alloc] initWithWindowControllers:windowControllers] autorelease];
+    NSWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:windowControllers];
     [controller showWindow:sender];
 }
 
@@ -83,15 +79,11 @@
 
 -(instancetype)initWithWindowControllers:(NSMutableArray *)c {
     self = [super initWithWindowNibName:@"Explorer"];
-    controllers = [c retain];
+    controllers = c;
     [c addObject:self];
     return self;
 }
 
--(void)dealloc {
-    [controllers release];
-    [super dealloc];
-}
 
 -(void)closeLoginPanelIfOpen:(id)sender {
     Explorer *e = (Explorer *)self.window.delegate;

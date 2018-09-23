@@ -20,7 +20,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "ZKQueryResult.h"
+#import "zkQueryResult.h"
 
 extern NSString *DELETE_COLUMN_IDENTIFIER;
 extern NSString *ERROR_COLUMN_IDENTIFIER;
@@ -47,7 +47,7 @@ extern NSArray  *ALL_APP_COLUMN_IDENTIFIERS;
 
 @property  BOOL editable;
 
-@property (assign) NSObject<EditableQueryResultWrapperDelegate> *delegate;
+@property (unsafe_unretained) NSObject<EditableQueryResultWrapperDelegate> *delegate;
 
 @property (readonly) BOOL hasCheckedRows;
 @property (readonly) int numCheckedRows;

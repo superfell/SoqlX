@@ -42,9 +42,9 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
 
 -(instancetype)initWithRows:(NSArray *)r errors:(NSDictionary *)err checkMarks:(NSSet *)checks {
     self = [super init];
-    rows = [[NSMutableArray arrayWithArray:r] retain];
-    checkMarks = [[NSMutableArray arrayWithCapacity:rows.count] retain];
-    errors = [[NSMutableArray arrayWithCapacity:rows.count] retain];
+    rows = [NSMutableArray arrayWithArray:r];
+    checkMarks = [NSMutableArray arrayWithCapacity:rows.count];
+    errors = [NSMutableArray arrayWithCapacity:rows.count];
     for (int i =0; i < rows.count; i++) {
         [checkMarks addObject:[NSNumber numberWithBool:FALSE]];
         [errors addObject:[NSNull null]];
@@ -57,12 +57,6 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
     return self;
 }
 
--(void)dealloc {
-    [rows release];
-    [checkMarks release];
-    [errors release];
-    [super dealloc];
-}
 
 -(void)removeRowAtIndex:(int)index {
     [rows removeObjectAtIndex:index];
@@ -88,7 +82,7 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
 
 - (instancetype)initWithQueryResult:(ZKQueryResult *)qr {
     self = [super init];
-    result = [qr retain];
+    result = qr;
     editable = NO;
     imageCell = [[QueryResultCell alloc] initTextCell:@""];
     checkedRows = [[NSMutableSet alloc] init];
@@ -96,17 +90,10 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
     return self;
 }
 
-- (void)dealloc {
-    [result release];
-    [imageCell release];
-    [checkedRows release];
-    [rowErrors release];
-    [super dealloc];
-}
 
 - (id)createMutatingRowsContext {
     EQRWMutating *c = [[EQRWMutating alloc] initWithRows:[result records] errors:rowErrors checkMarks:checkedRows];
-    return [c autorelease];
+    return c;
 }
 
 - (void)remmoveRowAtIndex:(int)index context:(id)mutatingContext {
@@ -134,7 +121,7 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
     [self didChangeValueForKey:@"hasCheckedRows"];
     
     int rowCountDiff = [result records].count - rows.count;
-    ZKQueryResult *nr = [[[ZKQueryResult alloc] initWithRecords:rows size:[result size] - rowCountDiff done:[result done] queryLocator:[result queryLocator]] autorelease];
+    ZKQueryResult *nr = [[ZKQueryResult alloc] initWithRecords:rows size:[result size] - rowCountDiff done:[result done] queryLocator:[result queryLocator]];
     [self setQueryResult:nr];
 }
 
@@ -144,8 +131,7 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
 
 - (void)setQueryResult:(ZKQueryResult *)newResults {
     if (result == newResults) return;
-    [result autorelease];
-    result = [newResults retain];
+    result = newResults;
 }
 
 - (ZKQueryResult *)queryResult {

@@ -37,30 +37,30 @@
 @end
 
 @interface ZKLoginController : NSObject {
-	NSString 		*username;
-	NSString 		*password;
-	NSString 		*server;
-	NSString 		*clientId;
-	NSArray  		*credentials;
-	Credential 		*selectedCredential;
-	ZKSforceClient 	*sforce;
-	NSString		*urlOfNewServer;
-	NSString		*statusText;
-	int				preferedApiVersion;
-	
-	NSWindow 			*modalWindow;
-	id					target;
-	SEL					selector;	
-	IBOutlet NSWindow 	*window;
-	IBOutlet NSButton 	*addButton;
-	IBOutlet NSButton	*delButton;
-	IBOutlet NSWindow	*newUrlWindow;
-	IBOutlet NSProgressIndicator *loginProgress;
+    NSString         *username;
+    NSString         *password;
+    NSString         *server;
+    NSString         *clientId;
+    NSArray          *credentials;
+    Credential         *selectedCredential;
+    ZKSforceClient     *sforce;
+    NSString        *urlOfNewServer;
+    NSString        *statusText;
+    int                preferedApiVersion;
+    
+    NSWindow             *modalWindow;
+    id                    target;
+    SEL                    selector;    
+    IBOutlet NSWindow     *window;
+    IBOutlet NSButton     *addButton;
+    IBOutlet NSButton    *delButton;
+    IBOutlet NSWindow    *newUrlWindow;
+    IBOutlet NSProgressIndicator *loginProgress;
     
     NSWindow        *tokenWindow;
     NSString        *apiSecurityToken;
     
-    NSObject<ZKLoginControllerDelegate> *delegate;
+    NSObject<ZKLoginControllerDelegate> *__unsafe_unretained delegate;
     NSArray *nibTopLevelObjects;
 }
 
@@ -81,17 +81,17 @@
 - (IBAction)cancelToken:(id)sender;
 - (IBAction)showTokenHelp:(id)sender;
 - (BOOL)hasEnteredToken;
-@property (retain) IBOutlet NSWindow *tokenWindow;
-@property (retain) NSString *apiSecurityToken;
+@property (strong) IBOutlet NSWindow *tokenWindow;
+@property (strong) NSString *apiSecurityToken;
 
-@property (retain) NSString *username;
-@property (retain) NSString *password;
-@property (retain) NSString *server;
-@property (retain) NSString *urlOfNewServer;
-@property (retain) NSString *statusText;
-@property (retain) NSString *clientId;
+@property (strong) NSString *username;
+@property (strong) NSString *password;
+@property (strong) NSString *server;
+@property (strong) NSString *urlOfNewServer;
+@property (strong) NSString *statusText;
+@property (strong) NSString *clientId;
 @property (assign) int preferedApiVersion;
-@property (assign) NSObject<ZKLoginControllerDelegate> *delegate;
+@property (unsafe_unretained) NSObject<ZKLoginControllerDelegate> *delegate;
 
 - (NSArray *)credentials;
 - (BOOL)canDeleteServer;

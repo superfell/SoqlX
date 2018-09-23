@@ -52,21 +52,21 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 - (void)collapseChildTableView;
 - (void)openChildTableView;
 
-@property (retain) NSMutableArray *selectedFields;
-@property (retain) NSString *selectedObjectName;
+@property (strong) NSMutableArray *selectedFields;
+@property (strong) NSString *selectedObjectName;
 
-@property (retain) NSString *previouslyColorized;
-@property (retain) ZKDescribeGlobalSObject *previousColorizedDescribe;
+@property (strong) NSString *previouslyColorized;
+@property (strong) ZKDescribeGlobalSObject *previousColorizedDescribe;
 @end
 
 
 @interface ColorizerStyle : NSObject
 
-@property (retain) NSColor *fieldColor;
-@property (retain) NSColor *keywordColor;
-@property (retain) NSNumber *underlineStyle;
-@property (retain) NSDictionary *underlined;
-@property (retain) NSDictionary *noUnderline;
+@property (strong) NSColor *fieldColor;
+@property (strong) NSColor *keywordColor;
+@property (strong) NSNumber *underlineStyle;
+@property (strong) NSDictionary *underlined;
+@property (strong) NSDictionary *noUnderline;
 
 +(ColorizerStyle *)style;
 
@@ -178,29 +178,14 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
        
     queryListController.delegate = self;
     [queryListController addObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE options:NSKeyValueObservingOptionNew context:nil];
-    [queryListController retain];
     [detailsController addObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE options:NSKeyValueObservingOptionNew context:nil];
-    [detailsController retain];
 }
 
 - (void)dealloc {
     [detailsController removeObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE];
-    [detailsController autorelease];
     [queryListController removeObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE];
-    [queryListController release];
-    [selectedFields release];
-    [selectedObjectName release];
-    [sforce release];
-    [descDataSource release];
-    [loginController release];
-    [statusText release];
     [rootResults removeObserver:self forKeyPath:@"hasCheckedRows"];
-    [rootResults release];
-    [childResults release];
-    self.previouslyColorized = nil;
-    self.previousColorizedDescribe= nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [super dealloc];
 }
 
 - (void)windowWillClose:(NSNotification *)notification {
@@ -247,7 +232,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 }
 
 - (IBAction)showLogin:(id)sender {
-    [loginController release];
     loginController = [[ZKLoginController alloc] init];
     [loginController setClientIdFromInfoPlist];
     loginController.delegate = self;
@@ -262,10 +246,8 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 }
 
 - (void)loginComplete:(ZKSforceClient *)sf {
-    [sforce release];
-    sforce = [sf retain];
+    sforce = sf;
     sforce.delegate = self;
-    [loginController release];
     loginController = nil;
     [self performSelector:@selector(postLogin:) withObject:nil afterDelay:0];
 }
@@ -343,7 +325,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     queryListController.prefsPrefix = userId;
     detailsController.prefsPrefix = userId;
 
-    [descDataSource release];
     descDataSource = [[DescribeListDataSource alloc] init];
     [apexController setSforceClient:sforce];
     [descDataSource setSforce:sforce];
@@ -369,7 +350,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 }
 
 - (void)setSoqlString:(NSString *)str {
-    [soql.textStorage setAttributedString:[[[NSAttributedString alloc] initWithString:str] autorelease]];
+    [soql.textStorage setAttributedString:[[NSAttributedString alloc] initWithString:str]];
     self.previouslyColorized = nil;
     self.previousColorizedDescribe = nil;
     [self colorize];
@@ -416,14 +397,14 @@ typedef enum SoqlParsePosition {
     __block BOOL atFrom = NO;
     [self enumerateWordsInString:soqlText withBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
         if (atFrom) {
-            entity = [substring retain];
+            entity = substring;
             *stop = YES;
             
         } else if (NSOrderedSame == [substring caseInsensitiveCompare:@"from"]) {
             atFrom = YES;
         }
     }];
-    return [entity autorelease];
+    return entity;
 }
 
 - (void)colorize {
@@ -547,7 +528,7 @@ typedef enum SoqlParsePosition {
     NSMutableString * query = [NSMutableString string];
     [query appendString:@"select"];
     
-    NSArray *fields = [[selectedFields copy] autorelease];
+    NSArray *fields = [selectedFields copy];
     
     if ([[NSUserDefaults standardUserDefaults] boolForKey:PREF_QUERY_SORT_FIELDS]) {
         NSSortDescriptor *sd = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)];
@@ -644,7 +625,7 @@ typedef enum SoqlParsePosition {
 }
 
 - (IBAction)saveQueryResults:(id)sender {
-    ResultsSaver *saver = [[[ResultsSaver alloc] initWithResults:rootResults client:sforce] autorelease];
+    ResultsSaver *saver = [[ResultsSaver alloc] initWithResults:rootResults client:sforce];
     [saver save:myWindow];
 }
 
@@ -724,7 +705,6 @@ typedef enum SoqlParsePosition {
     rootResults.queryResult = total;
     [self setRowsLoadedStatusText:total];
     [self updateProgress:NO];
-    [total release];
 }
 
 - (DescribeListDataSource *)describeDataSource {
@@ -778,13 +758,13 @@ typedef enum SoqlParsePosition {
             return;
         }
         ZKDescribeSObject *desc = [descDataSource describe:[selectedItem name]];
-        dataSource = [[[SObjectDataSource alloc] initWithDescribe:desc] autorelease];
+        dataSource = [[SObjectDataSource alloc] initWithDescribe:desc];
         [detailsController setIcon:[descDataSource iconForType:[selectedItem name]]];
         if ([soqlSchemaTabs.selectedTabViewItem.identifier isEqualToString:schemaTabId])
             [schemaController setSchemaViewToSObject:desc];
     } else {
         // field
-        dataSource = [[[SObjectFieldDataSource alloc] initWithDescribe:selectedItem] autorelease];
+        dataSource = [[SObjectFieldDataSource alloc] initWithDescribe:selectedItem];
         [detailsController  setIcon:nil];
     }
     [detailsController setDataSource:dataSource];

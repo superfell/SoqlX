@@ -25,11 +25,11 @@
 @interface HighlightTextFieldCell : NSTextFieldCell {
     NSInteger   zkTextXOffset;
     NSImage     *zkImage;
-	BOOL        zkStandout;
+    BOOL        zkStandout;
 }
 
 @property (assign) BOOL zkStandout;
-@property (retain) NSImage *zkImage;
+@property (strong) NSImage *zkImage;
 @property (assign) NSInteger zkTextXOffset;
 
 

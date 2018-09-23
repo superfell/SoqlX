@@ -40,7 +40,7 @@
     IBOutlet Explorer        *primaryController;
 }
 
-@property (retain) DescribeListDataSource *describesDataSource;
+@property (strong) DescribeListDataSource *describesDataSource;
 
 @property (strong) ZKDescribeSObject *centralSObject;
 - (void)setCentralSObject:(ZKDescribeSObject *)s withRipplePoint:(NSPoint)ripple;

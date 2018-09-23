@@ -23,13 +23,13 @@
 
 
 @interface ProgressController : NSObject {
-	NSWindow	*window;
-	NSString	*progressLabel;
-	double		progressValue;
+    NSWindow    *window;
+    NSString    *progressLabel;
+    double        progressValue;
 }
 
 @property (copy) NSString *progressLabel;
 @property (assign) double progressValue;
-@property (retain) IBOutlet  NSWindow *progressWindow;
+@property (strong) IBOutlet  NSWindow *progressWindow;
 
 @end

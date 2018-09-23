@@ -57,7 +57,6 @@
         NSGradient *gradient = [[NSGradient alloc] initWithStartingColor:gStartColor endingColor:gEndColor];
         [gradient drawInRect:p.bounds angle:90];
         [nsContext restoreGraphicsState];
-        [gradient release];
     
         [p stroke];
         tf = NSInsetRect(tf, 9, 0);

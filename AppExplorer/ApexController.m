@@ -29,13 +29,13 @@
 
 -(instancetype)initWithResult:(ZKExecuteAnonymousResult *)r andLog:(NSString *)log {
     self = [super init];
-    debugLog = [log retain];
-    res = [r retain];
+    debugLog = log;
+    res = r;
     return self;
 }
     
 +(ApexResult *)fromResult:(ZKExecuteAnonymousResult *)r andLog:(NSString *)debugLog {
-    return [[[ApexResult alloc] initWithResult:r andLog:debugLog] autorelease];
+    return [[ApexResult alloc] initWithResult:r andLog:debugLog];
 }
 
 // NSImageNameStatusAvailable NSImageNameStatusUnavailable
@@ -92,19 +92,12 @@
 
 -(void)awakeFromNib {
     [textHeader setHeaderText:@"Anonymous Apex"];
-    results = [[NSMutableArray arrayWithCapacity:20] retain];
+    results = [NSMutableArray arrayWithCapacity:20];
     self.apex = [[NSUserDefaults standardUserDefaults] objectForKey:@"LastApexExec"];
     (self.apexTextField).enabledTextCheckingTypes = 0;
     [self.apexTextField setSmartInsertDeleteEnabled:NO];
 }
 
--(void)dealloc {
-    [apex release];
-    [results release];
-    [apexClient release];
-    self.apexTextField = nil;
-    [super dealloc];
-}
 
 -(void)setDebugSettingsFromDefaults {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
@@ -122,8 +115,7 @@
 }
 
 -(void)setSforceClient:(ZKSforceClient *)client {
-    [apexClient autorelease];
-    apexClient = [[ZKApexClient fromClient:client] retain];
+    apexClient = [ZKApexClient fromClient:client];
     [apexClient setDebugLog:YES];
     [self setDebugSettingsFromDefaults];
 }

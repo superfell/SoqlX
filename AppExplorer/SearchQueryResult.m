@@ -26,7 +26,7 @@
 @implementation SearchQueryResult
 
 +(instancetype)searchQueryResults:(NSArray *)searchResults {
-    return [[[SearchQueryResult alloc] initWithRecords:searchResults size:searchResults.count done:TRUE queryLocator:nil] autorelease];
+    return [[SearchQueryResult alloc] initWithRecords:searchResults size:searchResults.count done:TRUE queryLocator:nil];
 }
 
 - (id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(int)rowIdx {

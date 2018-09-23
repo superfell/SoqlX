@@ -49,26 +49,26 @@ static const float titleIconGap  = 6.0f;
 
 -(instancetype)initWithFrame:(NSRect)frame andView:(SchemaView *)v {
     self = [super init];
-    view = [v retain];
+    view = v;
     origin = frame.origin;
     size = frame.size;
     self.color = [NSColor orangeColor];
     // Set up text attributes for drawing
-    NSMutableParagraphStyle *paragraphStyle = [[[NSMutableParagraphStyle alloc] init] autorelease];
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     [paragraphStyle setParagraphStyle:[NSParagraphStyle defaultParagraphStyle]];
     paragraphStyle.alignment = NSLeftTextAlignment;
     paragraphStyle.lineBreakMode = NSLineBreakByTruncatingTail;
     float fieldFontSize = ([NSFont systemFontSizeForControlSize:NSSmallControlSize] + [NSFont systemFontSizeForControlSize:NSMiniControlSize]) / 2;
-    fieldAttributes = [[NSMutableDictionary dictionaryWithObjectsAndKeys:
+    fieldAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                             [NSFont messageFontOfSize:fieldFontSize], NSFontAttributeName,
                             [NSColor blackColor], NSForegroundColorAttributeName,
                             paragraphStyle, NSParagraphStyleAttributeName,
-                            nil] retain];
-    titleAttributes = [[NSMutableDictionary dictionaryWithObjectsAndKeys:
+                            nil];
+    titleAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                             [NSFont boldSystemFontOfSize:[NSFont systemFontSizeForControlSize:NSSmallControlSize]], NSFontAttributeName,
                             [NSColor whiteColor], NSForegroundColorAttributeName,
                             paragraphStyle, NSParagraphStyleAttributeName,
-                            nil] retain];
+                            nil];
     highlight = NO;
     NSPoint ppos = [self positionForPlusWidget];
     NSPoint mpos = [self positionForMinusWidget];
@@ -83,19 +83,6 @@ static const float titleIconGap  = 6.0f;
 
 - (void)dealloc {
     [self clearTrackingRect];
-    [sobject release];
-    [plusWidget release];
-    [minusWidget release];
-    [titleAttributes release];
-    [fieldAttributes release];
-    [fieldsToDisplay release];
-    [fieldRects release];
-    [borderColor release];
-    [gradientStartColor release];
-    [gradientEndColor release];
-    [view release];
-    [iconProvider release];
-    [super dealloc];
 }
 
 // SObjectBox
@@ -105,8 +92,7 @@ static const float titleIconGap  = 6.0f;
 
 - (void)setSobject:(ZKDescribeSObject *)newSobject {
     if (newSobject == sobject) return;
-    [sobject release];
-    sobject = [newSobject retain];
+    sobject = newSobject;
     [self recalcLayout];
 }
 
@@ -117,8 +103,7 @@ static const float titleIconGap  = 6.0f;
 -(void)setIconProvider:(NSObject<IconProvider> *)ip {
     if (ip == iconProvider) return;
     BOOL needsLayout = ip != nil && iconProvider == nil;
-    [iconProvider autorelease];
-    iconProvider = [ip retain];
+    iconProvider = ip;
     if (needsLayout)
         [self recalcLayout];
 }
@@ -129,8 +114,7 @@ static const float titleIconGap  = 6.0f;
 
 -(void)setIncludeFksTo:(ZKDescribeSObject *)o {
     if (o == includeFksTo) return;
-    [includeFksTo autorelease];
-    includeFksTo = [o retain];
+    includeFksTo = o;
     [self recalcLayout];
 }
 
@@ -163,17 +147,14 @@ static const float titleIconGap  = 6.0f;
 
 - (void)setColor:(NSColor *)newColor {
     if (newColor == borderColor) return;
-    [borderColor release];
-    borderColor = [newColor retain];
+    borderColor = newColor;
     [self updateColors];
 }
 
 - (void)updateColors {
-    [gradientStartColor release];
-    [gradientEndColor release];
     NSColor *c = highlight ? [borderColor highlightWithLevel:0.25] : borderColor;
-    gradientStartColor = [[c blendedColorWithFraction:0.4 ofColor:[NSColor whiteColor]] retain];
-    gradientEndColor   = [[c blendedColorWithFraction:0.2 ofColor:[NSColor whiteColor]] retain];
+    gradientStartColor = [c blendedColorWithFraction:0.4 ofColor:[NSColor whiteColor]];
+    gradientEndColor   = [c blendedColorWithFraction:0.2 ofColor:[NSColor whiteColor]];
 }
 
 - (void)setOrigin:(NSPoint)point {
@@ -265,8 +246,7 @@ static const float titleIconGap  = 6.0f;
     origin.y -= (newHeight - size.height) /2;
     size.width = newWidth;
     size.height = newHeight;
-    [fieldRects release];
-    fieldRects = [positions retain];
+    fieldRects = positions;
     [self positionPlusMinusWidgets];
     [self resetTrackingRect];    
     [view setNeedsDisplay:YES];
@@ -285,10 +265,9 @@ static const float titleIconGap  = 6.0f;
         if ([self shouldDisplayField:f])
             [fields addObject:f];
     }
-    NSSortDescriptor *sortImportance = [[[NSSortDescriptor alloc] initWithKey:@"importance" ascending:NO] autorelease];
-    NSSortDescriptor *sortName = [[[NSSortDescriptor alloc] initWithKey:@"name" ascending:NO] autorelease];
+    NSSortDescriptor *sortImportance = [[NSSortDescriptor alloc] initWithKey:@"importance" ascending:NO];
+    NSSortDescriptor *sortName = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:NO];
     [fields sortUsingDescriptors:@[sortImportance, sortName]];
-    [fieldsToDisplay release];
     fieldsToDisplay = fields;
 }
 
@@ -337,7 +316,6 @@ static const float titleIconGap  = 6.0f;
     NSRect gradientRect = bgPath.bounds;
     [gradient drawInRect:gradientRect angle:gradientAngle];
     [nsContext restoreGraphicsState];
-    [gradient release];
     
     // Create drawing rectangle for title
     NSImage *titleIcon = [iconProvider iconForType:sobject.name];

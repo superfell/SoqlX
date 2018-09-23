@@ -24,6 +24,7 @@
 #import "HighlightTextFieldCell.h"
 #import "ZKDescribeThemeItem+ZKFindResource.h"
 #import "Prefs.h"
+#import "ZKXsdAnyType.h"
 
 @interface DescribeListDataSource ()
 -(void)updateFilter;
@@ -54,7 +55,7 @@
 
 - (instancetype)init {
     self = [super init];
-    fieldSortOrder = [[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)] retain];
+    fieldSortOrder = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(prefsChanged:) name:NSUserDefaultsDidChangeNotification object:nil];
     stopBackgroundDescribes = 0;
     return self;
@@ -62,18 +63,6 @@
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [types release];
-    [sforce release];
-    [operations release];
-    [describes release];
-    [sortedDescribes release];
-    [filter release];
-    [filteredTypes release];
-    [outlineView release];
-    [descGlobalSobjects release];
-    [icons release];
-    [fieldSortOrder release];
-    [super dealloc];
 }
 
 -(void)prefsChanged:(NSNotification *)notif {
@@ -81,8 +70,8 @@
 }
 
 - (void)setTypes:(ZKDescribeGlobalTheme *)t view:(NSOutlineView *)ov {
-    outlineView = [ov retain];
-    types = [t.global.sobjects retain];
+    outlineView = ov;
+    types = t.global.sobjects;
     describes = [[NSMutableDictionary alloc] init];
     sortedDescribes = [[NSMutableDictionary alloc] init];
     operations = [[NSMutableDictionary alloc] init];
@@ -92,7 +81,7 @@
     for (ZKDescribeGlobalSObject *o in types)
         byname[o.name.lowercaseString] = o;
         
-    descGlobalSobjects = [byname retain];
+    descGlobalSobjects = byname;
     
     NSString *sid = sforce.sessionId;
     for (ZKDescribeThemeItem *r in t.theme.themeItems) {
@@ -112,7 +101,7 @@
 }
 
 - (void)setSforce:(ZKSforceClient *)sf {
-    sforce = [[sf copy] retain];
+    sforce = [sf copy];
 }
 
 - (void)prioritizeDescribe:(NSString *)type {
@@ -122,8 +111,7 @@
 
 -(void)setFilteredTypes:(NSArray *)t {
     NSArray *old = filteredTypes;
-    [filteredTypes autorelease];
-    filteredTypes = [t retain];
+    filteredTypes = t;
     if (![old isEqualToArray:t])
         [outlineView reloadData];
 }
@@ -158,7 +146,6 @@
 }
 
 - (void)setFilter:(NSString *)filterValue {
-    [filter autorelease];
     filter = [filterValue copy];
     [self updateFilter];
 }
@@ -221,7 +208,7 @@
 -(void)startBackgroundDescribes {
     ZKSforceClient *client = [sforce copyWithZone:nil];
     // stop race condition with the delegate going away from under us.
-    [client.delegate retain];
+//    [client.delegate retain];
     NSArray *toDescribe = descGlobalSobjects.allKeys;
     const int DEFAULT_DESC_BATCH = 16;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^() {
@@ -232,7 +219,7 @@
         int batchSize = DEFAULT_DESC_BATCH;
         while (leftTodo.count > 0 && (OSAtomicAdd32(0, &stopBackgroundDescribes) == 0)) {
             dispatch_sync(dispatch_get_main_queue(), ^() {
-                alreadyDescribed = [describes.allKeys retain];
+                alreadyDescribed = describes.allKeys;
             });
             [batch removeAllObjects];
             for (i=leftTodo.count-1; i >= 0; i--) {
@@ -255,11 +242,8 @@
                 }
             }
             leftTodo = [leftTodo subarrayWithRange:NSMakeRange(0, i+1)];
-            [alreadyDescribed release];
         }
         dispatch_async(dispatch_get_main_queue(), ^() {
-            [client.delegate autorelease];
-            [client autorelease];
             // sanity check we got everything
             if (descGlobalSobjects.count != describes.count) {
                 NSLog(@"Background describe finished, but there are still missing describes");
@@ -269,6 +253,7 @@
                     }
                 }
             }
+//            [client.delegate release];
         });
     });
 }
@@ -342,7 +327,7 @@
 
 - (instancetype)initWithDescribe:(ZKDescribeSObject *)s {
     self = [super init];
-    sobject = [s retain];
+    sobject = s;
     
     NSMutableArray *t = [NSMutableArray arrayWithObjects:@"Name", @"Label", @"PluralLabel", @"Key Prefix", @"Custom", 
                 @"Createable", @"Updateable", @"Activateable", @"Deletable", @"Undeletable", 
@@ -352,56 +337,57 @@
     NSArray *cr = s.childRelationships;
     if (cr.count > 0) {
         NSString *sectionTitle = [NSString stringWithFormat:@"Relationships to %@", sobject.name];
-        NSAttributedString *boldTitle = [[[NSAttributedString alloc] initWithString:sectionTitle attributes:@{NSFontAttributeName: [NSFont boldSystemFontOfSize:11]}] autorelease];
+        NSAttributedString *boldTitle = [[NSAttributedString alloc] initWithString:sectionTitle attributes:@{NSFontAttributeName: [NSFont boldSystemFontOfSize:11]}];
         [t addObject:boldTitle]; 
         for (ZKChildRelationship *r in cr) {
             [t addObject:[NSString stringWithFormat:@"%@.%@", r.childSObject, r.field]];
         }
     }
-    titles = [t retain];
+    titles = t;
     return self;
 }
 
-- (void)dealloc {
-    [sobject release];
-    [titles release];
-    [super dealloc];
-}
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"SObject : %@", sobject.name];
 }
 
 // for use in a table view
--(int)numberOfRowsInTableView:(NSTableView *)view {
+-(NSInteger)numberOfRowsInTableView:(NSTableView *)view {
     return titles.count;
 }
 
--(id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(int)rowIdx {
+-(id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(NSInteger)rowIdx {
     if ([tc.identifier isEqualToString:@"title"])
         return titles[rowIdx];
 
-    SEL selectors[] = { @selector(name), @selector(label), @selector(labelPlural), @selector(keyPrefix), @selector(custom),            
-                        @selector(createable), @selector(updateable), @selector(activateable), @selector(deletable), @selector(undeletable),
-                        @selector(mergeable), @selector(queryable), @selector(retrieveable), @selector(searchable), @selector(layoutable),
-                        @selector(replicateable), @selector(triggerable), @selector(mruEnabled), @selector(hasSubtypes),
-                        @selector(urlEdit), @selector(urlDetail), @selector(urlNew) };
-
-    int numSelectors = sizeof(selectors)/sizeof(*selectors);
-    
-    if (rowIdx < numSelectors) {
-        SEL theSel = selectors[rowIdx];        
-        id f = [sobject performSelector:theSel];
-        const char *returnType = [sobject methodSignatureForSelector:theSel].methodReturnType;
-        if (returnType[0] == 'c')     // aka char aka Bool            
-            return f ? @"Yes" : @"";        
-        return [sobject performSelector:theSel];
-    }
-    if (rowIdx == numSelectors)
-        return @"";    // this is the value for the Child Relationships title row
-
-    ZKChildRelationship *cr = sobject.childRelationships[rowIdx - numSelectors -1];
-    return [NSString stringWithFormat:@"%@", cr.relationshipName == nil ? @"" : cr.relationshipName];
+    switch (rowIdx) {
+        case 0: return sobject.name;
+        case 1: return sobject.label;
+        case 2: return sobject.labelPlural;
+        case 3: return sobject.keyPrefix;
+        case 4: return sobject.custom ? @"Yes" : @"";
+        case 5: return sobject.createable ? @"Yes" : @"";
+        case 6: return sobject.updateable ? @"Yes" : @"";
+        case 7: return sobject.activateable ? @"Yes" : @"";
+        case 8: return sobject.deletable ? @"Yes" : @"";
+        case 9: return sobject.undeletable ? @"Yes" : @"";
+        case 10: return sobject.mergeable ? @"Yes" : @"";
+        case 11: return sobject.queryable ? @"Yes" : @"";
+        case 12: return sobject.retrieveable ? @"Yes" : @"";
+        case 13: return sobject.searchable ? @"Yes" : @"";
+        case 14: return sobject.layoutable ? @"Yes" : @"";
+        case 15: return sobject.replicateable ? @"Yes" : @"";
+        case 16: return sobject.triggerable ? @"Yes" : @"";
+        case 17: return sobject.mruEnabled ? @"Yes" : @"";
+        case 18: return sobject.hasSubtypes ? @"Yes" : @"";
+        case 19: return sobject.urlEdit;
+        case 20: return sobject.urlDetail;
+        case 21: return sobject.urlNew;
+        case 22: return @""; // this is the Child Relationships title row
+    };
+    ZKChildRelationship *cr = sobject.childRelationships[rowIdx - 23];
+    return cr.relationshipName == nil ? @"" : cr.relationshipName;
 }
 
 @end
@@ -410,8 +396,8 @@
 
 - (instancetype)initWithDescribe:(ZKDescribeField *)f {
     self = [super init];
-    field = [f retain];
-    titles = [@[@"Name", @"Label", @"Type", @"Custom", @"Help Text",
+    field = f;
+    titles = @[@"Name", @"Label", @"Type", @"Custom", @"Help Text",
                     @"Length", @"Digits", @"Scale", @"Precision", @"Byte Length",
                     @"Default Value", @"Createable", @"Updatable", @"Cascade Delete", @"Restricted Delete",
                     @"Default On Create", @"Calculated", @"AutoNumber",
@@ -419,58 +405,79 @@
                     @"External Id", @"ID Lookup", @"Filterable", @"HTML Formatted", @"Name Field", @"Nillable", 
                     @"Compound FieldName", @"Name Pointing", @"Extra TypeInfo", @"Reference To", @"Relationship Name",
                     @"Dependent Picklist", @"Controller Name", @"Restricted Picklist", @"Query By Distance",
-                    @"Value Formula", @"Default Formula", @"Relationship Order (CJOs)", @"Write Requires Read on Master (CJOs)", @"Display Location in Decimal"] retain];
+                    @"Value Formula", @"Default Formula", @"Relationship Order (CJOs)", @"Write Requires Read on Master (CJOs)", @"Display Location in Decimal"];
     return self;
 }
 
-- (void)dealloc {
-    [field release];
-    [titles release];
-    [super dealloc];
-}
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"Field : %@.%@", field.sobject.name, field.name];
 }
 
 // for use in a table view
-- (int)numberOfRowsInTableView:(NSTableView *)view {
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)view {
     return titles.count;
 }
 
-- (id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(int)rowIdx {
+NSObject *fmtInt(NSInteger v) {
+    return v == 0 ? @"": [NSNumber numberWithInteger:v];
+}
+
+- (id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(NSInteger)rowIdx {
     if ([tc.identifier isEqualToString:@"title"])
         return titles[rowIdx];
-
-    SEL selectors[] = { @selector(name), @selector(label), @selector(type), @selector(custom), @selector(inlineHelpText),
-                        @selector(length), @selector(digits), @selector(scale), @selector(precision), @selector(byteLength),            
-                        @selector(defaultValueAsString), @selector(createable), @selector(updateable), @selector(cascadeDelete), @selector(restrictedDelete),
-                        @selector(defaultedOnCreate), @selector(calculated), @selector(autoNumber),
-                        @selector(unique), @selector(caseSensitive), @selector(namePointing), @selector(sortable), @selector(groupable), @selector(aggregatable), @selector(permissionable),
-                        @selector(externalId), @selector(idLookup), @selector(filterable), @selector(htmlFormatted), @selector(nameField), @selector(nillable),
-                        @selector(compoundFieldName), @selector(namePointing), @selector(extraTypeInfo), @selector(referenceTo), @selector(relationshipName),
-                        @selector(dependentPicklist), @selector(controllerName), @selector(restrictedPicklist), @selector(queryByDistance),
-                        @selector(calculatedFormula), @selector(defaultValueFormula), @selector(relationshipOrder), @selector(writeRequiresMasterRead), @selector(displayLocationInDecimal) };
     
     if (field == nil) return @"";
-    id f = [field performSelector:selectors[rowIdx]];
-    const char *returnType = [field methodSignatureForSelector:selectors[rowIdx]].methodReturnType;
-    
-    if (returnType[0] == 'c')
-        return f ? @"Yes" : @"";
-    if (returnType[0] == 'i')
-        return f == 0 ? (id)@"" : (id)@((int)f);
-    if (returnType[0] == 'q')
-        return @((long long)f);
-    if (returnType[0] == '@') {
-        if ([f isKindOfClass:[NSArray class]]) {
-            if ([f count] == 0) return @"";
-            return [f componentsJoinedByString:@", "];
-        }
-        return f;
+    switch (rowIdx) {
+        case 0 : return field.name;
+        case 1 : return field.label;
+        case 2 : return field.type;
+        case 3 : return field.custom? @"Yes" : @"";
+        case 4 : return field.inlineHelpText;
+        case 5 : return fmtInt(field.length);
+        case 6 : return fmtInt(field.digits);
+        case 7 : return fmtInt(field.scale);
+        case 8 : return fmtInt(field.precision);
+        case 9 : return fmtInt(field.byteLength);
+        case 10 : return field.defaultValueAsString;
+        case 11 : return field.createable? @"Yes" : @"";
+        case 12 : return field.updateable? @"Yes" : @"";
+        case 13 : return field.cascadeDelete? @"Yes" : @"";
+        case 14 : return field.restrictedDelete? @"Yes" : @"";
+        case 15 : return field.defaultedOnCreate? @"Yes" : @"";
+        case 16 : return field.calculated? @"Yes" : @"";
+        case 17 : return field.autoNumber? @"Yes" : @"";
+        case 18 : return field.unique? @"Yes" : @"";
+        case 19 : return field.caseSensitive? @"Yes" : @"";
+        case 20 : return field.namePointing? @"Yes" : @"";
+        case 21 : return field.sortable? @"Yes" : @"";
+        case 22 : return field.groupable? @"Yes" : @"";
+        case 23 : return field.aggregatable? @"Yes" : @"";
+        case 24 : return field.permissionable? @"Yes" : @"";
+        case 25 : return field.externalId? @"Yes" : @"";
+        case 26 : return field.idLookup? @"Yes" : @"";
+        case 27 : return field.filterable? @"Yes" : @"";
+        case 28 : return field.htmlFormatted? @"Yes" : @"";
+        case 29 : return field.nameField? @"Yes" : @"";
+        case 30 : return field.nillable? @"Yes" : @"";
+        case 31 : return field.compoundFieldName;
+        case 32 : return field.namePointing? @"Yes" : @"";
+        case 33 : return field.extraTypeInfo;
+        case 34 : return [field.referenceTo componentsJoinedByString:@", "];
+        case 35 : return field.relationshipName;
+        case 36 : return field.dependentPicklist? @"Yes" : @"";
+        case 37 : return field.controllerName;
+        case 38 : return field.restrictedPicklist? @"Yes" : @"";
+        case 39 : return field.queryByDistance? @"Yes" : @"";
+        case 40 : return field.calculatedFormula;
+        case 41 : return field.defaultValueFormula;
+        case 42 : return fmtInt(field.relationshipOrder);
+        case 43 : return field.writeRequiresMasterRead? @"Yes" : @"";
+        case 44 : return field.displayLocationInDecimal? @"Yes" : @"";
+        default:
+            NSLog(@"Unexpected rowId:%ld in SObjectFieldDataSource", (long)rowIdx);
     }
-    NSLog(@"Unexpected return type of %c for selector %s", *returnType, sel_getName(selectors[rowIdx]));
-    return f;
+    return @"*****";
 }
 
 @end

@@ -27,7 +27,7 @@
     NSString *prefsPrefix;
 }
 
-@property (retain) NSString *prefsPrefix;
+@property (strong) NSString *prefsPrefix;
 -(NSString *)prefName:(NSString *)pref;
 
 -(void)onPrefsPrefixSet:(NSString *)pp;

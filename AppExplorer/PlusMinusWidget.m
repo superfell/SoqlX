@@ -34,7 +34,7 @@
 
 - (instancetype)initWithFrame:(NSRect)frame view:(SchemaView *)v andStyle:(pmButtonStyle)s {
     self = [super init];
-    view = [v retain];
+    view = v;
     rect = frame;
     style = s;
     visible = YES;
@@ -44,8 +44,6 @@
 
 -(void)dealloc {
     [self clearTrackingRect];
-    [view release];
-    [super dealloc];
 }
 
 -(NSPoint)origin {

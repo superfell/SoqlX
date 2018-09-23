@@ -34,15 +34,10 @@
     return self;
 }
 
-- (void)dealloc {
-    [myImage release];
-    [myTextAttrs release];
-    [super dealloc];
-}
 
 - (void)initProperties {
-    myImage = [[NSImage imageNamed:NSImageNameRevealFreestandingTemplate] retain];
-    myTextAttrs = [@{NSFontAttributeName: [NSFont userFontOfSize:10.0]} retain];
+    myImage = [NSImage imageNamed:NSImageNameRevealFreestandingTemplate];
+    myTextAttrs = @{NSFontAttributeName: [NSFont userFontOfSize:10.0]};
 }
 
 - (id)copyWithZone:(NSZone *)z {

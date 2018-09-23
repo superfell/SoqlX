@@ -34,10 +34,6 @@ static NSString *SHOWING_DETAILS = @"details";
     return paths;
 }
 
--(void)dealloc {
-    [dataSourceRef release];
-    [super dealloc];
-}
 
 -(NSString *)windowVisiblePrefName {
     return SHOWING_DETAILS;
@@ -53,8 +49,7 @@ static NSString *SHOWING_DETAILS = @"details";
 }
 
 -(void)setDataSource:(NSObject<NSTableViewDataSource> *)aValue {
-    [dataSourceRef autorelease];
-    dataSourceRef = [aValue retain];
+    dataSourceRef = aValue;
     detailsTable.dataSource = aValue;
 }
 

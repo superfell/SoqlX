@@ -45,14 +45,9 @@
     return self;
 }
 
--(void)dealloc {
-    [name release];
-    [childCols release];
-    [super dealloc];
-}
 
 +(QueryColumn *)columnWithName:(NSString *)name {
-    return [[[QueryColumn alloc] initWithName:name] autorelease];
+    return [[QueryColumn alloc] initWithName:name];
 }
 
 -(NSString *)name {
@@ -65,7 +60,7 @@
 
 -(void)addChildCol:(QueryColumn *)c {
     if (childCols == nil) {
-        childCols = [[NSMutableArray array] retain];
+        childCols = [NSMutableArray array];
         [childCols addObject:c];
         return;
     }
@@ -109,10 +104,7 @@
 }
 
 - (void)dealloc {
-    [queryResult release];
     [wrapper removeObserver:self forKeyPath:@"hasCheckedRows"];
-    [wrapper release];
-    [super dealloc];
 }
 
 - (ZKQueryResult *)queryResult {
@@ -152,9 +144,7 @@
     if (qr == queryResult) return;
     [wrapper removeObserver:self forKeyPath:@"hasCheckedRows"];
     [self willChangeValueForKey:@"hasCheckedRows"];
-    [wrapper autorelease];
-    [queryResult autorelease];
-    queryResult = [qr retain];
+    queryResult = qr;
     wrapper = [[EditableQueryResultWrapper alloc] initWithQueryResult:qr];
     [self didChangeValueForKey:@"hasCheckedRows"];
     [wrapper addObserver:self forKeyPath:@"hasCheckedRows" options:0 context:nil];
@@ -173,8 +163,7 @@
 }
 
 -(void)replaceQueryResult:(ZKQueryResult *)qr {
-    [queryResult autorelease];
-    queryResult = [qr retain];
+    queryResult = qr;
     [wrapper setQueryResult:queryResult];
     [self showHideErrorColumn];
     [table reloadData];
@@ -195,7 +184,7 @@
     col.resizingMask = NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask;
     if ([identifier hasSuffix:@"Id"])
         col.width = 165;
-    return [col autorelease];
+    return col;
 }
 
 - (NSArray *)createTableColumns:(ZKQueryResult *)qr {

@@ -25,10 +25,10 @@
 // This manages the recent queries list/window
 
 @interface QueryListController : BaseWindowToggleController {
-	IBOutlet QueryTextListView	*view;
+    IBOutlet QueryTextListView    *view;
 }
 
-@property (assign) id<QueryTextListViewDelegate> delegate;
+@property (unsafe_unretained) id<QueryTextListViewDelegate> delegate;
 
 -(void)addQuery:(NSString *)soql;
 

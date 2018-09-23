@@ -28,9 +28,9 @@ static const CGFloat MARGIN = 5.0;
 -(instancetype)initWithFrame:(NSRect)f attributes:(NSDictionary*)attributes listView:(QueryTextListView *)lv {
     self = [super initWithFrame:f];
     listView = lv;  // not retained, to prevent retain loop.
-    textAttributes = [attributes retain];
+    textAttributes = attributes;
     verticalPad = [@"M" sizeWithAttributes:textAttributes].height / 2; 
-    backgroundColor = [[NSColor whiteColor] retain];
+    backgroundColor = [NSColor whiteColor];
     trackingArea = [[NSTrackingArea alloc] initWithRect:f options:NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect owner:self userInfo:nil];
     [self addTrackingArea:trackingArea];
     [self setWantsLayer:YES];
@@ -39,11 +39,6 @@ static const CGFloat MARGIN = 5.0;
 
 -(void)dealloc {
     [self removeTrackingArea:trackingArea];
-    [text release];
-    [textAttributes release];
-    [backgroundColor release];
-    [trackingArea release];
-    [super dealloc];
 }
 
 - (void)recalcLayout:(CGFloat)width {
@@ -63,8 +58,6 @@ static const CGFloat MARGIN = 5.0;
 }
 
 - (void)setText:(NSString *)t {
-    [t retain];
-    [text release];
     text = t;
     [self recalcLayout];
     [self setNeedsDisplay:YES];
@@ -81,8 +74,7 @@ static const CGFloat MARGIN = 5.0;
 
 - (void)setBackgroundColor:(NSColor *)c {
     if (c == backgroundColor) return;
-    [backgroundColor release];
-    backgroundColor = [c retain];
+    backgroundColor = c;
     [self setNeedsDisplay:YES];
 }
 
@@ -132,20 +124,15 @@ static const CGFloat MARGIN = 5.0;
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code here.
-        textAttributes =  [[NSMutableDictionary dictionaryWithObjectsAndKeys:
+        textAttributes =  [NSMutableDictionary dictionaryWithObjectsAndKeys:
                             [NSFont titleBarFontOfSize:11.0], NSFontAttributeName,
                             [[NSColor blueColor] shadowWithLevel:0.33], NSForegroundColorAttributeName,
-                            nil] retain];
-        items = [[NSMutableArray arrayWithCapacity:10] retain];
+                            nil];
+        items = [NSMutableArray arrayWithCapacity:10];
     }
     return self;
 }
 
--(void)dealloc {
-    [textAttributes release];
-    [items release];
-    [super dealloc];
-}
 
 - (BOOL)isFlipped {
     return YES;
@@ -209,7 +196,7 @@ static const CGFloat MARGIN = 5.0;
     QueryTextListViewItem *i = [[QueryTextListViewItem alloc] initWithFrame:b attributes:textAttributes listView:self];
     i.text = text;
     [self addSubview:i];
-    return [i autorelease];
+    return i;
 }
 
 -(void)setInitialItems:(NSArray *)texts {

@@ -38,10 +38,6 @@
     [self setEnabledButtons:NO];
 }
 
-- (void)dealloc {
-    [sobjectType release];
-    [super dealloc];
-}
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
     [windowController.window setContentBorderThickness:28.0 forEdge:NSMinYEdge];     
@@ -129,7 +125,6 @@ NSString * tc(NSString *src) {
 }
 
 - (void)setSObjectType:(NSString *)type andDataSource:(DescribeListDataSource *)newDataSource {
-    [sobjectType autorelease];
     sobjectType = [type copy];
     if (![newDataSource hasAllDescribesRelatedTo:type]) {
         [self describeWithProgress:newDataSource];
@@ -146,7 +141,7 @@ NSString * tc(NSString *src) {
     
     NSRect offscreenRect = NSMakeRect(0.0, 0.0, bounds.size.width - 40.0, bounds.size.height);
     NSBitmapImageRep* offscreenRep = nil;
-    offscreenRep = [[[NSBitmapImageRep alloc] initWithBitmapDataPlanes:nil
+    offscreenRep = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:nil
                             pixelsWide:offscreenRect.size.width 
                             pixelsHigh:offscreenRect.size.height 
                             bitsPerSample:8 
@@ -156,7 +151,7 @@ NSString * tc(NSString *src) {
                             colorSpaceName:NSCalibratedRGBColorSpace 
                             bitmapFormat:0 
                             bytesPerRow:(4 * offscreenRect.size.width) 
-                            bitsPerPixel:32] autorelease];
+                            bitsPerPixel:32];
 
     [NSGraphicsContext saveGraphicsState];
     [NSGraphicsContext setCurrentContext:[NSGraphicsContext 

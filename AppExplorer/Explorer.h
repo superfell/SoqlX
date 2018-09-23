@@ -93,11 +93,11 @@
 - (IBAction)filterSObjectListView:(id)sender;
 - (IBAction)updateDetailsRecentSelection:(id)sender;
 
-@property (retain) NSString *statusText;
-@property (retain) NSString *apiCallCountText;
+@property (strong) NSString *statusText;
+@property (strong) NSString *apiCallCountText;
 @property (assign) BOOL schemaViewIsActive;
 
-@property (retain) IBOutlet NSSegmentedControl *detailsRecentSelector;
+@property (strong) IBOutlet NSSegmentedControl *detailsRecentSelector;
 
 @property (getter=isLoggedIn, readonly) BOOL loggedIn;
 @property (readonly) BOOL hasSelectedForDelete;

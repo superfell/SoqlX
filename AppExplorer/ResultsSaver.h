@@ -65,15 +65,15 @@
 
 -(void)save:(NSWindow *)parentWindow;
 
-@property (retain) IBOutlet NSWindow *progressWindow;
-@property (retain) IBOutlet NSView *optionsView;
-@property (retain) IBOutlet NSButtonCell *buttonAll;
-@property (retain) IBOutlet NSButtonCell *buttonCurrent;
+@property (strong) IBOutlet NSWindow *progressWindow;
+@property (strong) IBOutlet NSView *optionsView;
+@property (strong) IBOutlet NSButtonCell *buttonAll;
+@property (strong) IBOutlet NSButtonCell *buttonCurrent;
 
 @property (assign)   BOOL       saveAll;
 @property (assign)   NSUInteger rowsWritten;
 @property (readonly) NSUInteger totalRows;
-@property (retain)   NSURL      *filename;
+@property (strong)   NSURL      *filename;
 
 @end
 

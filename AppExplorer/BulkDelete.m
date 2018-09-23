@@ -28,7 +28,7 @@
 @interface BulkDelete ()
 -(void)doDeleteFrom:(int)start length:(int)length;
 
-@property (retain) QueryResultTable *table;
+@property (strong) QueryResultTable *table;
 @end
 
 @interface DeleteOperation : NSOperation {
@@ -42,21 +42,17 @@
 
 -(instancetype)initWithDelete:(BulkDelete *)bd startAt:(int)s length:(int)l {
     self = [super init];
-    bulkDelete = [bd retain];
+    bulkDelete = bd;
     start = s;
     len = l;
     return self;
 }
 
--(void)dealloc {
-    [bulkDelete release];
-    [super dealloc];
-}
 
 -(void)main {
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-    [bulkDelete doDeleteFrom:start length:len];
-    [pool release];
+    @autoreleasepool {
+        [bulkDelete doDeleteFrom:start length:len];
+    }
 }
 
 @end
@@ -65,23 +61,13 @@
 
 @synthesize table;
 
--(void)dealloc {
-    [progress release];
-    [queue release];
-    [indexes release];
-    [sfdcIds release];
-    [client release];
-    [results release];
-    [table release];
-    [super dealloc];
-}
 
 -(instancetype)initWithClient:(ZKSforceClient *)c {
     self = [super init];
     progress = [[ProgressController alloc] init];
     queue = [[NSOperationQueue alloc] init];
     queue.maxConcurrentOperationCount = 1;
-    client = [[c copy] retain];
+    client = [c copy];
     return self;
 }
 
@@ -95,9 +81,9 @@
         ZKSObject *row = [data records][idx.intValue];
         [ids addObject:[row id]];
     }
-    indexes = [ia retain];
-    sfdcIds = [ids retain];
-    results = [[NSMutableArray arrayWithCapacity:idxSet.count] retain];
+    indexes = ia;
+    sfdcIds = ids;
+    results = [NSMutableArray arrayWithCapacity:idxSet.count];
 }
 
 -(void)performBulkDelete:(QueryResultTable *)queryResultTable window:(NSWindow *)modalWindow {
@@ -114,7 +100,7 @@
     do {
         int len =indexes.count - start;
         if (len > chunk) len = chunk;
-        DeleteOperation *op = [[[DeleteOperation alloc] initWithDelete:self startAt:start length:len] autorelease];
+        DeleteOperation *op = [[DeleteOperation alloc] initWithDelete:self startAt:start length:len];
         [queue addOperation:op];
         start += len;
     } while (start < indexes.count);
@@ -149,7 +135,7 @@
     // remove the progress sheet, and tidy up
     [NSApp endSheet:progress.progressWindow];
     [progress.progressWindow orderOut:self];
-    [self release]; // we're outa here
+     // we're outa here
 }
 
 -(void)aboutToDeleteFromIndex:(NSNumber *)idx {

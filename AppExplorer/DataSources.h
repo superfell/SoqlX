@@ -76,23 +76,17 @@
     ZKDescribeSObject    *sobject;
     NSArray                *titles;
 }
-
 - (instancetype)initWithDescribe:(ZKDescribeSObject *)s NS_DESIGNATED_INITIALIZER;
-// for use in a table view
-- (int)numberOfRowsInTableView:(NSTableView *)v;
-- (id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(int)rowIdx;
-
+- (instancetype)init NS_UNAVAILABLE;
 @end;
+
 
 @interface SObjectFieldDataSource : NSObject<NSTableViewDataSource> {
     ZKDescribeField        *field;
     NSArray                *titles;
 }
 - (instancetype)initWithDescribe:(ZKDescribeField *)f NS_DESIGNATED_INITIALIZER;
-// for use in a table view
-- (int)numberOfRowsInTableView:(NSTableView *)v;
-- (id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(int)rowIdx;
-
+- (instancetype)init NS_UNAVAILABLE;
 @end;
 
 @interface NoSelection : NSObject {

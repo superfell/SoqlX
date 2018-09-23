@@ -51,11 +51,11 @@
 
 -(instancetype)initWithFrame:(NSRect)frame andView:(SchemaView *)v NS_DESIGNATED_INITIALIZER;
 
-@property (retain) ZKDescribeSObject *sobject;
+@property (strong) ZKDescribeSObject *sobject;
 @property (assign) SObjectBoxViewMode viewMode;
-@property (retain) NSColor *color;
-@property (retain) ZKDescribeSObject *includeFksTo;
-@property (retain) NSObject<IconProvider> *iconProvider;
+@property (strong) NSColor *color;
+@property (strong) ZKDescribeSObject *includeFksTo;
+@property (strong) NSObject<IconProvider> *iconProvider;
 
 @property (getter=isHighlighted, readonly) BOOL highlighted;
 @property (readonly) NSSize size;

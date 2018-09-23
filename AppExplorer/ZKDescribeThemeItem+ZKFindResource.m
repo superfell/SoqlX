@@ -63,7 +63,7 @@
     
     NSURL *theUrl = [NSURL URLWithString:[self url]];
     [queue addOperationWithBlock:^{
-        NSMutableURLRequest *r = [[[NSMutableURLRequest alloc] initWithURL:theUrl] autorelease];
+        NSMutableURLRequest *r = [[NSMutableURLRequest alloc] initWithURL:theUrl];
         [r setCachePolicy:NSURLCacheStorageAllowed];
         [r setHTTPShouldHandleCookies:NO];
         [r setHTTPShouldUsePipelining:NO];
@@ -72,7 +72,7 @@
         NSError *err;
         NSData *d = [NSURLConnection sendSynchronousRequest:r returningResponse:&res error:&err];
         if ([res statusCode] == 200) {
-            NSImage *i = [[[NSImage alloc] initWithData:d] autorelease];
+            NSImage *i = [[NSImage alloc] initWithData:d];
             if (i != nil) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     completeBlock(i);

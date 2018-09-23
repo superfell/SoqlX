@@ -25,10 +25,10 @@
 
 -(instancetype)initWithFrame:(NSRect)rect {
     self = [super initWithFrame:rect];
-    textAttributes =  [[NSMutableDictionary dictionaryWithObjectsAndKeys:
+    textAttributes =  [NSMutableDictionary dictionaryWithObjectsAndKeys:
                         [NSFont titleBarFontOfSize:11.0], NSFontAttributeName,
                         [NSColor blackColor], NSForegroundColorAttributeName,
-                        nil] retain];
+                        nil];
                         
     gradient = [[NSGradient alloc] initWithColors:@[[NSColor whiteColor],
                                                    [NSColor colorWithCalibratedRed:0.875 green:0.875 blue:0.875 alpha:1.0],
@@ -36,12 +36,6 @@
     return self;
 }
 
--(void)dealloc {
-    [headerText release];
-    [textAttributes release];
-    [gradient release];
-    [super dealloc];
-}
 
 -(void)drawRect:(NSRect)rect {
     NSRect b = self.bounds;
@@ -54,13 +48,12 @@
 
 -(void)setHeaderText:(NSString *)newValue {
     if (newValue != headerText) {
-        [headerText release];
         headerText = [newValue copy];
     }
 }
 
 -(NSString *)headerText {
-    return [[headerText retain] autorelease];
+    return headerText;
 }
 
 @end

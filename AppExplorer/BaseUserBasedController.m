@@ -24,10 +24,6 @@
 
 @implementation BaseUserBasedController
 
--(void)dealloc {
-    [prefsPrefix release];
-    [super dealloc];
-}
 
 -(NSString *)prefName:(NSString *)pref {
     return [NSString stringWithFormat:@"%@-%@", prefsPrefix, pref];
@@ -39,12 +35,11 @@
 }
 
 -(NSString *)prefsPrefix {
-    return [[prefsPrefix retain] autorelease];
+    return prefsPrefix;
 }
 
 -(void)setPrefsPrefix:(NSString *)pp {
-    [prefsPrefix autorelease];
-    prefsPrefix = [pp retain];
+    prefsPrefix = pp;
     [self onPrefsPrefixSet:pp];
 }
 
@@ -62,11 +57,10 @@
 
 -(void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [super dealloc];
 }
 
 -(NSString *)windowVisiblePrefName {
-    @throw [[[NSException alloc] initWithName:@"ABSTRACT_METHOD" reason:@"subclasses need to implement windowVisiblePrefName" userInfo:nil] autorelease];
+    @throw [[NSException alloc] initWithName:@"ABSTRACT_METHOD" reason:@"subclasses need to implement windowVisiblePrefName" userInfo:nil];
 }
 
 -(BOOL)windowVisible {

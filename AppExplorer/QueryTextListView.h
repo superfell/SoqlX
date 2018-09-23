@@ -36,7 +36,7 @@
 @interface QueryTextListView : NSView {
     NSMutableArray                  *items;
     NSDictionary                    *textAttributes;
-    id<QueryTextListViewDelegate>   delegate;
+    id<QueryTextListViewDelegate>   __unsafe_unretained delegate;
 }
 
 // set the list of items in the list, to this array of strings.
@@ -51,7 +51,7 @@
 // The current list of QueryTextListViewItems in the list view.
 @property (readonly, copy) NSArray *items;
 
-@property (assign, nonatomic) id<QueryTextListViewDelegate> delegate;
+@property (unsafe_unretained, nonatomic) id<QueryTextListViewDelegate> delegate;
 
 @end
 
@@ -71,8 +71,8 @@
 
 -(instancetype)initWithFrame:(NSRect)f attributes:(NSDictionary*)attributes listView:(QueryTextListView *)lv NS_DESIGNATED_INITIALIZER;
 
-@property (retain) NSString *text;
-@property (retain) NSColor    *backgroundColor;
+@property (strong) NSString *text;
+@property (strong) NSColor    *backgroundColor;
 
 -(void)setFrameWidth:(CGFloat)w;
 

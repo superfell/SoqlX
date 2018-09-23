@@ -60,8 +60,8 @@
 
 -(void)setSforceClient:(ZKSforceClient *)client;
 
-@property (retain) IBOutlet NSTextView *apexTextField;
-@property (retain) NSString *apex;
+@property (strong) IBOutlet NSTextView *apexTextField;
+@property (strong) NSString *apex;
 
 @property (readonly) NSUInteger countOfResults;
 -(ApexResult *)objectInResultsAtIndex:(NSUInteger)idx;
@@ -72,12 +72,12 @@
 
 @property (readonly, copy) NSArray *logLevelNames;
 
-@property (retain) NSDictionary *dbLogLevel;
-@property (retain) NSDictionary *workflowLogLevel;
-@property (retain) NSDictionary *validationLogLevel;
-@property (retain) NSDictionary *calloutLogLevel;
-@property (retain) NSDictionary *apexCodeLogLevel;
-@property (retain) NSDictionary *apexProfilingLogLevel;
+@property (strong) NSDictionary *dbLogLevel;
+@property (strong) NSDictionary *workflowLogLevel;
+@property (strong) NSDictionary *validationLogLevel;
+@property (strong) NSDictionary *calloutLogLevel;
+@property (strong) NSDictionary *apexCodeLogLevel;
+@property (strong) NSDictionary *apexProfilingLogLevel;
 
 @end
 

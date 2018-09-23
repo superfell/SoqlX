@@ -33,25 +33,19 @@
 }
 
 -(void)setProgressWindow:(NSWindow *)w {
-    [window autorelease];
-    window = [w retain];
+    window = w;
 }
 
 -(NSWindow *)progressWindow {
     if (window == nil) {
-		[[NSBundle mainBundle] loadNibNamed:@"ProgressWindow" owner:self topLevelObjects:nil];
+        [[NSBundle mainBundle] loadNibNamed:@"ProgressWindow" owner:self topLevelObjects:nil];
     }
-	return window;
+    return window;
 }
 
--(void)dealloc {
-	[progressLabel release];
-	[window release];
-	[super dealloc];
-}
 
 -(BOOL)progressAnimate {
-	return progressValue > 0.0f;
+    return progressValue > 0.0f;
 }
 
 @end

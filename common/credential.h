@@ -36,6 +36,7 @@
 + (id)createCredentialForServer:(NSString *)protocolAndServer username:(NSString *)un password:(NSString *)pwd;
 
 - (instancetype)initForServer:(NSString *)server username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
 
 @property (copy) NSString *server;
 @property (copy) NSString *username;

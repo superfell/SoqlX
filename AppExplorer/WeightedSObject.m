@@ -24,7 +24,7 @@
 @implementation WeightedSObject
 
 +(instancetype)weightedSObjectForSObject:(NSString *)sobjectName {
-    return [[[WeightedSObject alloc] initForSObject:sobjectName] autorelease];
+    return [[WeightedSObject alloc] initForSObject:sobjectName];
 }
 
 -(instancetype)initForSObject:(NSString *)sobjectName {
@@ -34,11 +34,6 @@
     return self;
 }
 
--(void)dealloc {
-    [sobject release];
-    [weight release];
-    [super dealloc];
-}
 
 -(NSString *)sobject {
     return sobject;

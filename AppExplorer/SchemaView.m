@@ -65,15 +65,6 @@
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [centralBox release];
-    [describes release];
-    [relatedBoxes release];
-    [foreignKeys release];
-    [children release];
-    [primaryColor release];
-    [foreignKeyColor release];
-    [childRelColor release];
-    [super dealloc];
 }
 
 // Printing
@@ -90,9 +81,9 @@
 - (instancetype)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        primaryColor = [[NSColor purpleColor] retain];
-        foreignKeyColor = [[NSColor colorWithCalibratedRed:0.3 green:0.3 blue:0.8 alpha:1.0] retain];
-        childRelColor = [[NSColor orangeColor] retain];
+        primaryColor = [NSColor purpleColor];
+        foreignKeyColor = [NSColor colorWithCalibratedRed:0.3 green:0.3 blue:0.8 alpha:1.0];
+        childRelColor = [NSColor orangeColor];
         isPrinting = NO;
         
         NSSize sz = NSMakeSize(200, 100);
@@ -175,14 +166,14 @@
     [nsContext saveGraphicsState];
     [p addClip];
     
-    RRGlossCausticShader *shader = [[[RRGlossCausticShader alloc] init] autorelease];
+    RRGlossCausticShader *shader = [[RRGlossCausticShader alloc] init];
     [shader setNoncausticColor:[NSColor colorWithCalibratedRed:0.1 green:0.1 blue:1 alpha:1]];
     [shader update];
     [shader drawShadingFromPoint:NSMakePoint(NSMinX(box), NSMaxY(box)) toPoint:NSMakePoint(NSMinX(box), NSMinY(box)) inContext:nsContext.graphicsPort];
 
     [nsContext restoreGraphicsState];
 
-    NSMutableParagraphStyle *st = [[[NSMutableParagraphStyle alloc] init] autorelease];
+    NSMutableParagraphStyle *st = [[NSMutableParagraphStyle alloc] init];
     [st setParagraphStyle:[NSParagraphStyle defaultParagraphStyle]];
     st.alignment = NSCenterTextAlignment;
     NSDictionary *a = @{NSForegroundColorAttributeName: [NSColor whiteColor],
@@ -343,7 +334,6 @@ static const float minSpacerSize = 5.0f;
         relRect.origin.y += sz.height;
         relatedBoxes[objName] = b;
         [createdBoxes addObject:b];
-        [b release];
     }    
     return createdBoxes;
 }
@@ -351,13 +341,10 @@ static const float minSpacerSize = 5.0f;
 -(void)setCentralSObjectImpl:(ZKDescribeSObject *)s {
     centralBox.sobject = s;
     centralBox.iconProvider = describes;
-    [relatedBoxes release];
     relatedBoxes = [[NSMutableDictionary alloc] init];
     NSArray *fkSObjects = [self foreignKeySObjects];
-    [foreignKeys release];
-    foreignKeys = [[self createSObjectBoxes:fkSObjects withColor:foreignKeyColor] retain];
-    [children release];
-    children = [[self createSObjectBoxes:[self childSObjectsSkipping:fkSObjects] withColor:childRelColor] retain];
+    foreignKeys = [self createSObjectBoxes:fkSObjects withColor:foreignKeyColor];
+    children = [self createSObjectBoxes:[self childSObjectsSkipping:fkSObjects] withColor:childRelColor];
     [self layoutBoxes];
 }
 

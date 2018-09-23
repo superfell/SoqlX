@@ -22,12 +22,12 @@
 #import "SchemaProtocol.h"
 
 NSString *SchemaProtocolSchema = @"schema";
-NSData *theData;
+__strong NSData *theData;
 
 @implementation SchemaProtocol
 
 + (void)setData:(NSData *)data {
-    theData = [data retain];
+    theData = data;
 }
 
 + (void)initialize {
@@ -53,8 +53,7 @@ NSData *theData;
     [client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
     [client URLProtocol:self didLoadData:theData];
     [client URLProtocolDidFinishLoading:self];
-    [response release];
-    [theData release];
+//    [theData release];
     theData = nil;
 }
 

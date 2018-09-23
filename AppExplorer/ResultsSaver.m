@@ -32,13 +32,13 @@
 
 -(instancetype)initWithResults:(QueryResultTable *)r client:(ZKSforceClient *)c {
     self = [super init];
-    results = [r retain];
+    results = r;
     if ([results.queryResult queryLocator] != nil) {
         [[NSBundle mainBundle] loadNibNamed:@"querySavePanel" owner:self topLevelObjects:nil];
         buttonAll.title = [NSString stringWithFormat:buttonAll.title, [results.queryResult size]];
         buttonCurrent.title = [NSString stringWithFormat:buttonCurrent.title, [results.queryResult records].count];
     }
-    client = [c retain];
+    client = c;
     queryQueue = [[NSOperationQueue alloc] init];
     queryQueue.maxConcurrentOperationCount = 1;
     saveQueue = [[NSOperationQueue alloc] init];
@@ -47,25 +47,15 @@
     return self;
 }
 
--(void)dealloc {
-    [client release];
-    [stream release];
-    [queryQueue release];
-    [saveQueue release];
-    [results release];
-    [started release];
-    [super dealloc];
-}
 
 - (void)save:(NSWindow *)parentWindow {
-    [self retain];
     NSSavePanel *sp = [NSSavePanel savePanel];
     sp.allowedFileTypes = @[@"csv"];
     [sp setAllowsOtherFileTypes:YES];
     [sp setCanSelectHiddenExtension:YES];
     sp.accessoryView = optionsView;
     [sp beginSheetModalForWindow:parentWindow completionHandler:^(NSInteger result) {
-        [self savePanelDidEnd:sp returnCode:result contextInfo:parentWindow];
+        [self savePanelDidEnd:sp returnCode:result contextInfo:(__bridge void *)(parentWindow)];
     }];
 }
 
@@ -78,13 +68,13 @@
 }
 
 -(void)savePanelDidEnd:(NSSavePanel *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo {
-    [optionsView autorelease];
+    // TODO [optionsView autorelease];
     if (returnCode == NSFileHandlingPanelCancelButton) {
-        [self autorelease];
+        // TODO [self autorelease];
         return;
     }
     self.filename = sheet.URL;
-    [self performSelectorOnMainThread:@selector(startWrite:) withObject:contextInfo waitUntilDone:NO];
+    [self performSelectorOnMainThread:@selector(startWrite:) withObject:(__bridge id _Nullable)(contextInfo) waitUntilDone:NO];
 }
 
 -(void)startWrite:(id)contextInfo {
@@ -92,7 +82,7 @@
     if (saveAll)
         [NSApp beginSheet:progressWindow modalForWindow:(NSWindow *)contextInfo modalDelegate:self didEndSelector:nil contextInfo:nil];
     
-    started = [[NSDate date] retain];
+    started = [NSDate date];
     NSOutputStream *s = [NSOutputStream outputStreamWithURL:filename append:NO];
     [s open];
     stream = [[BufferedWriter alloc] initOnStream:s];
@@ -110,10 +100,9 @@
     [stream write:@"\n"];
 
     ZKSforceClient *sf = [client copyWithZone:nil];
-    [client autorelease];
     client = sf;
 
-    NSInvocationOperation *sop = [[[NSInvocationOperation alloc] initWithTarget:self selector:@selector(writeResults:) object:qr] autorelease];
+    NSInvocationOperation *sop = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(writeResults:) object:qr];
     [saveQueue addOperation:sop];
 }
 
@@ -124,20 +113,20 @@
     if (saveAll) {
         [NSApp endSheet:progressWindow];
         [progressWindow orderOut:self];
-        [progressWindow autorelease];
+        // TODO [progressWindow autorelease];
     }
-    [self autorelease];
+    // TODO [self autorelease];
 }
 
 -(void)queryMore:(id)locator {
     ZKQueryResult *qr = [client queryMore:locator];
-    NSInvocationOperation *sop = [[[NSInvocationOperation alloc] initWithTarget:self selector:@selector(writeResults:) object:qr] autorelease];
+    NSInvocationOperation *sop = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(writeResults:) object:qr];
     [saveQueue addOperation:sop];
 }
 
 -(void)queueQueryMore:(NSString *)ql {
     if (ql.length == 0 || !saveAll) return;
-    NSInvocationOperation *q = [[[NSInvocationOperation alloc] initWithTarget:self selector:@selector(queryMore:) object:ql] autorelease];
+    NSInvocationOperation *q = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(queryMore:) object:ql];
     [queryQueue addOperation:q];
 }
 
@@ -193,7 +182,7 @@
 
 -(instancetype)initOnStream:(NSOutputStream *)s capacity:(NSUInteger)cap {
     self = [super init];
-    stream = [s retain];
+    stream = s;
     buffer = [[NSMutableData alloc] initWithCapacity:cap];
     capacity = cap;
     return self;
@@ -203,11 +192,6 @@
     return [self initOnStream:s capacity:64*1024];
 }
 
--(void)dealloc {
-    [stream release];
-    [buffer release];
-    [super dealloc];
-}
 
 -(void)write:(const uint8_t *)data maxLength:(uint)len {
     if (len < (capacity - buffer.length)) {
