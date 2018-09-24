@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2014 Simon Fell
+// Copyright (c) 2006,2014,2018 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -30,7 +30,7 @@
 
 @implementation PlusMinusWidget
 
-@synthesize visible;
+@synthesize visible, clickedBlock;
 
 - (instancetype)initWithFrame:(NSRect)frame view:(SchemaView *)v andStyle:(pmButtonStyle)s {
     self = [super init];
@@ -65,12 +65,6 @@
     [view setNeedsDisplayInRect:rect];
 }
 
--(void)setTarget:(id)aTarget andAction:(SEL)anAction {
-    // we explicity don't retain this to stop a ref counting loop.
-    target = aTarget;
-    action = anAction;
-}
-
 - (void)resetTrackingRect {
     [self clearTrackingRect];
     [self setTrackingRect];
@@ -101,11 +95,12 @@
 -(void)mouseUp:(NSEvent *)event {
     if (state != pmDown) return;
     [self setState:pmInside];
-    [target performSelector:action];
+    if (self.clickedBlock != nil) {
+        self.clickedBlock();
+    }
 }
 
--(void)drawRect:(NSRect)dirtyRect
-{
+-(void)drawRect:(NSRect)dirtyRect {
     if (!visible) return;
     if (state != pmOutside)
         [[NSColor blackColor] set];

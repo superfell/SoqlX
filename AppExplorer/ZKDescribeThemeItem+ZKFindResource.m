@@ -64,7 +64,6 @@
     NSURL *theUrl = [NSURL URLWithString:[self url]];
     [queue addOperationWithBlock:^{
         NSMutableURLRequest *r = [[NSMutableURLRequest alloc] initWithURL:theUrl];
-        [r setCachePolicy:NSURLCacheStorageAllowed];
         [r setHTTPShouldHandleCookies:NO];
         [r setHTTPShouldUsePipelining:NO];
         [r setHTTPMethod:@"GET"];

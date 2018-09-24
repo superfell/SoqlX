@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2016 Simon Fell
+// Copyright (c) 2006-2016,2018 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -56,7 +56,7 @@ static NSString *test = @"https://test.salesforce.com";
     self = [super init];
     server = [[[NSUserDefaults standardUserDefaults] objectForKey:@"server"] copy];
     [self setUsername:[[NSUserDefaults standardUserDefaults] objectForKey:login_lastUsernameKey]];
-    preferedApiVersion = 42;
+    preferedApiVersion = 44;
     return self;
 }
 
@@ -65,7 +65,6 @@ static NSString *test = @"https://test.salesforce.com";
     [loginProgress setHidden:YES];
     [loginProgress setDoubleValue:22.0];
 }
-
 
 - (void)loadNib {
     NSArray *top = nibTopLevelObjects;
@@ -83,36 +82,9 @@ static NSString *test = @"https://test.salesforce.com";
     [NSApp stopModal];
 }
 
-- (ZKSforceClient *)showModalLoginWindow:(id)sender {
-    return [self showModalLoginWindow:sender submitIfHaveCredentials:NO];
-}
-
-- (ZKSforceClient *)showModalLoginWindow:(id)sender submitIfHaveCredentials:(BOOL)autoSubmit {
+// the delegate will get a callback with the outcome
+- (void)showLoginSheet:(NSWindow *)modalForWindow {
     [self loadNib];
-    target = self;
-    selector = @selector(endModalWindow:);
-    modalWindow = nil;
-    if (autoSubmit && [password length] > 0 && [username length] > 0) {
-        [self login:sender];
-        if ([statusText length] == 0) return sforce;
-    }
-    [NSApp runModalForWindow:window];
-    [window close];
-    return [sforce loggedIn] ? sforce : nil;
-}
-
-- (void)showLoginWindow:(id)sender target:(id)t selector:(SEL)s {
-    [self loadNib];
-    target = t;
-    selector = s;
-    modalWindow = nil;
-    [window makeKeyAndOrderFront:sender];
-}
-
-- (void)showLoginSheet:(NSWindow *)modalForWindow target:(id)t selector:(SEL)s {
-    [self loadNib];
-    target = t;
-    selector = s;
     modalWindow = modalForWindow;
     [NSApp beginSheet:window modalForWindow:modalForWindow modalDelegate:self didEndSelector:nil contextInfo:nil];
 }
@@ -177,9 +149,7 @@ static NSString *test = @"https://test.salesforce.com";
 }
 
 -(void)closeLoginUi {
-    if (target == self) {
-        [NSApp stopModal];
-    } else if (modalWindow != nil) {
+    if (modalWindow != nil) {
         [NSApp endSheet:window];
         [window orderOut:self];
     } else {
@@ -215,7 +185,7 @@ static NSString *test = @"https://test.salesforce.com";
         [[self selectedCredential] update:username password:password];
     [[alert window] orderOut:self];
     [self closeLoginUi];
-    [target performSelector:selector withObject:sforce];    
+    [self.delegate loginController:self loginCompleted:sforce];
 }
 
 - (void)createKeychain:(NSAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo {
@@ -224,7 +194,7 @@ static NSString *test = @"https://test.salesforce.com";
         [Credential createCredentialForServer:server username:username password:password];
     [[alert window] orderOut:self];
     [self closeLoginUi];
-    [target performSelector:selector withObject:sforce];    
+    [self.delegate loginController:self loginCompleted:sforce];
 }
 
 - (void)promptAndAddToKeychain {
@@ -299,9 +269,7 @@ static NSString *test = @"https://test.salesforce.com";
             return;
         }
         [self closeLoginUi];
-        if ([delegate respondsToSelector:@selector(loginController:loginCompleted:)])
-            [delegate loginController:self loginCompleted:sforce];
-        [target performSelector:selector withObject:sforce];
+        [delegate loginController:self loginCompleted:sforce];
     }
     @finally {        
         [loginProgress setHidden:YES];
@@ -335,9 +303,7 @@ static NSString *test = @"https://test.salesforce.com";
 
 - (void)setPasswordFromKeychain {
     // see if there's a matching credential and default the password if so
-    Credential *c;
-    NSEnumerator *e = [[self credentials] objectEnumerator];
-    while (c = [e nextObject]) {
+    for (Credential *c in [self credentials]) {
         if ([[c username] caseInsensitiveCompare:username] == NSOrderedSame) {
             [self setPassword:[c password]];
             [self setSelectedCredential:c];

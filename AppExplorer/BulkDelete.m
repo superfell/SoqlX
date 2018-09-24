@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Simon Fell
+// Copyright (c) 2009,2018 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -26,28 +26,32 @@
 #import "QueryResultTable.h"
 
 @interface BulkDelete ()
--(void)doDeleteFrom:(int)start length:(int)length;
+-(void)doDeleteFrom:(NSInteger)start length:(NSInteger)length;
 
 @property (strong) QueryResultTable *table;
 @end
 
 @interface DeleteOperation : NSOperation {
-    BulkDelete *bulkDelete;
-    int            start, len;
 }
--(instancetype)initWithDelete:(BulkDelete *)bd startAt:(int)start length:(int)l NS_DESIGNATED_INITIALIZER;
+@property (strong) BulkDelete *bulkDelete;
+@property (assign) NSInteger start;
+@property (assign) NSInteger len;
+
+-(instancetype)initWithDelete:(BulkDelete *)bd startAt:(NSInteger)start length:(NSInteger)l;
+
 @end
 
 @implementation DeleteOperation 
 
--(instancetype)initWithDelete:(BulkDelete *)bd startAt:(int)s length:(int)l {
+@synthesize bulkDelete, start, len;
+
+-(instancetype)initWithDelete:(BulkDelete *)bd startAt:(NSInteger)startAt length:(NSInteger)length {
     self = [super init];
-    bulkDelete = bd;
-    start = s;
-    len = l;
+    self.bulkDelete = bd;
+    self.start = startAt;
+    self.len = length;
     return self;
 }
-
 
 -(void)main {
     @autoreleasepool {
@@ -60,7 +64,6 @@
 @implementation BulkDelete
 
 @synthesize table;
-
 
 -(instancetype)initWithClient:(ZKSforceClient *)c {
     self = [super init];
@@ -89,7 +92,7 @@
 -(void)performBulkDelete:(QueryResultTable *)queryResultTable window:(NSWindow *)modalWindow {
     self.table = queryResultTable;
     EditableQueryResultWrapper *dataSource = queryResultTable.wrapper;
-    progress.progressLabel = [NSString stringWithFormat:@"Deleting %d rows", [dataSource numCheckedRows]];
+    progress.progressLabel = [NSString stringWithFormat:@"Deleting %lu rows", (unsigned long)[dataSource numCheckedRows]];
     progress.progressValue = 1.0;
     [NSApp beginSheet:progress.progressWindow modalForWindow:modalWindow modalDelegate:self didEndSelector:nil contextInfo:nil];
     [self extractRows:dataSource];
@@ -98,7 +101,7 @@
     int start = 0;
     int chunk = 50;
     do {
-        int len =indexes.count - start;
+        NSInteger len = indexes.count - start;
         if (len > chunk) len = chunk;
         DeleteOperation *op = [[DeleteOperation alloc] initWithDelete:self startAt:start length:len];
         [queue addOperation:op];
@@ -143,7 +146,7 @@
     progress.progressLabel = l;
 }
 
--(void)doDeleteFrom:(int)start length:(int)length {
+-(void)doDeleteFrom:(NSInteger)start length:(NSInteger)length {
     [self performSelectorOnMainThread:@selector(aboutToDeleteFromIndex:) withObject:@(start+length) waitUntilDone:NO];
     NSArray *ids = [sfdcIds subarrayWithRange:NSMakeRange(start, length)];
     NSArray *res = [client delete:ids];

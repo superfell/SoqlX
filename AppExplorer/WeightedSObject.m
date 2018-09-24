@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Simon Fell
+// Copyright (c) 2006,2018 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -34,7 +34,6 @@
     return self;
 }
 
-
 -(NSString *)sobject {
     return sobject;
 }
@@ -47,8 +46,7 @@
     return weight;
 }
 
--(NSComparisonResult)compare:(WeightedSObject *)other
-{
+-(NSComparisonResult)compare:(WeightedSObject *)other {
     // start by looking at the last field connected to
     double left = [self weights].lastIndex;
     double right = [other weights].lastIndex;

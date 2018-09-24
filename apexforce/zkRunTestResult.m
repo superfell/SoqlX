@@ -20,8 +20,8 @@
 //
 
 #import "zkRunTestResult.h"
-#import "zkRunTestFailure.h"
-#import "zkCodeCoverageResult.h"
+#import "ZKRunTestFailure.h"
+#import "ZKCodeCoverageResult.h"
 
 @implementation ZKRunTestResult
 

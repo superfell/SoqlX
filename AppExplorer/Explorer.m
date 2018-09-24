@@ -21,7 +21,7 @@
 
 #import "Explorer.h"
 #import "ReportDocument.h"
-#import "detailsController.h"
+#import "DetailsController.h"
 #import "ZKLoginController.h"
 #import "EditableQueryResultWrapper.h"
 #import "QueryResultTable.h"
@@ -81,7 +81,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     self.fieldColor = [NSColor colorWithCalibratedRed:0.25 green:0.25 blue:0.8 alpha: 1.0];
     self.keywordColor = [NSColor colorWithCalibratedRed:0.8 green:0.25 blue:0.25 alpha: 1.0];
     
-    self.underlineStyle = [NSNumber numberWithInt:(NSUnderlineStyleSingle | NSUnderlinePatternDot | NSUnderlineByWordMask)];
+    self.underlineStyle = [NSNumber numberWithInteger:(NSUnderlineStyleSingle | NSUnderlinePatternDot | NSUnderlineByWordMask)];
     NSMutableDictionary *u = [NSMutableDictionary dictionary];
     u[NSUnderlineStyleAttributeName] = underlineStyle;
     u[NSUnderlineColorAttributeName] = [NSColor redColor];
@@ -193,7 +193,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 }
 
 -(void)updateQueryTextFontSize:(id)sender {
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:[sender tag]] forKey:PREF_TEXT_SIZE];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:[sender tag]] forKey:PREF_TEXT_SIZE];
     [self updateMenuState];
     [self colorize];    
 }
@@ -238,18 +238,18 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     NSNumber *apiVersion = [[NSUserDefaults standardUserDefaults] objectForKey:@"zkApiVersion"];
     if (apiVersion != nil)
         loginController.preferedApiVersion = apiVersion.intValue;
-    [loginController showLoginSheet:myWindow target:self selector:@selector(loginComplete:)];
+    [loginController showLoginSheet:myWindow];
 }
 
 -(void)loginControllerLoginCancelled:(ZKLoginController *)controller {
     [myWindow close];
 }
 
-- (void)loginComplete:(ZKSforceClient *)sf {
-    sforce = sf;
+-(void)loginController:(ZKLoginController *)controller loginCompleted:(ZKSforceClient *)client {
+    sforce = client;
     sforce.delegate = self;
     loginController = nil;
-    [self performSelector:@selector(postLogin:) withObject:nil afterDelay:0];
+    [self postLogin:self];
 }
 
 - (void)closeLoginPanelIfOpen:(id)sender {
@@ -344,7 +344,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
         NSLog(@"error doing descGT %@", result);
     } completeBlock:^(ZKDescribeGlobalTheme *result) {
         [self willChangeValueForKey:@"SObjects"];
-        [descDataSource setTypes:result view:describeList];
+        [self->descDataSource setTypes:result view:self->describeList];
         [self didChangeValueForKey:@"SObjects"];
     }];
 }
@@ -571,7 +571,7 @@ typedef enum SoqlParsePosition {
 }
 
 - (void)setRowsLoadedStatusText:(ZKQueryResult *)qr {
-    self.statusText = [NSString stringWithFormat:@"loaded %ld of %d total rows", (unsigned long)[qr records].count, [qr size]];
+    self.statusText = [NSString stringWithFormat:@"loaded %ld of %ld total rows", (unsigned long)[qr records].count, (long)[qr size]];
 }
 
 - (void)permformQuery:(BOOL)useQueryAll {
@@ -610,7 +610,7 @@ typedef enum SoqlParsePosition {
 }
 
 - (IBAction)queryResultDoubleClicked:(id)sender {
-    int cc = [sender clickedColumn];
+    NSInteger cc = [sender clickedColumn];
     if (cc > -1) {
         NSTableColumn *c = rootTableView.tableColumns[cc];
         NSObject *val = [[rootResults.queryResult  records][[sender clickedRow]] fieldValue:c.identifier];
@@ -740,7 +740,7 @@ typedef enum SoqlParsePosition {
     [self updateProgress:YES];
     [detailsController setDataSource:nil];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [descDataSource describe:sobjectType];
+        [self->descDataSource describe:sobjectType];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self selectedSObjectChanged:self];
             [self updateProgress:NO];
@@ -780,8 +780,8 @@ typedef enum SoqlParsePosition {
 }
 
 -(NSString *)idOfSelectedRowInTableVew:(NSTableView *)tv primaryIdOnly:(BOOL)primaryIdOnly {
-    int r = tv.clickedRow;
-    int c = tv.clickedColumn;
+    NSInteger r = tv.clickedRow;
+    NSInteger c = tv.clickedColumn;
     if (r >= 0 && c >= 0) {
         NSTableColumn *tc = tv.tableColumns[c];
         if (primaryIdOnly 
@@ -818,7 +818,7 @@ typedef enum SoqlParsePosition {
     if (theId == nil) return;
     ZKSaveResult *sr = [sforce delete:@[theId]][0];
     if (sr.success) {
-        int r = tr.table.clickedRow;
+        NSInteger r = tr.table.clickedRow;
         [tr removeRowAtIndex:r];
         [self setRowsLoadedStatusText:tr.queryResult];
     } else {

@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2015 Simon Fell
+// Copyright (c) 2007-2015,2018 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -32,7 +32,9 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
     NSMutableArray *errors;
 }
 -(instancetype)initWithRows:(NSArray *)rows errors:(NSDictionary *)errors checkMarks:(NSSet *)checks NS_DESIGNATED_INITIALIZER;
--(void)removeRowAtIndex:(int)index;
+-(instancetype)init NS_UNAVAILABLE;
+
+-(void)removeRowAtIndex:(NSInteger)index;
 @property (readonly, copy) NSArray *rows;
 @property (readonly, copy) NSArray *checkMarks;
 @property (readonly, copy) NSArray *errors;
@@ -46,19 +48,18 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
     checkMarks = [NSMutableArray arrayWithCapacity:rows.count];
     errors = [NSMutableArray arrayWithCapacity:rows.count];
     for (int i =0; i < rows.count; i++) {
-        [checkMarks addObject:[NSNumber numberWithBool:FALSE]];
+        [checkMarks addObject:@FALSE];
         [errors addObject:[NSNull null]];
     }
     for (NSNumber *n in checks) 
-        checkMarks[n.intValue] = [NSNumber numberWithBool:TRUE];
+        checkMarks[n.intValue] = @TRUE;
     
     for (NSNumber *n in err.allKeys)
         errors[n.intValue] = err[n];
     return self;
 }
 
-
--(void)removeRowAtIndex:(int)index {
+-(void)removeRowAtIndex:(NSInteger)index {
     [rows removeObjectAtIndex:index];
     [checkMarks removeObjectAtIndex:index];
     [errors removeObjectAtIndex:index];
@@ -96,7 +97,7 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
     return c;
 }
 
-- (void)remmoveRowAtIndex:(int)index context:(id)mutatingContext {
+- (void)remmoveRowAtIndex:(NSInteger)index context:(id)mutatingContext {
     [(EQRWMutating *)mutatingContext removeRowAtIndex:index];
 }
 
@@ -120,7 +121,7 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
     }
     [self didChangeValueForKey:@"hasCheckedRows"];
     
-    int rowCountDiff = [result records].count - rows.count;
+    NSInteger rowCountDiff = [result records].count - rows.count;
     ZKQueryResult *nr = [[ZKQueryResult alloc] initWithRecords:rows size:[result size] - rowCountDiff done:[result done] queryLocator:[result queryLocator]];
     [self setQueryResult:nr];
 }
@@ -170,7 +171,7 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
     rowErrors[index] = errMsg;
 }
 
-- (int)size {
+- (NSInteger)size {
     return [result size];
 }
 
@@ -186,11 +187,11 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
     return [result records];
 }
 
-- (int)numberOfRowsInTableView:(NSTableView *)v {
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)v {
     return [result numberOfRowsInTableView:v];
 }
 
-- (id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(int)rowIdx {
+- (id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(NSInteger)rowIdx {
     if ([tc.identifier isEqualToString:DELETE_COLUMN_IDENTIFIER]) 
         return @([checkedRows containsObject:@(rowIdx)]);
     if ([tc.identifier isEqualToString:ERROR_COLUMN_IDENTIFIER])
@@ -217,8 +218,8 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
 - (void)setChecksOnAllRows:(BOOL)checked {
     [self willChangeValueForKey:@"hasCheckedRows"];
     if (checked) {
-        int rows = [result records].count;
-        for (int i = 0; i < rows; i++)
+        NSInteger rows = [result records].count;
+        for (NSInteger i = 0; i < rows; i++)
             [checkedRows addObject:@(i)];
     } else {
         [checkedRows removeAllObjects];
@@ -236,7 +237,7 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
     if (dcv) [self didChangeValueForKey:@"hasCheckedRows"];
 }
 
-- (int)numCheckedRows {
+- (NSUInteger)numCheckedRows {
     return checkedRows.count;
 }
 
@@ -263,7 +264,7 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
 
     BOOL isDelete = [aTableColumn.identifier isEqualToString:DELETE_COLUMN_IDENTIFIER];
     if (isDelete) {
-        NSNumber *r = [NSNumber numberWithInt:rowIndex];
+        NSNumber *r = [NSNumber numberWithInteger:rowIndex];
         BOOL currentState = [checkedRows containsObject:r];
         [self setChecked:!currentState onRowWithIndex:r]; 
     } else {

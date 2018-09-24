@@ -21,7 +21,7 @@
 
 #import "zkApexClient.h"
 #import "ZKEnvelope.h"
-#import "zkCompileResult.h"
+#import "ZKCompileResult.h"
 #import "zkExecuteAnonResult.h"
 #import "zkRunTestResult.h"
 #import "zkParser.h"

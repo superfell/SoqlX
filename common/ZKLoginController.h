@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2015 Simon Fell
+// Copyright (c) 2006-2015,2018 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -19,8 +19,6 @@
 // THE SOFTWARE.
 //
 
-// LoginController and Login.nib make a reusable login window that support
-// the keychain, multiple servers, and differing ways to open the window
 #import <Cocoa/Cocoa.h>
 
 @class Credential;
@@ -29,9 +27,9 @@
 @class ZKLoginController;
 
 @protocol ZKLoginControllerDelegate <NSObject>
+-(void)loginController:(ZKLoginController *)controller loginCompleted:(ZKSforceClient *)client;
 @optional
 -(void)loginControllerLoginCancelled:(ZKLoginController *)controller;
--(void)loginController:(ZKLoginController *)controller loginCompleted:(ZKSforceClient *)client;
 -(void)loginController:(ZKLoginController *)controller serverUrlAdded:(NSURL *)url;
 -(void)loginController:(ZKLoginController *)controller serverUrlRemoved:(NSURL *)url;
 @end
@@ -42,33 +40,27 @@
     NSString         *server;
     NSString         *clientId;
     NSArray          *credentials;
-    Credential         *selectedCredential;
-    ZKSforceClient     *sforce;
-    NSString        *urlOfNewServer;
-    NSString        *statusText;
-    int                preferedApiVersion;
+    Credential       *selectedCredential;
+    ZKSforceClient   *sforce;
+    NSString         *urlOfNewServer;
+    NSString         *statusText;
+    int              preferedApiVersion;
     
-    NSWindow             *modalWindow;
-    id                    target;
-    SEL                    selector;    
-    IBOutlet NSWindow     *window;
-    IBOutlet NSButton     *addButton;
-    IBOutlet NSButton    *delButton;
-    IBOutlet NSWindow    *newUrlWindow;
+    NSWindow           *modalWindow;
+    IBOutlet NSWindow  *window;
+    IBOutlet NSButton  *addButton;
+    IBOutlet NSButton  *delButton;
+    IBOutlet NSWindow  *newUrlWindow;
     IBOutlet NSProgressIndicator *loginProgress;
     
     NSWindow        *tokenWindow;
     NSString        *apiSecurityToken;
     
-    NSObject<ZKLoginControllerDelegate> *__unsafe_unretained delegate;
+    NSObject<ZKLoginControllerDelegate> *__weak delegate;
     NSArray *nibTopLevelObjects;
 }
 
-- (ZKSforceClient *)showModalLoginWindow:(id)sender;
-- (ZKSforceClient *)showModalLoginWindow:(id)sender submitIfHaveCredentials:(BOOL)autoSubmit;
-
-- (void)showLoginWindow:(id)sender target:(id)target selector:(SEL)selector;
-- (void)showLoginSheet:(NSWindow *)modalForWindow target:(id)target selector:(SEL)selector;
+- (void)showLoginSheet:(NSWindow *)modalForWindow;
 
 - (IBAction)cancelLogin:(id)sender;
 - (IBAction)login:(id)sender;
@@ -80,7 +72,8 @@
 - (IBAction)loginWithToken:(id)sender;
 - (IBAction)cancelToken:(id)sender;
 - (IBAction)showTokenHelp:(id)sender;
-- (BOOL)hasEnteredToken;
+
+@property (readonly) BOOL hasEnteredToken;
 @property (strong) IBOutlet NSWindow *tokenWindow;
 @property (strong) NSString *apiSecurityToken;
 
@@ -91,7 +84,7 @@
 @property (strong) NSString *statusText;
 @property (strong) NSString *clientId;
 @property (assign) int preferedApiVersion;
-@property (unsafe_unretained) NSObject<ZKLoginControllerDelegate> *delegate;
+@property (weak) NSObject<ZKLoginControllerDelegate> *delegate;
 
 - (NSArray *)credentials;
 - (BOOL)canDeleteServer;

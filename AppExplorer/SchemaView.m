@@ -357,7 +357,7 @@ static const float minSpacerSize = 5.0f;
 -(void)asyncLoadDescribes:(ZKDescribeSObject *)type withRipplePoint:(NSPoint)ripple {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         for (NSString *t in [type namesOfAllReferencedObjects]) {
-            [describes describe:t];
+            [self->describes describe:t];
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             [self setCentralSObject:type withRipplePoint:ripple];

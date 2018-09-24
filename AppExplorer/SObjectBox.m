@@ -47,6 +47,8 @@ static const float titleIconGap  = 6.0f;
 
 @implementation SObjectBox
 
+@synthesize view=view;
+
 -(instancetype)initWithFrame:(NSRect)frame andView:(SchemaView *)v {
     self = [super init];
     view = v;
@@ -59,23 +61,27 @@ static const float titleIconGap  = 6.0f;
     paragraphStyle.alignment = NSLeftTextAlignment;
     paragraphStyle.lineBreakMode = NSLineBreakByTruncatingTail;
     float fieldFontSize = ([NSFont systemFontSizeForControlSize:NSSmallControlSize] + [NSFont systemFontSizeForControlSize:NSMiniControlSize]) / 2;
-    fieldAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                            [NSFont messageFontOfSize:fieldFontSize], NSFontAttributeName,
-                            [NSColor blackColor], NSForegroundColorAttributeName,
-                            paragraphStyle, NSParagraphStyleAttributeName,
-                            nil];
-    titleAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                            [NSFont boldSystemFontOfSize:[NSFont systemFontSizeForControlSize:NSSmallControlSize]], NSFontAttributeName,
-                            [NSColor whiteColor], NSForegroundColorAttributeName,
-                            paragraphStyle, NSParagraphStyleAttributeName,
-                            nil];
+    fieldAttributes = @{ NSFontAttributeName:               [NSFont messageFontOfSize:fieldFontSize],
+                         NSForegroundColorAttributeName:    [NSColor blackColor],
+                         NSParagraphStyleAttributeName:     paragraphStyle};
+    
+    titleAttributes = @{ NSFontAttributeName:            [NSFont boldSystemFontOfSize:[NSFont systemFontSizeForControlSize:NSSmallControlSize]],
+                         NSForegroundColorAttributeName: [NSColor whiteColor],
+                         NSParagraphStyleAttributeName:  paragraphStyle};
     highlight = NO;
     NSPoint ppos = [self positionForPlusWidget];
     NSPoint mpos = [self positionForMinusWidget];
     plusWidget = [[PlusMinusWidget alloc] initWithFrame:NSMakeRect(ppos.x, ppos.y, plusMinusSize, plusMinusSize) view:view andStyle:pmPlusButton];
-    [plusWidget setTarget:self andAction:@selector(plusClicked)];
+    __weak SObjectBox *selfWeak = self;
+    plusWidget.clickedBlock = ^() {
+        selfWeak.viewMode = selfWeak.viewMode+1;
+        [selfWeak.view layoutBoxes];
+    };
     minusWidget = [[PlusMinusWidget alloc] initWithFrame:NSMakeRect(mpos.x, mpos.y, plusMinusSize, plusMinusSize) view:view andStyle:pmMinusButton];
-    [minusWidget setTarget:self andAction:@selector(minusClicked)];
+    minusWidget.clickedBlock = ^() {
+        selfWeak.viewMode = selfWeak.viewMode-1;
+        [selfWeak.view layoutBoxes];
+    };
     [self setTrackingRect];
     self.viewMode = vmImportantFields;
     return self;
@@ -122,15 +128,7 @@ static const float titleIconGap  = 6.0f;
     return viewMode;
 }
 
--(void)plusClicked {
-    self.viewMode = viewMode+1;
-    [view layoutBoxes];
-}
 
--(void)minusClicked {
-    self.viewMode = viewMode-1;
-    [view layoutBoxes];
-}
 
 - (void)setViewMode:(SObjectBoxViewMode)newMode {
     if ((newMode < vmTitleOnly) || (newMode > vmAllFields)) return;

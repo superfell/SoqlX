@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2014 Simon Fell
+// Copyright (c) 2006,2014,2018 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -23,37 +23,37 @@
 
 @class SchemaView;
 
-typedef enum pmButtonState
-{
+typedef enum pmButtonState {
     pmOutside,
     pmInside,
     pmDown
 } pmButtonState;
 
-typedef enum pmButtonStyle
-{
+typedef enum pmButtonStyle {
     pmPlusButton,
     pmMinusButton
 } pmButtonStyle;
 
+typedef void (^WidgetClicked)(void);
+
 @interface PlusMinusWidget : NSObject {
-    SchemaView            *view;
-    NSRect                rect;
-    pmButtonState        state;
-    pmButtonStyle        style;
+    SchemaView         *view;
+    NSRect              rect;
+    pmButtonState       state;
+    pmButtonStyle       style;
     BOOL                visible;
-    NSTrackingRectTag    tagRect;
-    id                    target;
-    SEL                    action;    
+    NSTrackingRectTag   tagRect;
 }
 
 -(instancetype)initWithFrame:(NSRect)frame view:(SchemaView *)v andStyle:(pmButtonStyle)s NS_DESIGNATED_INITIALIZER;
+-(instancetype)init NS_UNAVAILABLE;
 
 @property (assign) BOOL visible;
 @property (assign) NSPoint origin;
+@property (strong) WidgetClicked clickedBlock;
 
 @property (readonly) pmButtonState state;
--(void)setTarget:(id)target andAction:(SEL)action;
+
 
 -(void)resetTrackingRect;
 -(void)drawRect:(NSRect)frame;

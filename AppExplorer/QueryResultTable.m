@@ -1,4 +1,4 @@
-// Copyright (c) 2008,2012,2014 Simon Fell
+// Copyright (c) 2008,2012,2014,2018 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -169,7 +169,7 @@
     [table reloadData];
 }
 
-- (void)removeRowAtIndex:(int)row {
+- (void)removeRowAtIndex:(NSInteger)row {
     if (row >= [wrapper records].count) return;
     id ctx = [wrapper createMutatingRowsContext];
     [wrapper remmoveRowAtIndex:row context:ctx];

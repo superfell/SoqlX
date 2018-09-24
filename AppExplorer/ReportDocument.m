@@ -1,4 +1,4 @@
-// Copyright (c) 2007,2012,2014 Simon Fell
+// Copyright (c) 2007,2012,2014,2018 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -51,14 +51,15 @@
 
 - (void)describeWithProgress:(DescribeListDataSource *)dataSource {
     self.describesDone = 0;
-    if (![dataSource hasDescribe:sobjectType]) 
+    if (![dataSource hasDescribe:sobjectType]) {
         self.totalObjects = [dataSource SObjects].count;
+    }
     [tabview selectTabViewItemWithIdentifier:@"progress"];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0), ^{
-        ZKDescribeSObject *desc = [dataSource describe:sobjectType];
+        ZKDescribeSObject *desc = [dataSource describe:self->sobjectType];
         NSSet *allTypes = [desc namesOfAllReferencedObjects];
-        int total = allTypes.count + 1;
-        int done = 1;
+        NSInteger total = allTypes.count + 1;
+        NSInteger done = 1;
         dispatch_async(dispatch_get_main_queue(), ^{
             self.totalObjects = total;
             self.describesDone = done;
@@ -199,21 +200,21 @@ NSString * tc(NSString *src) {
     return [NSString stringWithFormat:@"%@ Schema Report", sobjectType];
 }
 
-- (int)totalObjects {
+- (NSInteger)totalObjects {
     return totalObjects;
 }
 
-- (void)setTotalObjects:(int)newTotalObjects {
+- (void)setTotalObjects:(NSInteger)newTotalObjects {
     totalObjects = newTotalObjects;
     progress.maxValue = totalObjects;
     [progress display];
 }
 
-- (int)describesDone {
+- (NSInteger)describesDone {
     return describesDone;
 }
 
-- (void)setDescribesDone:(int)newDescribesDone {
+- (void)setDescribesDone:(NSInteger)newDescribesDone {
     describesDone = newDescribesDone;
     progress.doubleValue = describesDone;
     [progress display];
@@ -243,7 +244,7 @@ NSString * tc(NSString *src) {
     [sp beginSheetModalForWindow:window completionHandler:^(NSInteger result) {
         if (NSFileHandlingPanelOKButton == result) {
             [sp orderOut:nil];
-            NSView *docView = webview.mainFrame.frameView.documentView;
+            NSView *docView = self->webview.mainFrame.frameView.documentView;
             NSData *pdf = [docView dataWithPDFInsideRect:docView.bounds];
             [pdf writeToURL:sp.URL atomically:YES];
         }

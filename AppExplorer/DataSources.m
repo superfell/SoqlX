@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2014,2016 Simon Fell
+// Copyright (c) 2006,2014,2016,2018 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -74,8 +74,8 @@
     types = t.global.sobjects;
     describes = [[NSMutableDictionary alloc] init];
     sortedDescribes = [[NSMutableDictionary alloc] init];
-    operations = [[NSMutableDictionary alloc] init];
     icons = [[NSMutableDictionary alloc] init];
+    priorityDescribes = [[NSMutableArray alloc] init];
     
     NSMutableDictionary *byname = [NSMutableDictionary dictionary];
     for (ZKDescribeGlobalSObject *o in types)
@@ -88,8 +88,8 @@
         ZKDescribeIcon *i = [r iconWithHeight:16 theme:@"theme3"];
         [i fetchIconUsingSessionId:sid whenCompleteDo:^(NSImage *img) {
             NSString *tn = r.name.lowercaseString;
-            [icons setValue:img forKey:tn];
-            [outlineView reloadItem:byname[tn]];
+            self->icons[tn] = img;
+            [self->outlineView reloadItem:byname[tn]];
         }];
     }
     [self startBackgroundDescribes];
@@ -105,8 +105,7 @@
 }
 
 - (void)prioritizeDescribe:(NSString *)type {
-    NSOperation *op = operations[type.lowercaseString];
-    op.queuePriority = NSOperationQueuePriorityHigh;
+    [priorityDescribes addObject:type.lowercaseString];
 }
 
 -(void)setFilteredTypes:(NSArray *)t {
@@ -154,7 +153,7 @@
     return types;
 }
 
-- (int)numberOfRowsInTableView:(NSTableView *)v {
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)v {
     return filteredTypes.count;
 }
 
@@ -194,10 +193,10 @@
     dispatch_async(dispatch_get_main_queue(), ^() {
         int i = 0;
         for (ZKDescribeSObject *d in newDescribes) {
-            NSString *k = (d.name).lowercaseString;
-            if (describes[k] == nil) {
-                describes[k] = d;
-                sortedDescribes[k] = sorted[i];
+            NSString *k = d.name.lowercaseString;
+            if (self->describes[k] == nil) {
+                self->describes[k] = d;
+                self->sortedDescribes[k] = sorted[i];
             }
             i++;
         }
@@ -207,22 +206,33 @@
 
 -(void)startBackgroundDescribes {
     ZKSforceClient *client = [sforce copyWithZone:nil];
-    // stop race condition with the delegate going away from under us.
-//    [client.delegate retain];
     NSArray *toDescribe = descGlobalSobjects.allKeys;
     const int DEFAULT_DESC_BATCH = 16;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^() {
         NSMutableArray *batch = [NSMutableArray arrayWithCapacity:DEFAULT_DESC_BATCH];
         NSArray *leftTodo = toDescribe;
         NSArray __block *alreadyDescribed = nil;
-        int i;
+        NSArray __block *priority = nil;
+        NSInteger i;
         int batchSize = DEFAULT_DESC_BATCH;
-        while (leftTodo.count > 0 && (OSAtomicAdd32(0, &stopBackgroundDescribes) == 0)) {
+        while (leftTodo.count > 0 && (OSAtomicAdd32(0, &self->stopBackgroundDescribes) == 0)) {
             dispatch_sync(dispatch_get_main_queue(), ^() {
-                alreadyDescribed = describes.allKeys;
+                alreadyDescribed = self->describes.allKeys;
+                // take ownership of the list priority describes
+                priority = self->priorityDescribes;
+                self->priorityDescribes = [[NSMutableArray alloc] init];
             });
             [batch removeAllObjects];
-            for (i=leftTodo.count-1; i >= 0; i--) {
+            for (NSString *item in priority) {
+                if ([alreadyDescribed containsObject:item]) {
+                    continue;
+                }
+                [batch addObject:item];
+            }
+            if (batch.count > 0) {
+                NSLog(@"Found priority describes for %@", batch);
+            }
+            for (i=leftTodo.count-1; i >= 0 && batch.count < batchSize; i--) {
                 NSString *item = leftTodo[i];
                 if ([alreadyDescribed containsObject:item]) {
                     continue;
@@ -235,6 +245,7 @@
                     NSArray *res = [client describeSObjects:batch];
                     [self addDescribesToCache:res];
                     batchSize = MIN(DEFAULT_DESC_BATCH, MAX(2, batchSize * 3/2));
+                    NSLog(@"background Describe added %lu items", (unsigned long)res.count);
                 } @catch (NSException *ex) {
                     NSLog(@"Failed to describe %@: %@", batch, ex);
                     batchSize = MAX(1, batchSize / 2);
@@ -245,15 +256,14 @@
         }
         dispatch_async(dispatch_get_main_queue(), ^() {
             // sanity check we got everything
-            if (descGlobalSobjects.count != describes.count) {
+            if (self->descGlobalSobjects.count != self->describes.count) {
                 NSLog(@"Background describe finished, but there are still missing describes");
-                for (NSString *k in descGlobalSobjects.allKeys) {
-                    if (describes[k] == nil) {
+                for (NSString *k in self->descGlobalSobjects.allKeys) {
+                    if (self->describes[k] == nil) {
                         NSLog(@"\t%@", k);
                     }
                 }
             }
-//            [client.delegate release];
         });
     });
 }
@@ -263,7 +273,7 @@
 }
 
 // for use in an outline view
-- (int)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
+- (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
     if (item == nil) return filteredTypes.count;
     return [self describe:[item name]].fields.count;
 }
@@ -272,14 +282,13 @@
     return item == nil || [item isKindOfClass:[ZKDescribeGlobalSObject class]];
 }
 
-- (id)outlineView:(NSOutlineView *)outlineView child:(int)index ofItem:(id)item {
+- (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item {
     if (item == nil) return filteredTypes[index];
     NSArray *fields = [self describe:[item name]].fields;
     BOOL isSorted = [[NSUserDefaults standardUserDefaults] boolForKey:PREF_SORTED_FIELD_LIST];
     if (isSorted)
         fields = sortedDescribes[[item name].lowercaseString];
-    id f = fields[index];
-    return f;
+    return fields[index];
 }
 
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {

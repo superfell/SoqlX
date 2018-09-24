@@ -36,7 +36,7 @@
 @interface QueryTextListView : NSView {
     NSMutableArray                  *items;
     NSDictionary                    *textAttributes;
-    id<QueryTextListViewDelegate>   __unsafe_unretained delegate;
+    id<QueryTextListViewDelegate>   __weak delegate;
 }
 
 // set the list of items in the list, to this array of strings.
@@ -51,7 +51,7 @@
 // The current list of QueryTextListViewItems in the list view.
 @property (readonly, copy) NSArray *items;
 
-@property (unsafe_unretained, nonatomic) id<QueryTextListViewDelegate> delegate;
+@property (weak, nonatomic) id<QueryTextListViewDelegate> delegate;
 
 @end
 
@@ -59,20 +59,23 @@
 @interface QueryTextListViewItem : NSView {
     NSString        *text;
     NSDictionary    *textAttributes;
-    CGFloat            verticalPad;
-    NSRect            textRect;
-    NSColor            *backgroundColor;
+    CGFloat          verticalPad;
+    NSRect           textRect;
+    NSColor         *backgroundColor;
 
-    NSTrackingArea    *trackingArea;
-    BOOL            highlighted;
+    NSTrackingArea  *trackingArea;
+    BOOL             highlighted;
     
-    QueryTextListView *listView;
+    __weak QueryTextListView *listView;
 }
 
 -(instancetype)initWithFrame:(NSRect)f attributes:(NSDictionary*)attributes listView:(QueryTextListView *)lv NS_DESIGNATED_INITIALIZER;
+-(instancetype)init NS_UNAVAILABLE;
+-(instancetype)initWithCoder:(NSCoder *)decoder NS_UNAVAILABLE;
+-(instancetype)initWithFrame:(NSRect)frameRect NS_UNAVAILABLE;
 
 @property (strong) NSString *text;
-@property (strong) NSColor    *backgroundColor;
+@property (strong) NSColor  *backgroundColor;
 
 -(void)setFrameWidth:(CGFloat)w;
 

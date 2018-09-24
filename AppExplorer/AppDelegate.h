@@ -34,7 +34,8 @@
     NSMutableArray  *controllers;
     id              observer;
 }
--(instancetype)initWithWindowControllers:(NSMutableArray *)controllers NS_DESIGNATED_INITIALIZER;
+-(instancetype)initWithWindowControllers:(NSMutableArray *)controllers;
+
 -(void)closeLoginPanelIfOpen:(id)sender;
 
 @end

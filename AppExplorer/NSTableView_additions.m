@@ -26,8 +26,8 @@
 -(void)zkCopyTableDataToClipboard {
     NSMutableString *d = [NSMutableString string];
     id<NSTableViewDataSource> ds = self.dataSource;
-    int rows = [ds numberOfRowsInTableView:self];
-    for (int r=0; r < rows; r++) {
+    NSInteger rows = [ds numberOfRowsInTableView:self];
+    for (NSInteger r=0; r < rows; r++) {
         bool firstCol = YES;
         for (NSTableColumn *col in self.tableColumns) {
             if (!firstCol) {

@@ -1,4 +1,4 @@
-// Copyright (c) 2008,2015 Simon Fell
+// Copyright (c) 2008,2015,2018 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -43,10 +43,8 @@
     queryQueue.maxConcurrentOperationCount = 1;
     saveQueue = [[NSOperationQueue alloc] init];
     saveQueue.maxConcurrentOperationCount = 1;
-    
     return self;
 }
-
 
 - (void)save:(NSWindow *)parentWindow {
     NSSavePanel *sp = [NSSavePanel savePanel];
@@ -55,32 +53,31 @@
     [sp setCanSelectHiddenExtension:YES];
     sp.accessoryView = optionsView;
     [sp beginSheetModalForWindow:parentWindow completionHandler:^(NSInteger result) {
-        [self savePanelDidEnd:sp returnCode:result contextInfo:(__bridge void *)(parentWindow)];
+        if (result == NSModalResponseCancel) {
+            // TODO [self autorelease];
+            return;
+        }
+        self.filename = sp.URL;
+        dispatch_async(dispatch_get_main_queue(), ^() {
+            [self startWrite:parentWindow];
+        });
+//        [self performSelectorOnMainThread:@selector(startWrite:) withObject:(__bridge id _Nullable)(contextInfo) waitUntilDone:NO];
+//        [self savePanelDidEnd:sp returnCode:result contextInfo:(__bridge void *)(parentWindow)];
     }];
 }
 
 -(NSUInteger)totalRows {
-    return [results.queryResult size];
+    return results.queryResult.size;
 }
 
 -(NSArray *)columns {
     return results.table.tableColumns;
 }
 
--(void)savePanelDidEnd:(NSSavePanel *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo {
-    // TODO [optionsView autorelease];
-    if (returnCode == NSFileHandlingPanelCancelButton) {
-        // TODO [self autorelease];
-        return;
-    }
-    self.filename = sheet.URL;
-    [self performSelectorOnMainThread:@selector(startWrite:) withObject:(__bridge id _Nullable)(contextInfo) waitUntilDone:NO];
-}
-
--(void)startWrite:(id)contextInfo {
+-(void)startWrite:(NSWindow*)parentWindow {
     self.rowsWritten = 0;
     if (saveAll)
-        [NSApp beginSheet:progressWindow modalForWindow:(NSWindow *)contextInfo modalDelegate:self didEndSelector:nil contextInfo:nil];
+        [NSApp beginSheet:progressWindow modalForWindow:parentWindow modalDelegate:self didEndSelector:nil contextInfo:nil];
     
     started = [NSDate date];
     NSOutputStream *s = [NSOutputStream outputStreamWithURL:filename append:NO];
@@ -99,8 +96,7 @@
     }
     [stream write:@"\n"];
 
-    ZKSforceClient *sf = [client copyWithZone:nil];
-    client = sf;
+    client = [client copyWithZone:nil];
 
     NSInvocationOperation *sop = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(writeResults:) object:qr];
     [saveQueue addOperation:sop];
@@ -113,9 +109,8 @@
     if (saveAll) {
         [NSApp endSheet:progressWindow];
         [progressWindow orderOut:self];
-        // TODO [progressWindow autorelease];
+        progressWindow = nil;
     }
-    // TODO [self autorelease];
 }
 
 -(void)queryMore:(id)locator {
@@ -131,19 +126,19 @@
 }
 
 -(void)incrementRowCount:(NSNumber *)n {
-    NSUInteger tr = rowsWritten + n.intValue;
+    NSUInteger tr = rowsWritten + n.integerValue;
     self.rowsWritten = tr;
 }
 
--(void)updateRowCount:(int)rows {
+-(void)updateRowCount:(NSInteger)rows {
     [self performSelectorOnMainThread:@selector(incrementRowCount:) withObject:@(rows) waitUntilDone:NO];
 }
 
 -(void)writeResults:(id)data {
     ZKQueryResult *qr = (ZKQueryResult *)data;
     [self queueQueryMore:[qr queryLocator]];
-    int rows = [qr numberOfRowsInTableView:nil];
-    for (int i = 0; i < rows; i++) {
+    NSInteger rows = [qr numberOfRowsInTableView:nil];
+    for (NSInteger i = 0; i < rows; i++) {
         BOOL first = YES;
         for (NSTableColumn *c in [self columns]) {
             if ([[results.wrapper allSystemColumnIdentifiers] containsObject:c.identifier])
@@ -163,7 +158,7 @@
                 ZKQueryResult *child = (ZKQueryResult *)v;
                 s = [NSString stringWithFormat:@"[%ld child rows]", (long)child.size];
             } else if (v != nil && ![v isKindOfClass:[NSString class]]) {
-                NSLog(@"expected NSString, but got %@ for column %@, row %d", [v class], c.identifier, i);
+                NSLog(@"expected NSString, but got %@ for column %@, row %ld", [v class], c.identifier, (long)i);
                 s = v.description;
             }
             [stream writeQuoted:s];
@@ -193,7 +188,7 @@
 }
 
 
--(void)write:(const uint8_t *)data maxLength:(uint)len {
+-(void)write:(const uint8_t *)data maxLength:(NSUInteger)len {
     if (len < (capacity - buffer.length)) {
         [buffer appendBytes:data length:len];
     } else if (len < capacity) {

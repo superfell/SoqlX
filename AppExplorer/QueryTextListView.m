@@ -27,11 +27,14 @@ static const CGFloat MARGIN = 5.0;
 
 -(instancetype)initWithFrame:(NSRect)f attributes:(NSDictionary*)attributes listView:(QueryTextListView *)lv {
     self = [super initWithFrame:f];
-    listView = lv;  // not retained, to prevent retain loop.
+    listView = lv;
     textAttributes = attributes;
     verticalPad = [@"M" sizeWithAttributes:textAttributes].height / 2; 
     backgroundColor = [NSColor whiteColor];
-    trackingArea = [[NSTrackingArea alloc] initWithRect:f options:NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect owner:self userInfo:nil];
+    trackingArea = [[NSTrackingArea alloc] initWithRect:f
+                                                options:NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect
+                                                  owner:self
+                                               userInfo:nil];
     [self addTrackingArea:trackingArea];
     [self setWantsLayer:YES];
     return self;
@@ -123,16 +126,12 @@ static const CGFloat MARGIN = 5.0;
 -(instancetype)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        // Initialization code here.
-        textAttributes =  [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                            [NSFont titleBarFontOfSize:11.0], NSFontAttributeName,
-                            [[NSColor blueColor] shadowWithLevel:0.33], NSForegroundColorAttributeName,
-                            nil];
+        textAttributes =  @{NSFontAttributeName:            [NSFont titleBarFontOfSize:11.0],
+                            NSForegroundColorAttributeName: [[NSColor blueColor] shadowWithLevel:0.33]};
         items = [NSMutableArray arrayWithCapacity:10];
     }
     return self;
 }
-
 
 - (BOOL)isFlipped {
     return YES;
@@ -207,6 +206,5 @@ static const CGFloat MARGIN = 5.0;
 
 - (void)drawRect:(NSRect)rect {
 }
-
 
 @end

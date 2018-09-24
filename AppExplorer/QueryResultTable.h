@@ -28,7 +28,7 @@
 @class EditableQueryResultWrapper;
 
 @interface QueryResultTable : NSObject {
-    id                            __unsafe_unretained delegate;
+    id                            __weak delegate;
     NSTableView                    *__weak table;
     ZKQueryResult                *queryResult;
     EditableQueryResultWrapper    *wrapper;
@@ -36,12 +36,12 @@
 
 - (instancetype)initForTableView:(NSTableView *)view NS_DESIGNATED_INITIALIZER;
 
-- (void)removeRowAtIndex:(int)row;
+- (void)removeRowAtIndex:(NSInteger)row;
 
 @property (weak, readonly) NSTableView *table;
 @property (weak, readonly) EditableQueryResultWrapper *wrapper;
 @property (strong) ZKQueryResult *queryResult;
-@property (unsafe_unretained) id delegate;
+@property (weak) id delegate;
 
 @property (readonly) BOOL hasCheckedRows;
 -(void)showHideErrorColumn;

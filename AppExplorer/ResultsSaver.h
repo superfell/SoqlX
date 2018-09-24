@@ -1,4 +1,4 @@
-// Copyright (c) 2008,2012,2015 Simon Fell
+// Copyright (c) 2008,2012,2015,2018 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -26,13 +26,15 @@
 @class ZKQueryResult;
 
 @interface BufferedWriter : NSObject {
-    NSOutputStream    *stream;
+    NSOutputStream   *stream;
     NSMutableData    *buffer;
     NSUInteger        capacity;
 }
+-(instancetype)initOnStream:(NSOutputStream *)s capacity:(NSUInteger)cap NS_DESIGNATED_INITIALIZER;
 -(instancetype)initOnStream:(NSOutputStream *)s;
+-(instancetype)init NS_UNAVAILABLE;
 
--(void)write:(const uint8_t *)data maxLength:(uint)len;
+-(void)write:(const uint8_t *)data maxLength:(NSUInteger)len;
 -(void)flush:(BOOL)ensureFullyFlushed;
 -(void)close;
 
@@ -45,23 +47,24 @@
 
 @interface ResultsSaver : NSObject {
     NSWindow        *progressWindow;
-    NSView            *optionsView;
+    NSView          *optionsView;
     NSButtonCell    *buttonAll;
     NSButtonCell    *buttonCurrent;
     
     BOOL                saveAll;
     NSOperationQueue    *queryQueue;
     NSOperationQueue    *saveQueue;
-    BufferedWriter        *stream;
-    ZKSforceClient        *client;
+    BufferedWriter      *stream;
+    ZKSforceClient      *client;
     QueryResultTable    *results;
     NSURL               *filename;
-    NSDate                *started;
+    NSDate              *started;
     
-    NSUInteger            rowsWritten;
+    NSUInteger          rowsWritten;
 }
 
 -(instancetype)initWithResults:(QueryResultTable *)res client:(ZKSforceClient *)c NS_DESIGNATED_INITIALIZER;
+-(instancetype)init NS_UNAVAILABLE;
 
 -(void)save:(NSWindow *)parentWindow;
 

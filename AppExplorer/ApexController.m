@@ -106,8 +106,8 @@
         [self willChangeValueForKey:p];
 
     for (int c = 0; c < 6; c++) {
-        int lvl = [ud integerForKey:[NSString stringWithFormat:@"apexDebugLevel_%d", c]];
-        [apexClient setDebugLevel:lvl forCategory:c];
+        NSInteger lvl = [ud integerForKey:[NSString stringWithFormat:@"apexDebugLevel_%d", c]];
+        [apexClient setDebugLevel:(ZKLogCategoryLevel)lvl forCategory:c];
     }
 
     for (NSString *p in props) 

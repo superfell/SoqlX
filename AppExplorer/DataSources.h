@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2014 Simon Fell
+// Copyright (c) 2006-2014,2018 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -28,17 +28,17 @@
 @class ZKDescribeGlobalTheme;
 
 @interface DescribeListDataSource : NSObject<NSOutlineViewDataSource, NSOutlineViewDelegate, IconProvider> {
-    NSArray                    *types;
+    NSArray                 *types;
     NSDictionary            *descGlobalSobjects;
-    ZKSforceClient            *sforce;
-    NSMutableDictionary        *describes;
+    ZKSforceClient          *sforce;
+    NSMutableDictionary     *describes;
     NSMutableDictionary     *sortedDescribes;
-    NSMutableDictionary        *operations;
     NSMutableDictionary     *icons;
+    NSMutableArray          *priorityDescribes;
     
     NSString                *filter;
-    NSArray                    *filteredTypes;
-    NSOutlineView            *outlineView;
+    NSArray                 *filteredTypes;
+    NSOutlineView           *outlineView;
     
     NSSortDescriptor        *fieldSortOrder;
     int32_t                 stopBackgroundDescribes;
@@ -58,23 +58,14 @@
 // filter the view
 @property (copy) NSString *filter;
 
-// for use in a table view
-- (int)numberOfRowsInTableView:(NSTableView *)v;
-- (id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(int)rowIdx;
-
-// for use in an outline view
-- (int)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item;
-- (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item;
-- (id)outlineView:(NSOutlineView *)outlineView child:(int)index ofItem:(id)item;
-- (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item;
-
 @property (readonly, copy) NSArray *SObjects;
+
 @end;
 
 
 @interface SObjectDataSource : NSObject<NSTableViewDataSource> {
     ZKDescribeSObject    *sobject;
-    NSArray                *titles;
+    NSArray              *titles;
 }
 - (instancetype)initWithDescribe:(ZKDescribeSObject *)s NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;

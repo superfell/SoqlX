@@ -1,4 +1,4 @@
-// Copyright (c) 2007,2012 Simon Fell
+// Copyright (c) 2007,2012,2018 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -25,16 +25,16 @@
 @class DescribeListDataSource;
 @class SchemaView;
 
-@interface ReportDocument : NSDocument {
+@interface ReportDocument : NSDocument<WebUIDelegate> {
     IBOutlet WebView                *webview;
-    IBOutlet SchemaView                *schemaView;
-    IBOutlet NSTabView                *tabview;
+    IBOutlet SchemaView             *schemaView;
+    IBOutlet NSTabView              *tabview;
     IBOutlet NSProgressIndicator    *progress;
     
-    NSString             *sobjectType;
-    int                    totalObjects;
-    int                    describesDone;
-    BOOL                enabledButtons;
+    NSString   *sobjectType;
+    NSInteger   totalObjects;
+    NSInteger   describesDone;
+    BOOL        enabledButtons;
 }
 
 - (IBAction)copy:(id)sender;
@@ -44,8 +44,8 @@
 @property (readonly, copy) NSString *name;
 - (void)setSObjectType:(NSString *)type andDataSource:(DescribeListDataSource *)newDataSource;
 
-@property (assign) int totalObjects;
-@property (assign) int describesDone;
+@property (assign) NSInteger totalObjects;
+@property (assign) NSInteger describesDone;
 @property (assign) BOOL enabledButtons;
 
 @end

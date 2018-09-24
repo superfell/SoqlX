@@ -28,29 +28,31 @@
 @class PlusMinusWidget;
 
 @interface SObjectBox : NSObject {
-    SchemaView            *view;
+    SchemaView           *view;
     ZKDescribeSObject    *sobject;
     SObjectBoxViewMode    viewMode;
-    NSMutableDictionary *titleAttributes;
-    NSDictionary        *fieldAttributes;
-    NSArray                *fieldsToDisplay;
-    NSDictionary        *fieldRects;
-    NSColor             *borderColor;
-    NSColor                *gradientStartColor;
-    NSColor             *gradientEndColor;
-    NSTrackingRectTag    tagMainRect;
+    NSDictionary         *titleAttributes;
+    NSDictionary         *fieldAttributes;
+    NSArray              *fieldsToDisplay;
+    NSDictionary         *fieldRects;
+    NSColor              *borderColor;
+    NSColor              *gradientStartColor;
+    NSColor              *gradientEndColor;
+    NSTrackingRectTag     tagMainRect;
     NSSize                size;
-    NSPoint                origin;
-    BOOL                highlight;
-    PlusMinusWidget        *plusWidget;
-    PlusMinusWidget        *minusWidget;
+    NSPoint               origin;
+    BOOL                  highlight;
+    PlusMinusWidget      *plusWidget;
+    PlusMinusWidget      *minusWidget;
     
     ZKDescribeSObject       *includeFksTo;
     NSObject<IconProvider>  *iconProvider;
 }
 
 -(instancetype)initWithFrame:(NSRect)frame andView:(SchemaView *)v NS_DESIGNATED_INITIALIZER;
+-(instancetype)init NS_UNAVAILABLE;
 
+@property (readonly) SchemaView *view;
 @property (strong) ZKDescribeSObject *sobject;
 @property (assign) SObjectBoxViewMode viewMode;
 @property (strong) NSColor *color;
