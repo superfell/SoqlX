@@ -22,7 +22,7 @@
 #import "SchemaProtocol.h"
 
 NSString *SchemaProtocolSchema = @"schema";
-__strong NSData *theData;
+NSData *theData;
 
 @implementation SchemaProtocol
 
@@ -53,7 +53,6 @@ __strong NSData *theData;
     [client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
     [client URLProtocol:self didLoadData:theData];
     [client URLProtocolDidFinishLoading:self];
-//    [theData release];
     theData = nil;
 }
 

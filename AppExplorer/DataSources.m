@@ -245,7 +245,6 @@
                     NSArray *res = [client describeSObjects:batch];
                     [self addDescribesToCache:res];
                     batchSize = MIN(DEFAULT_DESC_BATCH, MAX(2, batchSize * 3/2));
-                    NSLog(@"background Describe added %lu items", (unsigned long)res.count);
                 } @catch (NSException *ex) {
                     NSLog(@"Failed to describe %@: %@", batch, ex);
                     batchSize = MAX(1, batchSize / 2);
@@ -255,6 +254,7 @@
             leftTodo = [leftTodo subarrayWithRange:NSMakeRange(0, i+1)];
         }
         dispatch_async(dispatch_get_main_queue(), ^() {
+            NSLog(@"Background describes completed");
             // sanity check we got everything
             if (self->descGlobalSobjects.count != self->describes.count) {
                 NSLog(@"Background describe finished, but there are still missing describes");
