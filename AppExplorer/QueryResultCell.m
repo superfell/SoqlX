@@ -1,4 +1,4 @@
-// Copyright (c) 2008 Simon Fell
+// Copyright (c) 2008,2018 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -22,37 +22,37 @@
 #import "QueryResultCell.h"
 #import "ZKQueryResult.h"
 
-@interface QueryResultCell ()
--(void)initProperties;
-@end 
-
 @implementation QueryResultCell
 
-- (instancetype)initTextCell:(NSString *)txt {
-    self = [super initTextCell:txt];
-    [self initProperties];
-    return self;
-}
+static NSImage *magnifyingGlassImage;
+static NSDictionary *textAttrs;
 
-
-- (void)initProperties {
-    myImage = [NSImage imageNamed:NSImageNameRevealFreestandingTemplate];
-    myTextAttrs = @{NSFontAttributeName: [NSFont userFontOfSize:10.0]};
-}
-
-- (id)copyWithZone:(NSZone *)z {
-    QueryResultCell *rhs = [super copyWithZone:z];
-    [self initProperties];
-    return rhs;
++(void)initialize {
+    // drawing the image with a factional alpha channel seems to be really slow, so we draw it once
+    // at the alpha we want. Then use that output for our real drawing, which can then use an
+    // alpha of 1.0, which isn't slow.
+    NSImage *img = [NSImage imageNamed:NSImageNameRevealFreestandingTemplate];
+    NSSize sz = img.size;
+    NSImage *res = [[NSImage alloc] initWithSize:sz];
+    [res lockFocus];
+    [img drawInRect:NSMakeRect(0,0, sz.width, sz.height) fromRect:NSZeroRect operation:NSCompositeSourceOut fraction:0.6];
+    [res unlockFocus];
+    magnifyingGlassImage = res;
+    textAttrs = @{NSFontAttributeName: [NSFont userFontOfSize:10.0]};
 }
 
 - (void)drawInteriorWithFrame:(NSRect)cellFrame inView:(NSView *)controlView {
     ZKQueryResult *qr = self.objectValue;
     if ([qr size] == 0) return;
     NSPoint cellPoint = cellFrame.origin;
+    NSRect dstRect = NSMakeRect(cellPoint.x + 2,
+                                cellPoint.y + ((cellFrame.size.height - magnifyingGlassImage.size.height) / 2),
+                                magnifyingGlassImage.size.width,
+                                magnifyingGlassImage.size.height);
+    NSString *txt = [NSString stringWithFormat:@"%ld row%@", (long)qr.size, qr.size > 1 ? @"s" : @""];
     [controlView lockFocus];
-    [myImage compositeToPoint:NSMakePoint(cellPoint.x+2, cellPoint.y+16) operation:NSCompositeSourceOver fraction:0.6];
-    [[NSString stringWithFormat:@"%d row%@", [qr size], [qr size] > 1 ? @"s" : @""] drawAtPoint:NSMakePoint(cellPoint.x+20, cellPoint.y+1) withAttributes:myTextAttrs];
+    [magnifyingGlassImage drawInRect:dstRect fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1 respectFlipped:YES hints:nil];
+    [txt drawAtPoint:NSMakePoint(cellPoint.x+20, cellPoint.y+1) withAttributes:textAttrs];
     [controlView unlockFocus];
 }
 
