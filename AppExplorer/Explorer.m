@@ -588,7 +588,7 @@ typedef enum SoqlParsePosition {
         }
         if ([qr size] > 0) {
             if ([qr records].count == 0) {
-                self.statusText = [NSString stringWithFormat:@"Count query result is %d rows", [qr size]];
+                self.statusText = [NSString stringWithFormat:@"Count query result is %ld rows", (long)[qr size]];
             } else {
                 rootResults.queryResult = qr;
                 [childResults setQueryResult:nil];
@@ -663,7 +663,7 @@ typedef enum SoqlParsePosition {
 
 - (IBAction)deleteCheckedRows:(id)sender {
     BulkDelete *bd = [[BulkDelete alloc] initWithClient:sforce];
-    [bd performBulkDelete:rootResults  window:myWindow];
+    [bd performBulkDelete:rootResults window:myWindow];
 }
 
 - (void)dataChangedOnObject:(ZKSObject *)anObject field:(NSString *)fieldName value:(id)newValue {

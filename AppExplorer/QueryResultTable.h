@@ -28,13 +28,14 @@
 @class EditableQueryResultWrapper;
 
 @interface QueryResultTable : NSObject {
-    id                            __weak delegate;
-    NSTableView                    *__weak table;
+    id                           __weak delegate;
+    NSTableView                  *__weak table;
     ZKQueryResult                *queryResult;
-    EditableQueryResultWrapper    *wrapper;
+    EditableQueryResultWrapper   *wrapper;
 }
 
 - (instancetype)initForTableView:(NSTableView *)view NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
 
 - (void)removeRowAtIndex:(NSInteger)row;
 

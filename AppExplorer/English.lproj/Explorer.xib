@@ -45,14 +45,14 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <segmentedControl verticalHuggingPriority="750" id="592">
-                        <rect key="frame" x="722" y="730" width="154" height="21"/>
+                        <rect key="frame" x="703" y="730" width="173" height="21"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                         <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="automatic" trackingMode="selectOne" id="1197">
                             <font key="font" metaFont="smallSystem"/>
                             <segments>
-                                <segment label="Query" imageScaling="none" width="50" selected="YES"/>
-                                <segment label="Schema" imageScaling="none" width="50" tag="1"/>
-                                <segment label="Apex" width="50" tag="2"/>
+                                <segment label="Query" imageScaling="none" width="55" selected="YES"/>
+                                <segment label="Schema" imageScaling="none" width="55" tag="1"/>
+                                <segment label="Apex" width="55" tag="2"/>
                             </segments>
                         </segmentedCell>
                         <connections>
@@ -965,6 +965,7 @@ DQ
                 <outlet property="delegate" destination="218" id="1670"/>
                 <outlet property="menu" destination="1257" id="1259"/>
             </connections>
+            <point key="canvasLocation" x="131.5" y="161.5"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="354" userLabel="Shared Defaults"/>
         <customObject id="560" userLabel="SchemaController" customClass="SchemaController">
