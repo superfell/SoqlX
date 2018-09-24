@@ -31,36 +31,6 @@
 @property (strong) QueryResultTable *table;
 @end
 
-@interface DeleteOperation : NSOperation {
-}
-@property (strong) BulkDelete *bulkDelete;
-@property (assign) NSInteger start;
-@property (assign) NSInteger len;
-
--(instancetype)initWithDelete:(BulkDelete *)bd startAt:(NSInteger)start length:(NSInteger)l;
-
-@end
-
-@implementation DeleteOperation 
-
-@synthesize bulkDelete, start, len;
-
--(instancetype)initWithDelete:(BulkDelete *)bd startAt:(NSInteger)startAt length:(NSInteger)length {
-    self = [super init];
-    self.bulkDelete = bd;
-    self.start = startAt;
-    self.len = length;
-    return self;
-}
-
--(void)main {
-    @autoreleasepool {
-        [bulkDelete doDeleteFrom:start length:len];
-    }
-}
-
-@end
-
 @implementation BulkDelete
 
 @synthesize table;
@@ -81,7 +51,7 @@
     NSMutableArray *ids = [NSMutableArray arrayWithCapacity:idxSet.count];
     for (NSNumber *idx in idxSet) {
         [ia addObject:idx];
-        ZKSObject *row = [data records][idx.intValue];
+        ZKSObject *row = [data records][idx.integerValue];
         [ids addObject:[row id]];
     }
     indexes = ia;
@@ -98,12 +68,14 @@
     [self extractRows:dataSource];
 
     // enqueue delete operations
-    int start = 0;
-    int chunk = 50;
+    NSInteger start = 0;
+    NSInteger chunk = 50;
     do {
         NSInteger len = indexes.count - start;
         if (len > chunk) len = chunk;
-        DeleteOperation *op = [[DeleteOperation alloc] initWithDelete:self startAt:start length:len];
+        NSBlockOperation *op = [NSBlockOperation blockOperationWithBlock:^{
+            [self doDeleteFrom:start length:len];
+        }];
         [queue addOperation:op];
         start += len;
     } while (start < indexes.count);
@@ -131,7 +103,7 @@
     NSNumber *idx;
     NSEnumerator *e = [sorted reverseObjectEnumerator];
     while (idx = [e nextObject])
-        [table.wrapper remmoveRowAtIndex:idx.intValue context:ctx];
+        [table.wrapper remmoveRowAtIndex:idx.integerValue context:ctx];
     [table.wrapper updateRowsFromContext:ctx];
     [table replaceQueryResult:[table.wrapper queryResult]];
     
