@@ -38,6 +38,17 @@
 	<array>
 		<string>MacOSX</string>
 	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>www.pocketsoap.com</key>
+			<dict>
+				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
 	<key>ZKHelpUrl</key>
 	<string>http://www.pocketsoap.com/osx/soqlx/help/</string>
 </dict>
