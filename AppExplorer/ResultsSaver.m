@@ -25,10 +25,14 @@
 #import "zkQueryResult+NSTableView.h"
 #import "EditableQueryResultWrapper.h"
 
+@interface ResultsSaver()
+@property (strong) NSArray *columnFieldPaths;
+@end
+
 @implementation ResultsSaver
 
 @synthesize progressWindow, optionsView, buttonAll, buttonCurrent;
-@synthesize saveAll, rowsWritten, filename;
+@synthesize saveAll, rowsWritten, filename, columnFieldPaths;
 
 -(instancetype)initWithResults:(QueryResultTable *)r client:(ZKSforceClient *)c {
     self = [super init];
@@ -54,24 +58,17 @@
     sp.accessoryView = optionsView;
     [sp beginSheetModalForWindow:parentWindow completionHandler:^(NSInteger result) {
         if (result == NSModalResponseCancel) {
-            // TODO [self autorelease];
             return;
         }
         self.filename = sp.URL;
         dispatch_async(dispatch_get_main_queue(), ^() {
             [self startWrite:parentWindow];
         });
-//        [self performSelectorOnMainThread:@selector(startWrite:) withObject:(__bridge id _Nullable)(contextInfo) waitUntilDone:NO];
-//        [self savePanelDidEnd:sp returnCode:result contextInfo:(__bridge void *)(parentWindow)];
     }];
 }
 
 -(NSUInteger)totalRows {
     return results.queryResult.size;
-}
-
--(NSArray *)columns {
-    return results.table.tableColumns;
 }
 
 -(void)startWrite:(NSWindow*)parentWindow {
@@ -85,17 +82,22 @@
     stream = [[BufferedWriter alloc] initOnStream:s];
     
     ZKQueryResult *qr = results.queryResult;
+    NSMutableArray *columns = [[NSMutableArray alloc] init];
     BOOL first = YES;
-    for (NSTableColumn *c in [self columns]) {
+    for (NSTableColumn *c in results.table.tableColumns) {
         if ([[results.wrapper allSystemColumnIdentifiers] containsObject:c.identifier])
             continue;
         if (!first)
             [stream write:@","];
         first = NO;
         [stream writeQuoted:c.headerCell.stringValue];
+        // this contains the dotted field path for this column
+        [columns addObject:c.identifier];
+        
     }
     [stream write:@"\n"];
 
+    self.columnFieldPaths = columns;
     client = [client copyWithZone:nil];
 
     NSInvocationOperation *sop = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(writeResults:) object:qr];
@@ -137,18 +139,16 @@
 -(void)writeResults:(id)data {
     ZKQueryResult *qr = (ZKQueryResult *)data;
     [self queueQueryMore:[qr queryLocator]];
-    NSInteger rows = [qr numberOfRowsInTableView:nil];
-    for (NSInteger i = 0; i < rows; i++) {
+    NSInteger rows = qr.records.count;
+    for (NSInteger row = 0; row < rows; row++) {
         BOOL first = YES;
-        for (NSTableColumn *c in [self columns]) {
-            if ([[results.wrapper allSystemColumnIdentifiers] containsObject:c.identifier])
-                continue;
+        for (NSString *fieldPath in self.columnFieldPaths) {
             if (first) {
                 first = NO;
             } else {
                 [stream write:@","];
             }
-            NSObject *v = [qr tableView:nil objectValueForTableColumn:c row:i];
+            NSObject *v = [qr valueForFieldPath:fieldPath row:row];
             NSString *s = nil;
             if ([v isKindOfClass:[NSString class]]) {
                 s = (NSString *)v;
@@ -158,7 +158,7 @@
                 ZKQueryResult *child = (ZKQueryResult *)v;
                 s = [NSString stringWithFormat:@"[%ld child rows]", (long)child.size];
             } else if (v != nil && ![v isKindOfClass:[NSString class]]) {
-                NSLog(@"expected NSString, but got %@ for column %@, row %ld", [v class], c.identifier, (long)i);
+                NSLog(@"expected NSString, but got %@ for column %@, row %ld", [v class], fieldPath, (long)row);
                 s = v.description;
             }
             [stream writeQuoted:s];
