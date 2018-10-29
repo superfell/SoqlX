@@ -244,6 +244,7 @@
 		F4BB7FAC18B0314100444797 /* ZKDescribeApprovalLayoutResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4BB7FA518B0314100444797 /* ZKDescribeApprovalLayoutResult.m */; };
 		F4BB7FAD18B0314100444797 /* ZKLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = F4BB7FA718B0314100444797 /* ZKLocation.m */; };
 		F4BB7FAE18B0314100444797 /* ZKQuickActionTemplateResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4BB7FA918B0314100444797 /* ZKQuickActionTemplateResult.m */; };
+		F4BBAA152186C3E100647C27 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F4BBAA142186C3E100647C27 /* Media.xcassets */; };
 		F4BF72A70F79E58C0089F459 /* NSWindow_additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F4BF72A60F79E58C0089F459 /* NSWindow_additions.m */; };
 		F4C440CA15DB50BC00590A1E /* SearchQueryResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C440C915DB50BC00590A1E /* SearchQueryResult.m */; };
 		F4C877F50F395C6E000075D4 /* ProgressWindow.nib in Resources */ = {isa = PBXBuildFile; fileRef = F4C877F40F395C6E000075D4 /* ProgressWindow.nib */; };
@@ -766,6 +767,7 @@
 		F4BB7FA718B0314100444797 /* ZKLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKLocation.m; path = ../zksforce/zkSforce/ZKLocation.m; sourceTree = "<group>"; };
 		F4BB7FA818B0314100444797 /* ZKQuickActionTemplateResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKQuickActionTemplateResult.h; path = ../zksforce/zkSforce/ZKQuickActionTemplateResult.h; sourceTree = "<group>"; };
 		F4BB7FA918B0314100444797 /* ZKQuickActionTemplateResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKQuickActionTemplateResult.m; path = ../zksforce/zkSforce/ZKQuickActionTemplateResult.m; sourceTree = "<group>"; };
+		F4BBAA142186C3E100647C27 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		F4BF72A50F79E58C0089F459 /* NSWindow_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSWindow_additions.h; path = ../common/NSWindow_additions.h; sourceTree = SOURCE_ROOT; };
 		F4BF72A60F79E58C0089F459 /* NSWindow_additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSWindow_additions.m; path = ../common/NSWindow_additions.m; sourceTree = SOURCE_ROOT; };
 		F4C440C815DB50BC00590A1E /* SearchQueryResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchQueryResult.h; sourceTree = "<group>"; };
@@ -965,6 +967,7 @@
 				F4D7831915D48C8500D00BB9 /* Explorer.xib */,
 				F44FC9DC0E1EB5D600B5F70C /* querySavePanel.xib */,
 				F4C877F40F395C6E000075D4 /* ProgressWindow.nib */,
+				F4BBAA142186C3E100647C27 /* Media.xcassets */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1540,6 +1543,7 @@
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				F413C7260AACB9B4000A8CDC /* sf.icns in Resources */,
 				F40444D40ACA4B870060C0F2 /* Credits.html in Resources */,
+				F4BBAA152186C3E100647C27 /* Media.xcassets in Resources */,
 				F4F249A60B0D92800027987B /* restrictedshine.tiff in Resources */,
 				F4B8DFE80B61EB8900DDD00A /* report.css in Resources */,
 				F4B8DFF60B61F4B900DDD00A /* key_b.png in Resources */,

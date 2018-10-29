@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2015 Simon Fell
+// Copyright (c) 2006-2015,2018 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -78,18 +78,15 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
 -(instancetype)init {
     self = [super init];
-    self.fieldColor = [NSColor colorWithCalibratedRed:0.25 green:0.25 blue:0.8 alpha: 1.0];
-    self.keywordColor = [NSColor colorWithCalibratedRed:0.8 green:0.25 blue:0.25 alpha: 1.0];
+    self.fieldColor = [NSColor colorNamed:@"soql.field"];
+    self.keywordColor = [NSColor colorNamed:@"soql.keyword"];
     
     self.underlineStyle = [NSNumber numberWithInteger:(NSUnderlineStyleSingle | NSUnderlinePatternDot | NSUnderlineByWordMask)];
-    NSMutableDictionary *u = [NSMutableDictionary dictionary];
-    u[NSUnderlineStyleAttributeName] = underlineStyle;
-    u[NSUnderlineColorAttributeName] = [NSColor redColor];
-    self.underlined = [NSDictionary dictionaryWithDictionary:u];
-    
-    NSMutableDictionary *nu = [NSMutableDictionary dictionary];
-    nu[NSUnderlineStyleAttributeName] = [NSNumber numberWithInt:NSUnderlineStyleNone];
-    self.noUnderline = [NSDictionary dictionaryWithDictionary:nu];
+    self.underlined = @{
+                        underlineStyle:NSUnderlineStyleAttributeName,
+                        [NSColor redColor]:NSUnderlineColorAttributeName,
+                        };
+    self.noUnderline = @{ [NSNumber numberWithInt:NSUnderlineStyleNone] :NSUnderlineStyleAttributeName };
     return self;
 }
 
@@ -350,7 +347,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 }
 
 - (void)setSoqlString:(NSString *)str {
-    [soql.textStorage setAttributedString:[[NSAttributedString alloc] initWithString:str]];
+    [soql.textStorage setAttributedString:[[NSAttributedString alloc] initWithString:str attributes:@{NSForegroundColorAttributeName: [NSColor textColor]}]];
     self.previouslyColorized = nil;
     self.previousColorizedDescribe = nil;
     [self colorize];
