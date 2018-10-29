@@ -21,10 +21,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+
 @interface StandAloneTableHeaderView : NSView {
-    NSString         *headerText;
-    NSDictionary     *textAttributes;
-    NSGradient        *gradient;
 }
 
 @property (copy) NSString *headerText;

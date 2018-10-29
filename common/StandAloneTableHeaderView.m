@@ -21,39 +21,36 @@
 
 #import "StandAloneTableHeaderView.h"
 
+@interface StandAloneTableHeaderView()
+@property (copy) NSDictionary *textAttributes;
+
+@end
+
 @implementation StandAloneTableHeaderView
+
+@synthesize headerText, textAttributes;
 
 -(instancetype)initWithFrame:(NSRect)rect {
     self = [super initWithFrame:rect];
-    textAttributes =  [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                        [NSFont titleBarFontOfSize:11.0], NSFontAttributeName,
-                        [NSColor blackColor], NSForegroundColorAttributeName,
-                        nil];
-                        
-    gradient = [[NSGradient alloc] initWithColors:@[[NSColor whiteColor],
-                                                   [NSColor colorWithCalibratedRed:0.875 green:0.875 blue:0.875 alpha:1.0],
-                                                   [NSColor whiteColor]]];
+    textAttributes = @{
+                       NSFontAttributeName: [NSFont titleBarFontOfSize:11.0],
+                       NSForegroundColorAttributeName : [NSColor headerTextColor],
+                       };
     return self;
 }
 
 
 -(void)drawRect:(NSRect)rect {
     NSRect b = self.bounds;
-    [[NSColor colorWithCalibratedRed:0.698 green:0.698 blue:0.698 alpha:1.0] set];
+    [[NSColor gridColor] set];
     NSRectFill(b);
-    [gradient drawInRect:NSInsetRect(b,1,1) angle:90];
-    NSRect txtRect = NSInsetRect(b, 5,1);
-    [headerText drawInRect:txtRect withAttributes:textAttributes];
-}
-
--(void)setHeaderText:(NSString *)newValue {
-    if (newValue != headerText) {
-        headerText = [newValue copy];
-    }
-}
-
--(NSString *)headerText {
-    return headerText;
+    // TODO: need a light / < 10.14 color for this
+    [[NSColor colorWithRed:0.17 green:0.18 blue:0.19 alpha:1.0] set];
+    NSRect c = NSInsetRect(b,1,1);
+    NSRectFill(c);
+    NSSize txtSize = [headerText sizeWithAttributes:textAttributes];
+    NSPoint txtPoint =NSMakePoint(c.origin.x + 9, (b.size.height - txtSize.height) / 2);
+    [headerText drawAtPoint:txtPoint withAttributes:textAttributes];
 }
 
 @end
