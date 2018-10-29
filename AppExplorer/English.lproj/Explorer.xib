@@ -1104,7 +1104,7 @@ DQ
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="dHX-os-fc5">
                             <rect key="frame" x="0.0" y="0.0" width="464" height="430"/>
-                            <autoresizingMask key="autoresizingMask"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <customView wantsLayer="YES" id="1328" customClass="QueryTextListView">
                                     <rect key="frame" x="0.0" y="0.0" width="464" height="430"/>

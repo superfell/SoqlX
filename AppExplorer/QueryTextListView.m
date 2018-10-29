@@ -127,7 +127,7 @@ static const CGFloat MARGIN = 5.0;
     self = [super initWithFrame:frame];
     if (self) {
         textAttributes =  @{NSFontAttributeName:            [NSFont titleBarFontOfSize:11.0],
-                            NSForegroundColorAttributeName: [[NSColor blueColor] shadowWithLevel:0.33]};
+                            NSForegroundColorAttributeName: [[NSColor textColor] shadowWithLevel:0.13]};
         items = [NSMutableArray arrayWithCapacity:10];
     }
     return self;
