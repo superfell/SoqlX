@@ -303,7 +303,7 @@
     c.zkImage = nil;
     c.zkStandout = NO;
     c.zkTextXOffset = 8;
-    c.textColor = [NSColor blackColor];
+    c.textColor = [NSColor textColor];
     c.font = [NSFont systemFontOfSize:12.0f];
     
     if ([item isKindOfClass:[ZKDescribeGlobalSObject class]]) {
