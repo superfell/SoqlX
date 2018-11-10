@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2012,2014 Simon Fell
+// Copyright (c) 2006,2012,2014,2018 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -81,9 +81,9 @@
 - (instancetype)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        primaryColor = [NSColor purpleColor];
-        foreignKeyColor = [NSColor colorWithCalibratedRed:0.3 green:0.3 blue:0.8 alpha:1.0];
-        childRelColor = [NSColor orangeColor];
+        primaryColor = [NSColor colorNamed:@"schema.primary"];
+        foreignKeyColor = [NSColor colorNamed:@"schema.parent"];
+        childRelColor = [NSColor colorNamed:@"schema.child"];
         isPrinting = NO;
         
         NSSize sz = NSMakeSize(200, 100);
@@ -151,7 +151,7 @@
 
 - (void)drawBackground:(NSRect)rect {
     if (isPrinting) return;
-    [[NSColor whiteColor] set];
+    [[NSColor colorNamed:@"schema.background"] set];
     NSRectFill(rect);
 }
 

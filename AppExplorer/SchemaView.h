@@ -30,7 +30,7 @@
     SObjectBox                *centralBox;
     DescribeListDataSource  *describes;
     NSMutableDictionary        *relatedBoxes;    // (SObjectBox keyed by SObject name)
-    NSArray                    *foreignKeys;    // (of SObject box)
+    NSArray                    *foreignKeys;     // (of SObject box)
     NSArray                    *children;        // (of SObject box)
     
     NSColor                    *primaryColor;
