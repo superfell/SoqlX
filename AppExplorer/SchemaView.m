@@ -61,7 +61,7 @@
 
 @implementation SchemaView
 
-@synthesize describesDataSource=describes;
+@synthesize describesDataSource=describes, isPrinting;
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -69,12 +69,12 @@
 
 // Printing
 - (void)print:(id)sender {
-    isPrinting = YES;
+    self.isPrinting = YES;
     NSPrintOperation *pop = [NSPrintOperation printOperationWithView:self];
     pop.printInfo.verticalPagination = NSFitPagination;
     pop.printInfo.horizontalPagination = NSFitPagination;
     [pop runOperation];
-    isPrinting = NO;
+    self.isPrinting = NO;
 }
 
 // NSView
@@ -84,7 +84,7 @@
         primaryColor = [NSColor colorNamed:@"schema.primary"];
         foreignKeyColor = [NSColor colorNamed:@"schema.parent"];
         childRelColor = [NSColor colorNamed:@"schema.child"];
-        isPrinting = NO;
+        self.isPrinting = NO;
         
         NSSize sz = NSMakeSize(200, 100);
         NSPoint pt = NSMakePoint(NSMidX(frame) - sz.width/2, NSMidY(frame) - sz.height/2);
@@ -150,7 +150,7 @@
 }
 
 - (void)drawBackground:(NSRect)rect {
-    if (isPrinting) return;
+    if (self.isPrinting) return;
     [[NSColor colorNamed:@"schema.background"] set];
     NSRectFill(rect);
 }

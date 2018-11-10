@@ -138,6 +138,7 @@ NSString * tc(NSString *src) {
     schemaView.describesDataSource = newDataSource;
     [schemaView centralBox].viewMode = vmAllFields;
     [schemaView setCentralSObject:[newDataSource describe:sobjectType]];
+    schemaView.isPrinting = YES;
     NSRect bounds = schemaView.bounds;
     
     NSRect offscreenRect = NSMakeRect(0.0, 0.0, bounds.size.width - 40.0, bounds.size.height);

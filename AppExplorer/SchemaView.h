@@ -36,7 +36,6 @@
     NSColor                    *primaryColor;
     NSColor                    *foreignKeyColor;
     NSColor                    *childRelColor;
-    BOOL                    isPrinting;
     IBOutlet Explorer        *primaryController;
 }
 
@@ -45,6 +44,8 @@
 @property (strong) ZKDescribeSObject *centralSObject;
 - (void)setCentralSObject:(ZKDescribeSObject *)s withRipplePoint:(NSPoint)ripple;
 @property (readonly, strong) SObjectBox *centralBox;
+
+@property (assign) BOOL isPrinting;
 
 - (void)layoutBoxes;
 - (BOOL)mousePointerIsInsideRect:(NSRect)rect;
