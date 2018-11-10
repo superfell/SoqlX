@@ -32,12 +32,13 @@
 @end
 
 @interface QueryColumn : NSObject {
-    NSString        *name;
-    NSMutableArray    *childCols; // of QueryColumn
+    NSString                     *name;
+    NSMutableArray<QueryColumn*> *childCols;
 }
 @end
 
 @implementation QueryColumn
+
 -(instancetype)initWithName:(NSString *)n {
     self = [super init];
     name = [n copy];
@@ -68,18 +69,18 @@
         [childCols addObject:c];
 }
 
--(void)addChildCols:(NSArray *)cols {
+-(void)addChildCols:(NSArray<QueryColumn*> *)cols {
     for (QueryColumn *c in cols)
         [self addChildCol:c];
 }
 
--(void)addChildColWithNames:(NSArray *)childNames {
+-(void)addChildColWithNames:(NSArray<NSString*> *)childNames {
     for (NSString *cn in childNames) {
         [self addChildCol:[QueryColumn columnWithName:[name stringByAppendingFormat:@".%@", cn]]];
     }
 }
 
--(NSArray *)allNames {
+-(NSArray<NSString*> *)allNames {
     if (childCols == nil) return @[name];
     NSMutableArray *c = [NSMutableArray arrayWithCapacity:childCols.count];
     for (QueryColumn *qc in childCols)

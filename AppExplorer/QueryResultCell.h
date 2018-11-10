@@ -24,5 +24,4 @@
 
 @interface QueryResultCell : NSCell {
 }
-
 @end
