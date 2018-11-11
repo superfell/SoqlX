@@ -81,10 +81,10 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     self.fieldColor = [NSColor colorNamed:@"soql.field"];
     self.keywordColor = [NSColor colorNamed:@"soql.keyword"];
     
-    self.underlineStyle = [NSNumber numberWithInteger:(NSUnderlineStyleSingle | NSUnderlinePatternDot | NSUnderlineByWordMask)];
+    self.underlineStyle = [NSNumber numberWithInteger:(NSUnderlineStyleSingle | NSUnderlinePatternDot | NSUnderlineByWord)];
     self.underlined = @{
-                        underlineStyle:NSUnderlineStyleAttributeName,
-                        [NSColor redColor]:NSUnderlineColorAttributeName,
+                        NSUnderlineStyleAttributeName: underlineStyle,
+                        NSUnderlineStyleAttributeName: [NSColor redColor],
                         };
     self.noUnderline = @{ [NSNumber numberWithInt:NSUnderlineStyleNone] :NSUnderlineStyleAttributeName };
     return self;
@@ -600,7 +600,9 @@ typedef enum SoqlParsePosition {
     @catch (ZKSoapException *ex)
     {
         [self updateProgress:NO];
-        NSAlert * a = [NSAlert alertWithMessageText:ex.reason defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:@"Query failed"];
+        NSAlert *a = [[NSAlert alloc] init];
+        a.messageText = ex.reason;
+        a.informativeText = @"Query Failed";
         [a runModal];
     }
     [self updateProgress:NO];
@@ -676,19 +678,15 @@ typedef enum SoqlParsePosition {
             self.statusText = [NSString stringWithFormat:@"Updated field %@ on row with Id %@", fieldName, [anObject id]];
             [anObject setFieldValue:newValue field:fieldName];
         } else {
-            NSAlert * a = [NSAlert alertWithMessageText:[sr message]
-                                          defaultButton:@"Close"
-                                        alternateButton:nil
-                                            otherButton:nil
-                              informativeTextWithFormat:@"%@", [sr statusCode]];
+            NSAlert *a = [[NSAlert alloc] init];
+            a.messageText = sr.message;
+            a.informativeText = sr.statusCode;
             [a runModal];
         }
     } @catch (ZKSoapException *ex) {
-        NSAlert *a =[NSAlert alertWithMessageText:[NSString stringWithFormat:@"Unable to update field %@", fieldName]
-                                    defaultButton:@"Close"
-                                  alternateButton:nil
-                                      otherButton:nil
-                        informativeTextWithFormat:@"%@", ex.reason];
+        NSAlert *a = [[NSAlert alloc] init];
+        a.messageText = [NSString stringWithFormat:@"Unable to update field %@", fieldName];
+        a.informativeText = ex.reason;
         [a runModal];
     }
 }
@@ -819,7 +817,9 @@ typedef enum SoqlParsePosition {
         [tr removeRowAtIndex:r];
         [self setRowsLoadedStatusText:tr.queryResult];
     } else {
-        NSAlert * a = [NSAlert alertWithMessageText:[sr message] defaultButton:@"Cancel" alternateButton:nil otherButton:nil informativeTextWithFormat:@"%@", [sr statusCode]];
+        NSAlert *a = [[NSAlert alloc] init];
+        a.messageText = sr.message;
+        a.informativeText = sr.statusCode;
         [a runModal];
     }
 }
