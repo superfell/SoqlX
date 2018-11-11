@@ -26,6 +26,7 @@
 #import "Prefs.h"
 #import "ZKXsdAnyType.h"
 
+
 @interface DescribeListDataSource ()
 -(void)updateFilter;
 -(void)prefsChanged:(NSNotification *)notif;
@@ -215,7 +216,7 @@
         NSArray __block *priority = nil;
         NSInteger i;
         int batchSize = DEFAULT_DESC_BATCH;
-        while (leftTodo.count > 0 && (OSAtomicAdd32(0, &self->stopBackgroundDescribes) == 0)) {
+        while (leftTodo.count > 0 && (atomic_fetch_add(&self->stopBackgroundDescribes, 0) == 0)) {
             dispatch_sync(dispatch_get_main_queue(), ^() {
                 alreadyDescribed = self->describes.allKeys;
                 // take ownership of the list priority describes
@@ -269,7 +270,7 @@
 }
 
 -(void)stopBackgroundDescribe {
-    OSAtomicIncrement32(&stopBackgroundDescribes);
+    atomic_fetch_add(&stopBackgroundDescribes, 1);
 }
 
 // for use in an outline view

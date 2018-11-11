@@ -21,6 +21,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "IconProvider.h"
+#include <stdatomic.h>
 
 @class ZKSforceClient;
 @class ZKDescribeSObject;
@@ -41,7 +42,7 @@
     NSOutlineView           *outlineView;
     
     NSSortDescriptor        *fieldSortOrder;
-    int32_t                 stopBackgroundDescribes;
+    atomic_int               stopBackgroundDescribes;
 }
 
 - (void)setSforce:(ZKSforceClient *)sf;
