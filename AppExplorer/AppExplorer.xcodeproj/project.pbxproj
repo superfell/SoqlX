@@ -10,7 +10,6 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		F40444D40ACA4B870060C0F2 /* Credits.html in Resources */ = {isa = PBXBuildFile; fileRef = F40444D30ACA4B870060C0F2 /* Credits.html */; };
 		F4065BD01EE4CB7200E70970 /* ZKChangeOwnPasswordResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4065BC11EE4CB7200E70970 /* ZKChangeOwnPasswordResult.m */; };
 		F4065BD11EE4CB7200E70970 /* ZKDescribeLayoutSaveOption.m in Sources */ = {isa = PBXBuildFile; fileRef = F4065BC31EE4CB7200E70970 /* ZKDescribeLayoutSaveOption.m */; };
 		F4065BD21EE4CB7200E70970 /* ZKEntitySearchMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = F4065BC51EE4CB7200E70970 /* ZKEntitySearchMetadata.m */; };
@@ -250,6 +249,7 @@
 		F4C877F50F395C6E000075D4 /* ProgressWindow.nib in Resources */ = {isa = PBXBuildFile; fileRef = F4C877F40F395C6E000075D4 /* ProgressWindow.nib */; };
 		F4C877FA0F395DB4000075D4 /* ProgressController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C877F90F395DB4000075D4 /* ProgressController.m */; };
 		F4C878B80F3964BD000075D4 /* BulkDelete.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C878B70F3964BD000075D4 /* BulkDelete.m */; };
+		F4C8BF332197C5740000E312 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = F4C8BF322197C5740000E312 /* Credits.rtf */; };
 		F4CD2AB71B76881500BDD68D /* NSTableView_additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CD2AB61B76881500BDD68D /* NSTableView_additions.m */; };
 		F4CD3DAD0B85701100084479 /* ZKLoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CD3DAB0B85701100084479 /* ZKLoginController.m */; };
 		F4CD3DBA0B8572DB00084479 /* credential.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CD3DB80B8572DB00084479 /* credential.m */; };
@@ -305,7 +305,6 @@
 		32CA4F630368D1EE00C91783 /* AppExplorer_Prefix.pch */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = AppExplorer_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* SoqlXplorer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SoqlXplorer.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		F40444D30ACA4B870060C0F2 /* Credits.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = Credits.html; sourceTree = "<group>"; };
 		F4065BC01EE4CB7200E70970 /* ZKChangeOwnPasswordResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKChangeOwnPasswordResult.h; path = ../zksforce/zkSforce/ZKChangeOwnPasswordResult.h; sourceTree = "<group>"; };
 		F4065BC11EE4CB7200E70970 /* ZKChangeOwnPasswordResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKChangeOwnPasswordResult.m; path = ../zksforce/zkSforce/ZKChangeOwnPasswordResult.m; sourceTree = "<group>"; };
 		F4065BC21EE4CB7200E70970 /* ZKDescribeLayoutSaveOption.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKDescribeLayoutSaveOption.h; path = ../zksforce/zkSforce/ZKDescribeLayoutSaveOption.h; sourceTree = "<group>"; };
@@ -777,6 +776,7 @@
 		F4C877F90F395DB4000075D4 /* ProgressController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProgressController.m; sourceTree = "<group>"; };
 		F4C878B60F3964BD000075D4 /* BulkDelete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BulkDelete.h; sourceTree = "<group>"; };
 		F4C878B70F3964BD000075D4 /* BulkDelete.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BulkDelete.m; sourceTree = "<group>"; };
+		F4C8BF322197C5740000E312 /* Credits.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		F4CD2AB51B76881500BDD68D /* NSTableView_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSTableView_additions.h; sourceTree = "<group>"; };
 		F4CD2AB61B76881500BDD68D /* NSTableView_additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSTableView_additions.m; sourceTree = "<group>"; };
 		F4CD3DAA0B85701100084479 /* ZKLoginController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ZKLoginController.h; path = ../common/ZKLoginController.h; sourceTree = SOURCE_ROOT; };
@@ -959,7 +959,6 @@
 				F4B8DFF50B61F4B900DDD00A /* key_r.png */,
 				F4B8DFE70B61EB8900DDD00A /* report.css */,
 				F4F249A50B0D92800027987B /* restrictedshine.tiff */,
-				F40444D30ACA4B870060C0F2 /* Credits.html */,
 				F413C7250AACB9B4000A8CDC /* sf.icns */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
@@ -968,6 +967,7 @@
 				F44FC9DC0E1EB5D600B5F70C /* querySavePanel.xib */,
 				F4C877F40F395C6E000075D4 /* ProgressWindow.nib */,
 				F4BBAA142186C3E100647C27 /* Media.xcassets */,
+				F4C8BF322197C5740000E312 /* Credits.rtf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1541,8 +1541,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
+				F4C8BF332197C5740000E312 /* Credits.rtf in Resources */,
 				F413C7260AACB9B4000A8CDC /* sf.icns in Resources */,
-				F40444D40ACA4B870060C0F2 /* Credits.html in Resources */,
 				F4BBAA152186C3E100647C27 /* Media.xcassets in Resources */,
 				F4F249A60B0D92800027987B /* restrictedshine.tiff in Resources */,
 				F4B8DFE80B61EB8900DDD00A /* report.css in Resources */,
