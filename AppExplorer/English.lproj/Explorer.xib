@@ -44,7 +44,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <segmentedControl verticalHuggingPriority="750" id="592">
-                        <rect key="frame" x="703" y="730" width="173" height="21"/>
+                        <rect key="frame" x="703" y="726" width="173" height="21"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                         <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="automatic" trackingMode="selectOne" id="1197">
                             <font key="font" metaFont="smallSystem"/>
@@ -944,7 +944,7 @@ DQ
                         </connections>
                     </textField>
                     <segmentedControl verticalHuggingPriority="750" id="87x-3E-Ucd">
-                        <rect key="frame" x="882" y="730" width="113" height="21"/>
+                        <rect key="frame" x="882" y="726" width="113" height="21"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                         <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="automatic" trackingMode="selectAny" id="aCP-ec-ph2">
                             <font key="font" metaFont="smallSystem"/>
