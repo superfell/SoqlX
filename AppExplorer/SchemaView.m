@@ -175,7 +175,7 @@
 
     NSMutableParagraphStyle *st = [[NSMutableParagraphStyle alloc] init];
     [st setParagraphStyle:[NSParagraphStyle defaultParagraphStyle]];
-    st.alignment = NSCenterTextAlignment;
+    st.alignment = NSTextAlignmentCenter;
     NSDictionary *a = @{NSForegroundColorAttributeName: [NSColor whiteColor],
         NSFontAttributeName: [NSFont boldSystemFontOfSize:14],
         NSParagraphStyleAttributeName: st};

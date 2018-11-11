@@ -58,14 +58,14 @@ static const float titleIconGap  = 6.0f;
     // Set up text attributes for drawing
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     [paragraphStyle setParagraphStyle:[NSParagraphStyle defaultParagraphStyle]];
-    paragraphStyle.alignment = NSLeftTextAlignment;
+    paragraphStyle.alignment = NSTextAlignmentLeft;
     paragraphStyle.lineBreakMode = NSLineBreakByTruncatingTail;
-    float fieldFontSize = ([NSFont systemFontSizeForControlSize:NSSmallControlSize] + [NSFont systemFontSizeForControlSize:NSMiniControlSize]) / 2;
+    float fieldFontSize = ([NSFont systemFontSizeForControlSize:NSControlSizeSmall] + [NSFont systemFontSizeForControlSize:NSControlSizeMini]) / 2;
     fieldAttributes = @{ NSFontAttributeName:               [NSFont messageFontOfSize:fieldFontSize],
                          NSForegroundColorAttributeName:    [NSColor blackColor],
                          NSParagraphStyleAttributeName:     paragraphStyle};
     
-    titleAttributes = @{ NSFontAttributeName:            [NSFont boldSystemFontOfSize:[NSFont systemFontSizeForControlSize:NSSmallControlSize]],
+    titleAttributes = @{ NSFontAttributeName:            [NSFont boldSystemFontOfSize:[NSFont systemFontSizeForControlSize:NSControlSizeSmall]],
                          NSForegroundColorAttributeName: [NSColor whiteColor],
                          NSParagraphStyleAttributeName:  paragraphStyle};
     highlight = NO;
