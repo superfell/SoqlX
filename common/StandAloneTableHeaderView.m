@@ -23,34 +23,36 @@
 
 @interface StandAloneTableHeaderView()
 @property (copy) NSDictionary *textAttributes;
-
+@property (strong) NSColor *backgroundColor;
+@property (strong) NSColor *borderColor;
 @end
 
 @implementation StandAloneTableHeaderView
 
-@synthesize headerText, textAttributes;
-
 -(instancetype)initWithFrame:(NSRect)rect {
     self = [super initWithFrame:rect];
-    textAttributes = @{
+    self.textAttributes = @{
                        NSFontAttributeName: [NSFont titleBarFontOfSize:11.0],
                        NSForegroundColorAttributeName : [NSColor headerTextColor],
                        };
+    self.backgroundColor = [NSColor colorNamed:@"table.header.background"];
+    self.borderColor = [NSColor colorNamed:@"table.header.border"];
     return self;
 }
 
 
 -(void)drawRect:(NSRect)rect {
     NSRect b = self.bounds;
-    [[NSColor gridColor] set];
+    [self.borderColor set];
     NSRectFill(b);
-    // TODO: need a light / < 10.14 color for this
-    [[NSColor colorWithRed:0.17 green:0.18 blue:0.19 alpha:1.0] set];
-    NSRect c = NSInsetRect(b,1,1);
-    NSRectFill(c);
-    NSSize txtSize = [headerText sizeWithAttributes:textAttributes];
-    NSPoint txtPoint =NSMakePoint(c.origin.x + 9, (b.size.height - txtSize.height) / 2);
-    [headerText drawAtPoint:txtPoint withAttributes:textAttributes];
+    [self.backgroundColor set];
+    b.size.height -= 2;
+    b.size.width -= 1;
+    b.origin.y += 1;
+    NSRectFill(b);
+    NSSize txtSize = [self.headerText sizeWithAttributes:self.textAttributes];
+    NSPoint txtPoint =NSMakePoint(b.origin.x + 6, (b.size.height - txtSize.height) / 2);
+    [self.headerText drawAtPoint:txtPoint withAttributes:self.textAttributes];
 }
 
 @end

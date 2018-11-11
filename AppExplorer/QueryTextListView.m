@@ -30,7 +30,7 @@ static const CGFloat MARGIN = 5.0;
     listView = lv;
     textAttributes = attributes;
     verticalPad = [@"M" sizeWithAttributes:textAttributes].height / 2; 
-    backgroundColor = [NSColor whiteColor];
+    backgroundColor = [NSColor windowBackgroundColor];
     trackingArea = [[NSTrackingArea alloc] initWithRect:f
                                                 options:NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect
                                                   owner:self
@@ -87,7 +87,7 @@ static const CGFloat MARGIN = 5.0;
     [bg set];
     NSRectFill(b);
     [text drawWithRect:textRect options:NSStringDrawingUsesLineFragmentOrigin attributes:textAttributes];
-    [[NSColor grayColor] set];
+    [[NSColor gridColor] set];
     NSRectFill(NSMakeRect(b.origin.x, NSMaxY(b)-1, b.size.width, 1));
 }
 
@@ -127,7 +127,7 @@ static const CGFloat MARGIN = 5.0;
     self = [super initWithFrame:frame];
     if (self) {
         textAttributes =  @{NSFontAttributeName:            [NSFont titleBarFontOfSize:11.0],
-                            NSForegroundColorAttributeName: [[NSColor textColor] shadowWithLevel:0.13]};
+                            NSForegroundColorAttributeName: [NSColor textColor] };
         items = [NSMutableArray arrayWithCapacity:10];
     }
     return self;

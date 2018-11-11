@@ -196,18 +196,18 @@
                                                                         </connections>
                                                                     </button>
                                                                     <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="929">
-                                                                        <rect key="frame" x="0.0" y="35" width="837" height="61"/>
+                                                                        <rect key="frame" x="0.0" y="35" width="837" height="63"/>
                                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                         <clipView key="contentView" id="9B8-Qx-eLR">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="837" height="61"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="837" height="63"/>
                                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                             <subviews>
                                                                                 <textView importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" allowsUndo="YES" usesRuler="YES" spellingCorrection="YES" smartInsertDelete="YES" id="930" customClass="ZKTextView">
-                                                                                    <rect key="frame" x="0.0" y="-10" width="837" height="61"/>
+                                                                                    <rect key="frame" x="0.0" y="-8" width="837" height="63"/>
                                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                                                    <size key="minSize" width="837" height="61"/>
+                                                                                    <size key="minSize" width="837" height="63"/>
                                                                                     <size key="maxSize" width="1674" height="10000000"/>
                                                                                     <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                                                     <connections>
@@ -434,7 +434,7 @@
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <clipView key="contentView" id="n4k-PW-bMX">
                                                         <rect key="frame" x="0.0" y="0.0" width="837" height="694"/>
-                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <subviews>
                                                             <customView id="1241" customClass="SchemaView">
                                                                 <rect key="frame" x="0.0" y="0.0" width="836" height="694"/>
@@ -963,7 +963,7 @@ DQ
                 <outlet property="delegate" destination="218" id="1670"/>
                 <outlet property="menu" destination="1257" id="1259"/>
             </connections>
-            <point key="canvasLocation" x="615" y="-392"/>
+            <point key="canvasLocation" x="368" y="-684"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="354" userLabel="Shared Defaults"/>
         <customObject id="560" userLabel="SchemaController" customClass="SchemaController">
