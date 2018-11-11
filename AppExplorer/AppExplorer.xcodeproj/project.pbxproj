@@ -777,6 +777,8 @@
 		F4C878B60F3964BD000075D4 /* BulkDelete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BulkDelete.h; sourceTree = "<group>"; };
 		F4C878B70F3964BD000075D4 /* BulkDelete.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BulkDelete.m; sourceTree = "<group>"; };
 		F4C8BF322197C5740000E312 /* Credits.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
+		F4C8BF342197CD820000E312 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		F4C8BF352197CD820000E312 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Explorer.xib; sourceTree = "<group>"; };
 		F4CD2AB51B76881500BDD68D /* NSTableView_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSTableView_additions.h; sourceTree = "<group>"; };
 		F4CD2AB61B76881500BDD68D /* NSTableView_additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSTableView_additions.m; sourceTree = "<group>"; };
 		F4CD3DAA0B85701100084479 /* ZKLoginController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ZKLoginController.h; path = ../common/ZKLoginController.h; sourceTree = SOURCE_ROOT; };
@@ -796,8 +798,6 @@
 		F4D4F5AA1623CD5D009CF3D4 /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		F4D6E1870BD70DA200813881 /* EditableQueryResultWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditableQueryResultWrapper.h; sourceTree = "<group>"; };
 		F4D6E1880BD70DA200813881 /* EditableQueryResultWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditableQueryResultWrapper.m; sourceTree = "<group>"; };
-		F4D7831715D489B800D00BB9 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		F4D7831A15D48C8500D00BB9 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Explorer.xib; sourceTree = "<group>"; };
 		F4D7831C15D49F7B00D00BB9 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		F4D7831D15D49F7B00D00BB9 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		F4D7833215D5F46600D00BB9 /* BaseUserBasedController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseUserBasedController.h; sourceTree = "<group>"; };
@@ -1516,7 +1516,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1010;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "AppExplorer" */;
 			compatibilityVersion = "Xcode 9.3";
@@ -1525,6 +1525,7 @@
 			knownRegions = (
 				en,
 				English,
+				Base,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* AppExplorer */;
 			projectDirPath = "";
@@ -1833,7 +1834,7 @@
 		F4D7831615D489B800D00BB9 /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				F4D7831715D489B800D00BB9 /* English */,
+				F4C8BF342197CD820000E312 /* Base */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -1841,7 +1842,7 @@
 		F4D7831915D48C8500D00BB9 /* Explorer.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				F4D7831A15D48C8500D00BB9 /* English */,
+				F4C8BF352197CD820000E312 /* Base */,
 			);
 			name = Explorer.xib;
 			sourceTree = "<group>";
@@ -1897,6 +1898,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)\"";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1911,6 +1913,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
 			name = Debug;

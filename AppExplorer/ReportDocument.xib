@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
-        <plugIn identifier="com.apple.WebKitIBPlugin" version="14113"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <plugIn identifier="com.apple.WebKitIBPlugin" version="14460.31"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -17,9 +17,9 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="5" userLabel="Window">
-            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" unifiedTitleAndToolbar="YES"/>
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="590" y="446" width="774" height="739"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1577"/>
@@ -36,19 +36,21 @@
                             <tabViewItem label="Report" identifier="report" id="38">
                                 <view key="view" id="40">
                                     <rect key="frame" x="0.0" y="0.0" width="774" height="711"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <webView maintainsBackForwardList="NO" id="23">
                                             <rect key="frame" x="0.0" y="0.0" width="774" height="711"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <webPreferences key="preferences" defaultFontSize="12" defaultFixedFontSize="12"/>
+                                            <webPreferences key="preferences" defaultFontSize="12" defaultFixedFontSize="12">
+                                                <nil key="identifier"/>
+                                            </webPreferences>
                                         </webView>
                                         <scrollView hidden="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" id="68">
                                             <rect key="frame" x="0.0" y="122" width="767" height="250"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <clipView key="contentView" autoresizesSubviews="NO" id="8oe-JL-zsk">
                                                 <rect key="frame" x="1" y="1" width="765" height="248"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <customView hidden="YES" id="24" customClass="SchemaView">
                                                         <rect key="frame" x="0.0" y="0.0" width="750" height="250"/>
@@ -93,7 +95,7 @@
                         </tabViewItems>
                     </tabView>
                     <button id="56">
-                        <rect key="frame" x="120" y="2" width="98" height="25"/>
+                        <rect key="frame" x="120" y="0.0" width="98" height="25"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <buttonCell key="cell" type="bevel" title="Save as PDF" bezelStyle="regularSquare" alignment="center" borderStyle="border" inset="2" id="71">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -105,7 +107,7 @@
                         </connections>
                     </button>
                     <button id="64">
-                        <rect key="frame" x="18" y="2" width="98" height="25"/>
+                        <rect key="frame" x="18" y="0.0" width="98" height="25"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <buttonCell key="cell" type="bevel" title="Print" bezelStyle="regularSquare" alignment="center" borderStyle="border" inset="2" id="72">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -117,7 +119,7 @@
                         </connections>
                     </button>
                     <button id="75">
-                        <rect key="frame" x="222" y="2" width="121" height="25"/>
+                        <rect key="frame" x="222" y="0.0" width="121" height="25"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <buttonCell key="cell" type="bevel" title="Copy to Clipboard" bezelStyle="regularSquare" alignment="center" borderStyle="border" inset="2" id="76">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
