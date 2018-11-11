@@ -64,7 +64,7 @@
     
     if (zkImage != nil) {
         imagef.size = zkImage.size;
-        [zkImage drawInRect:imagef fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0 respectFlipped:YES hints:nil];
+        [zkImage drawInRect:imagef fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1.0 respectFlipped:YES hints:nil];
     }
     tf.origin.y += (NSHeight(tf) - txtSize.height) / 2;
     [self.stringValue drawWithRect:tf options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingTruncatesLastVisibleLine attributes:a];

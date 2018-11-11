@@ -243,7 +243,7 @@ NSString * tc(NSString *src) {
     
     NSWindow *window = self.windowControllers[0].window;
     [sp beginSheetModalForWindow:window completionHandler:^(NSInteger result) {
-        if (NSFileHandlingPanelOKButton == result) {
+        if (NSModalResponseOK == result) {
             [sp orderOut:nil];
             NSView *docView = self->webview.mainFrame.frameView.documentView;
             NSData *pdf = [docView dataWithPDFInsideRect:docView.bounds];

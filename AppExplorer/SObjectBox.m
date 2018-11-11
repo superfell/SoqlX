@@ -341,7 +341,7 @@ static const float titleIconGap  = 6.0f;
         NSRect iconRect = titleRect;
         iconRect.origin.x -= iconOffset;
         iconRect.size.width = titleIconSize.width;
-        [titleIcon drawInRect:iconRect fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0 respectFlipped:YES hints:nil];
+        [titleIcon drawInRect:iconRect fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1.0 respectFlipped:YES hints:nil];
     }
 }
 
