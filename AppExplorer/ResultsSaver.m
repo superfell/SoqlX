@@ -73,9 +73,9 @@
 
 -(void)startWrite:(NSWindow*)parentWindow {
     self.rowsWritten = 0;
-    if (saveAll)
-        [NSApp beginSheet:progressWindow modalForWindow:parentWindow modalDelegate:self didEndSelector:nil contextInfo:nil];
-    
+    if (saveAll) {
+        [parentWindow beginSheet:progressWindow completionHandler:nil];
+    }
     started = [NSDate date];
     NSOutputStream *s = [NSOutputStream outputStreamWithURL:filename append:NO];
     [s open];

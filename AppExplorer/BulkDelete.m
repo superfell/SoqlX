@@ -64,7 +64,7 @@
     EditableQueryResultWrapper *dataSource = queryResultTable.wrapper;
     progress.progressLabel = [NSString stringWithFormat:@"Deleting %lu rows", (unsigned long)[dataSource numCheckedRows]];
     progress.progressValue = 1.0;
-    [NSApp beginSheet:progress.progressWindow modalForWindow:modalWindow modalDelegate:self didEndSelector:nil contextInfo:nil];
+    [modalWindow beginSheet:progress.progressWindow completionHandler:nil];
     [self extractRows:dataSource];
 
     // enqueue delete operations

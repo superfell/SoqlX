@@ -86,14 +86,7 @@ static NSString *test = @"https://test.salesforce.com";
 - (void)showLoginSheet:(NSWindow *)modalForWindow {
     [self loadNib];
     modalWindow = modalForWindow;
-    [NSApp beginSheet:window modalForWindow:modalForWindow modalDelegate:self didEndSelector:nil contextInfo:nil];
-}
-
-- (void)restoreLoginWindow:(NSWindow *)w returnCode:(int)rc contextInfo:(id)ctx {
-    if (modalWindow != nil) {
-        [w orderOut:self];
-        [NSApp beginSheet:window modalForWindow:modalWindow modalDelegate:self didEndSelector:nil contextInfo:nil];
-    }
+    [modalForWindow beginSheet:window completionHandler:nil];
 }
 
 - (BOOL)canDeleteServer {
@@ -102,15 +95,12 @@ static NSString *test = @"https://test.salesforce.com";
 
 - (IBAction)showAddNewServer:(id)sender {
     [self setUrlOfNewServer:@"https://"];
-    if (modalWindow != nil) {
-        [NSApp endSheet:window];
-        [window orderOut:sender];
-    }
-    [NSApp beginSheet:newUrlWindow
-       modalForWindow:modalWindow == nil ? window : modalWindow
-        modalDelegate:self
-       didEndSelector:@selector(restoreLoginWindow:returnCode:contextInfo:)
-          contextInfo:nil];
+    [NSApp endSheet:window];
+    [window orderOut:sender];
+    [modalWindow beginSheet:newUrlWindow completionHandler:^(NSModalResponse returnCode) {
+        [self->window orderOut:self];
+        [self->modalWindow beginSheet:self->window completionHandler:nil];
+    }];
 }
 
 - (IBAction)closeAddNewServer:(id)sender {
@@ -165,56 +155,44 @@ static NSString *test = @"https://test.salesforce.com";
 
 - (void)showAlertSheetWithMessageText:(NSString *)message 
             defaultButton:(NSString *)defaultButton 
-            altButton:(NSString *)altButton 
-            otherButton:(NSString *)otherButton 
-            additionalText:(NSString *)additionalText 
-            didEndSelector:(SEL)didEndSelector
-            contextInfo:(id)context {
-    NSAlert * a = [NSAlert alertWithMessageText:message defaultButton:defaultButton alternateButton:altButton otherButton:otherButton informativeTextWithFormat:@"%@", additionalText];
-    NSWindow *wndForAlertSheet = modalWindow == nil ? window : modalWindow;
-    if (modalWindow != nil) {
-        [NSApp endSheet:window];
-        [window orderOut:self];
-    }
-    [a beginSheetModalForWindow:(NSWindow *)wndForAlertSheet modalDelegate:self didEndSelector:didEndSelector contextInfo:(__bridge void * _Nullable)(context)];
-}
+            altButton:(NSString *)altButton
+            completionHandler:(void (^ __nullable)(NSModalResponse returnCode))handler {
+    
+    NSAlert *a = [[NSAlert alloc] init];
+    a.messageText = message;
+    [a addButtonWithTitle:defaultButton];
+    [a addButtonWithTitle:altButton];
 
-- (void)updateKeychain:(NSAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo {
-//    NSLog(@"updateKeychain rc=%d", returnCode);
-    if (returnCode == NSAlertDefaultReturn)
-        [[self selectedCredential] update:username password:password];
-    [[alert window] orderOut:self];
-    [self closeLoginUi];
-    [self.delegate loginController:self loginCompleted:sforce];
-}
-
-- (void)createKeychain:(NSAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo {
-//    NSLog(@"createKeychain rc=%d", returnCode);
-    if (returnCode == NSAlertDefaultReturn) 
-        [Credential createCredentialForServer:server username:username password:password];
-    [[alert window] orderOut:self];
-    [self closeLoginUi];
-    [self.delegate loginController:self loginCompleted:sforce];
+    [NSApp endSheet:window];
+    [window orderOut:self];
+    
+    [a beginSheetModalForWindow:modalWindow completionHandler:handler];
 }
 
 - (void)promptAndAddToKeychain {
     [self showAlertSheetWithMessageText:@"Create Keychain entry with new username & password?" 
                 defaultButton:@"Create Keychain Entry" 
-                altButton:@"No thanks" 
-                otherButton:nil 
-                additionalText:@"" 
-                didEndSelector:@selector(createKeychain:returnCode:contextInfo:) 
-                contextInfo:nil];
+                altButton:@"No thanks"
+                completionHandler:^(NSModalResponse returnCode) {
+                    if (NSAlertFirstButtonReturn == returnCode) {
+                         [Credential createCredentialForServer:self->server username:self->username password:self->password];
+                    }
+                    [self closeLoginUi];
+                    [self.delegate loginController:self loginCompleted:self->sforce];
+                }];
 }
 
 - (void)promptAndUpdateKeychain {
     [self showAlertSheetWithMessageText:@"Update Keychain entry with new password?" 
                 defaultButton:@"Update Keychain" 
-                altButton:@"No thanks" 
-                otherButton:nil 
-                additionalText:@"" 
-                didEndSelector:@selector(updateKeychain:returnCode:contextInfo:) 
-                contextInfo:nil];
+                altButton:@"No thanks"
+                completionHandler:^(NSModalResponse returnCode) {
+                    if (NSAlertFirstButtonReturn == returnCode) {
+                         [[self selectedCredential] update:self->username password:self->password];
+                    }
+                    [self closeLoginUi];
+                    [self.delegate loginController:self loginCompleted:self->sforce];
+                }];
 }
 
 - (ZKSforceClient *)performLogin:(ZKSoapException **)error withApiVersion:(int)version {
