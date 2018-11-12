@@ -274,7 +274,6 @@
 		F4E3194B2198ECE3009B8C4F /* ReportDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4E319472198ECE3009B8C4F /* ReportDocument.xib */; };
 		F4E3194E2198EF4E009B8C4F /* ProgressWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4E3194C2198EF4E009B8C4F /* ProgressWindow.xib */; };
 		F4E8BB10184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E8BB0F184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m */; };
-		F4F249A60B0D92800027987B /* restrictedshine.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F4F249A50B0D92800027987B /* restrictedshine.tiff */; };
 		F4F75D940D4EFCEE00608927 /* QueryTextListView.m in Sources */ = {isa = PBXBuildFile; fileRef = F4F75D930D4EFCEE00608927 /* QueryTextListView.m */; };
 		F4F897B4134CD84C00699880 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F4F897B3134CD84C00699880 /* libxml2.2.dylib */; };
 		F4FAFB660F68CAFD00ECC9BB /* HighlightTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F4FAFB650F68CAFD00ECC9BB /* HighlightTextFieldCell.m */; };
@@ -817,7 +816,6 @@
 		F4E3194D2198EF4E009B8C4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ProgressWindow.xib; sourceTree = "<group>"; };
 		F4E8BB0E184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZKDescribeThemeItem+ZKFindResource.h"; sourceTree = "<group>"; };
 		F4E8BB0F184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ZKDescribeThemeItem+ZKFindResource.m"; sourceTree = "<group>"; };
-		F4F249A50B0D92800027987B /* restrictedshine.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = restrictedshine.tiff; sourceTree = "<group>"; };
 		F4F75D920D4EFCEE00608927 /* QueryTextListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueryTextListView.h; sourceTree = "<group>"; };
 		F4F75D930D4EFCEE00608927 /* QueryTextListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QueryTextListView.m; sourceTree = "<group>"; };
 		F4F897B3134CD84C00699880 /* libxml2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.2.dylib; path = ../../../../../usr/lib/libxml2.2.dylib; sourceTree = "<group>"; };
@@ -964,7 +962,6 @@
 				F4B8DFF40B61F4B900DDD00A /* key_b.png */,
 				F4B8DFF50B61F4B900DDD00A /* key_r.png */,
 				F4B8DFE70B61EB8900DDD00A /* report.css */,
-				F4F249A50B0D92800027987B /* restrictedshine.tiff */,
 				F413C7250AACB9B4000A8CDC /* sf.icns */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
@@ -1546,7 +1543,6 @@
 				F413C7260AACB9B4000A8CDC /* sf.icns in Resources */,
 				F4BBAA152186C3E100647C27 /* Media.xcassets in Resources */,
 				F4E319492198ECE3009B8C4F /* querySavePanel.xib in Resources */,
-				F4F249A60B0D92800027987B /* restrictedshine.tiff in Resources */,
 				F4E3194B2198ECE3009B8C4F /* ReportDocument.xib in Resources */,
 				F4E3194E2198EF4E009B8C4F /* ProgressWindow.xib in Resources */,
 				F4B8DFE80B61EB8900DDD00A /* report.css in Resources */,
