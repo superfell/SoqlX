@@ -434,7 +434,7 @@
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <clipView key="contentView" id="n4k-PW-bMX">
                                                         <rect key="frame" x="0.0" y="0.0" width="837" height="694"/>
-                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
                                                         <subviews>
                                                             <customView id="1241" customClass="SchemaView">
                                                                 <rect key="frame" x="0.0" y="0.0" width="836" height="694"/>
@@ -676,7 +676,7 @@ DQ
                                                                         <rect key="frame" x="1" y="1" width="834" height="223"/>
                                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                         <subviews>
-                                                                            <textView importsGraphics="NO" richText="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" spellingCorrection="YES" smartInsertDelete="YES" id="1644">
+                                                                            <textView importsGraphics="NO" richText="NO" verticallyResizable="YES" findStyle="panel" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" spellingCorrection="YES" smartInsertDelete="YES" id="1644">
                                                                                 <rect key="frame" x="0.0" y="0.0" width="834" height="223"/>
                                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -691,6 +691,7 @@ DQ
                                                                                         </dictionary>
                                                                                     </binding>
                                                                                     <binding destination="354" name="fontSize" keyPath="values.TextSize" id="I6Z-rn-QYQ"/>
+                                                                                    <outlet property="menu" destination="iz2-fO-orK" id="Wja-go-Jln"/>
                                                                                 </connections>
                                                                             </textView>
                                                                         </subviews>
@@ -854,7 +855,7 @@ DQ
                                                                                         <rect key="frame" x="1" y="1" width="610" height="329"/>
                                                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                         <subviews>
-                                                                                            <textView editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" spellingCorrection="YES" smartInsertDelete="YES" id="1652">
+                                                                                            <textView editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" findStyle="panel" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" spellingCorrection="YES" smartInsertDelete="YES" id="1652">
                                                                                                 <rect key="frame" x="0.0" y="0.0" width="610" height="329"/>
                                                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -865,6 +866,7 @@ DQ
                                                                                                 <connections>
                                                                                                     <binding destination="1583" name="value" keyPath="selection.debugLog" id="1655"/>
                                                                                                     <binding destination="354" name="fontSize" keyPath="values.TextSize" id="BWg-bl-Nba"/>
+                                                                                                    <outlet property="menu" destination="iz2-fO-orK" id="zWU-XZ-4h2"/>
                                                                                                 </connections>
                                                                                             </textView>
                                                                                         </subviews>
@@ -963,7 +965,7 @@ DQ
                 <outlet property="delegate" destination="218" id="1670"/>
                 <outlet property="menu" destination="1257" id="1259"/>
             </connections>
-            <point key="canvasLocation" x="367.5" y="-684.5"/>
+            <point key="canvasLocation" x="125" y="-685"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="354" userLabel="Shared Defaults"/>
         <customObject id="560" userLabel="SchemaController" customClass="SchemaController">
