@@ -670,30 +670,19 @@ DQ
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                                 </customView>
                                                                 <scrollView autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="1641">
-                                                                    <rect key="frame" x="0.0" y="73" width="836" height="225"/>
+                                                                    <rect key="frame" x="0.0" y="71" width="836" height="228"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <clipView key="contentView" drawsBackground="NO" id="Kpl-p7-SPv">
-                                                                        <rect key="frame" x="1" y="1" width="834" height="223"/>
+                                                                        <rect key="frame" x="1" y="1" width="834" height="226"/>
                                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                         <subviews>
-                                                                            <textView importsGraphics="NO" richText="NO" verticallyResizable="YES" findStyle="panel" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" spellingCorrection="YES" smartInsertDelete="YES" id="1644">
-                                                                                <rect key="frame" x="0.0" y="0.0" width="834" height="223"/>
+                                                                            <customView id="1644" customClass="MGSFragariaView">
+                                                                                <rect key="frame" x="0.0" y="0.0" width="834" height="225"/>
                                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                                                <size key="minSize" width="834" height="223"/>
-                                                                                <size key="maxSize" width="836" height="10000000"/>
-                                                                                <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                                                 <connections>
-                                                                                    <binding destination="1449" name="value" keyPath="apex" id="1656">
-                                                                                        <dictionary key="options">
-                                                                                            <bool key="NSContinuouslyUpdatesValue" value="YES"/>
-                                                                                        </dictionary>
-                                                                                    </binding>
-                                                                                    <binding destination="354" name="fontSize" keyPath="values.TextSize" id="I6Z-rn-QYQ"/>
-                                                                                    <outlet property="menu" destination="iz2-fO-orK" id="Wja-go-Jln"/>
+                                                                                    <outlet property="menu" destination="iz2-fO-orK" id="Gu3-Ge-LD7"/>
                                                                                 </connections>
-                                                                            </textView>
+                                                                            </customView>
                                                                         </subviews>
                                                                     </clipView>
                                                                     <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="1643">
@@ -965,7 +954,7 @@ DQ
                 <outlet property="delegate" destination="218" id="1670"/>
                 <outlet property="menu" destination="1257" id="1259"/>
             </connections>
-            <point key="canvasLocation" x="125" y="-685"/>
+            <point key="canvasLocation" x="124.5" y="-685.5"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="354" userLabel="Shared Defaults"/>
         <customObject id="560" userLabel="SchemaController" customClass="SchemaController">

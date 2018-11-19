@@ -1,4 +1,4 @@
-// Copyright (c) 2010 Simon Fell
+// Copyright (c) 2010,2018 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -25,6 +25,7 @@
 @class ZKSforceClient;
 @class StandAloneTableHeaderView;
 @class ZKExecuteAnonymousResult;
+@class MGSFragariaView;
 
 @interface ApexResult : NSObject {
     NSString                    *debugLog;
@@ -52,7 +53,7 @@
 @interface ApexController : NSObject {
     NSString        *apex;
     ZKApexClient    *apexClient;
-    NSMutableArray    *results;
+    NSMutableArray  *results;
 
     IBOutlet StandAloneTableHeaderView    *textHeader;
     IBOutlet NSArrayController            *resultsController;
@@ -60,7 +61,7 @@
 
 -(void)setSforceClient:(ZKSforceClient *)client;
 
-@property (strong) IBOutlet NSTextView *apexTextField;
+@property (strong) IBOutlet MGSFragariaView *apexTextField;
 @property (strong) NSString *apex;
 
 @property (readonly) NSUInteger countOfResults;

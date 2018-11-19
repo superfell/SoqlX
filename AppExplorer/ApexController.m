@@ -1,4 +1,4 @@
-// Copyright (c) 2010 Simon Fell
+// Copyright (c) 2010,2018 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -24,6 +24,8 @@
 #import "zkApexClient.h"
 #import "zkExecuteAnonResult.h"
 #import "StandAloneTableHeaderView.h"
+#import "Prefs.h"
+#import <Fragaria/Fragaria.h>
 
 @implementation ApexResult
 
@@ -37,8 +39,6 @@
 +(ApexResult *)fromResult:(ZKExecuteAnonymousResult *)r andLog:(NSString *)debugLog {
     return [[ApexResult alloc] initWithResult:r andLog:debugLog];
 }
-
-// NSImageNameStatusAvailable NSImageNameStatusUnavailable
 
 -(NSImage *)compiledStatusImage {
     return [NSImage imageNamed:[self compiled] ? @"greenLight" : @"redLight"];
@@ -94,10 +94,41 @@
     [textHeader setHeaderText:@"Anonymous Apex"];
     results = [NSMutableArray arrayWithCapacity:20];
     self.apex = [[NSUserDefaults standardUserDefaults] objectForKey:@"LastApexExec"];
-    (self.apexTextField).enabledTextCheckingTypes = 0;
-    [self.apexTextField setSmartInsertDeleteEnabled:NO];
+    [self.apexTextField bind:@"string" toObject:self withKeyPath:@"apex" options:nil];
+    
+    /* This dance gets the colors setup correctly to reflect light/dark mode correctly */
+    MGSUserDefaultsController *apexGroup = [MGSUserDefaultsController sharedControllerForGroupID:@"apexCodeTextView"];
+    [apexGroup addFragariaToManagedSet:self.apexTextField];
+    self.apexTextField.lineHeightMultiple = 1.1;
+    self.apexTextField.textFont = [NSFont labelFontOfSize:[[NSUserDefaults standardUserDefaults] floatForKey:PREF_TEXT_SIZE]];
+    [[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:PREF_TEXT_SIZE options:NSKeyValueObservingOptionNew context:nil];
+    NSTextView *tv = self.apexTextField.textView;
+    tv.menu = self.apexTextField.menu;
+    tv.richText = NO;
+    tv.importsGraphics = NO;
+    tv.fieldEditor = NO;
+    tv.usesFontPanel = NO;
+    tv.smartInsertDeleteEnabled = NO;
+    tv.automaticQuoteSubstitutionEnabled = NO;
+    tv.automaticDataDetectionEnabled = NO;
+    tv.automaticLinkDetectionEnabled = NO;
+    tv.automaticTextCompletionEnabled = NO;
+    tv.automaticTextReplacementEnabled = NO;
+    tv.automaticSpellingCorrectionEnabled = NO;
+    tv.automaticDashSubstitutionEnabled = NO;
 }
 
+- (void)observeValueForKeyPath:(nullable NSString *)keyPath
+                      ofObject:(nullable id)object
+                        change:(nullable NSDictionary<NSKeyValueChangeKey, id> *)change
+                       context:(nullable void *)context {
+    self.apexTextField.textFont = [NSFont labelFontOfSize:[[change valueForKey:NSKeyValueChangeNewKey] floatValue]];
+}
+
+-(void)dealloc {
+    [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:PREF_TEXT_SIZE];
+    [self.apexTextField unbind:@"string"];
+}
 
 -(void)setDebugSettingsFromDefaults {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
@@ -124,11 +155,18 @@
     ZKExecuteAnonymousResult *r = [apexClient executeAnonymous:self.apex];
     NSString *deb = [apexClient lastDebugLog];
     ApexResult *ar = [ApexResult fromResult:r andLog:deb];
-    NSLog(@"res %@", [ar resultText]);
     [self insertObject:ar inResultsAtIndex:0];
     [[NSUserDefaults standardUserDefaults] setObject:self.apex forKey:@"LastApexExec"];
     [resultsController setSelectionIndex:0];
-//    [self setSelectedResult:[NSIndexSet indexSetWithIndex:0]];
+    if ([ar success]) {
+        self.apexTextField.syntaxErrors = @[];
+    } else {
+        SMLSyntaxError *err = [[SMLSyntaxError alloc] init];
+        err.line = ar.line;
+        err.character = ar.column;
+        err.errorDescription = ar.resultText;
+        self.apexTextField.syntaxErrors = @[err];
+    }
 }
 
 -(NSUInteger)countOfResults {
