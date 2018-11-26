@@ -3,4 +3,4 @@
 	url = git://github.com/superfell/zkSforce.git
 [submodule "Fragaria"]
 	path = Fragaria
-	url = https://github.com/shysaur/Fragaria.git
+	url = https://github.com/superfell/Fragaria.git

@@ -147,6 +147,7 @@
 		F454E24A184C3B990083AEA8 /* ZKUserTerritoryDeleteHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F454E1EE184C3B990083AEA8 /* ZKUserTerritoryDeleteHeader.m */; };
 		F458CEB20AFF2442008A20A9 /* SObjectBox.m in Sources */ = {isa = PBXBuildFile; fileRef = F458CEB00AFF2442008A20A9 /* SObjectBox.m */; };
 		F4592CBF21A24A8C0042F2AD /* Fragaria.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4CA097C21A1E8DE00CC9238 /* Fragaria.framework */; };
+		F4592CCA21AB8ADB0042F2AD /* Fragaria.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = F4CA097C21A1E8DE00CC9238 /* Fragaria.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F45B372F1B71BD7F00206510 /* ZKAdditionalInformationMap.m in Sources */ = {isa = PBXBuildFile; fileRef = F45B37161B71BD7F00206510 /* ZKAdditionalInformationMap.m */; };
 		F45B37301B71BD7F00206510 /* ZKAnalyticsCloudComponent.m in Sources */ = {isa = PBXBuildFile; fileRef = F45B37181B71BD7F00206510 /* ZKAnalyticsCloudComponent.m */; };
 		F45B37311B71BD7F00206510 /* ZKDescribeLayoutFeedFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = F45B371A1B71BD7F00206510 /* ZKDescribeLayoutFeedFilter.m */; };
@@ -348,6 +349,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				F4592CCA21AB8ADB0042F2AD /* Fragaria.framework in CopyFiles */,
 				F4D9DD1D0AD8A1840065EA2D /* Sparkle.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -99,6 +99,8 @@
     /* This dance gets the colors setup correctly to reflect light/dark mode correctly */
     MGSUserDefaultsController *apexGroup = [MGSUserDefaultsController sharedControllerForGroupID:@"apexCodeTextView"];
     [apexGroup addFragariaToManagedSet:self.apexTextField];
+    
+    [self.apexTextField setSyntaxDefinitionName:@"apex"];
     self.apexTextField.lineHeightMultiple = 1.1;
     self.apexTextField.textFont = [NSFont labelFontOfSize:[[NSUserDefaults standardUserDefaults] floatForKey:PREF_TEXT_SIZE]];
     [[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:PREF_TEXT_SIZE options:NSKeyValueObservingOptionNew context:nil];
