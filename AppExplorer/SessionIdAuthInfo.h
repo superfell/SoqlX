@@ -1,4 +1,4 @@
-// Copyright (c) 2012 Simon Fell
+// Copyright (c) 2018 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -20,28 +20,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "zkAuthentication.h"
 
-@class Explorer;
-@class ZKSforceClient;
-
-@interface AppDelegate : NSObject<NSApplicationDelegate> {
-    NSMutableArray *windowControllers;
+@interface SessionIdAuthInfo: NSObject<ZKAuthenticationInfo> {
 }
 
-- (IBAction)launchHelp:(id)sender;
-- (IBAction)openNewWindow:(id)sender;
+-(instancetype)initWithUrl:(NSURL*)url sessionId:(NSString*)sid;
 
-@end
-
-@interface SoqlXWindowController : NSWindowController {
-    NSMutableArray  *controllers;
-    id              observer;
-}
--(instancetype)initWithWindowControllers:(NSMutableArray *)controllers;
-
--(void)showWindowForClient:(ZKSforceClient*)client;
--(void)closeLoginPanelIfOpen:(id)sender;
-
-@property (strong) IBOutlet Explorer *explorer;
+@property (readonly) NSString *sessionId;     // return an API Session ID.
+@property (readonly) NSURL *instanceUrl;      // return the full URL to the soap endpoint for the authentication user.
 
 @end

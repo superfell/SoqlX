@@ -19,6 +19,7 @@
 		F4065BD61EE4CB7200E70970 /* ZKRenderStoredEmailTemplateResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4065BCD1EE4CB7200E70970 /* ZKRenderStoredEmailTemplateResult.m */; };
 		F4065BD71EE4CB7200E70970 /* ZKSearchRecordMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = F4065BCF1EE4CB7200E70970 /* ZKSearchRecordMetadata.m */; };
 		F412575D0B098593001622AC /* WeightedSObject.m in Sources */ = {isa = PBXBuildFile; fileRef = F412575B0B098593001622AC /* WeightedSObject.m */; };
+		F412DE1721B341D300D8889F /* SessionIdAuthInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F412DE1621B341D300D8889F /* SessionIdAuthInfo.m */; };
 		F413C6540AACABD5000A8CDC /* DataSources.m in Sources */ = {isa = PBXBuildFile; fileRef = F413C6530AACABD5000A8CDC /* DataSources.m */; };
 		F413C7260AACB9B4000A8CDC /* sf.icns in Resources */ = {isa = PBXBuildFile; fileRef = F413C7250AACB9B4000A8CDC /* sf.icns */; };
 		F425FAC61A33A04C0055D8B8 /* ZKActionOverride.m in Sources */ = {isa = PBXBuildFile; fileRef = F425FAA31A33A04B0055D8B8 /* ZKActionOverride.m */; };
@@ -384,6 +385,8 @@
 		F4065BCF1EE4CB7200E70970 /* ZKSearchRecordMetadata.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKSearchRecordMetadata.m; path = ../zksforce/zkSforce/ZKSearchRecordMetadata.m; sourceTree = "<group>"; };
 		F412575A0B098593001622AC /* WeightedSObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WeightedSObject.h; sourceTree = "<group>"; };
 		F412575B0B098593001622AC /* WeightedSObject.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WeightedSObject.m; sourceTree = "<group>"; };
+		F412DE1521B341D300D8889F /* SessionIdAuthInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SessionIdAuthInfo.h; sourceTree = "<group>"; };
+		F412DE1621B341D300D8889F /* SessionIdAuthInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SessionIdAuthInfo.m; sourceTree = "<group>"; };
 		F413C6520AACABD5000A8CDC /* DataSources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataSources.h; sourceTree = "<group>"; };
 		F413C6530AACABD5000A8CDC /* DataSources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataSources.m; sourceTree = "<group>"; };
 		F413C7250AACB9B4000A8CDC /* sf.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = sf.icns; sourceTree = "<group>"; };
@@ -918,6 +921,10 @@
 				F4CD3DB80B8572DB00084479 /* credential.m */,
 				F4CD3DAA0B85701100084479 /* ZKLoginController.h */,
 				F4CD3DAB0B85701100084479 /* ZKLoginController.m */,
+				F412DE1521B341D300D8889F /* SessionIdAuthInfo.h */,
+				F412DE1621B341D300D8889F /* SessionIdAuthInfo.m */,
+				F4D7831C15D49F7B00D00BB9 /* AppDelegate.h */,
+				F4D7831D15D49F7B00D00BB9 /* AppDelegate.m */,
 				F45DDFDB0AABBA6100ED0BA0 /* Explorer.m */,
 				F45DDFDC0AABBA6100ED0BA0 /* Explorer.h */,
 				F4B8AFC518A8540800FE114F /* IconProvider.h */,
@@ -943,8 +950,6 @@
 				F4C878B70F3964BD000075D4 /* BulkDelete.m */,
 				F454D161126785EA00DC16D9 /* ApexController.h */,
 				F454D162126785EA00DC16D9 /* ApexController.m */,
-				F4D7831C15D49F7B00D00BB9 /* AppDelegate.h */,
-				F4D7831D15D49F7B00D00BB9 /* AppDelegate.m */,
 				F4E8BB0E184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.h */,
 				F4E8BB0F184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m */,
 				F48B6B8A1969E68700496C82 /* Prefs.h */,
@@ -1819,6 +1824,7 @@
 				F4D7836B15D8814C00D00BB9 /* ZKDescribe_Reporting.m in Sources */,
 				F45B37371B71BD7F00206510 /* ZKFieldComponent.m in Sources */,
 				F4065BD51EE4CB7200E70970 /* ZKRenderStoredEmailTemplateRequest.m in Sources */,
+				F412DE1721B341D300D8889F /* SessionIdAuthInfo.m in Sources */,
 				F4C440CA15DB50BC00590A1E /* SearchQueryResult.m in Sources */,
 				F48B6B9E1969ED7D00496C82 /* ZKNamedLayoutInfo.m in Sources */,
 				F4E11E361820AFD5001D18C6 /* ZKLimitInfo.m in Sources */,

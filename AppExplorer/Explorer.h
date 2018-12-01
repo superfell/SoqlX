@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2012 Simon Fell
+// Copyright (c) 2006-2012,2018 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -109,6 +109,10 @@
 
 - (void)dataChangedOnObject:(ZKSObject *)anObject field:(NSString *)fieldName value:(id)newValue;
 - (void)updateQueryTextFontSize:(id)sender;
+
+// initializes the explorer from this already existing client instance. Assumes that
+// it has already sucesfully authenticated.
+- (void)useClient:(ZKSforceClient *)client;
 @end
 
 

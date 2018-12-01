@@ -6,8 +6,9 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="NSWindowController">
+        <customObject id="-2" userLabel="File's Owner" customClass="SoqlXWindowController">
             <connections>
+                <outlet property="explorer" destination="218" id="Hs3-th-ea1"/>
                 <outlet property="window" destination="290" id="1669"/>
             </connections>
         </customObject>
@@ -674,7 +675,7 @@ DQ
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <clipView key="contentView" drawsBackground="NO" id="Kpl-p7-SPv">
                                                                         <rect key="frame" x="1" y="1" width="834" height="226"/>
-                                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                                        <autoresizingMask key="autoresizingMask"/>
                                                                         <subviews>
                                                                             <customView id="1644" customClass="MGSFragariaView">
                                                                                 <rect key="frame" x="0.0" y="0.0" width="834" height="225"/>
@@ -716,7 +717,7 @@ DQ
                                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                     <clipView key="contentView" id="8QW-WY-ZbW">
                                                                                         <rect key="frame" x="1" y="0.0" width="211" height="359"/>
-                                                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                                                        <autoresizingMask key="autoresizingMask"/>
                                                                                         <subviews>
                                                                                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" headerView="1577" id="1576">
                                                                                                 <rect key="frame" x="0.0" y="0.0" width="211" height="342"/>
@@ -842,7 +843,7 @@ DQ
                                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                     <clipView key="contentView" drawsBackground="NO" id="wiT-5w-VwX">
                                                                                         <rect key="frame" x="1" y="1" width="610" height="329"/>
-                                                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                                                        <autoresizingMask key="autoresizingMask"/>
                                                                                         <subviews>
                                                                                             <textView editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" findStyle="panel" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" spellingCorrection="YES" smartInsertDelete="YES" id="1652">
                                                                                                 <rect key="frame" x="0.0" y="0.0" width="610" height="329"/>

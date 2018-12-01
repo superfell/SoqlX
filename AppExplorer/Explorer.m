@@ -224,7 +224,9 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
 - (IBAction)initUi:(id)sender {
     [self setSoqlString:[[NSUserDefaults standardUserDefaults] stringForKey:@"soql"]];
-    [self performSelector:@selector(showLogin:) withObject:nil afterDelay:0];
+    if (sforce == nil) {
+        [self showLogin:self];
+    }
 }
 
 - (IBAction)showLogin:(id)sender {
@@ -242,6 +244,12 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 }
 
 -(void)loginController:(ZKLoginController *)controller loginCompleted:(ZKSforceClient *)client {
+    loginController = nil;
+    [self useClient:client];
+}
+
+- (void)useClient:(ZKSforceClient *)client {
+    [self closeLoginPanelIfOpen:self];
     sforce = client;
     sforce.delegate = self;
     loginController = nil;
