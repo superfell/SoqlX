@@ -24,6 +24,9 @@
 #import "zkSforceClient.h"
 #import "zkSoapException.h"
 
+int DEFAULT_API_VERSION = 44;
+
+
 @interface ZKLoginController ()
 @property (strong) Credential *selectedCredential;
 -(void)closeLoginUi;
@@ -52,11 +55,17 @@ static NSString *test = @"https://test.salesforce.com";
     return [NSSet setWithObject:@"apiSecurityToken"];
 }
 
++ (NSString*)appClientId {
+    NSDictionary *plist = [[NSBundle mainBundle] infoDictionary];
+    NSString *cid = [NSString stringWithFormat:@"%@/%@", [plist objectForKey:@"CFBundleName"], [plist objectForKey:@"CFBundleVersion"]];
+    return cid;
+}
+
 - (id)init {
     self = [super init];
     server = [[[NSUserDefaults standardUserDefaults] objectForKey:@"server"] copy];
     [self setUsername:[[NSUserDefaults standardUserDefaults] objectForKey:login_lastUsernameKey]];
-    preferedApiVersion = 44;
+    preferedApiVersion = DEFAULT_API_VERSION;
     return self;
 }
 
@@ -73,9 +82,7 @@ static NSString *test = @"https://test.salesforce.com";
 }
 
 - (void)setClientIdFromInfoPlist {
-    NSDictionary *plist = [[NSBundle mainBundle] infoDictionary];
-    NSString *cid = [NSString stringWithFormat:@"%@/%@", [plist objectForKey:@"CFBundleName"], [plist objectForKey:@"CFBundleVersion"]];
-    [self setClientId:cid];
+    [self setClientId:[ZKLoginController appClientId]];
 }
 
 - (void)endModalWindow:(id)sforce {

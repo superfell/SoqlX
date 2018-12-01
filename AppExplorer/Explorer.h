@@ -40,30 +40,30 @@
 @interface Explorer : NSObject<EditableQueryResultWrapperDelegate, NSWindowDelegate, NSTabViewDelegate, QueryTextListViewDelegate, ZKLoginControllerDelegate, ZKBaseClientDelegate>
 {
     // old world order, needs modernizing
-    IBOutlet NSOutlineView            *describeList;
+    IBOutlet NSOutlineView          *describeList;
     IBOutlet NSTableView            *rootTableView;
     IBOutlet NSTableView            *childTableView;
-    IBOutlet NSTextView                *soql;    
+    IBOutlet NSTextView             *soql;
     IBOutlet NSMenu                 *soqlContextMenu;
     IBOutlet NSProgressIndicator    *progress;
-    IBOutlet NSWindow                *myWindow;
-    IBOutlet NSTabView                *soqlSchemaTabs;
+    IBOutlet NSWindow               *myWindow;
+    IBOutlet NSTabView              *soqlSchemaTabs;
     IBOutlet NSSplitView            *vertSplitView;
     IBOutlet NSSplitView            *soqlTextSplitView;
     IBOutlet StandAloneTableHeaderView    *soqlHeader;
     
-    ZKSforceClient                    *sforce;
-    DescribeListDataSource            *descDataSource;
+    ZKSforceClient                  *sforce;
+    DescribeListDataSource          *descDataSource;
 
     QueryResultTable                *rootResults;
     QueryResultTable                *childResults;
-    CGFloat                            uncollapsedDividerPosition;
+    CGFloat                         uncollapsedDividerPosition;
     
-    ZKLoginController                 *loginController;
-    IBOutlet SchemaController        *schemaController;
-    IBOutlet DetailsController        *detailsController;
+    ZKLoginController               *loginController;
+    IBOutlet SchemaController       *schemaController;
+    IBOutlet DetailsController      *detailsController;
     IBOutlet QueryListController    *queryListController;
-    IBOutlet ApexController            *apexController;
+    IBOutlet ApexController         *apexController;
     
     // new world order, uses binding
     NSString                        *statusText;

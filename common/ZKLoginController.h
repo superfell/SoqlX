@@ -26,6 +26,8 @@
 @class ZKSoapException;
 @class ZKLoginController;
 
+extern int DEFAULT_API_VERSION;
+
 @protocol ZKLoginControllerDelegate <NSObject>
 -(void)loginController:(ZKLoginController *)controller loginCompleted:(ZKSforceClient *)client;
 @optional
@@ -59,6 +61,8 @@
     NSObject<ZKLoginControllerDelegate> *__weak delegate;
     NSArray *nibTopLevelObjects;
 }
+
++ (NSString*)appClientId;
 
 - (void)showLoginSheet:(NSWindow *)modalForWindow;
 

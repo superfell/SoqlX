@@ -113,8 +113,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     NSString *prod = @"https://www.salesforce.com";
     NSString *test = @"https://test.salesforce.com";
     
-    NSMutableArray * defaultServers = [NSMutableArray arrayWithObjects:prod, test, nil];
-    defaults[@"servers"] = defaultServers;
+    defaults[@"servers"] = @[prod, test];
     defaults[@"server"] = prod;
     defaults[PREF_QUERY_SORT_FIELDS] = @YES;
     defaults[PREF_SKIP_ADDRESS_FIELDS] = @NO;
