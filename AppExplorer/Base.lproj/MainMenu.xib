@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -253,18 +253,18 @@
             </items>
         </menu>
         <customObject id="340" userLabel="SUUpdater" customClass="SUUpdater"/>
-        <window title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="prefs" animationBehavior="default" id="343" userLabel="Preferences">
-            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
-            <rect key="contentRect" x="710" y="756" width="435" height="176"/>
+        <window title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="prefs" animationBehavior="default" id="343" userLabel="Preferences">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
+            <rect key="contentRect" x="710" y="756" width="435" height="233"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1578"/>
             <value key="minSize" type="size" width="213" height="100"/>
             <value key="maxSize" type="size" width="1500" height="1200"/>
             <view key="contentView" id="344">
-                <rect key="frame" x="0.0" y="0.0" width="435" height="176"/>
+                <rect key="frame" x="0.0" y="0.0" width="435" height="233"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button id="345">
-                        <rect key="frame" x="18" y="139" width="203" height="18"/>
+                        <rect key="frame" x="18" y="197" width="203" height="18"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <buttonCell key="cell" type="check" title="Check for updates at startup" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="1204">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -279,7 +279,7 @@
                         </connections>
                     </button>
                     <button id="1686">
-                        <rect key="frame" x="18" y="99" width="354" height="18"/>
+                        <rect key="frame" x="18" y="157" width="354" height="18"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <buttonCell key="cell" type="check" title="Sort fields in alphabetical order in generated queries" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="1687">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -294,7 +294,7 @@
                         </connections>
                     </button>
                     <button id="1692">
-                        <rect key="frame" x="18" y="79" width="382" height="18"/>
+                        <rect key="frame" x="18" y="137" width="382" height="18"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <buttonCell key="cell" type="check" title="Use component fields for addresses in generated queries" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="1693">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -309,7 +309,7 @@
                         </connections>
                     </button>
                     <button id="YDz-10-l7r">
-                        <rect key="frame" x="18" y="119" width="287" height="18"/>
+                        <rect key="frame" x="18" y="177" width="287" height="18"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <buttonCell key="cell" type="check" title="Sort fields in alphabetical order in sidebar" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="XYO-XB-7Uv">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -324,7 +324,7 @@
                         </connections>
                     </button>
                     <button id="sdA-fY-fqy">
-                        <rect key="frame" x="18" y="59" width="382" height="18"/>
+                        <rect key="frame" x="18" y="117" width="382" height="18"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <buttonCell key="cell" type="check" title="Quit SoqlX when last window closes" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Xe7-dv-Q64">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -339,7 +339,7 @@
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" id="359">
-                        <rect key="frame" x="339" y="13" width="82" height="32"/>
+                        <rect key="frame" x="303" y="13" width="118" height="32"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <buttonCell key="cell" type="push" title="Close" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="1205">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -352,9 +352,41 @@ Gw
                             <action selector="performClose:" target="343" id="1681"/>
                         </connections>
                     </button>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="1rW-mR-B3p">
+                        <rect key="frame" x="37" y="69" width="268" height="17"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="Nak-Bf-mUO">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="1677" name="value" keyPath="editFontLabel" id="pyb-0Q-18F"/>
+                        </connections>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="N4F-3N-8jr">
+                        <rect key="frame" x="37" y="94" width="303" height="17"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="Edit Text Font:" id="ncI-E0-KU0">
+                            <font key="font" metaFont="systemBold"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button verticalHuggingPriority="750" id="cX7-EX-NvD">
+                        <rect key="frame" x="303" y="59" width="118" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Change Font" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Mhh-kR-IiD">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="showFontPrefs:" target="1677" id="WhR-9k-dJ6"/>
+                        </connections>
+                    </button>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="633.5" y="537"/>
+            <point key="canvasLocation" x="496.5" y="492.5"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="354" userLabel="Shared Defaults"/>
         <customObject id="1677" userLabel="App Delegate" customClass="AppDelegate"/>

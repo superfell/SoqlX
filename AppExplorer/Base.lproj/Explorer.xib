@@ -213,7 +213,7 @@
                                                                                     <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                                                     <connections>
                                                                                         <outlet property="delegate" destination="218" id="952"/>
-                                                                                        <outlet property="menu" destination="iz2-fO-orK" id="o9T-J1-E2J"/>
+                                                                                        <outlet property="menu" destination="iz2-fO-orK" id="v6l-Db-aBE"/>
                                                                                     </connections>
                                                                                 </textView>
                                                                             </subviews>
@@ -1151,45 +1151,7 @@ DQ
             </connections>
         </arrayController>
         <menu id="iz2-fO-orK">
-            <items>
-                <menuItem title="Font Size" id="aPV-0e-efO">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <menu key="submenu" title="Font Size" id="WnB-qh-FMc">
-                        <items>
-                            <menuItem title="8" tag="8" id="rBJ-hn-y2A">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                            </menuItem>
-                            <menuItem title="9" tag="9" id="620-dz-HXw">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                            </menuItem>
-                            <menuItem title="10" tag="10" id="t4t-0M-DWq">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                            </menuItem>
-                            <menuItem title="11" tag="11" id="BCY-D5-PWW">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                            </menuItem>
-                            <menuItem title="12" tag="12" id="xj7-We-smj">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                            </menuItem>
-                            <menuItem title="13" tag="13" id="6aA-KW-nc0">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                            </menuItem>
-                            <menuItem title="14" tag="14" id="png-i1-RtE">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                            </menuItem>
-                            <menuItem title="18" tag="18" id="5Wg-7e-PHL">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                            </menuItem>
-                            <menuItem title="21" tag="21" id="t7v-2p-bVV">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                            </menuItem>
-                            <menuItem title="24" tag="24" id="4oP-CX-bj8">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                            </menuItem>
-                        </items>
-                    </menu>
-                </menuItem>
-            </items>
+            <point key="canvasLocation" x="125" y="63"/>
         </menu>
     </objects>
     <resources>

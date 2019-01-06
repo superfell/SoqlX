@@ -31,7 +31,7 @@ extern NSString *PREF_QUERY_SORT_FIELDS;
 // If false (default) we'll skip the component fields and just select the compound field (short resulting query text, slightly cleaner results table, but not editable)
 extern NSString *PREF_SKIP_ADDRESS_FIELDS;
 
-// What font size do we want for text ?
+// What font size do we want for text ? migrated to NSFont userFixedPitchFont in 3.1
 extern NSString *PREF_TEXT_SIZE;
 
 // Should we exit the app if the last window is closed, or stay running ?

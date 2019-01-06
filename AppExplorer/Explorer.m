@@ -121,7 +121,22 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     defaults[PREF_SORTED_FIELD_LIST] = @YES;
     defaults[PREF_QUIT_ON_LAST_WINDOW_CLOSE] = @YES;
     
-    [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
+    NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
+    [defs registerDefaults:defaults];
+    NSFont *font = nil;
+    if ([defs integerForKey:PREF_TEXT_SIZE] > 0) {
+        double fontSize = [defs doubleForKey:PREF_TEXT_SIZE];
+        font = [NSFont userFixedPitchFontOfSize:fontSize];
+        if (font == nil) {
+            font = [NSFont monospacedDigitSystemFontOfSize:fontSize weight:NSFontWeightRegular];
+        }
+        NSLog(@"Migrating font size %f to font %@", [defs doubleForKey:PREF_TEXT_SIZE], font);
+        [NSFont setUserFixedPitchFont:font];
+        [defs setObject:@0 forKey:PREF_TEXT_SIZE];
+    } else {
+        font = [NSFont userFixedPitchFontOfSize:0];
+        NSLog(@"Using font %@", font);
+    }
 }
 
 +(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
@@ -130,6 +145,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
         return [paths setByAddingObjectsFromArray:@[@"currentResults", @"rowsLoadedStatusText"]];
     return paths;
 }
+
 
 -(void)updateMenuState {
     NSInteger currentSize = [[[NSUserDefaults standardUserDefaults] objectForKey:PREF_TEXT_SIZE] intValue];
@@ -188,10 +204,10 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     [descDataSource stopBackgroundDescribe];
 }
 
--(void)updateQueryTextFontSize:(id)sender {
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:[sender tag]] forKey:PREF_TEXT_SIZE];
-    [self updateMenuState];
-    [self colorize];    
+- (NSFont *)changeFont:(id)sender; {
+    soql.textStorage.font = [sender convertFont:soql.textStorage.font];
+    [NSFont setUserFixedPitchFont:soql.textStorage.font];
+    return soql.textStorage.font;
 }
 
 -(void)updateCallCount:(ZKSforceClient *)c {
@@ -224,6 +240,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
 - (IBAction)initUi:(id)sender {
     [self setSoqlString:[[NSUserDefaults standardUserDefaults] stringForKey:@"soql"]];
+    soql.textStorage.font = [NSFont userFixedPitchFontOfSize:0];
     if (sforce == nil) {
         [self showLogin:self];
     }
@@ -416,14 +433,6 @@ typedef enum SoqlParsePosition {
     
     NSTextStorage *soqlTextStorage = soql.textStorage;
     NSString *soqlText = soqlTextStorage.string;
-    float fontSize = [[[NSUserDefaults standardUserDefaults] valueForKey:PREF_TEXT_SIZE] floatValue];
-    NSFont *font = [NSFont userFixedPitchFontOfSize:fontSize];
-    if (font == nil) {
-        NSLog(@"userFixedPitchFontOfSize:%f returned nil!", fontSize);
-    } else {
-        soqlTextStorage.font = font;
-    }
-    
     NSString *entity = [self parseEntityName:soqlText];
     ZKDescribeSObject *desc = nil;
     if (entity != nil) {

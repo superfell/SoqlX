@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2015 Simon Fell
+// Copyright (c) 2012-2015,2018,2019 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -34,7 +34,7 @@
 
 @implementation AppDelegate
 
-@synthesize startedFromOpenUrls;
+@synthesize startedFromOpenUrls, editFontLabel;
 
 -(instancetype)init {
     self = [super init];
@@ -106,6 +106,10 @@
     }
 }
 
+-(void)setEditFontLabelFrom:(NSFont *)f {
+    self.editFontLabel = [NSString stringWithFormat:@"%.1f pt %@", f.pointSize, f.displayName];
+}
+
 -(void)applicationDidFinishLaunching:(NSNotification *)notification {
     [self resetApiVersionOverrideIfAppVersionChanged];
     if (!self.startedFromOpenUrls) {
@@ -114,6 +118,7 @@
     
     // If the updater is going to restart the app, we need to close the login sheet if its currently open.
     [[SUUpdater sharedUpdater] setDelegate:self];
+    [self setEditFontLabelFrom:[NSFont userFixedPitchFontOfSize:0]];
 }
 
 -(void)openNewWindow:(id)sender {
@@ -128,6 +133,27 @@
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender {
     return [[NSUserDefaults standardUserDefaults] boolForKey:PREF_QUIT_ON_LAST_WINDOW_CLOSE];
+}
+
+-(IBAction)showFontPrefs:(id)sender {
+    NSFontPanel *p = [NSFontPanel sharedFontPanel];
+    [p setPanelFont:[NSFont userFixedPitchFontOfSize:0] isMultiple:NO];
+    p.enabled = YES;
+    [p orderFront:self];
+}
+
+- (void)changeFont:(nullable NSFontManager *)sender {
+    NSFont *newFont = nil;
+    for (Explorer *ex in [windowControllers valueForKey:@"explorer"]) {
+        newFont = [ex changeFont:sender];
+    }
+    if (newFont !=nil) {
+        [self setEditFontLabelFrom:newFont];
+    }
+}
+
+- (NSFontPanelModeMask)validModesForFontPanel:(NSFontPanel *)fontPanel {
+    return NSFontPanelModeMaskFace | NSFontPanelModeMaskSize | NSFontPanelModeMaskCollection;
 }
 
 @end
