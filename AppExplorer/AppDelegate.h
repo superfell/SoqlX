@@ -33,6 +33,7 @@
 - (IBAction)showFontPrefs:(id)sender;
 
 @property (strong) NSString *editFontLabel;
+@property (strong) NSFont *editFont;
 
 @end
 

@@ -108,7 +108,7 @@
 - (void)updateProgress:(BOOL)show;
 
 - (void)dataChangedOnObject:(ZKSObject *)anObject field:(NSString *)fieldName value:(id)newValue;
-- (NSFont *)changeFont:(id)sender;
+- (void)changeEditFont:(id)sender;
 
 // initializes the explorer from this already existing client instance. Assumes that
 // it has already sucesfully authenticated.

@@ -105,40 +105,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
 @synthesize statusText, schemaViewIsActive, apiCallCountText, selectedObjectName, selectedFields, previouslyColorized, previousColorizedDescribe;
 
-+ (void)initialize {
-    NSMutableDictionary * defaults = [NSMutableDictionary dictionary];
-    defaults[@"details"] = @NO;
-    defaults[@"soql"] = @"select id, firstname, lastname from contact";
-
-    NSString *prod = @"https://www.salesforce.com";
-    NSString *test = @"https://test.salesforce.com";
-    
-    defaults[@"servers"] = @[prod, test];
-    defaults[@"server"] = prod;
-    defaults[PREF_QUERY_SORT_FIELDS] = @YES;
-    defaults[PREF_SKIP_ADDRESS_FIELDS] = @NO;
-    defaults[PREF_TEXT_SIZE] = @11;
-    defaults[PREF_SORTED_FIELD_LIST] = @YES;
-    defaults[PREF_QUIT_ON_LAST_WINDOW_CLOSE] = @YES;
-    
-    NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
-    [defs registerDefaults:defaults];
-    NSFont *font = nil;
-    if ([defs integerForKey:PREF_TEXT_SIZE] > 0) {
-        double fontSize = [defs doubleForKey:PREF_TEXT_SIZE];
-        font = [NSFont userFixedPitchFontOfSize:fontSize];
-        if (font == nil) {
-            font = [NSFont monospacedDigitSystemFontOfSize:fontSize weight:NSFontWeightRegular];
-        }
-        NSLog(@"Migrating font size %f to font %@", [defs doubleForKey:PREF_TEXT_SIZE], font);
-        [NSFont setUserFixedPitchFont:font];
-        [defs setObject:@0 forKey:PREF_TEXT_SIZE];
-    } else {
-        font = [NSFont userFixedPitchFontOfSize:0];
-        NSLog(@"Using font %@", font);
-    }
-}
-
 +(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
     NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
     if ([key isEqualToString:@"canQueryMore"])
@@ -146,30 +112,11 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     return paths;
 }
 
-
--(void)updateMenuState {
-    NSInteger currentSize = [[[NSUserDefaults standardUserDefaults] objectForKey:PREF_TEXT_SIZE] intValue];
-    for (NSMenuItem *i in soqlContextMenu.itemArray) {
-        for (NSMenuItem *c in i.submenu.itemArray) {
-            if (c.target == nil) {
-                c.action = @selector(updateQueryTextFontSize:);
-                c.target = self;
-            }
-            c.state = c.tag == currentSize ? NSOnState : NSOffState;
-        }
-    }
-}
-
 - (void)awakeFromNib {
     [myWindow setContentBorderThickness:28.0 forEdge:NSMinYEdge];     
     [myWindow setContentBorderThickness:28.0 forEdge:NSMaxYEdge];     
     myWindow.delegate = self;
     soql.enabledTextCheckingTypes = 0;
-    
-    // Turn on full-screen option in Lion
-    //if ([myWindow respondsToSelector:@selector(setCollectionBehavior:)]) {
-    //    [myWindow setCollectionBehavior:[myWindow collectionBehavior] | (1 << 7)];
-    //}
     
     soqlSchemaTabs.delegate = self;
     [soqlHeader setHeaderText:@"Query"];
@@ -185,7 +132,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     childResults = [[QueryResultTable alloc] initForTableView:childTableView];
     childResults.delegate = self;
     [self collapseChildTableView];
-    [self updateMenuState];
     [self performSelector:@selector(initUi:) withObject:nil afterDelay:0];
        
     queryListController.delegate = self;
@@ -204,10 +150,9 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     [descDataSource stopBackgroundDescribe];
 }
 
-- (NSFont *)changeFont:(id)sender; {
+- (void)changeEditFont:(id)sender; {
     soql.textStorage.font = [sender convertFont:soql.textStorage.font];
     [NSFont setUserFixedPitchFont:soql.textStorage.font];
-    return soql.textStorage.font;
 }
 
 -(void)updateCallCount:(ZKSforceClient *)c {
@@ -371,7 +316,12 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 }
 
 - (void)setSoqlString:(NSString *)str {
-    [soql.textStorage setAttributedString:[[NSAttributedString alloc] initWithString:str attributes:@{NSForegroundColorAttributeName: [NSColor textColor]}]];
+    NSAttributedString *s = [[NSAttributedString alloc]
+                             initWithString:str
+                             attributes:@{
+                                          NSForegroundColorAttributeName: [NSColor textColor]
+                                                                         }];
+    [soql.textStorage setAttributedString:s];
     self.previouslyColorized = nil;
     self.previousColorizedDescribe = nil;
     [self colorize];

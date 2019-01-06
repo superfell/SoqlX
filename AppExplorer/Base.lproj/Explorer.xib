@@ -203,7 +203,7 @@
                                                                             <rect key="frame" x="0.0" y="0.0" width="837" height="63"/>
                                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                             <subviews>
-                                                                                <textView importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" allowsUndo="YES" usesRuler="YES" spellingCorrection="YES" smartInsertDelete="YES" id="930" customClass="ZKTextView">
+                                                                                <textView importsGraphics="NO" richText="NO" verticallyResizable="YES" allowsUndo="YES" usesRuler="YES" spellingCorrection="YES" smartInsertDelete="YES" id="930" customClass="ZKTextView">
                                                                                     <rect key="frame" x="0.0" y="-8" width="837" height="63"/>
                                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -212,6 +212,7 @@
                                                                                     <size key="maxSize" width="1674" height="10000000"/>
                                                                                     <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                                                     <connections>
+                                                                                        <binding destination="-3" name="font" keyPath="delegate.editFont" id="vAG-Jz-Xa6"/>
                                                                                         <outlet property="delegate" destination="218" id="952"/>
                                                                                         <outlet property="menu" destination="iz2-fO-orK" id="v6l-Db-aBE"/>
                                                                                     </connections>
@@ -675,7 +676,7 @@ DQ
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <clipView key="contentView" drawsBackground="NO" id="Kpl-p7-SPv">
                                                                         <rect key="frame" x="1" y="1" width="834" height="226"/>
-                                                                        <autoresizingMask key="autoresizingMask"/>
+                                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                         <subviews>
                                                                             <customView id="1644" customClass="MGSFragariaView">
                                                                                 <rect key="frame" x="0.0" y="0.0" width="834" height="225"/>
@@ -717,7 +718,7 @@ DQ
                                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                     <clipView key="contentView" id="8QW-WY-ZbW">
                                                                                         <rect key="frame" x="1" y="0.0" width="211" height="359"/>
-                                                                                        <autoresizingMask key="autoresizingMask"/>
+                                                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                         <subviews>
                                                                                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" headerView="1577" id="1576">
                                                                                                 <rect key="frame" x="0.0" y="0.0" width="211" height="342"/>
@@ -843,7 +844,7 @@ DQ
                                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                     <clipView key="contentView" drawsBackground="NO" id="wiT-5w-VwX">
                                                                                         <rect key="frame" x="1" y="1" width="610" height="329"/>
-                                                                                        <autoresizingMask key="autoresizingMask"/>
+                                                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                         <subviews>
                                                                                             <textView editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" findStyle="panel" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" spellingCorrection="YES" smartInsertDelete="YES" id="1652">
                                                                                                 <rect key="frame" x="0.0" y="0.0" width="610" height="329"/>
@@ -854,8 +855,8 @@ DQ
                                                                                                 <size key="maxSize" width="612" height="10000000"/>
                                                                                                 <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                                                                 <connections>
+                                                                                                    <binding destination="-3" name="font" keyPath="delegate.editFont" id="jFj-Yb-buY"/>
                                                                                                     <binding destination="1583" name="value" keyPath="selection.debugLog" id="1655"/>
-                                                                                                    <binding destination="354" name="fontSize" keyPath="values.TextSize" id="BWg-bl-Nba"/>
                                                                                                     <outlet property="menu" destination="iz2-fO-orK" id="zWU-XZ-4h2"/>
                                                                                                 </connections>
                                                                                             </textView>
@@ -1151,6 +1152,14 @@ DQ
             </connections>
         </arrayController>
         <menu id="iz2-fO-orK">
+            <items>
+                <menuItem title="Select Font" id="SdV-Q7-4lI" userLabel="Font">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="showFontPrefs:" target="-1" id="2qd-PH-MkG"/>
+                    </connections>
+                </menuItem>
+            </items>
             <point key="canvasLocation" x="125" y="63"/>
         </menu>
     </objects>

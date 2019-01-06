@@ -34,11 +34,46 @@
 
 @implementation AppDelegate
 
-@synthesize startedFromOpenUrls, editFontLabel;
+@synthesize startedFromOpenUrls, editFont, editFontLabel;
+
++ (void)initialize {
+    NSMutableDictionary * defaults = [NSMutableDictionary dictionary];
+    defaults[@"details"] = @NO;
+    defaults[@"soql"] = @"select id, firstname, lastname from contact";
+    
+    NSString *prod = @"https://www.salesforce.com";
+    NSString *test = @"https://test.salesforce.com";
+    
+    defaults[@"servers"] = @[prod, test];
+    defaults[@"server"] = prod;
+    defaults[PREF_QUERY_SORT_FIELDS] = @YES;
+    defaults[PREF_SKIP_ADDRESS_FIELDS] = @NO;
+    defaults[PREF_TEXT_SIZE] = @11;
+    defaults[PREF_SORTED_FIELD_LIST] = @YES;
+    defaults[PREF_QUIT_ON_LAST_WINDOW_CLOSE] = @YES;
+    
+    NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
+    [defs registerDefaults:defaults];
+    NSFont *font = nil;
+    if ([defs integerForKey:PREF_TEXT_SIZE] > 0) {
+        double fontSize = [defs doubleForKey:PREF_TEXT_SIZE];
+        font = [NSFont userFixedPitchFontOfSize:fontSize];
+        if (font == nil) {
+            font = [NSFont monospacedDigitSystemFontOfSize:fontSize weight:NSFontWeightRegular];
+        }
+        NSLog(@"Migrating edit font size %f to font %@", [defs doubleForKey:PREF_TEXT_SIZE], font);
+        [NSFont setUserFixedPitchFont:font];
+        [defs setObject:@0 forKey:PREF_TEXT_SIZE];
+    } else {
+        font = [NSFont userFixedPitchFontOfSize:0];
+        NSLog(@"Using edit font %@", font);
+    }
+}
 
 -(instancetype)init {
     self = [super init];
     windowControllers = [[NSMutableArray alloc] init];
+    [self setEditFontLabelFrom:[NSFont userFixedPitchFontOfSize:0]];
     return self;
 }
 
@@ -106,10 +141,6 @@
     }
 }
 
--(void)setEditFontLabelFrom:(NSFont *)f {
-    self.editFontLabel = [NSString stringWithFormat:@"%.1f pt %@", f.pointSize, f.displayName];
-}
-
 -(void)applicationDidFinishLaunching:(NSNotification *)notification {
     [self resetApiVersionOverrideIfAppVersionChanged];
     if (!self.startedFromOpenUrls) {
@@ -118,7 +149,6 @@
     
     // If the updater is going to restart the app, we need to close the login sheet if its currently open.
     [[SUUpdater sharedUpdater] setDelegate:self];
-    [self setEditFontLabelFrom:[NSFont userFixedPitchFontOfSize:0]];
 }
 
 -(void)openNewWindow:(id)sender {
@@ -136,20 +166,21 @@
 }
 
 -(IBAction)showFontPrefs:(id)sender {
-    NSFontPanel *p = [NSFontPanel sharedFontPanel];
-    [p setPanelFont:[NSFont userFixedPitchFontOfSize:0] isMultiple:NO];
-    p.enabled = YES;
-    [p orderFront:self];
+    NSFontManager *fm = [NSFontManager sharedFontManager];
+    [fm setTarget:self];
+    [fm setSelectedFont:self.editFont isMultiple:NO];
+    [fm orderFrontFontPanel:self];
 }
 
 - (void)changeFont:(nullable NSFontManager *)sender {
-    NSFont *newFont = nil;
-    for (Explorer *ex in [windowControllers valueForKey:@"explorer"]) {
-        newFont = [ex changeFont:sender];
-    }
-    if (newFont !=nil) {
-        [self setEditFontLabelFrom:newFont];
-    }
+    NSFont *newFont = [sender convertFont:self.editFont];
+    [self setEditFontLabelFrom:newFont];
+    [[windowControllers valueForKey:@"explorer"] makeObjectsPerformSelector:@selector(changeEditFont:) withObject:sender];
+}
+
+-(void)setEditFontLabelFrom:(NSFont *)f {
+    self.editFont = f;
+    self.editFontLabel = [NSString stringWithFormat:@"%.1f pt %@", f.pointSize, f.displayName];
 }
 
 - (NSFontPanelModeMask)validModesForFontPanel:(NSFontPanel *)fontPanel {
