@@ -25,6 +25,7 @@
 #import "zkExecuteAnonResult.h"
 #import "StandAloneTableHeaderView.h"
 #import "Prefs.h"
+#import "AppDelegate.h"
 #import <Fragaria/Fragaria.h>
 
 @implementation ApexResult
@@ -102,8 +103,7 @@
     
     [self.apexTextField setSyntaxDefinitionName:@"apex"];
     self.apexTextField.lineHeightMultiple = 1.1;
-    self.apexTextField.textFont = [NSFont labelFontOfSize:[[NSUserDefaults standardUserDefaults] floatForKey:PREF_TEXT_SIZE]];
-    [[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:PREF_TEXT_SIZE options:NSKeyValueObservingOptionNew context:nil];
+    self.apexTextField.textFont = [(AppDelegate *)[NSApp delegate] editFont];
     NSTextView *tv = self.apexTextField.textView;
     tv.menu = self.apexTextField.menu;
     tv.richText = NO;
@@ -120,16 +120,13 @@
     tv.automaticDashSubstitutionEnabled = NO;
 }
 
-- (void)observeValueForKeyPath:(nullable NSString *)keyPath
-                      ofObject:(nullable id)object
-                        change:(nullable NSDictionary<NSKeyValueChangeKey, id> *)change
-                       context:(nullable void *)context {
-    self.apexTextField.textFont = [NSFont labelFontOfSize:[[change valueForKey:NSKeyValueChangeNewKey] floatValue]];
+-(void)dealloc {
+    [self.apexTextField unbind:@"string"];
 }
 
--(void)dealloc {
-    [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:PREF_TEXT_SIZE];
-    [self.apexTextField unbind:@"string"];
+-(void)changeEditFont:(id)sender {
+    NSFont *newFont = [sender convertFont:self.apexTextField.textFont];
+    self.apexTextField.textFont = newFont;
 }
 
 -(void)setDebugSettingsFromDefaults {

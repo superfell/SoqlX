@@ -71,6 +71,8 @@
 
 -(IBAction)executeApex:(id)sender;
 
+-(void)changeEditFont:(id)sender;
+
 @property (readonly, copy) NSArray *logLevelNames;
 
 @property (strong) NSDictionary *dbLogLevel;

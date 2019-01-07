@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2015,2018 Simon Fell
+// Copyright (c) 2006-2015,2018,2019 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -33,6 +33,7 @@
 #import "SearchQueryResult.h"
 #import "ZKDescribeThemeItem+ZKFindResource.h"
 #import "Prefs.h"
+#import "AppDelegate.h"
 
 static NSString *schemaTabId = @"schema";
 static CGFloat MIN_PANE_SIZE = 128.0f;
@@ -153,6 +154,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 - (void)changeEditFont:(id)sender; {
     soql.textStorage.font = [sender convertFont:soql.textStorage.font];
     [NSFont setUserFixedPitchFont:soql.textStorage.font];
+    [apexController changeEditFont:sender];
 }
 
 -(void)updateCallCount:(ZKSforceClient *)c {
@@ -185,7 +187,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
 - (IBAction)initUi:(id)sender {
     [self setSoqlString:[[NSUserDefaults standardUserDefaults] stringForKey:@"soql"]];
-    soql.textStorage.font = [NSFont userFixedPitchFontOfSize:0];
     if (sforce == nil) {
         [self showLogin:self];
     }
@@ -322,6 +323,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
                                           NSForegroundColorAttributeName: [NSColor textColor]
                                                                          }];
     [soql.textStorage setAttributedString:s];
+    soql.textStorage.font = [(AppDelegate*)[NSApp delegate] editFont];
     self.previouslyColorized = nil;
     self.previousColorizedDescribe = nil;
     [self colorize];
