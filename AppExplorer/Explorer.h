@@ -96,6 +96,8 @@
 // If not nil the soql query is asocicated with a file. i.e. it was loaded from, or saved to.
 @property (strong) NSURL *queryFilename;
 @property (readonly) NSString *titleUserInfo;
+-(void)save:(id)sender;
+-(void)load:(NSURL *)url;
 
 @property (strong) NSString *statusText;
 @property (strong) NSString *apiCallCountText;
@@ -103,6 +105,7 @@
 
 @property (strong) IBOutlet NSSegmentedControl *detailsRecentSelector;
 
+@property (readonly) BOOL loginSheetIsOpen;
 @property (getter=isLoggedIn, readonly) BOOL loggedIn;
 @property (readonly) BOOL hasSelectedForDelete;
 @property (readonly) BOOL canQueryMore;
@@ -117,6 +120,7 @@
 // initializes the explorer from this already existing client instance. Assumes that
 // it has already sucesfully authenticated.
 - (void)useClient:(ZKSforceClient *)client;
+
+@property (readonly) ZKSforceClient *sforce;
+
 @end
-
-

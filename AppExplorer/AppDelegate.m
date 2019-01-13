@@ -26,7 +26,9 @@
 #import "zkSforceClient.h"
 #import "ZKLoginController.h"
 #import "ZKSoapException.h"
+#import "zkUserInfo.h"
 #import "SessionIdAuthInfo.h"
+
 
 @interface AppDelegate ()
 @property (assign) BOOL startedFromOpenUrls;
@@ -96,47 +98,98 @@
     }
 }
 
+-(void)openSoqlXURL:(NSURL *)url {
+    NSString *server = [url.host lowercaseString];
+    if (!([server hasSuffix:@".salesforce.com"] || [server hasSuffix:@".force.com"])) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.messageText = @"Invalid SoqlX URL";
+        alert.informativeText = @"supplied server must be a .salesforce.com or .force.com address";
+        alert.alertStyle = NSAlertStyleWarning;
+        [alert runModal];
+        return;
+    }
+    if (![url.path hasPrefix:@"/sid/"]) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.messageText = @"Invalid SoqlX URL";
+        alert.informativeText = @"expected to be soqlx://{salesforceServer}/sid/{sessionId}";
+        alert.alertStyle = NSAlertStyleWarning;
+        [alert runModal];
+        return;
+    }
+    NSURL *instanceUrl = [NSURL URLWithString:[NSString stringWithFormat:@"https://%@/services/Soap/u/%d.0", url.host, DEFAULT_API_VERSION]];
+    NSString *sid = [url.path substringFromIndex:6]; // remove /sid/ prefix
+    SessionIdAuthInfo *auth = [[SessionIdAuthInfo alloc] initWithUrl:instanceUrl sessionId:sid];
+    ZKSforceClient *c = [[ZKSforceClient alloc] init];
+    [c setClientId:[ZKLoginController appClientId]];
+    c.authenticationInfo = auth;
+    @try {
+        // This call is used to validate that we were given a valid client, and that the auth info is usable.
+        [c currentUserInfo];
+        // If the app was just stated to deal with this URL then openUrls is called before appDidFinishLaunching
+        // so we can use this to stop our default window opening.
+        self.startedFromOpenUrls = TRUE;
+        SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:windowControllers];
+        [controller showWindowForClient:c];
+        [windowControllers makeObjectsPerformSelector:@selector(closeLoginPanelIfOpen:) withObject:self];
+        
+    } @catch (ZKSoapException *ex) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.messageText = @"Invalid parameters";
+        alert.informativeText = ex.reason;
+        alert.alertStyle = NSAlertStyleWarning;
+        [alert runModal];
+    }
+}
+
+-(void)openFileURL:(NSURL *)url {
+    // If the app was just stated to deal with this URL then openUrls is called before appDidFinishLaunching
+    // so we can use this to stop our default window opening.
+    self.startedFromOpenUrls = TRUE;
+    // If all the logged in windows are for the same userID, open a new window with the same userID.
+    ZKSforceClient *user = nil;
+    for (SoqlXWindowController *c in windowControllers) {
+        if ([c isWindowLoaded] && c.explorer.isLoggedIn) {
+            ZKUserInfo *t = c.explorer.sforce.currentUserInfo;
+            ZKUserInfo *p = [user currentUserInfo];
+            if (user == nil || ([p.userId isEqualToString:t.userId] &&
+                                [p.organizationId isEqualToString:t.organizationId])) {
+                user = c.explorer.sforce;
+            } else {
+                user = nil;
+                break;
+            }
+        }
+    }
+    if (user != nil) {
+        NSLog(@"Will open new window for %@", user.currentUserInfo.userName);
+        SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:windowControllers];
+        [controller window];
+        [controller showWindowForClient:[user copy]];
+        [controller.explorer load:url];
+        return;
+    }
+    // If there's an existing window that has the login sheet showing, and no asscoicated URL
+    // we'll update that one instead of opening a new one.
+    for (SoqlXWindowController *c in windowControllers) {
+        if ([c isWindowLoaded] && c.explorer.loginSheetIsOpen && c.explorer.queryFilename == nil) {
+            NSLog(@"Will update existing window at login state");
+            [c.explorer load:url];
+            return;
+        }
+    }
+    NSLog(@"Will open new default window");
+    SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:windowControllers];
+    [controller showWindow:self];
+    [controller.explorer load:url];
+    [controller.explorer showLogin:self];
+}
+
 -(void)application:(NSApplication *)application openURLs:(NSArray<NSURL *> *)urls {
     for (NSURL *url in urls) {
-        NSString *server = [url.host lowercaseString];
-        if (!([server hasSuffix:@".salesforce.com"] || [server hasSuffix:@".force.com"])) {
-            NSAlert *alert = [[NSAlert alloc] init];
-            alert.messageText = @"Invalid SoqlX URL";
-            alert.informativeText = @"supplied server must be a .salesforce.com or .force.com address";
-            alert.alertStyle = NSAlertStyleWarning;
-            [alert runModal];
-            return;
-        }
-        if (![url.path hasPrefix:@"/sid/"]) {
-            NSAlert *alert = [[NSAlert alloc] init];
-            alert.messageText = @"Invalid SoqlX URL";
-            alert.informativeText = @"expected to be soqlx://{salesforceServer}/sid/{sessionId}";
-            alert.alertStyle = NSAlertStyleWarning;
-            [alert runModal];
-            return;
-        }
-        NSURL *instanceUrl = [NSURL URLWithString:[NSString stringWithFormat:@"https://%@/services/Soap/u/%d.0", url.host, DEFAULT_API_VERSION]];
-        NSString *sid = [url.path substringFromIndex:6]; // remove /sid/ prefix
-        SessionIdAuthInfo *auth = [[SessionIdAuthInfo alloc] initWithUrl:instanceUrl sessionId:sid];
-        ZKSforceClient *c = [[ZKSforceClient alloc] init];
-        [c setClientId:[ZKLoginController appClientId]];
-        c.authenticationInfo = auth;
-        @try {
-            // This call is used to validate that we were given a valid client, and that the auth info is usable.
-            [c currentUserInfo];
-            // If the app was just stated to deal with this URL then openUrls is called before appDidFinishLaunching
-            // so we can use this to stop our default window opening.
-            self.startedFromOpenUrls = TRUE;
-            SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:windowControllers];
-            [controller showWindowForClient:c];
-            [windowControllers makeObjectsPerformSelector:@selector(closeLoginPanelIfOpen:) withObject:self];
-            
-        } @catch (ZKSoapException *ex) {
-            NSAlert *alert = [[NSAlert alloc] init];
-            alert.messageText = @"Invalid parameters";
-            alert.informativeText = ex.reason;
-            alert.alertStyle = NSAlertStyleWarning;
-            [alert runModal];
+        if ([url.scheme isEqualToString:@"soqlx"]) {
+            [self openSoqlXURL:url];
+        } else if ([url.scheme isEqualToString:@"file"]) {
+            [self openFileURL:url];
         }
     }
 }
@@ -152,8 +205,9 @@
 }
 
 -(void)openNewWindow:(id)sender {
-    NSWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:windowControllers];
+    SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:windowControllers];
     [controller showWindow:sender];
+    [controller.explorer performSelector:@selector(showLogin:) withObject:self afterDelay:0];
 }
 
 // Sparkle : SUUpdaterDelegate - Called immediately before relaunching.

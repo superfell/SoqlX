@@ -40,7 +40,6 @@ static CGFloat MIN_PANE_SIZE = 128.0f;
 static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
 @interface Explorer ()
-- (IBAction)initUi:(id)sender;
 - (IBAction)postLogin:(id)sender;
 - (void)closeLoginPanelIfOpen:(id)sender;
 
@@ -139,11 +138,12 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     childResults = [[QueryResultTable alloc] initForTableView:childTableView];
     childResults.delegate = self;
     [self collapseChildTableView];
-    [self performSelector:@selector(initUi:) withObject:nil afterDelay:0];
-       
+    
     queryListController.delegate = self;
     [queryListController addObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE options:NSKeyValueObservingOptionNew context:nil];
     [detailsController addObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE options:NSKeyValueObservingOptionNew context:nil];
+    
+    [self setSoqlString:[[NSUserDefaults standardUserDefaults] stringForKey:@"soql"]];
 }
 
 - (void)dealloc {
@@ -191,20 +191,14 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     }
 }
 
-- (IBAction)initUi:(id)sender {
-    [self setSoqlString:[[NSUserDefaults standardUserDefaults] stringForKey:@"soql"]];
-    if (sforce == nil) {
-        [self showLogin:self];
-    }
-}
-
 - (IBAction)showLogin:(id)sender {
     loginController = [[ZKLoginController alloc] init];
     [loginController setClientIdFromInfoPlist];
     loginController.delegate = self;
     NSNumber *apiVersion = [[NSUserDefaults standardUserDefaults] objectForKey:@"zkApiVersion"];
-    if (apiVersion != nil)
+    if (apiVersion != nil) {
         loginController.preferedApiVersion = apiVersion.intValue;
+    }
     [loginController showLoginSheet:myWindow];
 }
 
@@ -225,11 +219,15 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     [self postLogin:self];
 }
 
-- (void)closeLoginPanelIfOpen:(id)sender {
+-(void)closeLoginPanelIfOpen:(id)sender {
     [loginController cancelLogin:sender];
 }
 
-- (BOOL)isLoggedIn {
+-(BOOL)loginSheetIsOpen {
+    return loginController != nil;
+}
+
+-(BOOL)isLoggedIn {
     return [sforce loggedIn];
 }
 
@@ -608,6 +606,19 @@ typedef enum SoqlParsePosition {
         [sforce serverHostAbbriviation]];
     
     return user;
+}
+
+-(void)load:(NSURL *)url {
+    NSError *err = nil;
+    NSString *soql = [[NSString alloc] initWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&err];
+    if (err == nil) {
+        self.queryFilename = url;
+        self.soqlString = soql;
+        return;
+    }
+    self.queryFilename = nil;
+    NSAlert *alert = [NSAlert alertWithError:err];
+    [alert runModal];
 }
 
 // Called via "Save" Menu item
