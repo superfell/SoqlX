@@ -30,13 +30,9 @@
 #import "SessionIdAuthInfo.h"
 
 
-@interface AppDelegate ()
-@property (assign) BOOL startedFromOpenUrls;
-@end
-
 @implementation AppDelegate
 
-@synthesize startedFromOpenUrls, editFont, editFontLabel;
+@synthesize editFont, editFontLabel;
 
 + (void)initialize {
     NSMutableDictionary * defaults = [NSMutableDictionary dictionary];
@@ -126,8 +122,8 @@
         // This call is used to validate that we were given a valid client, and that the auth info is usable.
         [c currentUserInfo];
         // If the app was just stated to deal with this URL then openUrls is called before appDidFinishLaunching
-        // so we can use this to stop our default window opening.
-        self.startedFromOpenUrls = TRUE;
+        // so the window controller we create here will stop the default one being created.
+
         SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:windowControllers];
         [controller showWindowForClient:c];
         [windowControllers makeObjectsPerformSelector:@selector(closeLoginPanelIfOpen:) withObject:self];
@@ -142,9 +138,10 @@
 }
 
 -(void)openFileURL:(NSURL *)url {
-    // If the app was just stated to deal with this URL then openUrls is called before appDidFinishLaunching
-    // so we can use this to stop our default window opening.
-    self.startedFromOpenUrls = TRUE;
+    // If the app was just stated to deal with this URL then openUrls is called before appDidFinishLaunching.
+    // Any window controller we create here will prevent the default one in applicationDidFinishLaunching being
+    // created.
+    
     // If all the logged in windows are for the same userID, open a new window with the same userID.
     ZKSforceClient *user = nil;
     for (SoqlXWindowController *c in windowControllers) {
@@ -196,7 +193,7 @@
 
 -(void)applicationDidFinishLaunching:(NSNotification *)notification {
     [self resetApiVersionOverrideIfAppVersionChanged];
-    if (!self.startedFromOpenUrls) {
+    if (windowControllers.count == 0) {
         [self openNewWindow:self];
     }
     
