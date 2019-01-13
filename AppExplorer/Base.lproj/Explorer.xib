@@ -953,6 +953,12 @@ DQ
                 </subviews>
             </view>
             <connections>
+                <binding destination="218" name="title" keyPath="titleUserInfo" id="y1d-BN-jqM">
+                    <dictionary key="options">
+                        <string key="NSNoSelectionPlaceholder">SoqlX</string>
+                        <string key="NSNullPlaceholder">SoqlX</string>
+                    </dictionary>
+                </binding>
                 <outlet property="delegate" destination="218" id="1670"/>
                 <outlet property="menu" destination="1257" id="1259"/>
             </connections>

@@ -58,6 +58,9 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
 @property (strong) NSString *previouslyColorized;
 @property (strong) ZKDescribeGlobalSObject *previousColorizedDescribe;
+
+@property (strong) ZKSforceClient *sforce;
+
 @end
 
 
@@ -104,12 +107,15 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
 @implementation Explorer
 
-@synthesize statusText, schemaViewIsActive, apiCallCountText, selectedObjectName, selectedFields, previouslyColorized, previousColorizedDescribe;
+@synthesize sforce, statusText, schemaViewIsActive, apiCallCountText;
+@synthesize selectedObjectName, selectedFields, previouslyColorized, previousColorizedDescribe;
 
 +(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
     NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
     if ([key isEqualToString:@"canQueryMore"])
         return [paths setByAddingObjectsFromArray:@[@"currentResults", @"rowsLoadedStatusText"]];
+    if ([key isEqualToString:@"titleUserInfo"])
+        return [paths setByAddingObjectsFromArray:@[@"sforce", @"queryFilename"]];
     return paths;
 }
 
@@ -213,8 +219,8 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
 - (void)useClient:(ZKSforceClient *)client {
     [self closeLoginPanelIfOpen:self];
-    sforce = client;
-    sforce.delegate = self;
+    self.sforce = client;
+    self.sforce.delegate = self;
     loginController = nil;
     [self postLogin:self];
 }
@@ -283,11 +289,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
                         [sforce serverUrl].host];
     self.statusText = msg;
     
-    NSString *title = [NSString stringWithFormat:@"SoqlX : %@ (%@ on %@)",
-                       [[sforce currentUserInfo] fullName],
-                       [sforce currentUserInfo].userName,
-                       [sforce serverHostAbbriviation]];
-    myWindow.title = title;
     NSString *userId = [sforce currentUserInfo].userId;
     queryListController.prefsPrefix = userId;
     detailsController.prefsPrefix = userId;
@@ -589,6 +590,52 @@ typedef enum SoqlParsePosition {
             [rootTableView editColumn:[sender clickedColumn] row:[sender clickedRow] withEvent:nil select:YES]; 
         }
     }
+}
+
+-(NSString *)titleUserInfo {
+    NSString *doc = @"SoqlX";
+    if (self.queryFilename != nil) {
+        doc = self.queryFilename.lastPathComponent;
+        doc = [doc substringToIndex:doc.length - self.queryFilename.pathExtension.length - 1];
+    }
+    if (self.sforce == nil) {
+        return doc;
+    }
+    NSString *user = [NSString stringWithFormat:@"%@ : %@ (%@ on %@)",
+        doc,
+        [[sforce currentUserInfo] fullName],
+        [sforce currentUserInfo].userName,
+        [sforce serverHostAbbriviation]];
+    
+    return user;
+}
+
+// Called via "Save" Menu item
+-(void)save:(id)sender {
+    NSSavePanel *s = [NSSavePanel savePanel];
+    s.allowsOtherFileTypes = YES;
+    s.extensionHidden = NO;
+    s.canSelectHiddenExtension = YES;
+    s.title = @"Save Query";
+    if (self.queryFilename == nil) {
+        s.nameFieldStringValue = @"query.soql";
+    } else {
+        s.nameFieldStringValue = self.queryFilename.lastPathComponent;
+    }
+    s.allowedFileTypes= @[@"com.pocketsoap.soql"];
+    [s beginSheetModalForWindow:myWindow completionHandler:^(NSModalResponse result) {
+        if (result != NSModalResponseOK) {
+            return;
+        }
+        NSError *err = nil;
+        if ([[self soqlString] writeToURL:s.URL atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
+            self.queryFilename = s.URL;
+        } else {
+            [s orderOut:nil];
+            NSAlert *alert = [NSAlert alertWithError:err];
+            [alert beginSheetModalForWindow:self->myWindow completionHandler:^(NSModalResponse returnCode) {}];
+        }
+    }];
 }
 
 - (IBAction)saveQueryResults:(id)sender {

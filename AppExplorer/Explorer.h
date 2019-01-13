@@ -93,6 +93,10 @@
 - (IBAction)filterSObjectListView:(id)sender;
 - (IBAction)updateDetailsRecentSelection:(id)sender;
 
+// If not nil the soql query is asocicated with a file. i.e. it was loaded from, or saved to.
+@property (strong) NSURL *queryFilename;
+@property (readonly) NSString *titleUserInfo;
+
 @property (strong) NSString *statusText;
 @property (strong) NSString *apiCallCountText;
 @property (assign) BOOL schemaViewIsActive;

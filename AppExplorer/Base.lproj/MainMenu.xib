@@ -79,7 +79,12 @@
                             <menuItem isSeparatorItem="YES" id="687">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Save Query Results" keyEquivalent="s" id="1340">
+                            <menuItem title="Save Query" keyEquivalent="s" id="1cx-6s-qnE">
+                                <connections>
+                                    <action selector="save:" target="-1" id="nhp-1u-MsJ"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Save Query Results" keyEquivalent="S" id="1340">
                                 <connections>
                                     <action selector="saveQueryResults:" target="-1" id="1683"/>
                                 </connections>
