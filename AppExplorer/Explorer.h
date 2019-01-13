@@ -96,6 +96,7 @@
 // If not nil the soql query is asocicated with a file. i.e. it was loaded from, or saved to.
 @property (strong) NSURL *queryFilename;
 @property (readonly) NSString *titleUserInfo;
+-(void)open:(id)sender;
 -(void)save:(id)sender;
 -(void)load:(NSURL *)url;
 

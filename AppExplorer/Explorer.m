@@ -608,17 +608,42 @@ typedef enum SoqlParsePosition {
     return user;
 }
 
--(void)load:(NSURL *)url {
+-(NSError *)loadQuery:(NSURL *)url {
     NSError *err = nil;
     NSString *soql = [[NSString alloc] initWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&err];
-    if (err == nil) {
+    if (err != nil) {
+        self.queryFilename = nil;
+    } else {
         self.queryFilename = url;
         self.soqlString = soql;
-        return;
     }
-    self.queryFilename = nil;
-    NSAlert *alert = [NSAlert alertWithError:err];
-    [alert runModal];
+    return err;
+}
+
+-(void)load:(NSURL *)url {
+    NSError *err = [self loadQuery:url];
+    if (err != nil) {
+        NSAlert *alert = [NSAlert alertWithError:err];
+        [alert runModal];
+    }
+}
+
+// Called via "Open..." Menu item
+-(void)open:(id)sender {
+    NSOpenPanel *o = [NSOpenPanel openPanel];
+    o.allowsOtherFileTypes = YES;
+    o.allowedFileTypes = @[@"com.pocketsoap.soql"];
+    [o beginSheetModalForWindow:myWindow completionHandler:^(NSModalResponse result) {
+        if (result != NSModalResponseOK) {
+            return;
+        }
+        NSError *err = [self loadQuery:o.URL];
+        if (err != nil) {
+            [o orderOut:nil];
+            NSAlert *alert = [NSAlert alertWithError:err];
+            [alert beginSheetModalForWindow:self->myWindow completionHandler:^(NSModalResponse returnCode) {}];
+        }
+    }];
 }
 
 // Called via "Save" Menu item
@@ -627,7 +652,6 @@ typedef enum SoqlParsePosition {
     s.allowsOtherFileTypes = YES;
     s.extensionHidden = NO;
     s.canSelectHiddenExtension = YES;
-    s.title = @"Save Query";
     if (self.queryFilename == nil) {
         s.nameFieldStringValue = @"query.soql";
     } else {
