@@ -35,12 +35,14 @@
 #import "Prefs.h"
 #import "AppDelegate.h"
 
+static NSString *soqlTabId = @"soql";
 static NSString *schemaTabId = @"schema";
+static NSString *apexTabId = @"Apex";
+
 static CGFloat MIN_PANE_SIZE = 128.0f;
 static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
 @interface Explorer ()
-- (IBAction)initUi:(id)sender;
 - (IBAction)postLogin:(id)sender;
 - (void)closeLoginPanelIfOpen:(id)sender;
 
@@ -58,6 +60,9 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
 @property (strong) NSString *previouslyColorized;
 @property (strong) ZKDescribeGlobalSObject *previousColorizedDescribe;
+
+@property (strong) ZKSforceClient *sforce;
+
 @end
 
 
@@ -104,12 +109,15 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
 @implementation Explorer
 
-@synthesize statusText, schemaViewIsActive, apiCallCountText, selectedObjectName, selectedFields, previouslyColorized, previousColorizedDescribe;
+@synthesize sforce, statusText, schemaViewIsActive, apiCallCountText;
+@synthesize selectedObjectName, selectedFields, previouslyColorized, previousColorizedDescribe;
 
 +(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
     NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
     if ([key isEqualToString:@"canQueryMore"])
         return [paths setByAddingObjectsFromArray:@[@"currentResults", @"rowsLoadedStatusText"]];
+    if ([key isEqualToString:@"titleUserInfo"])
+        return [paths setByAddingObjectsFromArray:@[@"sforce", @"queryFilename", @"apexFilename", @"selectedTabViewIdentifier"]];
     return paths;
 }
 
@@ -133,11 +141,12 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     childResults = [[QueryResultTable alloc] initForTableView:childTableView];
     childResults.delegate = self;
     [self collapseChildTableView];
-    [self performSelector:@selector(initUi:) withObject:nil afterDelay:0];
-       
+    
     queryListController.delegate = self;
     [queryListController addObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE options:NSKeyValueObservingOptionNew context:nil];
     [detailsController addObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE options:NSKeyValueObservingOptionNew context:nil];
+    
+    [self setSoqlString:[[NSUserDefaults standardUserDefaults] stringForKey:@"soql"]];
 }
 
 - (void)dealloc {
@@ -185,20 +194,14 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     }
 }
 
-- (IBAction)initUi:(id)sender {
-    [self setSoqlString:[[NSUserDefaults standardUserDefaults] stringForKey:@"soql"]];
-    if (sforce == nil) {
-        [self showLogin:self];
-    }
-}
-
 - (IBAction)showLogin:(id)sender {
     loginController = [[ZKLoginController alloc] init];
     [loginController setClientIdFromInfoPlist];
     loginController.delegate = self;
     NSNumber *apiVersion = [[NSUserDefaults standardUserDefaults] objectForKey:@"zkApiVersion"];
-    if (apiVersion != nil)
+    if (apiVersion != nil) {
         loginController.preferedApiVersion = apiVersion.intValue;
+    }
     [loginController showLoginSheet:myWindow];
 }
 
@@ -213,17 +216,21 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
 - (void)useClient:(ZKSforceClient *)client {
     [self closeLoginPanelIfOpen:self];
-    sforce = client;
-    sforce.delegate = self;
+    self.sforce = client;
+    self.sforce.delegate = self;
     loginController = nil;
     [self postLogin:self];
 }
 
-- (void)closeLoginPanelIfOpen:(id)sender {
+-(void)closeLoginPanelIfOpen:(id)sender {
     [loginController cancelLogin:sender];
 }
 
-- (BOOL)isLoggedIn {
+-(BOOL)loginSheetIsOpen {
+    return loginController != nil;
+}
+
+-(BOOL)isLoggedIn {
     return [sforce loggedIn];
 }
 
@@ -283,11 +290,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
                         [sforce serverUrl].host];
     self.statusText = msg;
     
-    NSString *title = [NSString stringWithFormat:@"SoqlX : %@ (%@ on %@)",
-                       [[sforce currentUserInfo] fullName],
-                       [sforce currentUserInfo].userName,
-                       [sforce serverHostAbbriviation]];
-    myWindow.title = title;
     NSString *userId = [sforce currentUserInfo].userId;
     queryListController.prefsPrefix = userId;
     detailsController.prefsPrefix = userId;
@@ -591,9 +593,167 @@ typedef enum SoqlParsePosition {
     }
 }
 
-- (IBAction)saveQueryResults:(id)sender {
+-(NSString *)titleUserInfo {
+    NSString *doc = @"SoqlX";
+    if ([self.selectedTabViewIdentifier isEqualToString:soqlTabId] && self.queryFilename != nil) {
+        doc = self.queryFilename.lastPathComponent;
+        doc = [doc substringToIndex:doc.length - self.queryFilename.pathExtension.length - 1];
+    } else if ([self.selectedTabViewIdentifier isEqualToString:apexTabId] && self.apexFilename != nil) {
+        doc = self.apexFilename.lastPathComponent;
+        doc = [doc substringToIndex:doc.length - self.apexFilename.pathExtension.length - 1];
+    }
+    if (self.sforce == nil) {
+        return doc;
+    }
+    NSString *user = [NSString stringWithFormat:@"%@ : %@ (%@ on %@)",
+        doc,
+        [[sforce currentUserInfo] fullName],
+        [sforce currentUserInfo].userName,
+        [sforce serverHostAbbriviation]];
+    
+    return user;
+}
+
+-(NSError *)loadQuery:(NSURL *)url {
+    NSError *err = nil;
+    NSString *soql = [[NSString alloc] initWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&err];
+    if (err != nil) {
+        self.queryFilename = nil;
+    } else {
+        self.queryFilename = url;
+        self.soqlString = soql;
+        [self.soqlSchemaApexSelector selectSegmentWithTag:0];
+        [soqlSchemaTabs selectTabViewItemWithIdentifier:soqlTabId];
+    }
+    return err;
+}
+
+-(NSError *)loadApex:(NSURL *)url {
+    NSError *err = nil;
+    NSString *apex = [[NSString alloc] initWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&err];
+    if (err != nil) {
+        self.apexFilename = nil;
+    } else {
+        self.apexFilename = url;
+        apexController.apex = apex;
+        [self.soqlSchemaApexSelector selectSegmentWithTag:2];
+        [soqlSchemaTabs selectTabViewItemWithIdentifier:apexTabId];
+    }
+    return err;
+}
+
+-(NSError *)loadFromURLType:(NSURL *)url {
+    NSString *type;
+    NSError *error;
+    if ([url getResourceValue:&type forKey:NSURLTypeIdentifierKey error:&error]) {
+        if ([[NSWorkspace sharedWorkspace] type:type conformsToType:@"com.pocketsoap.anon.apex"]) {
+            return [self loadApex:url];
+        }
+    }
+    return [self loadQuery:url];
+}
+
+-(void)load:(NSURL *)url {
+    NSError *err = [self loadFromURLType:url];
+    if (err != nil) {
+        NSAlert *alert = [NSAlert alertWithError:err];
+        [alert runModal];
+    }
+}
+
+// Called via "Open..." Menu item
+-(void)open:(id)sender {
+    NSOpenPanel *o = [NSOpenPanel openPanel];
+    o.allowsOtherFileTypes = YES;
+    o.allowedFileTypes = @[@"com.pocketsoap.soql", @"com.pocketsoap.anon.apex"];
+    [o beginSheetModalForWindow:myWindow completionHandler:^(NSModalResponse result) {
+        if (result != NSModalResponseOK) {
+            return;
+        }
+        NSError *err = [self loadFromURLType:o.URL];
+        if (err != nil) {
+            [o orderOut:nil];
+            NSAlert *alert = [NSAlert alertWithError:err];
+            [alert beginSheetModalForWindow:self->myWindow completionHandler:^(NSModalResponse returnCode) {}];
+        }
+    }];
+}
+
+-(void)saveQuery:(NSSavePanel *)s {
+    if (self.queryFilename == nil) {
+        s.nameFieldStringValue = @"query.soql";
+    } else {
+        s.nameFieldStringValue = self.queryFilename.lastPathComponent;
+    }
+    s.allowedFileTypes= @[@"com.pocketsoap.soql"];
+    [s beginSheetModalForWindow:myWindow completionHandler:^(NSModalResponse result) {
+        if (result != NSModalResponseOK) {
+            return;
+        }
+        NSError *err = nil;
+        if ([[self soqlString] writeToURL:s.URL atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
+            self.queryFilename = s.URL;
+        } else {
+            [s orderOut:nil];
+            NSAlert *alert = [NSAlert alertWithError:err];
+            [alert beginSheetModalForWindow:self->myWindow completionHandler:^(NSModalResponse returnCode) {}];
+        }
+    }];
+}
+
+-(void)saveApex:(NSSavePanel *)s {
+    if (self.apexFilename == nil) {
+        s.nameFieldStringValue = @"apex.aapx";
+    } else {
+        s.nameFieldStringValue = self.apexFilename.lastPathComponent;
+    }
+    s.allowedFileTypes = @[@"com.pocketsoap.anon.apex"];
+    [s beginSheetModalForWindow:myWindow completionHandler:^(NSModalResponse result) {
+        if (result != NSModalResponseOK) {
+            return;
+        }
+        NSError *err = nil;
+        if ([self->apexController.apex writeToURL:s.URL atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
+            self.apexFilename = s.URL;
+        } else {
+            [s orderOut:nil];
+            NSAlert *alert = [NSAlert alertWithError:err];
+            [alert beginSheetModalForWindow:self->myWindow completionHandler:^(NSModalResponse returnCode) {}];
+        }
+    }];
+}
+
+// Called via "Save" Menu item
+-(void)save:(id)sender {
+    NSSavePanel *s = [NSSavePanel savePanel];
+    s.allowsOtherFileTypes = YES;
+    s.extensionHidden = NO;
+    s.canSelectHiddenExtension = YES;
+
+    if ([soqlSchemaTabs.selectedTabViewItem.identifier isEqualToString:apexTabId]) {
+        [self saveApex:s];
+        return;
+    }
+    [self saveQuery:s];
+}
+
+// Called via "Save Query Results" Menu item
+-(void)saveQueryResults:(id)sender {
     ResultsSaver *saver = [[ResultsSaver alloc] initWithResults:rootResults client:sforce];
     [saver save:myWindow];
+}
+
+// this is called by the menu to see if items should be enabled. This is an addition to the
+// check that the target implements the selector.
+-(BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)i {
+    SEL theAction = [i action];
+    if (theAction == @selector(save:)) {
+        return ![self schemaViewIsActive];
+    }
+    if (theAction == @selector(saveQueryResults:)) {
+        return (rootResults.queryResult.size > 0) && ![self schemaViewIsActive];
+    }
+    return YES;
 }
 
 - (IBAction)executeQuery:(id)sender {
@@ -805,6 +965,7 @@ typedef enum SoqlParsePosition {
     } else {
         [self setSchemaViewIsActive:NO];
     }
+    self.selectedTabViewIdentifier = item.identifier;
 }
 
 // NSSplitView delegate

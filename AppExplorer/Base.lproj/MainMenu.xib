@@ -79,7 +79,18 @@
                             <menuItem isSeparatorItem="YES" id="687">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Save Query Results" keyEquivalent="s" id="1340">
+                            <menuItem title="Open..." keyEquivalent="o" id="444-Td-dj5">
+                                <connections>
+                                    <action selector="open:" target="-1" id="b9b-L8-yUX"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="5wU-Wq-xeR"/>
+                            <menuItem title="Save..." keyEquivalent="s" id="1cx-6s-qnE">
+                                <connections>
+                                    <action selector="save:" target="-1" id="nhp-1u-MsJ"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Save Query Results" keyEquivalent="S" id="1340">
                                 <connections>
                                     <action selector="saveQueryResults:" target="-1" id="1683"/>
                                 </connections>
