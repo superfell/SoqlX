@@ -117,7 +117,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     if ([key isEqualToString:@"canQueryMore"])
         return [paths setByAddingObjectsFromArray:@[@"currentResults", @"rowsLoadedStatusText"]];
     if ([key isEqualToString:@"titleUserInfo"])
-        return [paths setByAddingObjectsFromArray:@[@"sforce", @"queryFilename"]];
+        return [paths setByAddingObjectsFromArray:@[@"sforce", @"queryFilename", @"apexFilename", @"selectedTabViewIdentifier"]];
     return paths;
 }
 
@@ -595,9 +595,12 @@ typedef enum SoqlParsePosition {
 
 -(NSString *)titleUserInfo {
     NSString *doc = @"SoqlX";
-    if (self.queryFilename != nil) {
+    if ([self.selectedTabViewIdentifier isEqualToString:soqlTabId] && self.queryFilename != nil) {
         doc = self.queryFilename.lastPathComponent;
         doc = [doc substringToIndex:doc.length - self.queryFilename.pathExtension.length - 1];
+    } else if ([self.selectedTabViewIdentifier isEqualToString:apexTabId] && self.apexFilename != nil) {
+        doc = self.apexFilename.lastPathComponent;
+        doc = [doc substringToIndex:doc.length - self.apexFilename.pathExtension.length - 1];
     }
     if (self.sforce == nil) {
         return doc;
@@ -962,6 +965,7 @@ typedef enum SoqlParsePosition {
     } else {
         [self setSchemaViewIsActive:NO];
     }
+    self.selectedTabViewIdentifier = item.identifier;
 }
 
 // NSSplitView delegate

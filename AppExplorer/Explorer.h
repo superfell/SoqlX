@@ -104,6 +104,7 @@
 @property (strong) NSString *statusText;
 @property (strong) NSString *apiCallCountText;
 @property (assign) BOOL schemaViewIsActive;
+@property (strong) NSString *selectedTabViewIdentifier;
 
 @property (strong) IBOutlet NSSegmentedControl *soqlSchemaApexSelector;
 @property (strong) IBOutlet NSSegmentedControl *detailsRecentSelector;
