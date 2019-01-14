@@ -87,7 +87,6 @@
 - (IBAction)queryResultDoubleClicked:(id)sender;
 - (IBAction)showSelectedIdFronRootInBrowser:(id)sender;
 - (IBAction)showSelectedIdFronChildInBrowser:(id)sender;
-- (IBAction)saveQueryResults:(id)sender;
 - (IBAction)deleteSelectedRow:(id)sender;
 - (IBAction)deleteCheckedRows:(id)sender;
 - (IBAction)filterSObjectListView:(id)sender;
@@ -95,15 +94,18 @@
 
 // If not nil the soql query is asocicated with a file. i.e. it was loaded from, or saved to.
 @property (strong) NSURL *queryFilename;
+@property (strong) NSURL *apexFilename;
 @property (readonly) NSString *titleUserInfo;
--(void)open:(id)sender;
 -(void)save:(id)sender;
+-(void)saveQueryResults:(id)sender;
+-(void)open:(id)sender;
 -(void)load:(NSURL *)url;
 
 @property (strong) NSString *statusText;
 @property (strong) NSString *apiCallCountText;
 @property (assign) BOOL schemaViewIsActive;
 
+@property (strong) IBOutlet NSSegmentedControl *soqlSchemaApexSelector;
 @property (strong) IBOutlet NSSegmentedControl *detailsRecentSelector;
 
 @property (readonly) BOOL loginSheetIsOpen;

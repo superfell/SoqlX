@@ -29,6 +29,7 @@
                 <outlet property="soql" destination="930" id="945"/>
                 <outlet property="soqlContextMenu" destination="iz2-fO-orK" id="VDC-HE-sxM"/>
                 <outlet property="soqlHeader" destination="928" id="946"/>
+                <outlet property="soqlSchemaApexSelector" destination="592" id="OAS-4t-joL"/>
                 <outlet property="soqlSchemaTabs" destination="924" id="947"/>
                 <outlet property="soqlTextSplitView" destination="1227" id="1240"/>
                 <outlet property="vertSplitView" destination="963" id="993"/>
@@ -436,7 +437,7 @@
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <clipView key="contentView" id="n4k-PW-bMX">
                                                         <rect key="frame" x="0.0" y="0.0" width="837" height="694"/>
-                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <subviews>
                                                             <customView id="1241" customClass="SchemaView">
                                                                 <rect key="frame" x="0.0" y="0.0" width="836" height="694"/>

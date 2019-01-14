@@ -85,7 +85,7 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="5wU-Wq-xeR"/>
-                            <menuItem title="Save Query" keyEquivalent="s" id="1cx-6s-qnE">
+                            <menuItem title="Save..." keyEquivalent="s" id="1cx-6s-qnE">
                                 <connections>
                                     <action selector="save:" target="-1" id="nhp-1u-MsJ"/>
                                 </connections>
