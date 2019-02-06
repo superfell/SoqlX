@@ -11,6 +11,9 @@ SoqlX is a tool for developers using the Salesforce.com platform, it allows you 
 ZKSforce & Fragaria are pulled in via git submodules, so you need to clone this repo, and fetch the submodules
 
 ```
+    git clone --recurse-submodules https://github.com/superfell/SoqlX
+
+    # or the long way.
     git clone https://github.com/superfell/SoqlX.git SoqlX
     cd SoqlX
     git submodule init
