@@ -17,7 +17,7 @@ ZKSforce & Fragaria are pulled in via git submodules, so you need to clone this 
     git submodule update
 ```
 
-Now you can open the project in XCode. The Xcode project file is at AppExplorer/AppExplorer.xcodeproj
+Now you can open the project in XCode, it requires XCode 10. The Xcode project file is at AppExplorer/AppExplorer.xcodeproj
 
 Building the SoqlXplorer target will build the dependencies, then SoqlX. You may find that the first
 build of Fragaria fails with a "Command PhaseScriptExecution failed" error, just hit build again, and
