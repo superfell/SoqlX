@@ -24,7 +24,7 @@
 #import "zkSforceClient.h"
 #import "zkSoapException.h"
 
-int DEFAULT_API_VERSION = 45;
+int DEFAULT_API_VERSION = 46;
 
 
 @interface ZKLoginController ()
