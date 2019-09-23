@@ -20,7 +20,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "zkAuthentication.h"
+#import "ZKAuthenticationInfo.h"
 
 @interface SessionIdAuthInfo: NSObject<ZKAuthenticationInfo> {
 }
@@ -29,5 +29,5 @@
 
 @property (readonly) NSString *sessionId;     // return an API Session ID.
 @property (readonly) NSURL *instanceUrl;      // return the full URL to the soap endpoint for the authentication user.
-
+@property (readwrite) NSURLSession *urlSession;
 @end

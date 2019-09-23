@@ -23,14 +23,15 @@
     return self;
 }
 
--(void)refresh {
+- (void)refresh:(void (^)(NSError *))cb {
     // there's no way to refresh a sessionId if it expires.
+    cb(nil);
 }
 
 // refresh the sesion if its needed. (this gets called before every soap call)
 // returns true if the session was refreshed.
--(BOOL)refreshIfNeeded {
-    return NO;
+- (void)refreshIfNeeded:(void (^)(BOOL, NSError *))cb {
+    cb(FALSE, nil);
 }
 
 @end
