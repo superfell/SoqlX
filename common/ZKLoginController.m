@@ -21,10 +21,9 @@
 
 #import "ZKLoginController.h"
 #import "credential.h"
-#import "zkSforceClient.h"
-#import "zkSoapException.h"
 
-int DEFAULT_API_VERSION = 46;
+
+int DEFAULT_API_VERSION = 47;
 
 
 @interface ZKLoginController ()
@@ -202,64 +201,64 @@ static NSString *test = @"https://test.salesforce.com";
                 }];
 }
 
-- (ZKSforceClient *)performLogin:(ZKSoapException **)error withApiVersion:(int)version {
-    sforce = [[ZKSforceClient alloc] init];
-    [sforce setLoginProtocolAndHost:server andVersion:version];    
-    if ([clientId length] > 0)
-        [sforce setClientId:clientId];
-    @try {
-        [sforce login:username password:password];
-        [[NSUserDefaults standardUserDefaults] setObject:server forKey:@"server"];
-        [[NSUserDefaults standardUserDefaults] setObject:username forKey:login_lastUsernameKey];
+- (void)startLoginWithApiVersion:(int)version
+                       failBlock:(ZKFailWithErrorBlock)failBlock
+                   completeBlock:(void(^)(ZKSforceClient *client))completeBlock {
+    
+    ZKSforceClient *newClient = [[ZKSforceClient alloc] init];
+    sforce = newClient;
+    [newClient setLoginProtocolAndHost:server andVersion:version];
+    if ([clientId length] > 0) {
+        [newClient setClientId:clientId];
     }
-    @catch (ZKSoapException *ex) {
-        if ([[ex reason] hasPrefix:@"UNSUPPORTED_API_VERSION:"]) {
-            NSLog(@"Login failed with %@ on API Version %d, retrying with version %d", [ex reason], version, version-1);
-            return [self performLogin:error withApiVersion:version-1];
+    [newClient login:username password:password failBlock:^(NSError *result) {
+        if ([result.userInfo[ZKSoapFaultCodeKey] hasPrefix:@"UNSUPPORTED_API_VERSION"]) {
+            NSLog(@"Login failed with %@ on API Version %d, retrying with version %d", result, version, version-1);
+            [self startLoginWithApiVersion:version-1 failBlock:failBlock completeBlock:completeBlock];
+        } else {
+            failBlock(result);
         }
-        if (error != nil) *error = ex;
-        return nil;
-    }
-    return sforce;
+    } completeBlock:^(ZKLoginResult *result) {
+        [[NSUserDefaults standardUserDefaults] setObject:self.server forKey:@"server"];
+        [[NSUserDefaults standardUserDefaults] setObject:self.username forKey:login_lastUsernameKey];
+        completeBlock(newClient);
+    }];
 }
 
-- (ZKSforceClient *)performLogin:(ZKSoapException **)error {
-    return [self performLogin:error withApiVersion:preferedApiVersion];
+-(void)startLogin:(ZKFailWithErrorBlock)failBlock completeBlock:(void(^)(ZKSforceClient *client))completeBlock {
+    [self startLoginWithApiVersion:preferedApiVersion failBlock:failBlock completeBlock:completeBlock];
 }
-
+            
 - (IBAction)login:(id)sender {
     [self setStatusText:nil];
     [loginProgress setHidden:NO];
     [loginProgress display];
-    @try {
-        ZKSoapException *ex = nil;
-        [self performLogin:&ex];
-        if (ex != nil) {
-            [self setStatusText:[ex reason]];
-            if ([[ex reason] hasPrefix:@"LOGIN_MUST_USE_SECURITY_TOKEN:"]) {
-                NSInteger mc =[NSApp runModalForWindow:tokenWindow];
-                [tokenWindow orderOut:self];
-                if (NSModalResponseStop == mc) {
-                    [self login:sender];
-                }
+    [self startLogin:^(NSError *result) {
+        [self setStatusText:result.localizedDescription];
+        if ([result.userInfo[ZKSoapFaultCodeKey] hasPrefix:@"LOGIN_MUST_USE_SECURITY_TOKEN"]) {
+            NSInteger mc =[NSApp runModalForWindow:self.tokenWindow];
+            [self.tokenWindow orderOut:self];
+            if (NSModalResponseStop == mc) {
+                [self login:sender];
+            } else {
+                [self->loginProgress setHidden:YES];
+                [self->loginProgress display];
             }
-            return;
-        } 
-        if (selectedCredential == nil || (![[[selectedCredential username] lowercaseString] isEqualToString:[username lowercaseString]])) {
+        }
+    } completeBlock:^(ZKSforceClient *client) {
+        [self->loginProgress setHidden:YES];
+        [self->loginProgress display];
+        if (self.selectedCredential == nil || (![[[self.selectedCredential username] lowercaseString] isEqualToString:[self.username lowercaseString]])) {
             [self promptAndAddToKeychain];
             return;
         }
-        else if (![[selectedCredential password] isEqualToString:password]) {
+        else if (![[self.selectedCredential password] isEqualToString:self.password]) {
             [self promptAndUpdateKeychain];
             return;
         }
         [self closeLoginUi];
-        [delegate loginController:self loginCompleted:sforce];
-    }
-    @finally {        
-        [loginProgress setHidden:YES];
-        [loginProgress display];
-    }
+        [self.delegate loginController:self loginCompleted:self->sforce];
+    }];
 }
 
 - (NSArray *)credentials {

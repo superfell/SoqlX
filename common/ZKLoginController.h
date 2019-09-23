@@ -20,10 +20,9 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "ZKSforce.h"
 
 @class Credential;
-@class ZKSforceClient;
-@class ZKSoapException;
 @class ZKLoginController;
 
 extern int DEFAULT_API_VERSION;
@@ -93,7 +92,7 @@ extern int DEFAULT_API_VERSION;
 - (NSArray *)credentials;
 - (BOOL)canDeleteServer;
 - (void)setClientIdFromInfoPlist;
-- (ZKSforceClient *)performLogin:(ZKSoapException **)error;
+- (void)startLogin:(ZKFailWithErrorBlock)failBlock completeBlock:(void(^)(ZKSforceClient *client))completeBlock;
 
 
 @end
