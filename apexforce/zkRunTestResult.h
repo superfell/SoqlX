@@ -20,7 +20,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "zkXmlDeserializer.h"
+#import "ZKXmlDeserializer.h"
 
 // <xsd:element name="codeCoverage" minOccurs="0" maxOccurs="unbounded" type="tns:CodeCoverageResult"/>
 // <xsd:element name="failures" minOccurs="0" maxOccurs="unbounded" type="tns:RunTestFailure"/>
