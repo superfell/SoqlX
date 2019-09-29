@@ -28,20 +28,21 @@
 
 @interface SchemaView : NSView {
     SObjectBox                *centralBox;
-    DescribeListDataSource  *describes;
-    NSMutableDictionary        *relatedBoxes;    // (SObjectBox keyed by SObject name)
-    NSArray                    *foreignKeys;     // (of SObject box)
-    NSArray                    *children;        // (of SObject box)
+    DescribeListDataSource    *describes;
+    NSMutableDictionary       *relatedBoxes;    // (SObjectBox keyed by SObject name)
+    NSArray                   *foreignKeys;     // (of SObject box)
+    NSArray                   *children;        // (of SObject box)
     
-    NSColor                    *primaryColor;
-    NSColor                    *foreignKeyColor;
-    NSColor                    *childRelColor;
-    IBOutlet Explorer        *primaryController;
+    NSColor                   *primaryColor;
+    NSColor                   *foreignKeyColor;
+    NSColor                   *childRelColor;
+    IBOutlet Explorer         *primaryController;
 }
 
 @property (strong) DescribeListDataSource *describesDataSource;
 
 @property (strong) ZKDescribeSObject *centralSObject;
+
 - (void)setCentralSObject:(ZKDescribeSObject *)s withRipplePoint:(NSPoint)ripple;
 @property (readonly, strong) SObjectBox *centralBox;
 

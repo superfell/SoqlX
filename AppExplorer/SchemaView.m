@@ -324,7 +324,7 @@ static const float minSpacerSize = 5.0f;
     NSRect relRect = NSMakeRect(frame.origin.x, frame.origin.y, sz.width, sz.height);
     NSMutableArray *createdBoxes = [NSMutableArray array];
     for (NSString *objName in sobjects) {
-        ZKDescribeSObject *desc = [describes describe:objName];
+        ZKDescribeSObject *desc = [describes cachedDescribe:objName];
         SObjectBox *b = [[SObjectBox alloc] initWithFrame:relRect andView:self];
         b.sobject = desc;
         b.includeFksTo = centralBox.sobject;
@@ -356,12 +356,15 @@ static const float minSpacerSize = 5.0f;
 
 -(void)asyncLoadDescribes:(ZKDescribeSObject *)type withRipplePoint:(NSPoint)ripple {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        for (NSString *t in [type namesOfAllReferencedObjects]) {
-            [self->describes describe:t];
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self setCentralSObject:type withRipplePoint:ripple];
-        });
+        [self->describes enumerateDescribes:[[type namesOfAllReferencedObjects] allObjects]
+              failBlock:^(NSError *result) {
+                  [[NSAlert alertWithError:result] runModal];
+              }
+              describeBlock:^(ZKDescribeSObject *desc, BOOL isLast, BOOL *stop) {
+                if (isLast) {
+                    [self setCentralSObject:type withRipplePoint:ripple];
+                }
+              }];
     });
 }
 
