@@ -40,7 +40,7 @@
     progress = [[ProgressController alloc] init];
     queue = [[NSOperationQueue alloc] init];
     queue.maxConcurrentOperationCount = 1;
-    client = [c copy];
+    client = c;
     return self;
 }
 
@@ -121,12 +121,15 @@
 -(void)doDeleteFrom:(NSInteger)start length:(NSInteger)length {
     [self performSelectorOnMainThread:@selector(aboutToDeleteFromIndex:) withObject:@(start+length) waitUntilDone:NO];
     NSArray *ids = [sfdcIds subarrayWithRange:NSMakeRange(start, length)];
-    NSArray *res = [client delete:ids];
-    [results addObjectsFromArray:res];
-    if (results.count == sfdcIds.count) {
-        // all done, lets wrap up
-        [self performSelectorOnMainThread:@selector(deletesFinished) withObject:nil waitUntilDone:NO];
-    }
+    [client delete:ids failBlock:^(NSError *result) {
+        [[NSAlert alertWithError:result] runModal];
+    } completeBlock:^(NSArray *res) {
+        [self->results addObjectsFromArray:res];
+        if (self->results.count == self->sfdcIds.count) {
+            // all done, lets wrap up
+            [self performSelectorOnMainThread:@selector(deletesFinished) withObject:nil waitUntilDone:NO];
+        }
+    }];
 }
 
 @end
