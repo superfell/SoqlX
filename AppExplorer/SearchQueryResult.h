@@ -21,6 +21,8 @@
 
 #import "zkQueryResult.h"
 
+@class ZKSearchResult;
+
 @protocol IsSearchQueryResult <NSObject>
 // this is a marker protocol to make it easier to distingush search results
 // from a reqular soql query result.
@@ -33,6 +35,6 @@
 @interface SearchQueryResult : ZKQueryResult <IsSearchQueryResult> {
 }
 
-+(instancetype)searchQueryResults:(NSArray *)searchResults;
++(instancetype)searchQueryResults:(ZKSearchResult *)searchResults;
 
 @end

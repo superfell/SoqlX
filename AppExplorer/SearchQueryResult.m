@@ -22,12 +22,14 @@
 #import "SearchQueryResult.h"
 #import "ZKSObject.h"
 #import "ZKQueryResult+NSTableView.h"
+#import "ZKSearchResult.h"
+#import "ZKSearchRecord.h"
 
 @implementation SearchQueryResult
 
-+(instancetype)searchQueryResults:(NSArray *)searchResults {
-    return [[SearchQueryResult alloc] initWithRecords:searchResults
-                                                 size:(int)searchResults.count
++(instancetype)searchQueryResults:(ZKSearchResult *)searchResults {
+    return [[SearchQueryResult alloc] initWithRecords:[searchResults.searchRecords valueForKey:@"record"]
+                                                 size:(int)searchResults.searchRecords.count
                                                  done:TRUE
                                          queryLocator:nil];
 }
