@@ -43,8 +43,6 @@
         buttonCurrent.title = [NSString stringWithFormat:buttonCurrent.title, [results.queryResult records].count];
     }
     client = c;
-    queryQueue = [[NSOperationQueue alloc] init];
-    queryQueue.maxConcurrentOperationCount = 1;
     saveQueue = [[NSOperationQueue alloc] init];
     saveQueue.maxConcurrentOperationCount = 1;
     return self;
@@ -98,7 +96,6 @@
     [stream write:@"\n"];
 
     self.columnFieldPaths = columns;
-    client = [client copyWithZone:nil];
 
     NSInvocationOperation *sop = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(writeResults:) object:qr];
     [saveQueue addOperation:sop];
@@ -107,7 +104,6 @@
 -(void)endWrite {
     NSTimeInterval ttaken = [[NSDate date] timeIntervalSinceDate:started];
     NSLog(@"query result saving complete, %lu rows in %f seconds (%d rows per hour)", (unsigned long)rowsWritten, ttaken, (int)(rowsWritten * 3600 / ttaken) );
-    [stream close];
     if (saveAll) {
         [NSApp endSheet:progressWindow];
         [progressWindow orderOut:self];
@@ -115,16 +111,16 @@
     }
 }
 
--(void)queryMore:(id)locator {
-    ZKQueryResult *qr = [client queryMore:locator];
-    NSInvocationOperation *sop = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(writeResults:) object:qr];
-    [saveQueue addOperation:sop];
-}
-
--(void)queueQueryMore:(NSString *)ql {
-    if (ql.length == 0 || !saveAll) return;
-    NSInvocationOperation *q = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(queryMore:) object:ql];
-    [queryQueue addOperation:q];
+-(void)queryMore:(NSString *)locator {
+    if ((locator.length == 0) || !saveAll) {
+        return;
+    }
+    [client queryMore:locator failBlock:^(NSError *result) {
+        [[NSAlert alertWithError:result] runModal];
+    } completeBlock:^(ZKQueryResult *qr) {
+        NSInvocationOperation *sop = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(writeResults:) object:qr];
+        [self->saveQueue addOperation:sop];
+    }];
 }
 
 -(void)incrementRowCount:(NSNumber *)n {
@@ -138,7 +134,7 @@
 
 -(void)writeResults:(id)data {
     ZKQueryResult *qr = (ZKQueryResult *)data;
-    [self queueQueryMore:[qr queryLocator]];
+    [self queryMore:[qr queryLocator]];
     NSInteger rows = qr.records.count;
     for (NSInteger row = 0; row < rows; row++) {
         BOOL first = YES;
@@ -167,6 +163,7 @@
     }
     [self updateRowCount:rows];
     if ([qr done] || !saveAll) {
+        [stream close];
         [self performSelectorOnMainThread:@selector(endWrite) withObject:nil waitUntilDone:NO];
     }
 }
@@ -203,6 +200,10 @@
 -(void)flush:(BOOL)ensureFullyFlushed {
     while (buffer.length > 0) {
         NSInteger written = [stream write:buffer.mutableBytes maxLength:buffer.length];
+        if (written == -1) {
+            [[NSAlert alertWithError:[stream streamError]] runModal];
+            return;
+        }
         if (written == buffer.length) {
             buffer.length = 0;
             return;

@@ -52,7 +52,6 @@
     NSButtonCell    *buttonCurrent;
     
     BOOL                saveAll;
-    NSOperationQueue    *queryQueue;
     NSOperationQueue    *saveQueue;
     BufferedWriter      *stream;
     ZKSforceClient      *client;
