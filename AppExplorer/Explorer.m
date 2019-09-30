@@ -170,13 +170,9 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     ZKLimitInfoHeader *h = c.lastLimitInfoHeader;
     ZKLimitInfo *api = [h limitInfoOfType:@"API REQUESTS"];
     NSString *newVal = (api == nil) ? nil : [NSString stringWithFormat:@"Org API calls %d/%d", [api current], [api limit]];
-    if ([NSThread isMainThread])
+    dispatch_async(dispatch_get_main_queue(), ^{
         self.apiCallCountText = newVal;
-    else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.apiCallCountText = newVal;
-        });
-    }
+    });
 }
 
 - (void)collapseChildTableView {
@@ -986,12 +982,15 @@ typedef enum SoqlParsePosition {
 }
 
 // ZKBaseClientDelegate
--(void)client:(ZKBaseClient *)client sentRequest:(NSString *)payload named:(NSString *)callName to:(NSURL *)destination withResponse:(zkElement *)response in:(NSTimeInterval)time {
-    [self updateCallCount:(ZKSforceClient *)client];
-}
+-(void)client:(ZKBaseClient *)client
+  sentRequest:(NSString *)payload
+        named:(NSString *)callName
+           to:(NSURL *)destination
+ withResponse:(ZKElement *)response
+        error:(NSError *)error
+           in:(NSTimeInterval)time {
 
--(void)client:(ZKBaseClient *)client sentRequest:(NSString *)payload named:(NSString *)callName to:(NSURL *)destination withException:(NSException *)ex    in:(NSTimeInterval)time {
-    
+    [self updateCallCount:(ZKSforceClient *)client];
 }
 
 @end
