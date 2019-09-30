@@ -248,7 +248,7 @@
     const int DEFAULT_DESC_BATCH = 16;
     int __block batchSize = DEFAULT_DESC_BATCH;
     typedef void (^nextBlock)(void);
-    __block nextBlock describeNextBatch;
+    nextBlock __block describeNextBatch;
     
     describeNextBatch = ^{
         if (leftTodo.count == 0 || (atomic_fetch_add(&self->stopBackgroundDescribes, 0) > 0)) {
@@ -299,6 +299,10 @@
                 leftTodo = [leftTodo subarrayWithRange:NSMakeRange(0, i+1)];
                 describeNextBatch();
             }];
+        } else {
+            // ensure the complete sanity check is done.
+            leftTodo = [leftTodo subarrayWithRange:NSMakeRange(0, i+1)];
+            describeNextBatch();
         }
     };
     describeNextBatch();
