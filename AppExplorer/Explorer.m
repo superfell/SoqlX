@@ -577,10 +577,13 @@ typedef enum SoqlParsePosition {
     if (self.sforce == nil) {
         return doc;
     }
+    // Regular soap login will always have the cachedUserInfo from Login Result.
+    // SID based logins, explictly call cachedUserInfo to validate the sid.
+    // So by this point there's always a cached user info we can use.
     NSString *user = [NSString stringWithFormat:@"%@ : %@ (%@ on %@)",
         doc,
-        [[sforce currentUserInfo] fullName],
-        [sforce currentUserInfo].userName,
+        [[sforce cachedUserInfo] fullName],
+        [sforce cachedUserInfo].userName,
         [sforce serverHostAbbriviation]];
     
     return user;
