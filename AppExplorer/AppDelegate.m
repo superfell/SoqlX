@@ -23,10 +23,9 @@
 #import "Explorer.h"
 #import "Prefs.h"
 #import <Sparkle/Sparkle.h>
-#import "zkSforceClient.h"
+#import "ZKSforceClient.h"
 #import "ZKLoginController.h"
-#import "ZKSoapException.h"
-#import "zkUserInfo.h"
+#import "ZKUserInfo.h"
 #import "SessionIdAuthInfo.h"
 
 
@@ -118,23 +117,23 @@
     ZKSforceClient *c = [[ZKSforceClient alloc] init];
     [c setClientId:[ZKLoginController appClientId]];
     c.authenticationInfo = auth;
-    @try {
-        // This call is used to validate that we were given a valid client, and that the auth info is usable.
-        [c currentUserInfo];
-        // If the app was just stated to deal with this URL then openUrls is called before appDidFinishLaunching
-        // so the window controller we create here will stop the default one being created.
-
-        SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:windowControllers];
-        [controller showWindowForClient:c];
-        [windowControllers makeObjectsPerformSelector:@selector(closeLoginPanelIfOpen:) withObject:self];
-        
-    } @catch (ZKSoapException *ex) {
+    
+    // This call is used to validate that we were given a valid client, and that the auth info is usable.
+    [c currentUserInfoWithFailBlock:^(NSError *result) {
         NSAlert *alert = [[NSAlert alloc] init];
         alert.messageText = @"Invalid parameters";
-        alert.informativeText = ex.reason;
+        alert.informativeText = result.localizedDescription;
         alert.alertStyle = NSAlertStyleWarning;
         [alert runModal];
-    }
+        
+    } completeBlock:^(ZKUserInfo *result) {
+        // If the app was just stated to deal with this URL then openUrls is called before appDidFinishLaunching
+        // so the window controller we create here will stop the default one being created.
+        
+        SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self->windowControllers];
+        [controller showWindowForClient:c];
+        [self->windowControllers makeObjectsPerformSelector:@selector(closeLoginPanelIfOpen:) withObject:self];
+    }];
 }
 
 -(void)openFileURL:(NSURL *)url {
@@ -146,8 +145,8 @@
     ZKSforceClient *user = nil;
     for (SoqlXWindowController *c in windowControllers) {
         if ([c isWindowLoaded] && c.explorer.isLoggedIn) {
-            ZKUserInfo *t = c.explorer.sforce.currentUserInfo;
-            ZKUserInfo *p = [user currentUserInfo];
+            ZKUserInfo *t = c.explorer.sforce.cachedUserInfo;
+            ZKUserInfo *p = [user cachedUserInfo];
             if (user == nil || ([p.userId isEqualToString:t.userId] &&
                                 [p.organizationId isEqualToString:t.organizationId])) {
                 user = c.explorer.sforce;
@@ -158,10 +157,10 @@
         }
     }
     if (user != nil) {
-        NSLog(@"Will open new window for %@", user.currentUserInfo.userName);
+        NSLog(@"Will open new window for %@", user.cachedUserInfo.userName);
         SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:windowControllers];
         [controller window];
-        [controller showWindowForClient:[user copy]];
+        [controller showWindowForClient:user];
         [controller.explorer load:url];
         return;
     }
