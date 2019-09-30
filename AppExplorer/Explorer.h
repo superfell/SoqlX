@@ -115,7 +115,7 @@
 @property (readonly) BOOL canQueryMore;
 @property (readonly, copy) NSArray *SObjects;
 @property (readonly, strong) DescribeListDataSource *describeDataSource;
-@property (readonly, strong) ZKDescribeSObject *selectedSObject;
+@property (readonly, strong) NSString *selectedSObjectName;
 - (void)updateProgress:(BOOL)show;
 
 - (void)dataChangedOnObject:(ZKSObject *)anObject field:(NSString *)fieldName value:(id)newValue;

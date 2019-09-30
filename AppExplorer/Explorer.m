@@ -813,25 +813,6 @@ typedef enum SoqlParsePosition {
     return [descDataSource SObjects];
 }
 
-- (ZKDescribeSObject *)selectedSObject {
-    id selectedItem = [describeList itemAtRow:describeList.selectedRow];
-    if ([selectedItem isKindOfClass:[NSString class]]) {
-        // sobject name
-        return [descDataSource describe:selectedItem];
-        
-    } else if ([selectedItem isKindOfClass:[ZKDescribeGlobalSObject class]]) {
-        // sobject desc
-        return [descDataSource describe:[selectedItem name]];
-        
-    } else if ([selectedItem isKindOfClass:[ZKDescribeField class]]) {
-        // field
-        return ((ZKDescribeField *)selectedItem).sobject;
-    }
-    // unknown
-    NSLog(@"selected item from describeList of unexpected type %@ %@", selectedItem, [selectedItem class]);
-    return selectedItem;
-}
-
 // When the user selected an sobject we don't have a describe for, we'll do a describe in the background
 // then re-update the UI/data sources.
 -(void)asyncSelectedSObjectChanged:(NSString *)sobjectType {
@@ -872,13 +853,32 @@ typedef enum SoqlParsePosition {
     [detailsController setDataSource:dataSource];
 }
 
+- (NSString *)selectedSObjectName {
+    id selectedItem = [describeList itemAtRow:describeList.selectedRow];
+    if ([selectedItem isKindOfClass:[NSString class]]) {
+        // sobject name
+        return selectedItem;
+        
+    } else if ([selectedItem isKindOfClass:[ZKDescribeGlobalSObject class]]) {
+        // sobject desc
+        return [selectedItem name];
+        
+    } else if ([selectedItem isKindOfClass:[ZKDescribeField class]]) {
+        // field
+        return ((ZKDescribeField *)selectedItem).sobject.name;
+    }
+    // unknown
+    NSLog(@"selected item from describeList of unexpected type %@ %@", selectedItem, [selectedItem class]);
+    return selectedItem;
+}
+
 - (IBAction)generateReportForSelection:(id)sender {
-    ZKDescribeSObject *sobject = [self selectedSObject]; 
-    if (sobject == nil) return;
+    NSString *sobjectName = [self selectedSObjectName];
+    if (sobjectName == nil) return;
     ReportDocument *d = [[ReportDocument alloc] init];
     [d makeWindowControllers];
     [d showWindows];
-    [d setSObjectType:sobject.name andDataSource:[self describeDataSource]];
+    [d setSObjectType:sobjectName andDataSource:[self describeDataSource]];
 }
 
 -(NSString *)idOfSelectedRowInTableVew:(NSTableView *)tv primaryIdOnly:(BOOL)primaryIdOnly {
