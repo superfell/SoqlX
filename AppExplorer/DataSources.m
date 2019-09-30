@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2014,2016,2018 Simon Fell
+// Copyright (c) 2006,2014,2016,2018,2019 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -102,7 +102,7 @@
 }
 
 - (void)setSforce:(ZKSforceClient *)sf {
-    sforce = [sf copy];
+    sforce = sf;
 }
 
 - (void)prioritizeDescribe:(NSString *)type {
@@ -121,7 +121,7 @@
         return YES; // easy, type contains the filter clause
     if (![self hasDescribe:type]) 
         return NO;    // we haven't described it yet
-    for (ZKDescribeField *f in [self describe:type].fields) {
+    for (ZKDescribeField *f in [self cachedDescribe:type].fields) {
         if ([f fieldMatchesFilter:filter])
             return YES;
     }
@@ -170,91 +170,88 @@
     return nil != describes[type.lowercaseString];
 }
 
-- (ZKDescribeSObject *)describe:(NSString *)type {
+-(ZKDescribeSObject *)cachedDescribe:(NSString *)type {
+    return describes[type.lowercaseString];
+}
+
+- (void)describe:(NSString *)type
+       failBlock:(ZKFailWithErrorBlock)failBlock
+   completeBlock:(ZKCompleteDescribeSObjectBlock)completeBlock {
+
     NSString *t = type.lowercaseString;
     ZKDescribeSObject * d = describes[t];
-    if (d == nil) {
-        if (![self isTypeDescribable:t]) 
-            return nil;
-        d = [sforce describeSObject:t];
-        // this is always called on the main thread, can fiddle with the cache directly
-        NSArray *sortedFields = [d.fields sortedArrayUsingDescriptors:@[fieldSortOrder]];
-        describes[t] = d;
-        sortedDescribes[t] = sortedFields;
-        [self performSelectorOnMainThread:@selector(updateFilter) withObject:nil waitUntilDone:NO];
+    if (d != nil || ![self isTypeDescribable:t]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completeBlock(d);
+        });
+        return;
     }
-    return d;
+    [sforce describeSObject:type
+                  failBlock:failBlock
+              completeBlock:^(ZKDescribeSObject *result) {
+      // this is always called on the main thread, can fiddle with the cache directly
+      [self addDescribesToCache:@[result]];
+      completeBlock(result);
+    }];
 }
+
+- (void)enumerateDescribes:(NSArray *)types
+                 failBlock:(ZKFailWithErrorBlock)failBlock
+             describeBlock:(void(^)(ZKDescribeSObject *desc, BOOL isLast, BOOL *stop))describeBlock {
+
+    NSMutableSet *todo = [NSMutableSet setWithArray:types];
+    [todo minusSet:[NSSet setWithArray:describes.allKeys]];
+    if (todo.count > 0) {
+        [priorityDescribes addObjectsFromArray:[todo allObjects]];
+    }
+    void(^__block next)(int idx) = nil;
+    next = ^(int idx) {
+        [self describe:types[idx] failBlock:failBlock completeBlock:^(ZKDescribeSObject *result) {
+            BOOL stop = NO;
+            BOOL last = idx >= types.count-1;
+            describeBlock(result, last, &stop);
+            if ((!stop) && (!last)) {
+                next(idx+1);
+            } else {
+                next = nil;
+            }
+        }];
+    };
+    next(0);
+}
+
 
 -(void)addDescribesToCache:(NSArray *)newDescribes {
     NSMutableArray *sorted = [NSMutableArray arrayWithCapacity:newDescribes.count];
     for (ZKDescribeSObject * d in newDescribes) {
         [sorted addObject:[d.fields sortedArrayUsingDescriptors:@[fieldSortOrder]]];
     }
-    dispatch_async(dispatch_get_main_queue(), ^() {
-        int i = 0;
-        for (ZKDescribeSObject *d in newDescribes) {
-            NSString *k = d.name.lowercaseString;
-            if (self->describes[k] == nil) {
-                self->describes[k] = d;
-                self->sortedDescribes[k] = sorted[i];
-            }
-            i++;
+    int i = 0;
+    for (ZKDescribeSObject *d in newDescribes) {
+        NSString *k = d.name.lowercaseString;
+        if (self->describes[k] == nil) {
+            self->describes[k] = d;
+            self->sortedDescribes[k] = sorted[i];
         }
-        [self updateFilter];
-    });
+        i++;
+        [outlineView reloadItem:descGlobalSobjects[k] reloadChildren:YES];
+    }
+    [self updateFilter];
 }
 
 -(void)startBackgroundDescribes {
-    ZKSforceClient *client = [sforce copyWithZone:nil];
     NSArray *toDescribe = descGlobalSobjects.allKeys;
+    NSArray __block *leftTodo = toDescribe;
+    NSArray __block *alreadyDescribed = nil;
+    NSArray __block *priority = nil;
+
     const int DEFAULT_DESC_BATCH = 16;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^() {
-        NSMutableArray *batch = [NSMutableArray arrayWithCapacity:DEFAULT_DESC_BATCH];
-        NSArray *leftTodo = toDescribe;
-        NSArray __block *alreadyDescribed = nil;
-        NSArray __block *priority = nil;
-        NSInteger i;
-        int batchSize = DEFAULT_DESC_BATCH;
-        while (leftTodo.count > 0 && (atomic_fetch_add(&self->stopBackgroundDescribes, 0) == 0)) {
-            dispatch_sync(dispatch_get_main_queue(), ^() {
-                alreadyDescribed = self->describes.allKeys;
-                // take ownership of the list priority describes
-                priority = self->priorityDescribes;
-                self->priorityDescribes = [[NSMutableArray alloc] init];
-            });
-            [batch removeAllObjects];
-            for (NSString *item in priority) {
-                if ([alreadyDescribed containsObject:item]) {
-                    continue;
-                }
-                [batch addObject:item];
-            }
-            if (batch.count > 0) {
-                NSLog(@"Found priority describes for %@", batch);
-            }
-            for (i=leftTodo.count-1; i >= 0 && batch.count < batchSize; i--) {
-                NSString *item = leftTodo[i];
-                if ([alreadyDescribed containsObject:item]) {
-                    continue;
-                }
-                [batch addObject:item];
-                if (batch.count >= batchSize) break;
-            }
-            if (batch.count > 0) {
-                @try {
-                    NSArray *res = [client describeSObjects:batch];
-                    [self addDescribesToCache:res];
-                    batchSize = MIN(DEFAULT_DESC_BATCH, MAX(2, batchSize * 3/2));
-                } @catch (NSException *ex) {
-                    NSLog(@"Failed to describe %@: %@", batch, ex);
-                    batchSize = MAX(1, batchSize / 2);
-                    continue;
-                }
-            }
-            leftTodo = [leftTodo subarrayWithRange:NSMakeRange(0, i+1)];
-        }
-        dispatch_async(dispatch_get_main_queue(), ^() {
+    int __block batchSize = DEFAULT_DESC_BATCH;
+    typedef void (^nextBlock)(void);
+    __block nextBlock describeNextBatch;
+    
+    describeNextBatch = ^{
+        if (leftTodo.count == 0 || (atomic_fetch_add(&self->stopBackgroundDescribes, 0) > 0)) {
             NSLog(@"Background describes completed");
             // sanity check we got everything
             if (self->descGlobalSobjects.count != self->describes.count) {
@@ -265,8 +262,46 @@
                     }
                 }
             }
-        });
-    });
+            describeNextBatch = nil;
+            return;
+        }
+        NSMutableArray *batch = [NSMutableArray arrayWithCapacity:batchSize];
+        alreadyDescribed = self->describes.allKeys;
+        // take ownership of the list priority describes
+        priority = self->priorityDescribes;
+        self->priorityDescribes = [[NSMutableArray alloc] init];
+        for (NSString *item in priority) {
+            if ([alreadyDescribed containsObject:item]) {
+                continue;
+            }
+            [batch addObject:item];
+        }
+        if (batch.count > 0) {
+            NSLog(@"Found priority describes for %@", batch);
+        }
+        NSInteger i;
+        for (i=leftTodo.count-1; i >= 0 && batch.count < batchSize; i--) {
+            NSString *item = leftTodo[i];
+            if ([alreadyDescribed containsObject:item]) {
+                continue;
+            }
+            [batch addObject:item];
+            if (batch.count >= batchSize) break;
+        }
+        if (batch.count > 0) {
+            [self->sforce describeSObjects:batch failBlock:^(NSError *err) {
+                NSLog(@"Failed to describe %@: %@", batch, err);
+                batchSize = MAX(1, batchSize / 2);
+                describeNextBatch();
+            } completeBlock:^(NSArray *result) {
+                [self addDescribesToCache:result];
+                batchSize = MIN(DEFAULT_DESC_BATCH, MAX(2, batchSize * 3/2));
+                leftTodo = [leftTodo subarrayWithRange:NSMakeRange(0, i+1)];
+                describeNextBatch();
+            }];
+        }
+    };
+    describeNextBatch();
 }
 
 -(void)stopBackgroundDescribe {
@@ -276,7 +311,7 @@
 // for use in an outline view
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
     if (item == nil) return filteredTypes.count;
-    return [self describe:[item name]].fields.count;
+    return [self cachedDescribe:[item name]].fields.count;
 }
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item  {
@@ -285,7 +320,7 @@
 
 - (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item {
     if (item == nil) return filteredTypes[index];
-    NSArray *fields = [self describe:[item name]].fields;
+    NSArray *fields = [self cachedDescribe:[item name]].fields;
     BOOL isSorted = [[NSUserDefaults standardUserDefaults] boolForKey:PREF_SORTED_FIELD_LIST];
     if (isSorted)
         fields = sortedDescribes[[item name].lowercaseString];

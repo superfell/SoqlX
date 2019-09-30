@@ -21,6 +21,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "IconProvider.h"
+#import "ZKSforce.h"
 #include <stdatomic.h>
 
 @class ZKSforceClient;
@@ -49,12 +50,21 @@
 - (void)setTypes:(ZKDescribeGlobalTheme *)t view:(NSOutlineView *)ov;
 - (void)stopBackgroundDescribe;
 
-// access to the desc cache
-- (ZKDescribeSObject *)describe:(NSString *)type;
-- (BOOL)isTypeDescribable:(NSString *)type;
-- (BOOL)hasDescribe:(NSString *)type;
-- (void)prioritizeDescribe:(NSString *)type;
-- (NSImage *)iconForType:(NSString *)sobjectName;
+// access/trigger the desc cache
+- (void)describe:(NSString *)type
+       failBlock:(ZKFailWithErrorBlock)failBlock
+   completeBlock:(ZKCompleteDescribeSObjectBlock)completeBlock;
+
+- (void)enumerateDescribes:(NSArray *)types
+                 failBlock:(ZKFailWithErrorBlock)failBlock
+             describeBlock:(void(^)(ZKDescribeSObject *desc, BOOL isLast, BOOL *stop))describeBlock;
+
+-(BOOL)isTypeDescribable:(NSString *)type;
+-(BOOL)hasDescribe:(NSString *)type;
+-(ZKDescribeSObject *)cachedDescribe:(NSString *)type;
+
+-(void)prioritizeDescribe:(NSString *)type;
+-(NSImage *)iconForType:(NSString *)sobjectName;
 
 // filter the view
 @property (copy) NSString *filter;
