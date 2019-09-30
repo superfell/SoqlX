@@ -38,6 +38,9 @@
     [self setEnabledButtons:NO];
 }
 
+-(void)dealloc {
+    webview.UIDelegate = nil;
+}
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
     [windowController.window setContentBorderThickness:28.0 forEdge:NSMinYEdge];     
@@ -55,26 +58,27 @@
         self.totalObjects = [dataSource SObjects].count;
     }
     [tabview selectTabViewItemWithIdentifier:@"progress"];
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0), ^{
-        ZKDescribeSObject *desc = [dataSource describe:self->sobjectType];
-        NSSet *allTypes = [desc namesOfAllReferencedObjects];
-        NSInteger total = allTypes.count + 1;
-        NSInteger done = 1;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.totalObjects = total;
-            self.describesDone = done;
-        });
-        for (NSString *t in allTypes) {
-            [dataSource describe:t];
-            done++;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.describesDone = done;
-            });
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self renderReportFromDataSource:dataSource];
-        });
-    });
+    [dataSource describe:self->sobjectType
+               failBlock:^(NSError *result) {
+                   [[NSAlert alertWithError:result] runModal];
+               }
+           completeBlock:^(ZKDescribeSObject *desc) {
+               NSArray *allTypes = [[desc namesOfAllReferencedObjects] allObjects];
+               NSInteger __block done = 1;
+               self.totalObjects = allTypes.count + 1;
+               self.describesDone = done;
+               [dataSource enumerateDescribes:allTypes
+                    failBlock:^(NSError *result) {
+                        [[NSAlert alertWithError:result] runModal];
+                    }
+                    describeBlock:^(ZKDescribeSObject *desc, BOOL isLast, BOOL *stop) {
+                        done++;
+                        self.describesDone = done;
+                        if (isLast) {
+                            [self renderReportFromDataSource:dataSource];
+                        }
+               }];
+           }];
 }
 
 NSString * tc(NSString *src) {
@@ -137,7 +141,7 @@ NSString * tc(NSString *src) {
 - (void)renderReportFromDataSource:(DescribeListDataSource *)newDataSource {
     schemaView.describesDataSource = newDataSource;
     [schemaView centralBox].viewMode = vmAllFields;
-    [schemaView setCentralSObject:[newDataSource describe:sobjectType]];
+    [schemaView setCentralSObject:[newDataSource cachedDescribe:sobjectType]];
     schemaView.isPrinting = YES;
     NSRect bounds = schemaView.bounds;
     
@@ -178,7 +182,7 @@ NSString * tc(NSString *src) {
     [s appendString:@"<hr/>"];
     [s appendFormat:@"<img src='schema://%@'/>", sobjectType];
 
-    ZKDescribeSObject *sobject = [newDataSource describe:sobjectType];
+    ZKDescribeSObject *sobject = [newDataSource cachedDescribe:sobjectType];
     [self renderFieldTable:s sobject:sobject];
     [self renderRelationships:s sobject:sobject];
     
