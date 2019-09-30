@@ -230,39 +230,10 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     return [sforce loggedIn];
 }
 
-// returns the urlNew pattern from any sobject we can find it in, starting with those we've already described.
--(NSString *)urlNewForAnyType {
-    for (ZKDescribeGlobalSObject *obj in [descDataSource SObjects]) {
-        if ([descDataSource hasDescribe:obj.name]) {
-            ZKDescribeSObject *desc = [descDataSource describe:obj.name];
-            if (desc.urlNew != nil)
-                return desc.urlNew;
-        }
-    }
-    // not found in what we already have, going to have to make an actual describe call, try a custom object first
-    for (ZKDescribeGlobalSObject *obj in [descDataSource SObjects]) {
-        if (obj.custom)
-            return [descDataSource describe:obj.name].urlNew;
-    }
-    // no custom objects, try some well know ones that we know have urlNew set
-    NSArray *wellKnown = @[@"Task", @"Event", @"Contact", @"Account", @"Case", @"User"];
-    for (NSString *type in wellKnown) {
-        NSString *url = [descDataSource describe:type].urlNew;
-        if (url != nil) return url;
-    }
-    // sheesh, still not found, try every type we know about
-    for (ZKDescribeGlobalSObject *obj in [descDataSource SObjects]) {
-        NSString *url = [descDataSource describe:obj.name].urlNew;
-        if (url != nil) return url;
-    }
-    return nil; // give up
-}
-
-- (void)launchSfdcBrowser:(NSString *)retUrl {
-    NSURL *url = [NSURL URLWithString:[self urlNewForAnyType]];
-    NSURL *baseUiUrl = [NSURL URLWithString:@"/" relativeToURL:url];
-    retUrl = retUrl == nil ? @"" : [NSString stringWithFormat:@"&retURL=%@", retUrl];
-    NSURL *fd = [NSURL URLWithString:[NSString stringWithFormat:@"/secur/frontdoor.jsp?sid=%@%@", [sforce sessionId], retUrl] relativeToURL:baseUiUrl];
+-(void)launchSfdcBrowser:(NSString *)retUrl {
+    NSString *returnUrl = retUrl == nil ? @"" : [NSString stringWithFormat:@"&retURL=%@", retUrl];
+    NSURL *fd = [NSURL URLWithString:[NSString stringWithFormat:@"/secur/frontdoor.jsp?sid=%@%@", [self.sforce sessionId], returnUrl]
+                       relativeToURL:self.sforce.serverUrl];
     [[NSWorkspace sharedWorkspace] openURL:fd];
 }
 
