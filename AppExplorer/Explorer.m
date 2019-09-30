@@ -251,15 +251,23 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     [progress display];
 }
 
+-(ZKFailWithErrorBlock)errorHandler {
+    return ^(NSError *err) {
+        [self updateProgress:NO];
+        [[NSAlert alertWithError:err] runModal];
+    };
+}
+
 - (IBAction)postLogin:(id)sender {
-    NSString *msg = [NSString stringWithFormat:@"Welcome %@ (instance:%@)",
-                        [[sforce currentUserInfo] fullName],
-                        [sforce serverUrl].host];
-    self.statusText = msg;
-    
-    NSString *userId = [sforce currentUserInfo].userId;
-    queryListController.prefsPrefix = userId;
-    detailsController.prefsPrefix = userId;
+    [sforce currentUserInfoWithFailBlock:[self errorHandler] completeBlock:^(ZKUserInfo *userInfo) {
+        NSString *msg = [NSString stringWithFormat:@"Welcome %@ (instance:%@)",
+                         [userInfo fullName],
+                         [self.sforce serverHostAbbriviation]];
+        self.statusText = msg;
+        NSString *userId = [userInfo userId];
+        self->queryListController.prefsPrefix = userId;
+        self->detailsController.prefsPrefix = userId;
+    }];
 
     descDataSource = [[DescribeListDataSource alloc] init];
     [apexController setSforceClient:sforce];
@@ -276,8 +284,8 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     [rootResults setQueryResult:nil];
     [childResults setQueryResult:nil];
 
-    [sforce performDescribeGlobalThemeWithFailBlock:^(NSException *result) {
-        NSLog(@"error doing descGT %@", result);
+    [sforce describeGlobalThemeWithFailBlock:^(NSError *result) {
+        [[NSAlert alertWithError:result] runModal];
     } completeBlock:^(ZKDescribeGlobalTheme *result) {
         [self willChangeValueForKey:@"SObjects"];
         [self->descDataSource setTypes:result view:self->describeList];
@@ -358,7 +366,7 @@ typedef enum SoqlParsePosition {
     ZKDescribeSObject *desc = nil;
     if (entity != nil) {
         if ([descDataSource hasDescribe:entity])
-            desc = [descDataSource describe:entity];
+            desc = [descDataSource cachedDescribe:entity];
         else if ([descDataSource isTypeDescribable:entity]) {
             [descDataSource prioritizeDescribe:entity];
         }
@@ -454,7 +462,7 @@ typedef enum SoqlParsePosition {
         
     } else {
         self.selectedObjectName = [selectedItem name];
-        d = [descDataSource describe:selectedObjectName];
+        d = [descDataSource cachedDescribe:selectedObjectName];
         [selectedFields removeAllObjects];
         [selectedFields addObjectsFromArray:d.fields];
     }
@@ -476,7 +484,7 @@ typedef enum SoqlParsePosition {
     } else {
         // more work, calculate set of the component field names to skip, based on the name of the compound Field + the standard trailers
         NSMutableSet *fieldsToSkip = [NSMutableSet set];
-        for (ZKDescribeField * f in [fields filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type=='address' || type='location'"]]) {
+        for (ZKDescribeField * f in [fields filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type=='address' || type=='location'"]]) {
             NSArray *lsuffixes = @[@"Longitude", @"Latitude"];
             NSArray *lcsuffixes= @[@"__Longitude__s", @"__Latitude__s"];
             NSArray *asuffixes = @[@"City", @"Country", @"CountryCode", @"State", @"StateCode", @"PostalCode", @"Street"];
@@ -512,37 +520,34 @@ typedef enum SoqlParsePosition {
     [self updateProgress:YES];
     [queryListController addQuery:[self soqlString]];
     [[NSUserDefaults standardUserDefaults] setObject:[self soqlString] forKey:@"soql"];
-    @try {
-        NSString *query = [[self soqlString] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-        ZKQueryResult *qr = nil;
-        if ([query.lowercaseString hasPrefix:@"find "]) {
-            qr = [SearchQueryResult searchQueryResults:[sforce search:query]];
-        } else {
-            qr = useQueryAll ? [sforce queryAll:query] : [sforce query:query];
-        }
+
+    NSString *query = [[self soqlString] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    ZKCompleteQueryResultBlock cb = ^(ZKQueryResult *qr) {
+        [self updateProgress:NO];
         if ([qr size] > 0) {
             if ([qr records].count == 0) {
                 self.statusText = [NSString stringWithFormat:@"Count query result is %ld rows", (long)[qr size]];
             } else {
-                rootResults.queryResult = qr;
-                [childResults setQueryResult:nil];
+                self->rootResults.queryResult = qr;
+                [self->childResults setQueryResult:nil];
                 [self setRowsLoadedStatusText:qr];
             }
         } else {
             self.statusText = @"Query returned 0 rows";
-            [rootResults setQueryResult:nil];
-            [childResults setQueryResult:nil];
+            [self->rootResults setQueryResult:nil];
+            [self->childResults setQueryResult:nil];
         }
+    };
+    if ([query.lowercaseString hasPrefix:@"find "]) {
+        [sforce search:query failBlock:[self errorHandler] completeBlock:^(ZKSearchResult *searchResult) {
+            ZKQueryResult *qr = [SearchQueryResult searchQueryResults:searchResult];
+            cb(qr);
+        }];
+    } else if (useQueryAll) {
+        [sforce queryAll:query failBlock:[self errorHandler] completeBlock:cb];
+    } else {
+        [sforce query:query failBlock:[self errorHandler] completeBlock:cb];
     }
-    @catch (ZKSoapException *ex)
-    {
-        [self updateProgress:NO];
-        NSAlert *a = [[NSAlert alloc] init];
-        a.messageText = ex.reason;
-        a.informativeText = @"Query Failed";
-        [a runModal];
-    }
-    [self updateProgress:NO];
 }
 
 - (IBAction)queryResultDoubleClicked:(id)sender {
@@ -767,8 +772,10 @@ typedef enum SoqlParsePosition {
     self.statusText = [NSString stringWithFormat:@"Updating field %@ on row with Id %@", fieldName, [anObject id]];
     ZKSObject *update = [ZKSObject withTypeAndId:[anObject type] sfId:[anObject id]];
     [update setFieldValue:newValue field:fieldName];
-    @try {
-        ZKSaveResult *sr = [sforce update:@[update]][0];
+    [self updateProgress:YES];
+    [sforce update:@[update] failBlock:[self errorHandler] completeBlock:^(NSArray *result) {
+        ZKSaveResult *sr = result[0];
+        [self updateProgress:NO];
         if (sr.success) {
             self.statusText = [NSString stringWithFormat:@"Updated field %@ on row with Id %@", fieldName, [anObject id]];
             [anObject setFieldValue:newValue field:fieldName];
@@ -778,23 +785,21 @@ typedef enum SoqlParsePosition {
             a.informativeText = sr.statusCode;
             [a runModal];
         }
-    } @catch (ZKSoapException *ex) {
-        NSAlert *a = [[NSAlert alloc] init];
-        a.messageText = [NSString stringWithFormat:@"Unable to update field %@", fieldName];
-        a.informativeText = ex.reason;
-        [a runModal];
-    }
+    }];
 }
 
 - (IBAction)queryMore:(id)sender {
     [self updateProgress:YES];
-    ZKQueryResult * next = [sforce queryMore:[rootResults.queryResult queryLocator]];
-    NSMutableArray *allRecs = [NSMutableArray arrayWithArray:[rootResults.queryResult records]];
-    [allRecs addObjectsFromArray:[next records]];
-    ZKQueryResult * total = [[ZKQueryResult alloc] initWithRecords:allRecs size:[next size] done:[next done] queryLocator:[next queryLocator]];
-    rootResults.queryResult = total;
-    [self setRowsLoadedStatusText:total];
-    [self updateProgress:NO];
+    [sforce queryMore:[rootResults.queryResult queryLocator]
+            failBlock:[self errorHandler]
+        completeBlock:^(ZKQueryResult *next) {
+            NSMutableArray *allRecs = [NSMutableArray arrayWithArray:[self->rootResults.queryResult records]];
+            [allRecs addObjectsFromArray:[next records]];
+            ZKQueryResult * total = [[ZKQueryResult alloc] initWithRecords:allRecs size:[next size] done:[next done] queryLocator:[next queryLocator]];
+            self->rootResults.queryResult = total;
+            [self setRowsLoadedStatusText:total];
+            [self updateProgress:NO];
+        }];
 }
 
 - (DescribeListDataSource *)describeDataSource {
@@ -829,13 +834,16 @@ typedef enum SoqlParsePosition {
 -(void)asyncSelectedSObjectChanged:(NSString *)sobjectType {
     [self updateProgress:YES];
     [detailsController setDataSource:nil];
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [self->descDataSource describe:sobjectType];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self selectedSObjectChanged:self];
-            [self updateProgress:NO];
-        });
-    });
+    NSInteger selectedRow = describeList.selectedRow;
+    [self->descDataSource describe:sobjectType
+                         failBlock:[self errorHandler]
+                     completeBlock:^(ZKDescribeSObject *result) {
+                        [self updateProgress:NO];
+                        // the describe completed, and this item is still selected update it.
+                        if (selectedRow == self->describeList.selectedRow) {
+                            [self selectedSObjectChanged:self];
+                        }
+                     }];
 }
 
 - (IBAction)selectedSObjectChanged:(id)sender {
@@ -843,19 +851,20 @@ typedef enum SoqlParsePosition {
     NSObject<NSTableViewDataSource> *dataSource = nil;
     if ([selectedItem isKindOfClass:[ZKDescribeGlobalSObject class]]) {
         // sobject
-        if (![descDataSource hasDescribe:[selectedItem name]] && !self.schemaViewIsActive) {
+        if (![descDataSource hasDescribe:[selectedItem name]]) {
             [self asyncSelectedSObjectChanged:[selectedItem name]];
             return;
         }
-        ZKDescribeSObject *desc = [descDataSource describe:[selectedItem name]];
+        ZKDescribeSObject *desc = [descDataSource cachedDescribe:[selectedItem name]];
         dataSource = [[SObjectDataSource alloc] initWithDescribe:desc];
         [detailsController setIcon:[descDataSource iconForType:[selectedItem name]]];
-        if ([soqlSchemaTabs.selectedTabViewItem.identifier isEqualToString:schemaTabId])
+        if (self.schemaViewIsActive) {
             [schemaController setSchemaViewToSObject:desc];
+        }
     } else {
         // field
         dataSource = [[SObjectFieldDataSource alloc] initWithDescribe:selectedItem];
-        [detailsController  setIcon:nil];
+        [detailsController setIcon:nil];
     }
     [detailsController setDataSource:dataSource];
 }
@@ -906,17 +915,21 @@ typedef enum SoqlParsePosition {
 - (void)deleteSelectedRowInTable:(QueryResultTable *)tr {
     NSString *theId = [self idOfSelectedRowInTableVew:tr.table primaryIdOnly:YES];
     if (theId == nil) return;
-    ZKSaveResult *sr = [sforce delete:@[theId]][0];
-    if (sr.success) {
-        NSInteger r = tr.table.clickedRow;
-        [tr removeRowAtIndex:r];
-        [self setRowsLoadedStatusText:tr.queryResult];
-    } else {
-        NSAlert *a = [[NSAlert alloc] init];
-        a.messageText = sr.message;
-        a.informativeText = sr.statusCode;
-        [a runModal];
-    }
+    [self updateProgress:YES];
+    [sforce delete:@[theId] failBlock:[self errorHandler] completeBlock:^(NSArray *result) {
+        [self updateProgress:NO];
+        ZKSaveResult *sr = result[0];
+        if (sr.success) {
+            NSInteger r = tr.table.clickedRow;
+            [tr removeRowAtIndex:r];
+            [self setRowsLoadedStatusText:tr.queryResult];
+        } else {
+            NSAlert *a = [[NSAlert alloc] init];
+            a.messageText = sr.message;
+            a.informativeText = sr.statusCode;
+            [a runModal];
+        }
+    }];
 }
 
 - (IBAction)deleteSelectedRow:(id)sender {
