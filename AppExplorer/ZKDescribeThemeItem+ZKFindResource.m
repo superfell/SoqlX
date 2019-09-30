@@ -67,19 +67,20 @@
         [r setHTTPShouldHandleCookies:NO];
         [r setHTTPShouldUsePipelining:NO];
         [r setHTTPMethod:@"GET"];
-        NSHTTPURLResponse *res;
-        NSError *err;
-        NSData *d = [NSURLConnection sendSynchronousRequest:r returningResponse:&res error:&err];
-        if ([res statusCode] == 200) {
-            NSImage *i = [[NSImage alloc] initWithData:d];
-            if (i != nil) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    completeBlock(i);
-                });
-                return;
+        [[[NSURLSession sharedSession] dataTaskWithRequest:r
+                                         completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+            NSHTTPURLResponse *res = (NSHTTPURLResponse *)response;
+            if ([res statusCode] == 200) {
+                NSImage *i = [[NSImage alloc] initWithData:data];
+                if (i != nil) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completeBlock(i);
+                    });
+                    return;
+                }
             }
-        }
-        NSLog(@"failed to load image from url %@", theUrl);
+            NSLog(@"failed to load image from url %@", theUrl);
+        }] resume];
     }];
 }
 
