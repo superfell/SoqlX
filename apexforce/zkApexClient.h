@@ -84,23 +84,28 @@ typedef enum ZKLogCategoryLevel {
 
 @interface ZKApexClient : ZKBaseClient {
 	ZKSforceClient		*sforce;	
-	NSString			*lastDebugLog;
-	BOOL				debugLog;
 	ZKLogCategoryLevel	loggingLevels[ZKLogCategory_Count];
 }
 
 + (id) fromClient:(ZKSforceClient *)sf;
 - (id) initFromClient:(ZKSforceClient *)sf;
 
-- (NSArray *)compilePackages:(NSArray *)src;
-- (NSArray *)compileTriggers:(NSArray *)src;
-- (ZKExecuteAnonymousResult *)executeAnonymous:(NSString *)src;
-- (ZKRunTestResult *)runTests:(BOOL)allTests namespace:(NSString *)ns packages:(NSArray *)pkgs;
+-(void)compilePackages:(NSArray *)src withFailBlock:(ZKFailWithErrorBlock)failBock completeBlock:(ZKCompleteArrayBlock)completeBlock;
+-(void)compileTriggers:(NSArray *)src withFailBlock:(ZKFailWithErrorBlock)failBock completeBlock:(ZKCompleteArrayBlock)completeBlock;
+
+-(void)executeAnonymous:(NSString *)src withFailBlock:(ZKFailWithErrorBlock)failBlock
+                                        completeBlock:(void(^)(ZKExecuteAnonymousResult *r))completeBlock;
+
+-(void)runTests:(BOOL)allTests namespace:(NSString *)ns packages:(NSArray *)pkgs
+                                                   withFailBlock:(ZKFailWithErrorBlock)failBlock
+                                                   completeBlock:(void(^)(ZKRunTestResult *r))completeBlock;
 
 @property (assign) BOOL debugLog;
+@property (readonly) NSString *lastDebugLog;
+
 -(ZKLogCategoryLevel)debugLevelForCategory:(ZKLogCategory)c;
 -(void)setDebugLevel:(ZKLogCategoryLevel)lvl forCategory:(ZKLogCategory)c;
--(NSString *)lastDebugLog;
 
 +(NSArray *)logLevelNames;
+
 @end

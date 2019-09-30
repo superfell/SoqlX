@@ -26,12 +26,16 @@
 #import "zkRunTestResult.h"
 #import "zkParser.h"
 
+@interface ZKApexClient ()
+@property (readwrite, atomic) NSString *lastDebugLog;
+@end
+
 @implementation ZKApexClient
 
 #define APEX_WS_NS   @"http://soap.sforce.com/2006/08/apex"
 #define SOAP_ENV_NS  @"http://schemas.xmlsoap.org/soap/envelope/"
 
-@synthesize debugLog;
+@synthesize debugLog, lastDebugLog;
 
 static NSArray *logLevelNames;
 
@@ -85,7 +89,6 @@ static NSArray *logLevelNames;
     return self;
 }
 
-
 -(ZKLogCategoryLevel)debugLevelForCategory:(ZKLogCategory)c {
     return loggingLevels[c];
 }
@@ -98,18 +101,10 @@ static NSArray *logLevelNames;
     return logLevelNames;
 }
 
--(NSString *)lastDebugLog {
-    return lastDebugLog;
-}
-
--(void)setLastDebugLog:(NSString *)log {
-    lastDebugLog = log;
-}
-
 - (void)setEndpointUrl {
     NSString *sUrl = [[sforce serverUrl] absoluteString];
     sUrl = [sUrl stringByReplacingOccurrencesOfString:@"/services/Soap/u/" withString:@"/services/Soap/s/"];
-    endpointUrl = [NSURL URLWithString:sUrl];
+    self.endpointUrl = [NSURL URLWithString:sUrl];
 }
 
 - (ZKEnvelope *)startEnvelope {
@@ -134,56 +129,78 @@ static NSArray *logLevelNames;
     return e;
 }
 
--(NSString *)getResponseDebugLog:(zkElement *)soapRoot {
-    zkElement *headers = [soapRoot childElement:@"Header" ns:SOAP_ENV_NS];
-    zkElement *debugInfo = [headers childElement:@"DebuggingInfo" ns:APEX_WS_NS];
-    zkElement *debugLogE = [debugInfo childElement:@"debugLog" ns:APEX_WS_NS];
+-(NSString *)getResponseDebugLog:(ZKElement *)soapRoot {
+    ZKElement *headers = [soapRoot childElement:@"Header" ns:SOAP_ENV_NS];
+    ZKElement *debugInfo = [headers childElement:@"DebuggingInfo" ns:APEX_WS_NS];
+    ZKElement *debugLogE = [debugInfo childElement:@"debugLog" ns:APEX_WS_NS];
     return [debugLogE stringValue];
 }
 
-- (NSArray *)sendAndParseResults:(ZKEnvelope *)requestEnv name:(NSString *)callName resultType:(Class)resultClass {
+- (void)sendAndParseResults:(ZKEnvelope *)requestEnv name:(NSString *)callName resultType:(Class)resultClass
+                  failBlock:(ZKFailWithErrorBlock)failBlock
+              completeBlock:(ZKCompleteArrayBlock)completeBlock {
+    
     NSString *soapRequest = [requestEnv end];
-    zkElement *soapRoot = [self sendRequest:soapRequest name:callName returnRoot:YES];
-    NSString *debugLogStr = [self getResponseDebugLog:soapRoot];
-    [self setLastDebugLog:debugLogStr];
-    
-    zkElement *body = [soapRoot childElement:@"Body" ns:SOAP_ENV_NS];
-    zkElement *resRoot = [[body childElements] objectAtIndex:0];
-    
-    NSArray * results = [resRoot childElements:@"result"];
-    NSMutableArray *resArr = [NSMutableArray arrayWithCapacity:[results count]];
-    for (zkElement *child in results) {
-        NSObject *o = [[resultClass alloc] initWithXmlElement:child];
-        [resArr addObject:o];
-    }
-    return resArr;
+    [self startRequest:soapRequest name:callName handler:^void(ZKElement *root, NSError *err) {
+        if (err != nil) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                failBlock(err);
+            });
+            return;
+        }
+        NSString *debugLogStr = [self getResponseDebugLog:root];
+        [self setLastDebugLog:debugLogStr];
+        
+        ZKElement *body = [root childElement:@"Body" ns:SOAP_ENV_NS];
+        ZKElement *resRoot = [[body childElements] objectAtIndex:0];
+        
+        NSArray * results = [resRoot childElements:@"result"];
+        NSMutableArray *resArr = [NSMutableArray arrayWithCapacity:[results count]];
+        for (ZKElement *child in results) {
+            NSObject *o = [[resultClass alloc] initWithXmlElement:child];
+            [resArr addObject:o];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completeBlock(resArr);
+        });
+    }];
 }
 
-- (NSArray *)compile:(NSString *)elemName src:(NSArray *)src {
+- (void)compile:(NSString *)elemName src:(NSArray *)src withFailBlock:(ZKFailWithErrorBlock)failBlock completeBlock:(ZKCompleteArrayBlock)completeBlock {
     ZKEnvelope * env = [self startEnvelope];
     [env startElement:elemName];
     [env addElementArray:@"scripts" elemValue:src];
     [env endElement:elemName];
-    return [self sendAndParseResults:env name:[NSString stringWithFormat:@"%@:", elemName] resultType:[ZKCompileResult class]];
+    return [self sendAndParseResults:env name:[NSString stringWithFormat:@"%@:", elemName] resultType:[ZKCompileResult class]
+                           failBlock:failBlock completeBlock:completeBlock];
 }
 
-- (NSArray *)compilePackages:(NSArray *)src {
-    return [self compile:@"compilePackages" src:src];
+-(void)compilePackages:(NSArray *)src withFailBlock:(ZKFailWithErrorBlock)failBlock completeBlock:(ZKCompleteArrayBlock)completeBlock {
+    [self compile:@"compilePackages" src:src withFailBlock:failBlock completeBlock:completeBlock];
 }
 
-- (NSArray *)compileTriggers:(NSArray *)src {
-    return [self compile:@"compileTriggers" src:src];
+-(void)compileTriggers:(NSArray *)src withFailBlock:(ZKFailWithErrorBlock)failBlock completeBlock:(ZKCompleteArrayBlock)completeBlock {
+    [self compile:@"compileTriggers" src:src withFailBlock:failBlock completeBlock:completeBlock];
 }
 
-- (ZKExecuteAnonymousResult *)executeAnonymous:(NSString *)src {
+-(void)executeAnonymous:(NSString *)src withFailBlock:(ZKFailWithErrorBlock)failBlock
+                                        completeBlock:(void(^)(ZKExecuteAnonymousResult *r))completeBlock {
+
     ZKEnvelope * env = [self startEnvelope];
     [env startElement:@"executeAnonymous"];
     [env addElement:@"String" elemValue:src];
     [env endElement:@"executeAnonymous"];
-    return [[self sendAndParseResults:env name:NSStringFromSelector(_cmd) resultType:[ZKExecuteAnonymousResult class]] objectAtIndex:0];
+    [self sendAndParseResults:env name:NSStringFromSelector(_cmd) resultType:[ZKExecuteAnonymousResult class]
+                    failBlock:failBlock
+                completeBlock:^(NSArray *result) {
+        completeBlock(result[0]);
+    }];
 }
 
-- (ZKRunTestResult *)runTests:(BOOL)allTests namespace:(NSString *)ns packages:(NSArray *)pkgs {
+-(void)runTests:(BOOL)allTests namespace:(NSString *)ns packages:(NSArray *)pkgs
+                           withFailBlock:(ZKFailWithErrorBlock)failBlock
+                           completeBlock:(void(^)(ZKRunTestResult *r))completeBlock {
+
     ZKEnvelope *env = [self startEnvelope];
     [env startElement:@"runTests"];
     [env startElement:@"RunTestsRequest"];
@@ -192,7 +209,9 @@ static NSArray *logLevelNames;
     [env addElement:@"packages" elemValue:pkgs];
     [env endElement:@"RunTestsRequest"];
     [env endElement:@"runTests"];
-    return [[self sendAndParseResults:env name:NSStringFromSelector(_cmd) resultType:[ZKRunTestResult class]] objectAtIndex:0];
+    [self sendAndParseResults:env name:NSStringFromSelector(_cmd) resultType:[ZKRunTestResult class] failBlock:failBlock completeBlock:^(NSArray *result) {
+        completeBlock(result[0]);
+    }];
 }
 
 @end

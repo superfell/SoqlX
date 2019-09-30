@@ -1,4 +1,4 @@
-// Copyright (c) 2010,2018 Simon Fell
+// Copyright (c) 2010,2018,2019 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -151,21 +151,25 @@
 }
 
 -(IBAction)executeApex:(id)sender {
-    ZKExecuteAnonymousResult *r = [apexClient executeAnonymous:self.apex];
-    NSString *deb = [apexClient lastDebugLog];
-    ApexResult *ar = [ApexResult fromResult:r andLog:deb];
-    [self insertObject:ar inResultsAtIndex:0];
-    [[NSUserDefaults standardUserDefaults] setObject:self.apex forKey:@"LastApexExec"];
-    [resultsController setSelectionIndex:0];
-    if ([ar success]) {
-        self.apexTextField.syntaxErrors = @[];
-    } else {
-        SMLSyntaxError *err = [[SMLSyntaxError alloc] init];
-        err.line = ar.line;
-        err.character = ar.column;
-        err.errorDescription = ar.resultText;
-        self.apexTextField.syntaxErrors = @[err];
-    }
+    ZKApexClient *c = apexClient;
+    [c executeAnonymous:self.apex withFailBlock:^(NSError *result) {
+        [[NSAlert alertWithError:result] runModal];
+    } completeBlock:^(ZKExecuteAnonymousResult *r) {
+        NSString *deb = [c lastDebugLog];
+        ApexResult *ar = [ApexResult fromResult:r andLog:deb];
+        [self insertObject:ar inResultsAtIndex:0];
+        [[NSUserDefaults standardUserDefaults] setObject:self.apex forKey:@"LastApexExec"];
+        [self->resultsController setSelectionIndex:0];
+        if ([ar success]) {
+            self.apexTextField.syntaxErrors = @[];
+        } else {
+            SMLSyntaxError *err = [[SMLSyntaxError alloc] init];
+            err.line = ar.line;
+            err.character = ar.column;
+            err.errorDescription = ar.resultText;
+            self.apexTextField.syntaxErrors = @[err];
+        }
+    }];
 }
 
 -(NSUInteger)countOfResults {
