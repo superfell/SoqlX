@@ -50,8 +50,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
 - (void)colorize;
 
-- (void)describeFinished:(NSNotification *)notification;
-
 - (void)collapseChildTableView;
 - (void)openChildTableView;
 
@@ -333,10 +331,6 @@ typedef enum SoqlParsePosition {
     
 -(void)textDidChange:(NSNotification *)notification {
     [self colorize];
-}
-
--(void)describeFinished:(NSNotification *)notification {
-    [self performSelectorOnMainThread:@selector(colorize) withObject:nil waitUntilDone:NO];
 }
 
 - (void)enumerateWordsInString:(NSString *)s withBlock:(void(^)(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop)) block {
