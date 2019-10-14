@@ -201,6 +201,7 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
 
 - (BOOL)allowEdit:(NSTableColumn *)aColumn {
     if (!editable) return NO;
+    if (delegate.isEditing) return NO;
     if ([aColumn.identifier isEqualToString:ERROR_COLUMN_IDENTIFIER]) return NO;
     return [aColumn.identifier rangeOfString:@"."].location == NSNotFound;
 }

@@ -118,6 +118,9 @@
 @property (readonly, strong) NSString *selectedSObjectName;
 - (void)updateProgress:(BOOL)show;
 
+@property BOOL isQuerying;
+@property BOOL isEditing;
+
 - (void)dataChangedOnObject:(ZKSObject *)anObject field:(NSString *)fieldName value:(id)newValue;
 - (void)changeEditFont:(id)sender;
 

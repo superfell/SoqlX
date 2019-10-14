@@ -30,6 +30,7 @@ extern NSArray  *ALL_APP_COLUMN_IDENTIFIERS;
 
 @protocol EditableQueryResultWrapperDelegate
 -(void) dataChangedOnObject:(ZKSObject *)sobject field:(NSString *)fieldName value:(id)value;
+-(BOOL) isEditing;
 @end
 
 @interface EditableQueryResultWrapper : NSObject<NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate> {

@@ -111,6 +111,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
 @synthesize sforce, statusText, schemaViewIsActive, apiCallCountText;
 @synthesize selectedObjectName, selectedFields, previouslyColorized, previousColorizedDescribe;
+@synthesize isQuerying, isEditing;
 
 +(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
     NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
@@ -255,6 +256,8 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     return ^(NSError *err) {
         [self updateProgress:NO];
         [[NSAlert alertWithError:err] runModal];
+        self.isEditing = NO;
+        self.isQuerying = NO;
     };
 }
 
@@ -518,12 +521,14 @@ typedef enum SoqlParsePosition {
 
 - (void)permformQuery:(BOOL)useQueryAll {
     [self updateProgress:YES];
+    self.isQuerying = YES;
     [queryListController addQuery:[self soqlString]];
     [[NSUserDefaults standardUserDefaults] setObject:[self soqlString] forKey:@"soql"];
 
     NSString *query = [[self soqlString] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     ZKCompleteQueryResultBlock cb = ^(ZKQueryResult *qr) {
         [self updateProgress:NO];
+        self.isQuerying = NO;
         if ([qr size] > 0) {
             if ([qr records].count == 0) {
                 self.statusText = [NSString stringWithFormat:@"Count query result is %ld rows", (long)[qr size]];
@@ -776,9 +781,11 @@ typedef enum SoqlParsePosition {
     ZKSObject *update = [ZKSObject withTypeAndId:[anObject type] sfId:[anObject id]];
     [update setFieldValue:newValue field:fieldName];
     [self updateProgress:YES];
+    self.isEditing = YES;
     [sforce update:@[update] failBlock:[self errorHandler] completeBlock:^(NSArray *result) {
         ZKSaveResult *sr = result[0];
         [self updateProgress:NO];
+        self.isEditing = NO;
         if (sr.success) {
             self.statusText = [NSString stringWithFormat:@"Updated field %@ on row with Id %@", fieldName, [anObject id]];
             [anObject setFieldValue:newValue field:fieldName];
@@ -793,6 +800,7 @@ typedef enum SoqlParsePosition {
 
 - (IBAction)queryMore:(id)sender {
     [self updateProgress:YES];
+    self.isQuerying = YES;
     [sforce queryMore:[rootResults.queryResult queryLocator]
             failBlock:[self errorHandler]
         completeBlock:^(ZKQueryResult *next) {
@@ -802,6 +810,7 @@ typedef enum SoqlParsePosition {
             self->rootResults.queryResult = total;
             [self setRowsLoadedStatusText:total];
             [self updateProgress:NO];
+            self.isQuerying = NO;
         }];
 }
 
