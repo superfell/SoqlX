@@ -51,6 +51,10 @@
     return [[QueryColumn alloc] initWithName:name];
 }
 
+-(NSString *)debugDescription {
+    return [NSString stringWithFormat:@"%@ [%@]", name, [childCols debugDescription]];
+}
+
 -(NSString *)name {
     return name;
 }
@@ -65,8 +69,13 @@
         [childCols addObject:c];
         return;
     }
-    if (![childCols containsObject:c])
+    NSInteger idx = [childCols indexOfObject:c];
+    if (idx == NSNotFound) {
         [childCols addObject:c];
+    } else {
+        QueryColumn *existing = childCols[idx];
+        [existing addChildCol:c];
+    }
 }
 
 -(void)addChildCols:(NSArray<QueryColumn*> *)cols {
@@ -228,11 +237,11 @@
                 [qc addChildColWithNames:@[@"longitude", @"latitude"]];
 
         } else if ([val isKindOfClass:[ZKSObject class]]) {
-            if (![qc hasChildNames]) {
-                NSMutableArray *relatedColumns = [NSMutableArray array];
-                seenNull |= [self addColumnsFromSObject:(ZKSObject *)val withPrefix:fullName toList:relatedColumns];
-                [qc addChildCols:relatedColumns];
-            }
+            // different rows might have different sets of child fields populated, so we have to look at all
+            // the rows, until we see a full row.
+            NSMutableArray *relatedColumns = [NSMutableArray array];
+            seenNull |= [self addColumnsFromSObject:(ZKSObject *)val withPrefix:fullName toList:relatedColumns];
+            [qc addChildCols:relatedColumns];
         }
     }
     return seenNull;
