@@ -36,3 +36,6 @@ extern NSString *PREF_TEXT_SIZE;
 
 // Should we exit the app if the last window is closed, or stay running ?
 extern NSString *PREF_QUIT_ON_LAST_WINDOW_CLOSE;
+
+// The number of recent queries we should keep in the list.
+extern NSString *PREF_MAX_RECENT_QUERIES;

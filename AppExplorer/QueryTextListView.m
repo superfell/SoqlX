@@ -1,4 +1,4 @@
-// Copyright (c) 2008,2012 Simon Fell
+// Copyright (c) 2008,2012,2019 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -20,6 +20,7 @@
 //
 
 #import "QueryTextListView.h"
+#import "Prefs.h"
 
 static const CGFloat MARGIN = 5.0;
 
@@ -180,7 +181,7 @@ static const CGFloat MARGIN = 5.0;
         QueryTextListViewItem *i = [self createItem:text];
         [items insertObject:i atIndex:0];
         // remove the oldest item if needed
-        if (items.count > 10) {
+        if (items.count > [[NSUserDefaults standardUserDefaults] integerForKey:PREF_MAX_RECENT_QUERIES]) {
             QueryTextListViewItem *toremove = items.lastObject;
             [items removeLastObject];
             [toremove removeFromSuperview];

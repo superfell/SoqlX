@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14868" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14868"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -262,21 +262,24 @@
                     </menu>
                 </menuItem>
             </items>
+            <point key="canvasLocation" x="139" y="154"/>
         </menu>
         <customObject id="340" userLabel="SUUpdater" customClass="SUUpdater"/>
         <window title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="prefs" animationBehavior="default" id="343" userLabel="Preferences">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
-            <rect key="contentRect" x="710" y="756" width="435" height="233"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1578"/>
+            <rect key="contentRect" x="710" y="756" width="435" height="283"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <value key="minSize" type="size" width="213" height="100"/>
             <value key="maxSize" type="size" width="1500" height="1200"/>
             <view key="contentView" id="344">
-                <rect key="frame" x="0.0" y="0.0" width="435" height="233"/>
+                <rect key="frame" x="0.0" y="0.0" width="435" height="283"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <button id="345">
-                        <rect key="frame" x="18" y="197" width="203" height="18"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="345">
+                        <rect key="frame" x="18" y="247" width="399" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="395" id="NWB-ki-jpc"/>
+                        </constraints>
                         <buttonCell key="cell" type="check" title="Check for updates at startup" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="1204">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -289,9 +292,11 @@
                             </binding>
                         </connections>
                     </button>
-                    <button id="1686">
-                        <rect key="frame" x="18" y="157" width="354" height="18"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="1686">
+                        <rect key="frame" x="18" y="207" width="399" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="395" id="iGz-jk-4SO"/>
+                        </constraints>
                         <buttonCell key="cell" type="check" title="Sort fields in alphabetical order in generated queries" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="1687">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -304,9 +309,11 @@
                             </binding>
                         </connections>
                     </button>
-                    <button id="1692">
-                        <rect key="frame" x="18" y="137" width="382" height="18"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="1692">
+                        <rect key="frame" x="18" y="187" width="399" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="395" id="TlY-Lz-2gu"/>
+                        </constraints>
                         <buttonCell key="cell" type="check" title="Use component fields for addresses in generated queries" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="1693">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -319,9 +326,11 @@
                             </binding>
                         </connections>
                     </button>
-                    <button id="YDz-10-l7r">
-                        <rect key="frame" x="18" y="177" width="287" height="18"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="YDz-10-l7r">
+                        <rect key="frame" x="18" y="227" width="399" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="283" id="cTm-Pa-U0s"/>
+                        </constraints>
                         <buttonCell key="cell" type="check" title="Sort fields in alphabetical order in sidebar" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="XYO-XB-7Uv">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -334,9 +343,11 @@
                             </binding>
                         </connections>
                     </button>
-                    <button id="sdA-fY-fqy">
-                        <rect key="frame" x="18" y="117" width="382" height="18"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="sdA-fY-fqy">
+                        <rect key="frame" x="18" y="167" width="399" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="395" id="dhy-x5-xhz"/>
+                        </constraints>
                         <buttonCell key="cell" type="check" title="Quit SoqlX when last window closes" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Xe7-dv-Q64">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -349,9 +360,76 @@
                             </binding>
                         </connections>
                     </button>
-                    <button verticalHuggingPriority="750" id="359">
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1rW-mR-B3p">
+                        <rect key="frame" x="18" y="80" width="254" height="16"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="Nak-Bf-mUO">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="1677" name="value" keyPath="editFontLabel" id="pyb-0Q-18F"/>
+                        </connections>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="N4F-3N-8jr">
+                        <rect key="frame" x="18" y="104" width="254" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="250" id="3M5-4e-pFG"/>
+                        </constraints>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="Edit Text Font:" id="ncI-E0-KU0">
+                            <font key="font" metaFont="systemBold"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cX7-EX-NvD">
+                        <rect key="frame" x="303" y="71" width="118" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="428-Ol-3WZ"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Change Font" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Mhh-kR-IiD">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="showFontPrefs:" target="1677" id="WhR-9k-dJ6"/>
+                        </connections>
+                    </button>
+                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="L8r-v1-FRe">
+                        <rect key="frame" x="18" y="125" width="115" height="25"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="lessThanOrEqual" priority="555" constant="110" id="aym-4L-dYP"/>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="bfd-hu-eq1"/>
+                        </constraints>
+                        <popUpButtonCell key="cell" type="push" title="10" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Sd9-u2-l5g" id="Pvv-aM-0Yi">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <menu key="menu" id="Mcg-Un-xd3">
+                                <items>
+                                    <menuItem title="10" state="on" id="Sd9-u2-l5g"/>
+                                    <menuItem title="25" id="jU4-Lq-fdR"/>
+                                    <menuItem title="50" id="0mt-Du-4hE"/>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
+                        <connections>
+                            <binding destination="354" name="selectedValue" keyPath="values.MaxRecentQueries" id="zPU-KL-ce8">
+                                <dictionary key="options">
+                                    <bool key="NSValidatesImmediately" value="YES"/>
+                                </dictionary>
+                            </binding>
+                        </connections>
+                    </popUpButton>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UE6-jo-hRU">
+                        <rect key="frame" x="136" y="131" width="281" height="16"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="Max number of recent queries to keep" id="06p-b1-oSX">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="359">
                         <rect key="frame" x="303" y="13" width="118" height="32"/>
-                        <autoresizingMask key="autoresizingMask"/>
                         <buttonCell key="cell" type="push" title="Close" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="1205">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -363,41 +441,40 @@ Gw
                             <action selector="performClose:" target="343" id="1681"/>
                         </connections>
                     </button>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="1rW-mR-B3p">
-                        <rect key="frame" x="37" y="69" width="268" height="17"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="Nak-Bf-mUO">
-                            <font key="font" metaFont="system"/>
-                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                        <connections>
-                            <binding destination="1677" name="value" keyPath="editFontLabel" id="pyb-0Q-18F"/>
-                        </connections>
-                    </textField>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="N4F-3N-8jr">
-                        <rect key="frame" x="37" y="94" width="303" height="17"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <textFieldCell key="cell" lineBreakMode="clipping" title="Edit Text Font:" id="ncI-E0-KU0">
-                            <font key="font" metaFont="systemBold"/>
-                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                    </textField>
-                    <button verticalHuggingPriority="750" id="cX7-EX-NvD">
-                        <rect key="frame" x="303" y="59" width="118" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="push" title="Change Font" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Mhh-kR-IiD">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="showFontPrefs:" target="1677" id="WhR-9k-dJ6"/>
-                        </connections>
-                    </button>
                 </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="YDz-10-l7r" secondAttribute="trailing" constant="20" symbolic="YES" id="308-tM-JHq"/>
+                    <constraint firstItem="345" firstAttribute="top" secondItem="344" secondAttribute="top" constant="20" symbolic="YES" id="6Pf-6u-HKv"/>
+                    <constraint firstItem="cX7-EX-NvD" firstAttribute="leading" secondItem="359" secondAttribute="leading" id="BmE-ow-fc3"/>
+                    <constraint firstItem="sdA-fY-fqy" firstAttribute="top" secondItem="1692" secondAttribute="bottom" constant="6" symbolic="YES" id="Bxy-HW-Bed"/>
+                    <constraint firstItem="UE6-jo-hRU" firstAttribute="leading" secondItem="L8r-v1-FRe" secondAttribute="trailing" constant="8" symbolic="YES" id="DWg-QJ-Z85"/>
+                    <constraint firstItem="YDz-10-l7r" firstAttribute="top" secondItem="345" secondAttribute="bottom" constant="6" symbolic="YES" id="DdH-qq-I9g"/>
+                    <constraint firstItem="1rW-mR-B3p" firstAttribute="top" secondItem="N4F-3N-8jr" secondAttribute="bottom" constant="8" symbolic="YES" id="Ev4-Tv-0wD"/>
+                    <constraint firstAttribute="bottom" secondItem="359" secondAttribute="bottom" constant="20" symbolic="YES" id="GIB-SB-1Ln"/>
+                    <constraint firstItem="L8r-v1-FRe" firstAttribute="leading" secondItem="344" secondAttribute="leading" constant="20" symbolic="YES" id="Ifs-6M-Y88"/>
+                    <constraint firstItem="cX7-EX-NvD" firstAttribute="centerY" secondItem="1rW-mR-B3p" secondAttribute="centerY" id="Q26-g5-YFq"/>
+                    <constraint firstAttribute="trailing" secondItem="UE6-jo-hRU" secondAttribute="trailing" constant="20" symbolic="YES" id="QB2-aL-CDe"/>
+                    <constraint firstAttribute="trailing" secondItem="359" secondAttribute="trailing" constant="20" symbolic="YES" id="RFK-Bp-E5s"/>
+                    <constraint firstItem="345" firstAttribute="leading" secondItem="YDz-10-l7r" secondAttribute="leading" id="RrM-vs-DqN"/>
+                    <constraint firstItem="1rW-mR-B3p" firstAttribute="leading" secondItem="344" secondAttribute="leading" constant="20" symbolic="YES" id="SpC-qa-kdG"/>
+                    <constraint firstItem="1686" firstAttribute="leading" secondItem="1692" secondAttribute="leading" id="TGb-jc-jpj"/>
+                    <constraint firstItem="YDz-10-l7r" firstAttribute="leading" secondItem="1686" secondAttribute="leading" id="TlW-xL-1Q5"/>
+                    <constraint firstItem="1692" firstAttribute="leading" secondItem="sdA-fY-fqy" secondAttribute="leading" id="Vkf-TI-0pQ"/>
+                    <constraint firstAttribute="trailing" secondItem="345" secondAttribute="trailing" constant="20" symbolic="YES" id="b9J-0c-P1j"/>
+                    <constraint firstAttribute="trailing" secondItem="1686" secondAttribute="trailing" constant="20" symbolic="YES" id="fG7-4d-ncJ"/>
+                    <constraint firstItem="1692" firstAttribute="top" secondItem="1686" secondAttribute="bottom" constant="6" symbolic="YES" id="fOI-Eo-fhO"/>
+                    <constraint firstItem="L8r-v1-FRe" firstAttribute="top" secondItem="sdA-fY-fqy" secondAttribute="bottom" constant="20" symbolic="YES" id="fza-aS-6Gn"/>
+                    <constraint firstItem="UE6-jo-hRU" firstAttribute="firstBaseline" secondItem="L8r-v1-FRe" secondAttribute="firstBaseline" id="gHq-Ue-Jqc"/>
+                    <constraint firstItem="N4F-3N-8jr" firstAttribute="top" secondItem="L8r-v1-FRe" secondAttribute="bottom" constant="8" symbolic="YES" id="hXc-h5-iiq"/>
+                    <constraint firstItem="345" firstAttribute="leading" secondItem="344" secondAttribute="leading" constant="20" symbolic="YES" id="jS4-MH-E5L"/>
+                    <constraint firstItem="N4F-3N-8jr" firstAttribute="trailing" secondItem="1rW-mR-B3p" secondAttribute="trailing" id="mZx-FB-Fac"/>
+                    <constraint firstItem="N4F-3N-8jr" firstAttribute="leading" secondItem="344" secondAttribute="leading" constant="20" symbolic="YES" id="niN-Cf-cuR"/>
+                    <constraint firstAttribute="trailing" secondItem="cX7-EX-NvD" secondAttribute="trailing" constant="20" symbolic="YES" id="prG-KY-aor"/>
+                    <constraint firstItem="1692" firstAttribute="trailing" secondItem="sdA-fY-fqy" secondAttribute="trailing" id="ru5-Hi-8K1"/>
+                    <constraint firstItem="1686" firstAttribute="top" secondItem="YDz-10-l7r" secondAttribute="bottom" constant="6" symbolic="YES" id="uw7-ZV-Zox"/>
+                </constraints>
             </view>
-            <point key="canvasLocation" x="496.5" y="492.5"/>
+            <point key="canvasLocation" x="496.5" y="517.5"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="354" userLabel="Shared Defaults"/>
         <customObject id="1677" userLabel="App Delegate" customClass="AppDelegate"/>
