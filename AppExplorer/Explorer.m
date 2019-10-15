@@ -259,6 +259,15 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     };
 }
 
+-(void)describe:(NSString *)sobject failed:(NSError *)err {
+    // describe failed after a number of attempts.
+    NSAlert *a = [[NSAlert alloc] init];
+    a.messageText = @"Describe API Call failled";
+    a.informativeText = [NSString stringWithFormat:@"The describeSobject API call for %@ failed after multiple attempts. Detailed object information for this object will not be available. This is likely a Salesforce bug. The last error was %@", sobject, err.description];
+    [a addButtonWithTitle:@"Close"];
+    [a runModal];
+}
+
 - (IBAction)postLogin:(id)sender {
     [sforce currentUserInfoWithFailBlock:[self errorHandler] completeBlock:^(ZKUserInfo *userInfo) {
         NSString *msg = [NSString stringWithFormat:@"Welcome %@ (instance:%@)",
@@ -271,6 +280,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     }];
 
     descDataSource = [[DescribeListDataSource alloc] init];
+    descDataSource.delegate = self;
     [apexController setSforceClient:sforce];
     [descDataSource setSforce:sforce];
     describeList.dataSource = descDataSource;
@@ -352,6 +362,10 @@ typedef enum SoqlParsePosition {
         }
     }];
     return entity;
+}
+
+-(void)prioritizedDescribesCompleted:(NSArray *)prioritizedSObjects {
+    [self colorize];
 }
 
 - (void)colorize {

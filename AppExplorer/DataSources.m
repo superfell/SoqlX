@@ -54,6 +54,8 @@
 
 @implementation DescribeListDataSource
 
+@synthesize delegate;
+
 - (instancetype)init {
     self = [super init];
     fieldSortOrder = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)];
@@ -244,7 +246,10 @@
     NSArray __block *leftTodo = toDescribe;
     NSArray __block *alreadyDescribed = nil;
     NSArray __block *priority = nil;
+    NSMutableDictionary<NSString*, NSNumber*> __block *errors = [[NSMutableDictionary alloc] init];
 
+    // allow for the batch size to get halved all the way to one, and then allow a few more attempts
+    const int MAX_ERRORS_BEFORE_GIVING_UP = 10;
     const int DEFAULT_DESC_BATCH = 16;
     int __block batchSize = DEFAULT_DESC_BATCH;
     typedef void (^nextBlock)(void);
@@ -282,7 +287,7 @@
         NSInteger i;
         for (i=leftTodo.count-1; i >= 0 && batch.count < batchSize; i--) {
             NSString *item = leftTodo[i];
-            if ([alreadyDescribed containsObject:item]) {
+            if ([alreadyDescribed containsObject:item] || [errors[item] intValue] >= MAX_ERRORS_BEFORE_GIVING_UP) {
                 continue;
             }
             [batch addObject:item];
@@ -291,10 +296,24 @@
         if (batch.count > 0) {
             [self->sforce describeSObjects:batch failBlock:^(NSError *err) {
                 NSLog(@"Failed to describe %@: %@", batch, err);
+                for (NSString *failedSObject in batch) {
+                    int count = [errors[failedSObject] intValue] + 1;
+                    errors[failedSObject] = [NSNumber numberWithInt:count];
+                    if (count >= MAX_ERRORS_BEFORE_GIVING_UP) {
+                        [self.delegate describe:failedSObject failed:err];
+                    }
+                }
+                [self->priorityDescribes addObjectsFromArray:priority];
                 batchSize = MAX(1, batchSize / 2);
                 describeNextBatch();
             } completeBlock:^(NSArray *result) {
                 [self addDescribesToCache:result];
+                for (NSString *sobject in batch) {
+                    [errors removeObjectForKey:sobject];
+                }
+                if (priority.count > 0) {
+                    [self.delegate prioritizedDescribesCompleted:priority];
+                }
                 batchSize = MIN(DEFAULT_DESC_BATCH, MAX(2, batchSize * 3/2));
                 leftTodo = [leftTodo subarrayWithRange:NSMakeRange(0, i+1)];
                 describeNextBatch();

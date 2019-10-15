@@ -29,6 +29,11 @@
 @class ZKDescribeField;
 @class ZKDescribeGlobalTheme;
 
+@protocol DescribeListDataSourceDelegate
+-(void)prioritizedDescribesCompleted:(NSArray *)prioritizedSObjects;
+-(void)describe:(NSString *)sobject failed:(NSError *)err;
+@end
+
 @interface DescribeListDataSource : NSObject<NSOutlineViewDataSource, NSOutlineViewDelegate, IconProvider> {
     NSArray                 *types;
     NSDictionary            *descGlobalSobjects;
@@ -45,6 +50,8 @@
     NSSortDescriptor        *fieldSortOrder;
     atomic_int               stopBackgroundDescribes;
 }
+
+@property (weak) NSObject<DescribeListDataSourceDelegate> *delegate;
 
 - (void)setSforce:(ZKSforceClient *)sf;
 - (void)setTypes:(ZKDescribeGlobalTheme *)t view:(NSOutlineView *)ov;
