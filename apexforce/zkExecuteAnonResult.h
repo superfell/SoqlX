@@ -20,7 +20,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "ZKXmlDeserializer.h"
+#import <ZKSforce/ZKXmlDeserializer.h>
 
 /*
      <xsd:element name="column" type="xsd:int"/> 

@@ -20,11 +20,11 @@
 //
 
 #import "QueryResultTable.h"
-#import "zkSObject.h"
-#import "ZKQueryResult.h"
+#import <ZKSforce/ZKSObject.h>
+#import <ZKSforce/ZKQueryResult.h>
 #import "EditableQueryResultWrapper.h"
 #import "SearchQueryResult.h"
-#import "ZKAddress.h"
+#import <ZKSforce/ZKAddress.h>
 
 @interface QueryResultTable ()
 - (NSArray *)createTableColumns:(ZKQueryResult *)qr;

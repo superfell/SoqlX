@@ -24,8 +24,8 @@
 #import "DataSources.h"
 #import "Explorer.h"
 #import "WeightedSObject.h"
-#import "zkChildRelationship.h"
-#import "zkDescribeSObject.h"
+#import <ZKSforce/ZKChildRelationship.h>
+#import <ZKSforce/ZKDescribeSObject.h>
 #import "RRGlossCausticShader.h"
 #import "ZKDescribe_Reporting.h"
 

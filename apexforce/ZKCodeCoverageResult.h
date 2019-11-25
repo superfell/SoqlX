@@ -20,7 +20,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "zkXmlDeserializer.h"
+#import <ZKSforce/ZKXmlDeserializer.h>
 
 // <xsd:element name="dmlInfo" minOccurs="0" maxOccurs="unbounded" type="tns:CodeLocation"/>
 // <xsd:element name="locationsNotCovered" minOccurs="0" maxOccurs="unbounded" type="tns:CodeLocation"/>

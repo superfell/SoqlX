@@ -20,7 +20,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "zkXmlDeserializer.h"
+#import <ZKSforce/ZKXmlDeserializer.h>
 
 // <xsd:element name="message" type="xsd:string"/>
 // <xsd:element name="methodName" type="xsd:string"/>

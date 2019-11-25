@@ -20,11 +20,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Sparkle/Sparkle.h>
 
 @class Explorer;
 @class ZKSforceClient;
 
-@interface AppDelegate : NSObject<NSApplicationDelegate> {
+@interface AppDelegate : NSObject<NSApplicationDelegate, SUUpdaterDelegate> {
     NSMutableArray *windowControllers;
 }
 

@@ -21,7 +21,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "ZKXmlDeserializer.h"
+#import <ZKSforce/ZKXmlDeserializer.h>
 
 // <xsd:complexType name="CompilePackageResult">
 // <xsd:sequence>

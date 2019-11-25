@@ -20,10 +20,10 @@
 //
 
 #import "SearchQueryResult.h"
-#import "ZKSObject.h"
-#import "ZKQueryResult+NSTableView.h"
-#import "ZKSearchResult.h"
-#import "ZKSearchRecord.h"
+#import <ZKSforce/ZKSObject.h>
+#import <ZKSforce/ZKQueryResult+NSTableView.h>
+#import <ZKSforce/ZKSearchResult.h>
+#import <ZKSforce/ZKSearchRecord.h>
 
 @implementation SearchQueryResult
 

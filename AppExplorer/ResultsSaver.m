@@ -21,8 +21,8 @@
 
 #import "ResultsSaver.h"
 #import "QueryResultTable.h"
-#import "zkSforce.h"
-#import "zkQueryResult+NSTableView.h"
+#import <ZKSforce/ZKSforce.h>
+#import <ZKSforce/ZKQueryResult+NSTableView.h>
 #import "EditableQueryResultWrapper.h"
 
 @interface ResultsSaver()

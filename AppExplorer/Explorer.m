@@ -27,7 +27,7 @@
 #import "QueryResultTable.h"
 #import "QueryListController.h"
 #import "ApexController.h"
-#import "zkSforce.h"
+#import <ZKSforce/ZKSforce.h>
 #import "ResultsSaver.h"
 #import "BulkDelete.h"
 #import "SearchQueryResult.h"

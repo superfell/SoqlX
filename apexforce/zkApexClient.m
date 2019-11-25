@@ -20,11 +20,11 @@
 //
 
 #import "zkApexClient.h"
-#import "ZKEnvelope.h"
+#import <ZKSforce/ZKEnvelope.h>
 #import "ZKCompileResult.h"
 #import "zkExecuteAnonResult.h"
 #import "zkRunTestResult.h"
-#import "zkParser.h"
+#import <ZKSforce/ZKParser.h>
 
 @interface ZKApexClient ()
 @property (readwrite, atomic) NSString *lastDebugLog;

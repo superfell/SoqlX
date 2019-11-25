@@ -20,7 +20,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "zkDescribeField.h"
+#import <ZKSforce/ZKDescribeField.h>
 #import "SObjectViewMode.h"
 
 @interface ZKDescribeField (FieldImportance)

@@ -8,3 +8,6 @@ AppExplorer/AppExplorer.xcodeproj/xcuserdata/simon.xcuserdatad/xcdebugger/Breakp
 AppExplorer/AppExplorer.xcodeproj/project.xcworkspace/
 /AppExplorer/dsa_priv.pem
 AppExplorer/AppExplorer.xcodeproj/xcuserdata/simon.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist
+/Pods
+/Podfile.lock
+/AppExplorer.xcworkspace

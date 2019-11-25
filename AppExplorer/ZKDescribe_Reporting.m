@@ -20,8 +20,8 @@
 //
 
 #import "ZKDescribe_Reporting.h"
-#import "zkPicklistEntry.h"
-#import "zkChildRelationship.h"
+#import <ZKSforce/ZKPicklistEntry.h>
+#import <ZKSforce/ZKChildRelationship.h>
 
 
 @implementation ZKDescribeField (Reporting)

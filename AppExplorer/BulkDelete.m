@@ -22,7 +22,7 @@
 #import "BulkDelete.h"
 #import "ProgressController.h"
 #import "EditableQueryResultWrapper.h"
-#import "zkSforce.h"
+#import <ZKSforce/ZKSforce.h>
 #import "QueryResultTable.h"
 
 @interface BulkDelete ()

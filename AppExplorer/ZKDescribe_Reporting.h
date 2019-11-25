@@ -20,8 +20,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "zkDescribeSObject.h"
-#import "zkDescribeField.h"
+#import <ZKSforce/ZKDescribeSObject.h>
+#import <ZKSforce/ZKDescribeField.h>
 #import "DataSources.h"
 
 @interface ZKDescribeSObject (Reporting)

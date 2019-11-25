@@ -20,7 +20,7 @@
 //
 
 #import "ApexController.h"
-#import "zkSforceClient.h"
+#import <ZKSforce/ZKSforceClient.h>
 #import "zkApexClient.h"
 #import "zkExecuteAnonResult.h"
 #import "StandAloneTableHeaderView.h"

@@ -21,7 +21,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "IconProvider.h"
-#import "ZKSforce.h"
+#import <ZKSforce/ZKSforce.h>
 #include <stdatomic.h>
 
 @class ZKSforceClient;

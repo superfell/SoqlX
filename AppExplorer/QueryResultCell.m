@@ -20,7 +20,7 @@
 //
 
 #import "QueryResultCell.h"
-#import "ZKQueryResult.h"
+#import <ZKSforce/ZKQueryResult.h>
 
 @implementation QueryResultCell
 

@@ -20,7 +20,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "zkSforceClient.h"
+#import <ZKSforce/ZKSforceClient.h>
 
 @class ZKExecuteAnonymousResult;
 @class ZKRunTestResult;

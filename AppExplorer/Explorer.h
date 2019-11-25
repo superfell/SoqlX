@@ -23,7 +23,7 @@
 #import "DataSources.h"
 #import "SchemaController.h"
 #import "StandAloneTableHeaderView.h"
-#import "zkSforceClient.h"
+#import <ZKSforce/ZKSforceClient.h>
 #import "EditableQueryResultWrapper.h"
 #import "QueryListController.h"
 #import "ZKLoginController.h"

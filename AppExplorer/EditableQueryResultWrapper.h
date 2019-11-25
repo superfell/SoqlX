@@ -20,7 +20,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "zkQueryResult.h"
+#import <ZKSforce/ZKQueryResult.h>
 
 extern NSString *DELETE_COLUMN_IDENTIFIER;
 extern NSString *ERROR_COLUMN_IDENTIFIER;

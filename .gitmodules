@@ -1,6 +1,3 @@
-[submodule "zksforce"]
-	path = zksforce
-	url = git://github.com/superfell/zkSforce.git
 [submodule "Fragaria"]
 	path = Fragaria
 	url = https://github.com/shysaur/Fragaria.git

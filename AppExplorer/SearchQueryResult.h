@@ -19,7 +19,7 @@
 // THE SOFTWARE.
 //
 
-#import "zkQueryResult.h"
+#import <ZKSforce/ZKQueryResult.h>
 
 @class ZKSearchResult;
 

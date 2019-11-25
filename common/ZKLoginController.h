@@ -20,7 +20,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "ZKSforce.h"
+#import <ZKSforce/ZKSforce.h>
 
 @class Credential;
 @class ZKLoginController;
