@@ -797,6 +797,7 @@ typedef enum SoqlParsePosition {
         if (sr.success) {
             self.statusText = [NSString stringWithFormat:@"Updated field %@ on row with Id %@", fieldName, [anObject id]];
             [anObject setFieldValue:newValue field:fieldName];
+            [self->rootTableView reloadData];
         } else {
             NSAlert *a = [[NSAlert alloc] init];
             a.messageText = sr.message;
