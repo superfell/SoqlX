@@ -212,7 +212,7 @@ static NSString *test = @"https://test.salesforce.com";
         [newClient setClientId:clientId];
     }
     [newClient login:username password:password failBlock:^(NSError *result) {
-        if ([result.userInfo[ZKSoapFaultCodeKey] hasPrefix:@"UNSUPPORTED_API_VERSION"]) {
+        if ([result.userInfo[ZKSoapFaultCodeKey] hasSuffix:@":UNSUPPORTED_API_VERSION"]) {
             NSLog(@"Login failed with %@ on API Version %d, retrying with version %d", result, version, version-1);
             [self startLoginWithApiVersion:version-1 failBlock:failBlock completeBlock:completeBlock];
         } else {
@@ -234,8 +234,10 @@ static NSString *test = @"https://test.salesforce.com";
     [loginProgress setHidden:NO];
     [loginProgress display];
     [self startLogin:^(NSError *result) {
+        [self->loginProgress setHidden:YES];
+        [self->loginProgress display];
         [self setStatusText:result.localizedDescription];
-        if ([result.userInfo[ZKSoapFaultCodeKey] hasPrefix:@"LOGIN_MUST_USE_SECURITY_TOKEN"]) {
+        if ([result.userInfo[ZKSoapFaultCodeKey] hasSuffix:@":LOGIN_MUST_USE_SECURITY_TOKEN"]) {
             NSInteger mc =[NSApp runModalForWindow:self.tokenWindow];
             [self.tokenWindow orderOut:self];
             if (NSModalResponseStop == mc) {
