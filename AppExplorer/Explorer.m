@@ -523,8 +523,12 @@ typedef enum SoqlParsePosition {
     [descDataSource setFilter:[sender stringValue]];
 }
 
-- (void)setRowsLoadedStatusText:(ZKQueryResult *)qr {
-    self.statusText = [NSString stringWithFormat:@"loaded %ld of %ld total rows", (unsigned long)[qr records].count, (long)[qr size]];
+- (void)setRowsLoadedStatusText:(ZKQueryResult *)qr timing:(NSString *)time {
+    self.statusText = [NSString stringWithFormat:@"loaded %ld of %ld total rows %@", (unsigned long)[qr records].count, (long)[qr size], time];
+}
+
+- (NSString *)execTimeSince:(NSDate *)started {
+    return [NSString stringWithFormat:@"(in %.0f ms)", [[NSDate date] timeIntervalSinceDate:started] * 1000];
 }
 
 - (void)permformQuery:(BOOL)useQueryAll {
@@ -534,19 +538,21 @@ typedef enum SoqlParsePosition {
     [[NSUserDefaults standardUserDefaults] setObject:[self soqlString] forKey:@"soql"];
 
     NSString *query = [[self soqlString] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    NSDate *started = [NSDate date];
     ZKCompleteQueryResultBlock cb = ^(ZKQueryResult *qr) {
         [self updateProgress:NO];
         self.isQuerying = NO;
+        NSString *time = [self execTimeSince:started];
         if ([qr size] > 0) {
             if ([qr records].count == 0) {
-                self.statusText = [NSString stringWithFormat:@"Count query result is %ld rows", (long)[qr size]];
+                self.statusText = [NSString stringWithFormat:@"Count query result is %ld rows %@", (long)[qr size], time];
             } else {
                 self->rootResults.queryResult = qr;
                 [self->childResults setQueryResult:nil];
-                [self setRowsLoadedStatusText:qr];
+                [self setRowsLoadedStatusText:qr timing:time];
             }
         } else {
-            self.statusText = @"Query returned 0 rows";
+            self.statusText = [NSString stringWithFormat:@"Query returned 0 rows %@", time];
             [self->rootResults setQueryResult:nil];
             [self->childResults setQueryResult:nil];
         }
@@ -811,14 +817,16 @@ typedef enum SoqlParsePosition {
 - (IBAction)queryMore:(id)sender {
     [self updateProgress:YES];
     self.isQuerying = YES;
+    NSDate *started = [NSDate date];
     [sforce queryMore:[rootResults.queryResult queryLocator]
             failBlock:[self errorHandler]
         completeBlock:^(ZKQueryResult *next) {
+            NSString *execTime = [self execTimeSince:started];
             NSMutableArray *allRecs = [NSMutableArray arrayWithArray:[self->rootResults.queryResult records]];
             [allRecs addObjectsFromArray:[next records]];
             ZKQueryResult * total = [[ZKQueryResult alloc] initWithRecords:allRecs size:[next size] done:[next done] queryLocator:[next queryLocator]];
             self->rootResults.queryResult = total;
-            [self setRowsLoadedStatusText:total];
+            [self setRowsLoadedStatusText:total timing:execTime];
             [self updateProgress:NO];
             self.isQuerying = NO;
         }];
@@ -938,13 +946,15 @@ typedef enum SoqlParsePosition {
     NSString *theId = [self idOfSelectedRowInTableVew:tr.table primaryIdOnly:YES];
     if (theId == nil) return;
     [self updateProgress:YES];
+    NSDate *started = [NSDate date];
     [sforce delete:@[theId] failBlock:[self errorHandler] completeBlock:^(NSArray *result) {
+        NSString *execTime = [self execTimeSince:started];
         [self updateProgress:NO];
         ZKSaveResult *sr = result[0];
         if (sr.success) {
             NSInteger r = tr.table.clickedRow;
             [tr removeRowAtIndex:r];
-            [self setRowsLoadedStatusText:tr.queryResult];
+            [self setRowsLoadedStatusText:tr.queryResult timing:execTime];
         } else {
             NSAlert *a = [[NSAlert alloc] init];
             a.messageText = sr.message;
