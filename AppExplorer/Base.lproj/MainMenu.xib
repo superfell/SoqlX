@@ -245,6 +245,28 @@
                         </items>
                     </menu>
                 </menuItem>
+                <menuItem title="Query" id="Rmy-oH-MLd">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Query" id="I4h-NI-JIe">
+                        <items>
+                            <menuItem title="Query" keyEquivalent="r" id="KDK-8h-YWC">
+                                <connections>
+                                    <action selector="executeQuery:" target="-1" id="NNG-q3-oiQ"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Query All" keyEquivalent="R" id="gtT-r3-rXR">
+                                <connections>
+                                    <action selector="executeQueryAll:" target="-1" id="hx8-VI-nsT"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Query More" keyEquivalent="M" id="NRN-z4-7LD">
+                                <connections>
+                                    <action selector="queryMore:" target="-1" id="5OO-bu-3EB"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
                 <menuItem title="Help" id="103">
                     <menu key="submenu" title="Help" id="106">
                         <items>
@@ -262,7 +284,7 @@
                     </menu>
                 </menuItem>
             </items>
-            <point key="canvasLocation" x="139" y="154"/>
+            <point key="canvasLocation" x="-303" y="-34"/>
         </menu>
         <customObject id="340" userLabel="SUUpdater" customClass="SUUpdater"/>
         <window title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="prefs" animationBehavior="default" id="343" userLabel="Preferences">
@@ -403,7 +425,7 @@
                         </constraints>
                         <popUpButtonCell key="cell" type="push" title="10" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Sd9-u2-l5g" id="Pvv-aM-0Yi">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
+                            <font key="font" metaFont="menu"/>
                             <menu key="menu" id="Mcg-Un-xd3">
                                 <items>
                                     <menuItem title="10" state="on" id="Sd9-u2-l5g"/>

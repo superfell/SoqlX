@@ -157,17 +157,15 @@
                                                                         <buttonCell key="cell" type="smallSquare" title="Query More" bezelStyle="smallSquare" alignment="center" borderStyle="border" inset="2" id="1203">
                                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                             <font key="font" metaFont="system"/>
-                                                                            <string key="keyEquivalent">m</string>
-                                                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                                                                         </buttonCell>
                                                                         <connections>
                                                                             <action selector="queryMore:" target="218" id="955"/>
-                                                                            <binding destination="218" name="enabled" keyPath="isQuerying" id="hNx-nO-hhS">
+                                                                            <binding destination="218" name="hidden" keyPath="canQueryMore" previousBinding="hNx-nO-hhS" id="Q6p-1g-SuB">
                                                                                 <dictionary key="options">
                                                                                     <string key="NSValueTransformerName">NSNegateBoolean</string>
                                                                                 </dictionary>
                                                                             </binding>
-                                                                            <binding destination="218" name="hidden" keyPath="canQueryMore" previousBinding="hNx-nO-hhS" id="Q6p-1g-SuB">
+                                                                            <binding destination="218" name="enabled" keyPath="isQuerying" id="hNx-nO-hhS">
                                                                                 <dictionary key="options">
                                                                                     <string key="NSValueTransformerName">NSNegateBoolean</string>
                                                                                 </dictionary>
@@ -180,11 +178,10 @@
                                                                         <buttonCell key="cell" type="smallSquare" title="Query" bezelStyle="smallSquare" alignment="center" enabled="NO" borderStyle="border" inset="2" id="1201">
                                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                             <font key="font" metaFont="system"/>
-                                                                            <string key="keyEquivalent">r</string>
-                                                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                                                                         </buttonCell>
                                                                         <connections>
                                                                             <action selector="executeQuery:" target="218" id="953"/>
+                                                                            <binding destination="218" name="enabled" keyPath="isLoggedIn" id="948"/>
                                                                             <binding destination="218" name="enabled2" keyPath="isQuerying" previousBinding="948" id="urx-Lb-cGM">
                                                                                 <dictionary key="options">
                                                                                     <integer key="NSMultipleValuesPlaceholder" value="-1"/>
@@ -194,7 +191,6 @@
                                                                                     <string key="NSValueTransformerName">NSNegateBoolean</string>
                                                                                 </dictionary>
                                                                             </binding>
-                                                                            <binding destination="218" name="enabled" keyPath="isLoggedIn" id="948"/>
                                                                         </connections>
                                                                     </button>
                                                                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="931">
@@ -203,11 +199,10 @@
                                                                         <buttonCell key="cell" type="smallSquare" title="Query All" bezelStyle="smallSquare" alignment="center" enabled="NO" borderStyle="border" inset="2" id="1202">
                                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                             <font key="font" metaFont="system"/>
-                                                                            <string key="keyEquivalent">R</string>
-                                                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                                                                         </buttonCell>
                                                                         <connections>
                                                                             <action selector="executeQueryAll:" target="218" id="954"/>
+                                                                            <binding destination="218" name="enabled" keyPath="isLoggedIn" id="959"/>
                                                                             <binding destination="218" name="enabled2" keyPath="isQuerying" previousBinding="959" id="3mi-6V-Zrt">
                                                                                 <dictionary key="options">
                                                                                     <integer key="NSMultipleValuesPlaceholder" value="-1"/>
@@ -217,7 +212,6 @@
                                                                                     <string key="NSValueTransformerName">NSNegateBoolean</string>
                                                                                 </dictionary>
                                                                             </binding>
-                                                                            <binding destination="218" name="enabled" keyPath="isLoggedIn" id="959"/>
                                                                         </connections>
                                                                     </button>
                                                                     <scrollView fixedFrame="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="929">

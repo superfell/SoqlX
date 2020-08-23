@@ -747,6 +747,15 @@ typedef enum SoqlParsePosition {
     if (theAction == @selector(saveQueryResults:)) {
         return (rootResults.queryResult.size > 0) && ![self schemaViewIsActive];
     }
+    if (theAction == @selector(executeQuery:)) {
+        return [self isLoggedIn];
+    }
+    if (theAction == @selector(executeQueryAll:)) {
+        return [self isLoggedIn];
+    }
+    if (theAction == @selector(queryMore:)) {
+        return [self canQueryMore];
+    }
     return YES;
 }
 
