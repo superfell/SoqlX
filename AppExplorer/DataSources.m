@@ -401,6 +401,7 @@
                 @"Createable", @"Updateable", @"Activateable", @"Deletable", @"Undeletable", 
                 @"Mergeable", @"Queryable", @"Retrieveable", @"Searchable", @"Layoutable",
                 @"Replicateable", @"Triggerable", @"MRU Enabled", @"Has Subtypes",
+                @"Associate Entity Type", @"Associate Parent Entity",
                 @"URL for Edit", @"URL for Detail", @"URL for New", nil];
     NSArray *cr = s.childRelationships;
     if (cr.count > 0) {
@@ -449,12 +450,14 @@
         case 16: return sobject.triggerable ? @"Yes" : @"";
         case 17: return sobject.mruEnabled ? @"Yes" : @"";
         case 18: return sobject.hasSubtypes ? @"Yes" : @"";
-        case 19: return sobject.urlEdit;
-        case 20: return sobject.urlDetail;
-        case 21: return sobject.urlNew;
-        case 22: return @""; // this is the Child Relationships title row
+        case 19: return sobject.associateEntityType;
+        case 20: return sobject.associateParentEntity;
+        case 21: return sobject.urlEdit;
+        case 22: return sobject.urlDetail;
+        case 23: return sobject.urlNew;
+        case 24: return @""; // this is the Child Relationships title row
     };
-    ZKChildRelationship *cr = sobject.childRelationships[rowIdx - 23];
+    ZKChildRelationship *cr = sobject.childRelationships[rowIdx - 25];
     return cr.relationshipName == nil ? @"" : cr.relationshipName;
 }
 

@@ -9,5 +9,5 @@ target 'SoqlXplorer' do
 
   # Pods for SoqlXplorer
   pod 'Sparkle', '~> 1.22'
-  pod 'ZKSforce', '~> 49'
+  pod 'ZKSforce', '~> 50.0.0'
 end
