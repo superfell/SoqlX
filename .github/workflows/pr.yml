@@ -13,6 +13,6 @@ jobs:
         run: pod update
       - name: "Build"
         uses: devbotsxyz/xcode-build@v1
-        input:
+        inputs:
             scheme: SoqlXplorer
             workspace: AppExplorer.xcworkspace
