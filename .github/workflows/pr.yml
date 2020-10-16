@@ -1,0 +1,14 @@
+name: Pull Request
+
+on: [pull_request]
+
+jobs:
+  Build:
+    runs-on: macos-10.15
+    timeout-minutes: 5
+    steps:
+      - name: "Checkout Project"
+        uses: actions/checkout@v2
+
+      - name: "Build"
+        uses: devbotsxyz/xcode-archive@v1
