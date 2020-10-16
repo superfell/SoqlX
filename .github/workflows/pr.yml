@@ -9,6 +9,7 @@ jobs:
     steps:
       - name: "Checkout Project"
         uses: actions/checkout@v2
-
+      - name: "Cocoapods setup"
+        run: pod update
       - name: "Build"
         uses: devbotsxyz/xcode-archive@v1
