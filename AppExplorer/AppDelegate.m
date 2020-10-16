@@ -70,6 +70,7 @@
 
 -(instancetype)init {
     self = [super init];
+    self.isOpeningFromUrl = NO;
     windowControllers = [[NSMutableArray alloc] init];
     [self setEditFontLabelFrom:[NSFont userFixedPitchFontOfSize:0]];
     return self;
@@ -118,6 +119,10 @@
     ZKSforceClient *c = [[ZKSforceClient alloc] init];
     [c setClientId:[ZKLoginController appClientId]];
     c.authenticationInfo = auth;
+
+    // If the app was just stated to deal with this URL then openUrls is called before appDidFinishLaunching
+    // so stop the default window from being opened.
+    self.isOpeningFromUrl = YES;
     
     // This call is used to validate that we were given a valid client, and that the auth info is usable.
     [c currentUserInfoWithFailBlock:^(NSError *result) {
@@ -128,8 +133,6 @@
         [alert runModal];
         
     } completeBlock:^(ZKUserInfo *result) {
-        // If the app was just stated to deal with this URL then openUrls is called before appDidFinishLaunching
-        // so the window controller we create here will stop the default one being created.
         
         SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self->windowControllers];
         [controller showWindowForClient:c];
@@ -193,7 +196,7 @@
 
 -(void)applicationDidFinishLaunching:(NSNotification *)notification {
     [self resetApiVersionOverrideIfAppVersionChanged];
-    if (windowControllers.count == 0) {
+    if (windowControllers.count == 0 && !self.isOpeningFromUrl) {
         [self openNewWindow:self];
     }
     

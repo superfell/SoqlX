@@ -32,3 +32,4 @@ build of Fragaria fails with a "Command PhaseScriptExecution failed" error, just
 this error goes away.
 
 You should be able to run the built version of SoqlX at this point.
+
