@@ -35,7 +35,7 @@
 
 @property (strong) NSString *editFontLabel;
 @property (strong) NSFont *editFont;
-
+@property (assign) BOOL isOpeningFromUrl;
 @end
 
 @interface SoqlXWindowController : NSWindowController {
