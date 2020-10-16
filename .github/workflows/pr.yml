@@ -11,4 +11,4 @@ jobs:
         uses: actions/checkout@v2
 
       - name: "Build"
-        uses: devbotsxyz/xcode-archive@master
+        uses: devbotsxyz/xcode-archive@v1
