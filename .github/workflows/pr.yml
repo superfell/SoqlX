@@ -14,4 +14,4 @@ jobs:
       - name: "Cocoapods setup"
         run: pod update
       - name: "Build"
-        run: xcodebuild -workspace AppExplorer.xcworkspace -scheme SoqlXplorer build
+        run: xcodebuild -workspace AppExplorer.xcworkspace -scheme SoqlXplorer build CODE_SIGN_IDENTITY=-
