@@ -12,4 +12,7 @@ jobs:
       - name: "Cocoapods setup"
         run: pod update
       - name: "Build"
-        uses: devbotsxyz/xcode-archive@v1
+        uses: devbotsxyz/xcode-build@v1
+        input:
+            scheme: SoqlXplorer
+            workspace: AppExplorer.xcworkspace
