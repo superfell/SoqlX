@@ -9,10 +9,9 @@ jobs:
     steps:
       - name: "Checkout Project"
         uses: actions/checkout@v2
+        with:
+            submodules: recursive
       - name: "Cocoapods setup"
         run: pod update
       - name: "Build"
-        uses: devbotsxyz/xcode-build@v1
-        with:
-            scheme: SoqlXplorer
-            workspace: AppExplorer.xcworkspace
+        run: xcodebuild -workspace=AppExplorer -scheme=SoqlXplorer build
