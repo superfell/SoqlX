@@ -10,11 +10,14 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		DFE42AEE94210F1BB1E1DFCD /* Pods_SoqlXplorerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D5A96B45D611A7235D41491 /* Pods_SoqlXplorerTests.framework */; };
 		F412575D0B098593001622AC /* WeightedSObject.m in Sources */ = {isa = PBXBuildFile; fileRef = F412575B0B098593001622AC /* WeightedSObject.m */; };
 		F412DE1721B341D300D8889F /* SessionIdAuthInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F412DE1621B341D300D8889F /* SessionIdAuthInfo.m */; };
 		F413C6540AACABD5000A8CDC /* DataSources.m in Sources */ = {isa = PBXBuildFile; fileRef = F413C6530AACABD5000A8CDC /* DataSources.m */; };
 		F413C7260AACB9B4000A8CDC /* sf.icns in Resources */ = {isa = PBXBuildFile; fileRef = F413C7250AACB9B4000A8CDC /* sf.icns */; };
 		F428A2D30F677BC3007BD862 /* BlueView.m in Sources */ = {isa = PBXBuildFile; fileRef = F428A2D20F677BC3007BD862 /* BlueView.m */; };
+		F4408FEF2562F4C1005E8BB7 /* QueryColumns.m in Sources */ = {isa = PBXBuildFile; fileRef = F4408FEE2562F4C1005E8BB7 /* QueryColumns.m */; };
+		F4408FF02562F4C1005E8BB7 /* QueryColumns.m in Sources */ = {isa = PBXBuildFile; fileRef = F4408FEE2562F4C1005E8BB7 /* QueryColumns.m */; };
 		F44FC9E10E1EB69D00B5F70C /* ResultsSaver.m in Sources */ = {isa = PBXBuildFile; fileRef = F44FC9E00E1EB69D00B5F70C /* ResultsSaver.m */; };
 		F45229BE997B42C97906B069 /* Pods_SoqlXplorer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21E4B8D32EEB87E1463F1F48 /* Pods_SoqlXplorer.framework */; };
 		F454D163126785EA00DC16D9 /* ApexController.m in Sources */ = {isa = PBXBuildFile; fileRef = F454D162126785EA00DC16D9 /* ApexController.m */; };
@@ -71,6 +74,8 @@
 		F4D7836B15D8814C00D00BB9 /* ZKDescribe_Reporting.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D7836A15D8814C00D00BB9 /* ZKDescribe_Reporting.m */; };
 		F4DD944B0AFEEC9400B0E3AC /* SchemaView.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DD94490AFEEC9400B0E3AC /* SchemaView.m */; };
 		F4DD94540AFEED9500B0E3AC /* SchemaController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DD94520AFEED9500B0E3AC /* SchemaController.m */; };
+		F4DE40652562079100FBA200 /* QueryColumnsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DE40642562079100FBA200 /* QueryColumnsTest.m */; };
+		F4DE40692562088B00FBA200 /* ZKSforce.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4DE40682562088B00FBA200 /* ZKSforce.framework */; };
 		F4E319492198ECE3009B8C4F /* querySavePanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4E319432198ECE3009B8C4F /* querySavePanel.xib */; };
 		F4E3194B2198ECE3009B8C4F /* ReportDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4E319472198ECE3009B8C4F /* ReportDocument.xib */; };
 		F4E3194E2198EF4E009B8C4F /* ProgressWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4E3194C2198EF4E009B8C4F /* ProgressWindow.xib */; };
@@ -139,6 +144,13 @@
 			remoteGlobalIDString = D0E5210D1A90E34F005CB80B;
 			remoteInfo = "Fragaria Tests";
 		};
+		F4DE4054256205D300FBA200 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D1107260486CEB800E47090;
+			remoteInfo = SoqlXplorer;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -163,9 +175,12 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* AppExplorer_Prefix.pch */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = AppExplorer_Prefix.pch; sourceTree = "<group>"; };
+		424BB7186AD49DBAAAD87F51 /* Pods-SoqlXplorerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SoqlXplorerTests.release.xcconfig"; path = "Target Support Files/Pods-SoqlXplorerTests/Pods-SoqlXplorerTests.release.xcconfig"; sourceTree = "<group>"; };
+		5D5A96B45D611A7235D41491 /* Pods_SoqlXplorerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SoqlXplorerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8645EEF3637151E34CF2C051 /* Pods-SoqlXplorer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SoqlXplorer.debug.xcconfig"; path = "Target Support Files/Pods-SoqlXplorer/Pods-SoqlXplorer.debug.xcconfig"; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* SoqlXplorer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SoqlXplorer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D9545AAB5647FCCF37DF52D4 /* Pods-SoqlXplorerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SoqlXplorerTests.debug.xcconfig"; path = "Target Support Files/Pods-SoqlXplorerTests/Pods-SoqlXplorerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		F4119DAC237BCED0003E3134 /* SoqlXplorer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SoqlXplorer.entitlements; sourceTree = "<group>"; };
 		F412575A0B098593001622AC /* WeightedSObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WeightedSObject.h; sourceTree = "<group>"; };
 		F412575B0B098593001622AC /* WeightedSObject.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WeightedSObject.m; sourceTree = "<group>"; };
@@ -176,6 +191,8 @@
 		F413C7250AACB9B4000A8CDC /* sf.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = sf.icns; sourceTree = "<group>"; };
 		F428A2D10F677BC3007BD862 /* BlueView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlueView.h; sourceTree = "<group>"; };
 		F428A2D20F677BC3007BD862 /* BlueView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlueView.m; sourceTree = "<group>"; };
+		F4408FED2562F4C1005E8BB7 /* QueryColumns.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QueryColumns.h; sourceTree = "<group>"; };
+		F4408FEE2562F4C1005E8BB7 /* QueryColumns.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QueryColumns.m; sourceTree = "<group>"; };
 		F44DAD4623418A6800EF8C44 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F44FC9DF0E1EB69D00B5F70C /* ResultsSaver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResultsSaver.h; sourceTree = "<group>"; };
 		F44FC9E00E1EB69D00B5F70C /* ResultsSaver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResultsSaver.m; sourceTree = "<group>"; };
@@ -272,6 +289,10 @@
 		F4DD94490AFEEC9400B0E3AC /* SchemaView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SchemaView.m; sourceTree = "<group>"; };
 		F4DD94510AFEED9500B0E3AC /* SchemaController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SchemaController.h; sourceTree = "<group>"; };
 		F4DD94520AFEED9500B0E3AC /* SchemaController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SchemaController.m; sourceTree = "<group>"; };
+		F4DE404F256205D300FBA200 /* SoqlXplorerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SoqlXplorerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F4DE4053256205D300FBA200 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F4DE40642562079100FBA200 /* QueryColumnsTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QueryColumnsTest.m; sourceTree = "<group>"; };
+		F4DE40682562088B00FBA200 /* ZKSforce.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ZKSforce.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4E319442198ECE3009B8C4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/querySavePanel.xib; sourceTree = "<group>"; };
 		F4E319482198ECE3009B8C4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ReportDocument.xib; sourceTree = "<group>"; };
 		F4E3194D2198EF4E009B8C4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ProgressWindow.xib; sourceTree = "<group>"; };
@@ -300,6 +321,15 @@
 				F4CD50770B0C18BC00345D9E /* QuartzCore.framework in Frameworks */,
 				F45C7EEB0B5FDB5F00F93DD7 /* WebKit.framework in Frameworks */,
 				F45229BE997B42C97906B069 /* Pods_SoqlXplorer.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F4DE404C256205D300FBA200 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F4DE40692562088B00FBA200 /* ZKSforce.framework in Frameworks */,
+				DFE42AEE94210F1BB1E1DFCD /* Pods_SoqlXplorerTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -335,6 +365,8 @@
 				F4C877F90F395DB4000075D4 /* ProgressController.m */,
 				F49741EE0D554DB500DD77F4 /* QueryListController.h */,
 				F49741EF0D554DB500DD77F4 /* QueryListController.m */,
+				F4408FED2562F4C1005E8BB7 /* QueryColumns.h */,
+				F4408FEE2562F4C1005E8BB7 /* QueryColumns.m */,
 				F4CF71F20D4704EE001001F2 /* QueryResultTable.h */,
 				F4CF71F30D4704EE001001F2 /* QueryResultTable.m */,
 				F44FC9DF0E1EB69D00B5F70C /* ResultsSaver.h */,
@@ -379,6 +411,7 @@
 			isa = PBXGroup;
 			children = (
 				8D1107320486CEB800E47090 /* SoqlXplorer.app */,
+				F4DE404F256205D300FBA200 /* SoqlXplorerTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -393,6 +426,7 @@
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
+				F4DE4050256205D300FBA200 /* SoqlXplorerTests */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 				85C79E27EE4D6B545D0AE931 /* Pods */,
@@ -436,9 +470,11 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F4DE40682562088B00FBA200 /* ZKSforce.framework */,
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 				21E4B8D32EEB87E1463F1F48 /* Pods_SoqlXplorer.framework */,
+				5D5A96B45D611A7235D41491 /* Pods_SoqlXplorerTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -448,6 +484,8 @@
 			children = (
 				8645EEF3637151E34CF2C051 /* Pods-SoqlXplorer.debug.xcconfig */,
 				190BF657BA880DE3A8326501 /* Pods-SoqlXplorer.release.xcconfig */,
+				D9545AAB5647FCCF37DF52D4 /* Pods-SoqlXplorerTests.debug.xcconfig */,
+				424BB7186AD49DBAAAD87F51 /* Pods-SoqlXplorerTests.release.xcconfig */,
 			);
 			name = Pods;
 			path = ../Pods;
@@ -550,6 +588,15 @@
 			name = schemaView;
 			sourceTree = "<group>";
 		};
+		F4DE4050256205D300FBA200 /* SoqlXplorerTests */ = {
+			isa = PBXGroup;
+			children = (
+				F4DE40642562079100FBA200 /* QueryColumnsTest.m */,
+				F4DE4053256205D300FBA200 /* Info.plist */,
+			);
+			path = SoqlXplorerTests;
+			sourceTree = "<group>";
+		};
 		F4FDA6CA0B39162300A541E5 /* SchemaReportClasses */ = {
 			isa = PBXGroup;
 			children = (
@@ -588,6 +635,26 @@
 			productReference = 8D1107320486CEB800E47090 /* SoqlXplorer.app */;
 			productType = "com.apple.product-type.application";
 		};
+		F4DE404E256205D300FBA200 /* SoqlXplorerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F4DE405F256205D300FBA200 /* Build configuration list for PBXNativeTarget "SoqlXplorerTests" */;
+			buildPhases = (
+				C00EA5BD0BAB48B27C8A8815 /* [CP] Check Pods Manifest.lock */,
+				F4DE404B256205D300FBA200 /* Sources */,
+				F4DE404C256205D300FBA200 /* Frameworks */,
+				F4DE404D256205D300FBA200 /* Resources */,
+				93961BCB0C2C358B14D28096 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F4DE4055256205D300FBA200 /* PBXTargetDependency */,
+			);
+			name = SoqlXplorerTests;
+			productName = SoqlXplorerTests;
+			productReference = F4DE404F256205D300FBA200 /* SoqlXplorerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -595,6 +662,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1100;
+				TargetAttributes = {
+					F4DE404E256205D300FBA200 = {
+						CreatedOnToolsVersion = 12.1;
+					};
+				};
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "AppExplorer" */;
 			compatibilityVersion = "Xcode 9.3";
@@ -616,6 +688,7 @@
 			projectRoot = "";
 			targets = (
 				8D1107260486CEB800E47090 /* SoqlXplorer */,
+				F4DE404E256205D300FBA200 /* SoqlXplorerTests */,
 			);
 		};
 /* End PBXProject section */
@@ -696,9 +769,33 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F4DE404D256205D300FBA200 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		93961BCB0C2C358B14D28096 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SoqlXplorerTests/Pods-SoqlXplorerTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SoqlXplorerTests/Pods-SoqlXplorerTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SoqlXplorerTests/Pods-SoqlXplorerTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		A032B494B1AAF92B4D715985 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -738,6 +835,28 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		C00EA5BD0BAB48B27C8A8815 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SoqlXplorerTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -761,6 +880,7 @@
 				F4CD3DAD0B85701100084479 /* ZKLoginController.m in Sources */,
 				F4CD3DBA0B8572DB00084479 /* credential.m in Sources */,
 				F4D6E18A0BD70DA200813881 /* EditableQueryResultWrapper.m in Sources */,
+				F4408FEF2562F4C1005E8BB7 /* QueryColumns.m in Sources */,
 				F4A62E2F0D31AC6300D7EACA /* NSView_additions.m in Sources */,
 				F4CF71F40D4704EE001001F2 /* QueryResultTable.m in Sources */,
 				F4CF73E80D49BDDB001001F2 /* QueryResultCell.m in Sources */,
@@ -797,6 +917,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F4DE404B256205D300FBA200 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F4408FF02562F4C1005E8BB7 /* QueryColumns.m in Sources */,
+				F4DE40652562079100FBA200 /* QueryColumnsTest.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -804,6 +933,11 @@
 			isa = PBXTargetDependency;
 			name = Fragaria;
 			targetProxy = F4592CBD21A24A530042F2AD /* PBXContainerItemProxy */;
+		};
+		F4DE4055256205D300FBA200 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D1107260486CEB800E47090 /* SoqlXplorer */;
+			targetProxy = F4DE4054256205D300FBA200 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -993,6 +1127,84 @@
 			};
 			name = Release;
 		};
+		F4DE4056256205D300FBA200 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D9545AAB5647FCCF37DF52D4 /* Pods-SoqlXplorerTests.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = SoqlXplorerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.superfell.soqlx.tests.SoqlXplorerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		F4DE4057256205D300FBA200 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 424BB7186AD49DBAAAD87F51 /* Pods-SoqlXplorerTests.release.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = SoqlXplorerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.superfell.soqlx.tests.SoqlXplorerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1010,6 +1222,15 @@
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
 				C01FCF5008A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F4DE405F256205D300FBA200 /* Build configuration list for PBXNativeTarget "SoqlXplorerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F4DE4056256205D300FBA200 /* Debug */,
+				F4DE4057256205D300FBA200 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

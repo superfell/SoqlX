@@ -11,3 +11,11 @@ target 'SoqlXplorer' do
   pod 'Sparkle', '~> 1.22'
   pod 'ZKSforce', '~> 50.0.0'
 end
+
+target 'SoqlXplorerTests' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for SoqlXplorer
+  pod 'ZKSforce', '~> 50.0.0'
+end

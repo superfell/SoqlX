@@ -49,13 +49,3 @@
 -(void)replaceQueryResult:(ZKQueryResult *)queryResult;    // this is like setQR, except it doesn't reset everything
 @end
 
-@interface QueryColumns : NSObject {
-}
-
--(instancetype)initWithResult:(ZKQueryResult*)qr NS_DESIGNATED_INITIALIZER;
--(instancetype)init NS_UNAVAILABLE;
-
-@property (assign) BOOL isSearchResult;
-@property (strong) NSArray<NSString*>* names;
-
-@end
