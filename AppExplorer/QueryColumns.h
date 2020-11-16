@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (assign) BOOL isSearchResult;
 @property (strong) NSArray<NSString*>* names;
-
+@property (assign) NSUInteger rowsChecked;
 @end
 
 

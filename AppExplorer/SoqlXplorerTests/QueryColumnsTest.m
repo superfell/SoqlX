@@ -125,6 +125,28 @@
     XCTAssertEqualObjects((@[@"firstName",@"Salesperson.name",@"Salesperson.CreatedBy.Nickname",@"Website"]), qc.names);
 }
 
+-(void)testDoneOnceSeenValueForEachColumn {
+    // When there are null values, we need to check additional rows in order to see if that value was a nested object that
+    // has child fields. But we don't need to wait til we see an entire row that was not null, just till we've seen a non-null
+    // in each column in aggregate.
+    // In this example once we've processed the 2nd row we're done.
+    NSString *qrXml = @"<QueryResult xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>"
+                        "<records><type>Contact</type><Id>123</Id><firstName>Bob</firstName><friend xsi:nil='true'/><name>Bob</name></records>"
+                        "<records><type>Contact</type><Id>124</Id><firstName xsi:nil='true'/>"
+                            "<friend xsi:type='sObject'><type>User</type><Id>321</Id><name>Eve</name></friend>"
+                            "<name>Ms Alice</name>"
+                        "</records>"
+                        "<records><type>Contact</type><Id>125</Id><firstName>Eve</firstName><friend xsi:nil='true'/><name>Eve</name></records>"
+                        "<size>3</size><done>true</done></QueryResult>";
+    ZKElement *xml = [ZKParser parseData:[qrXml dataUsingEncoding:NSUTF8StringEncoding]];
+    XCTAssertNotNil(xml);
+    ZKQueryResult *qr = [[ZKQueryResult alloc] initWithXmlElement:xml];
+    QueryColumns *qc = [[QueryColumns alloc] initWithResult:qr];
+    XCTAssertFalse(qc.isSearchResult);
+    XCTAssertEqualObjects((@[@"firstName",@"friend.name",@"name"]), qc.names);
+    XCTAssertEqual(2, qc.rowsChecked);
+}
+
 - (void)setUp {
     // Put setup code here. This method is called before the invocation of each test method in the class.
 }

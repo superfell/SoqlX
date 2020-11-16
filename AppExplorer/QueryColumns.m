@@ -30,6 +30,9 @@
     NSString                     *name;
     NSMutableArray<QueryColumn*> *childCols;
 }
+
+@property (assign) BOOL hasSeenValue;
+
 @end
 
 @implementation QueryColumn
@@ -38,6 +41,7 @@
     self = [super init];
     name = [n copy];
     childCols = nil;
+    self.hasSeenValue = NO;
     return self;
 }
 
@@ -74,7 +78,7 @@
 
 -(void)addChildColWithNames:(NSArray<NSString*>*)names {
     for (NSString *n in names) {
-        [self getOrAddQueryColumn:n];
+        [self getOrAddQueryColumn:n].hasSeenValue = YES;
     }
 }
 
@@ -97,20 +101,30 @@
     return childCols.count > 0;
 }
 
+-(BOOL)allHaveSeenValues {
+    if (childCols.count == 0) {
+        return self.hasSeenValue;
+    }
+    for (QueryColumn *c in childCols) {
+        if (!c.allHaveSeenValues) {
+            return NO;
+        }
+    }
+    return YES;
+}
+
 @end
 
 @implementation QueryColumns
 
-+(BOOL)addColumnsFromSObject:(ZKSObject *)row withPrefix:(NSString *)prefix to:(QueryColumn *)parent {
-    BOOL seenNull = NO;
-    
++(void)addColumnsFromSObject:(ZKSObject *)row withPrefix:(NSString *)prefix to:(QueryColumn *)parent {
     for (NSString *fn in [row orderedFieldNames]) {
-        NSObject *val = [row fieldValue:fn];
-        if (val == nil || val == [NSNull null]) {
-            seenNull = YES;
-        }
         NSString *fullName = prefix.length > 0 ? [NSString stringWithFormat:@"%@.%@", prefix, fn] : fn;
         QueryColumn *qc = [parent getOrAddQueryColumn:fullName];
+        NSObject *val = [row fieldValue:fn];
+        if (!(val == nil || val == [NSNull null])) {
+            qc.hasSeenValue = YES;
+        }
         if ([val isKindOfClass:[ZKAddress class]]) {
             if (![qc hasChildNames])
                 [qc addChildColWithNames:@[@"street", @"city", @"state", @"stateCode", @"country", @"countryCode", @"postalCode", @"longitude", @"latitude"]];
@@ -120,15 +134,14 @@
                 [qc addChildColWithNames:@[@"longitude", @"latitude"]];
 
         } else if ([val isKindOfClass:[ZKSObject class]]) {
-            // different rows might have different sets of child fields populated, so we have to look at all
-            // the rows, until we see a full row.
-            seenNull |= [QueryColumns addColumnsFromSObject:(ZKSObject *)val withPrefix:fullName to:qc];
+            [QueryColumns addColumnsFromSObject:(ZKSObject *)val withPrefix:fullName to:qc];
         }
     }
-    return seenNull;
 }
 
-- (NSArray *)buildColumnListFromQueryResult:(ZKQueryResult *)qr {
+-(instancetype)initWithResult:(ZKQueryResult*)qr {
+    self = [super init];
+    
     QueryColumn *root = [[QueryColumn alloc] initWithName:@""];
     NSMutableSet *processedTypes = [NSMutableSet set];
     BOOL isSearchResult = [qr conformsToProtocol:@protocol(IsSearchQueryResult)];
@@ -138,20 +151,16 @@
         if ([processedTypes containsObject:[row type]]) continue;
         
         // if we didn't see any null columns, then there's no need to look at any further rows.
-        if (![QueryColumns addColumnsFromSObject:row withPrefix:nil to:root]) {
+        self.rowsChecked++;
+        [QueryColumns addColumnsFromSObject:row withPrefix:nil to:root];
+        if (root.allHaveSeenValues) {
             if (!isSearchResult) break; // all done.
             [processedTypes addObject:[row type]];
         }
     }
     // now flatten the queryColumns into a set of real columns
-    return [root allNames];
-}
-
-
--(instancetype)initWithResult:(ZKQueryResult*)qr {
-    self = [super init];
-    self.names = [self buildColumnListFromQueryResult:qr];
-    self.isSearchResult = [qr conformsToProtocol:@protocol(IsSearchQueryResult)];
+    self.names = [root allNames];
+    self.isSearchResult = isSearchResult;
     return self;
 }
 
