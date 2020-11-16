@@ -48,3 +48,4 @@
 -(void)showHideErrorColumn;
 -(void)replaceQueryResult:(ZKQueryResult *)queryResult;    // this is like setQR, except it doesn't reset everything
 @end
+
