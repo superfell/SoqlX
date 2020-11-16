@@ -58,61 +58,50 @@
     return [name isEqualToString:[anObject name]];
 }
 
--(void)addChildCol:(QueryColumn *)c {
+-(QueryColumn*)getOrAddQueryColumn:(NSString *)name {
+    for (QueryColumn *c in childCols) {
+        if ([c.name isEqualToString:name]) {
+            return c;
+        }
+    }
     if (childCols == nil) {
         childCols = [NSMutableArray array];
-        [childCols addObject:c];
-        return;
     }
-    NSInteger idx = [childCols indexOfObject:c];
-    if (idx == NSNotFound) {
-        [childCols addObject:c];
-    } else {
-        QueryColumn *existing = childCols[idx];
-        [existing addChildCol:c];
+    QueryColumn *c = [QueryColumn columnWithName:name];
+    [childCols addObject:c];
+    return c;
+}
+
+-(void)addChildColWithNames:(NSArray<NSString*>*)names {
+    for (NSString *n in names) {
+        [self getOrAddQueryColumn:n];
     }
 }
 
--(void)addChildCols:(NSArray<QueryColumn*> *)cols {
-    for (QueryColumn *c in cols)
-        [self addChildCol:c];
-}
-
--(void)addChildColWithNames:(NSArray<NSString*> *)childNames {
-    for (NSString *cn in childNames) {
-        [self addChildCol:[QueryColumn columnWithName:[name stringByAppendingFormat:@".%@", cn]]];
+-(void)addNamesTo:(NSMutableArray<NSString*>*)dest {
+    if (name.length > 0 && childCols.count == 0) {
+        [dest addObject:name];
+    }
+    for (QueryColumn *c in childCols) {
+        [c addNamesTo:dest];
     }
 }
 
 -(NSArray<NSString*> *)allNames {
-    if (childCols == nil) return @[name];
-    NSMutableArray *c = [NSMutableArray arrayWithCapacity:childCols.count];
-    for (QueryColumn *qc in childCols)
-        [c addObjectsFromArray:[qc allNames]];
-    return c;
+    NSMutableArray *n = [NSMutableArray array];
+    [self addNamesTo:n];
+    return n;
 }
 
 -(BOOL)hasChildNames {
-    return childCols != nil;
+    return childCols.count > 0;
 }
 
 @end
 
 @implementation QueryColumns
 
-// looks to see if the queryColumn already exists in the columns collection, its returned if it is
-// otherwise it's added to the collection.
-// so in either case, the return value is the QueryColumn instance that is in the columns collection.
-+ (QueryColumn *)getOrAddQueryColumn:(QueryColumn *)qc fromList:(NSMutableArray *)columns {
-    NSUInteger idx = [columns indexOfObject:qc];
-    if (idx == NSNotFound) {
-        [columns addObject:qc];
-        return qc;
-    }
-    return columns[idx];
-}
-
-+ (BOOL)addColumnsFromSObject:(ZKSObject *)row withPrefix:(NSString *)prefix toList:(NSMutableArray *)columns {
++(BOOL)addColumnsFromSObject:(ZKSObject *)row withPrefix:(NSString *)prefix to:(QueryColumn *)parent {
     BOOL seenNull = NO;
     
     for (NSString *fn in [row orderedFieldNames]) {
@@ -121,7 +110,7 @@
             seenNull = YES;
         }
         NSString *fullName = prefix.length > 0 ? [NSString stringWithFormat:@"%@.%@", prefix, fn] : fn;
-        QueryColumn *qc = [QueryColumns getOrAddQueryColumn:[QueryColumn columnWithName:fullName] fromList:columns];
+        QueryColumn *qc = [parent getOrAddQueryColumn:fullName];
         if ([val isKindOfClass:[ZKAddress class]]) {
             if (![qc hasChildNames])
                 [qc addChildColWithNames:@[@"street", @"city", @"state", @"stateCode", @"country", @"countryCode", @"postalCode", @"longitude", @"latitude"]];
@@ -133,16 +122,14 @@
         } else if ([val isKindOfClass:[ZKSObject class]]) {
             // different rows might have different sets of child fields populated, so we have to look at all
             // the rows, until we see a full row.
-            NSMutableArray *relatedColumns = [NSMutableArray array];
-            seenNull |= [QueryColumns addColumnsFromSObject:(ZKSObject *)val withPrefix:fullName toList:relatedColumns];
-            [qc addChildCols:relatedColumns];
+            seenNull |= [QueryColumns addColumnsFromSObject:(ZKSObject *)val withPrefix:fullName to:qc];
         }
     }
     return seenNull;
 }
 
 - (NSArray *)buildColumnListFromQueryResult:(ZKQueryResult *)qr {
-    NSMutableArray *columns = [NSMutableArray array];
+    QueryColumn *root = [[QueryColumn alloc] initWithName:@""];
     NSMutableSet *processedTypes = [NSMutableSet set];
     BOOL isSearchResult = [qr conformsToProtocol:@protocol(IsSearchQueryResult)];
     
@@ -151,18 +138,13 @@
         if ([processedTypes containsObject:[row type]]) continue;
         
         // if we didn't see any null columns, then there's no need to look at any further rows.
-        if (![QueryColumns addColumnsFromSObject:row withPrefix:nil toList:columns]) {
+        if (![QueryColumns addColumnsFromSObject:row withPrefix:nil to:root]) {
             if (!isSearchResult) break; // all done.
             [processedTypes addObject:[row type]];
         }
     }
     // now flatten the queryColumns into a set of real columns
-    NSMutableArray *colNames = [NSMutableArray arrayWithCapacity:columns.count + 1];
-
-    for (QueryColumn *qc in columns)
-        [colNames addObjectsFromArray:[qc allNames]];
-        
-    return colNames;
+    return [root allNames];
 }
 
 
