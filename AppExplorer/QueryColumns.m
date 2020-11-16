@@ -76,9 +76,10 @@
     return c;
 }
 
--(void)addChildColWithNames:(NSArray<NSString*>*)names {
+-(void)addChildColsWithNames:(NSArray<NSString*>*)names {
     for (NSString *n in names) {
-        [self getOrAddQueryColumn:n].hasSeenValue = YES;
+        NSString *fn = name.length > 0 ? [NSString stringWithFormat:@"%@.%@", name, n] : n;
+        [self getOrAddQueryColumn:fn].hasSeenValue = YES;
     }
 }
 
@@ -127,11 +128,11 @@
         }
         if ([val isKindOfClass:[ZKAddress class]]) {
             if (![qc hasChildNames])
-                [qc addChildColWithNames:@[@"street", @"city", @"state", @"stateCode", @"country", @"countryCode", @"postalCode", @"longitude", @"latitude"]];
+                [qc addChildColsWithNames:@[@"street", @"city", @"state", @"stateCode", @"country", @"countryCode", @"postalCode"]];
 
         } else if ([val isKindOfClass:[ZKLocation class]]) {
             if (![qc hasChildNames])
-                [qc addChildColWithNames:@[@"longitude", @"latitude"]];
+                [qc addChildColsWithNames:@[@"longitude", @"latitude"]];
 
         } else if ([val isKindOfClass:[ZKSObject class]]) {
             [QueryColumns addColumnsFromSObject:(ZKSObject *)val withPrefix:fullName to:qc];

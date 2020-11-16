@@ -147,6 +147,18 @@
     XCTAssertEqual(2, qc.rowsChecked);
 }
 
+-(void)testAddress {
+    NSString *qrXml = @"<QueryResult xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>"
+                        "<records><type>Contact</type><Id>123</Id><firstName>Bob</firstName><MailingAddress xsi:type='address'><city>SF</city></MailingAddress></records>"
+                        "<size>1</size><done>true</done></QueryResult>";
+    ZKElement *xml = [ZKParser parseData:[qrXml dataUsingEncoding:NSUTF8StringEncoding]];
+    XCTAssertNotNil(xml);
+    ZKQueryResult *qr = [[ZKQueryResult alloc] initWithXmlElement:xml];
+    QueryColumns *qc = [[QueryColumns alloc] initWithResult:qr];
+    XCTAssertFalse(qc.isSearchResult);
+    XCTAssertEqualObjects((@[@"firstName",@"MailingAddress.street", @"MailingAddress.city", @"MailingAddress.state", @"MailingAddress.stateCode", @"MailingAddress.country", @"MailingAddress.countryCode", @"MailingAddress.postalCode"]), qc.names);
+}
+
 - (void)setUp {
     // Put setup code here. This method is called before the invocation of each test method in the class.
 }
