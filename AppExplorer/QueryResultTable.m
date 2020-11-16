@@ -198,18 +198,25 @@
 }
 
 - (NSArray *)createTableColumns:(ZKQueryResult *)qr {
-    NSArray *cols = [self buildColumnListFromQueryResult:qr];
-    for (NSString *colName in cols) {
+    QueryColumns *qcols = [[QueryColumns alloc] initWithResult:qr];
+    if (qcols.isSearchResult)
+        [table addTableColumn:[self createTableColumnWithIdentifier:@"SObject__Type" label:@"Type"]];
+    
+    for (NSString *colName in qcols.names) {
         NSTableColumn *col = [self createTableColumnWithIdentifier:colName label:colName];
         [table addTableColumn:col];
     }
-    return cols;
+    return qcols.names;
 }
+
+@end
+
+@implementation QueryColumns
 
 // looks to see if the queryColumn already exists in the columns collection, its returned if it is
 // otherwise it's added to the collection.
 // so in either case, the return value is the QueryColumn instance that is in the columns collection.
-- (QueryColumn *)getOrAddQueryColumn:(QueryColumn *)qc fromList:(NSMutableArray *)columns {
++ (QueryColumn *)getOrAddQueryColumn:(QueryColumn *)qc fromList:(NSMutableArray *)columns {
     NSUInteger idx = [columns indexOfObject:qc];
     if (idx == NSNotFound) {
         [columns addObject:qc];
@@ -218,7 +225,7 @@
     return columns[idx];
 }
 
-- (BOOL)addColumnsFromSObject:(ZKSObject *)row withPrefix:(NSString *)prefix toList:(NSMutableArray *)columns {
++ (BOOL)addColumnsFromSObject:(ZKSObject *)row withPrefix:(NSString *)prefix toList:(NSMutableArray *)columns {
     BOOL seenNull = NO;
     
     for (NSString *fn in [row orderedFieldNames]) {
@@ -227,7 +234,7 @@
             seenNull = YES;
         }
         NSString *fullName = prefix.length > 0 ? [NSString stringWithFormat:@"%@.%@", prefix, fn] : fn;
-        QueryColumn *qc = [self getOrAddQueryColumn:[QueryColumn columnWithName:fullName] fromList:columns];
+        QueryColumn *qc = [QueryColumns getOrAddQueryColumn:[QueryColumn columnWithName:fullName] fromList:columns];
         if ([val isKindOfClass:[ZKAddress class]]) {
             if (![qc hasChildNames])
                 [qc addChildColWithNames:@[@"street", @"city", @"state", @"stateCode", @"country", @"countryCode", @"postalCode", @"longitude", @"latitude"]];
@@ -240,7 +247,7 @@
             // different rows might have different sets of child fields populated, so we have to look at all
             // the rows, until we see a full row.
             NSMutableArray *relatedColumns = [NSMutableArray array];
-            seenNull |= [self addColumnsFromSObject:(ZKSObject *)val withPrefix:fullName toList:relatedColumns];
+            seenNull |= [QueryColumns addColumnsFromSObject:(ZKSObject *)val withPrefix:fullName toList:relatedColumns];
             [qc addChildCols:relatedColumns];
         }
     }
@@ -257,7 +264,7 @@
         if ([processedTypes containsObject:[row type]]) continue;
         
         // if we didn't see any null columns, then there's no need to look at any further rows.
-        if (![self addColumnsFromSObject:row withPrefix:nil toList:columns]) {
+        if (![QueryColumns addColumnsFromSObject:row withPrefix:nil toList:columns]) {
             if (!isSearchResult) break; // all done.
             [processedTypes addObject:[row type]];
         }
@@ -265,13 +272,19 @@
     // now flatten the queryColumns into a set of real columns
     NSMutableArray *colNames = [NSMutableArray arrayWithCapacity:columns.count + 1];
 
-    if (isSearchResult)
-        [table addTableColumn:[self createTableColumnWithIdentifier:@"SObject__Type" label:@"Type"]];
-    
     for (QueryColumn *qc in columns)
         [colNames addObjectsFromArray:[qc allNames]];
         
     return colNames;
 }
 
+
+-(instancetype)initWithResult:(ZKQueryResult*)qr {
+    self = [super init];
+    self.names = [self buildColumnListFromQueryResult:qr];
+    self.isSearchResult = [qr conformsToProtocol:@protocol(IsSearchQueryResult)];
+    return self;
+}
+
 @end
+
