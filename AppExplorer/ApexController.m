@@ -27,6 +27,7 @@
 #import "Prefs.h"
 #import "AppDelegate.h"
 #import <Fragaria/Fragaria.h>
+#import <FragariaDefaultsCoordinator/FragariaDefaultsCoordinator.h>
 
 @implementation ApexResult
 
@@ -101,7 +102,7 @@
     MGSUserDefaultsController *apexGroup = [MGSUserDefaultsController sharedControllerForGroupID:@"apexCodeTextView"];
     [apexGroup addFragariaToManagedSet:self.apexTextField];
     
-    [self.apexTextField setSyntaxDefinitionName:@"apex"];
+    [self.apexTextField setSyntaxDefinitionName:@"Apex"];
     self.apexTextField.lineHeightMultiple = 1.1;
     self.apexTextField.textFont = [(AppDelegate *)[NSApp delegate] editFont];
     NSTextView *tv = self.apexTextField.textView;
@@ -163,7 +164,7 @@
         if ([ar success]) {
             self.apexTextField.syntaxErrors = @[];
         } else {
-            SMLSyntaxError *err = [[SMLSyntaxError alloc] init];
+            MGSSyntaxError *err = [[MGSSyntaxError alloc] init];
             err.line = ar.line;
             err.character = ar.column;
             err.errorDescription = ar.resultText;
