@@ -19,6 +19,9 @@
 		F4408FEF2562F4C1005E8BB7 /* QueryColumns.m in Sources */ = {isa = PBXBuildFile; fileRef = F4408FEE2562F4C1005E8BB7 /* QueryColumns.m */; };
 		F4408FF02562F4C1005E8BB7 /* QueryColumns.m in Sources */ = {isa = PBXBuildFile; fileRef = F4408FEE2562F4C1005E8BB7 /* QueryColumns.m */; };
 		F44FC9E10E1EB69D00B5F70C /* ResultsSaver.m in Sources */ = {isa = PBXBuildFile; fileRef = F44FC9E00E1EB69D00B5F70C /* ResultsSaver.m */; };
+		F45176FA25672843006C7628 /* FragariaDefaultsCoordinator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F45176F725672843006C7628 /* FragariaDefaultsCoordinator.framework */; };
+		F45176FB25672843006C7628 /* FragariaDefaultsCoordinator.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = F45176F725672843006C7628 /* FragariaDefaultsCoordinator.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F451770425672E0B006C7628 /* apex.plist in Copy Syntax Definitions */ = {isa = PBXBuildFile; fileRef = F451770325672E0B006C7628 /* apex.plist */; };
 		F45229BE997B42C97906B069 /* Pods_SoqlXplorer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21E4B8D32EEB87E1463F1F48 /* Pods_SoqlXplorer.framework */; };
 		F454D163126785EA00DC16D9 /* ApexController.m in Sources */ = {isa = PBXBuildFile; fileRef = F454D162126785EA00DC16D9 /* ApexController.m */; };
 		F454D2E01267E0AF00DC16D9 /* redLight.png in Resources */ = {isa = PBXBuildFile; fileRef = F454D2DE1267E0AF00DC16D9 /* redLight.png */; };
@@ -88,6 +91,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		F45176F625672843006C7628 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F4CA096621A1E8DE00CC9238 /* Fragaria.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 01919E23217D20A800E26B9D;
+			remoteInfo = FragariaDefaultsCoordinator;
+		};
+		F45176F825672843006C7628 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F4CA096621A1E8DE00CC9238 /* Fragaria.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 01919E2B217D20A800E26B9D;
+			remoteInfo = FragariaDefaultsCoordinatorTests;
+		};
 		F4592CBD21A24A530042F2AD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F4CA096621A1E8DE00CC9238 /* Fragaria.xcodeproj */;
@@ -154,12 +171,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		F451770225672DBE006C7628 /* Copy Syntax Definitions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "Syntax Definitions";
+			dstSubfolderSpec = 7;
+			files = (
+				F451770425672E0B006C7628 /* apex.plist in Copy Syntax Definitions */,
+			);
+			name = "Copy Syntax Definitions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F4D9DD1A0AD8A13E0065EA2D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				F45176FB25672843006C7628 /* FragariaDefaultsCoordinator.framework in CopyFiles */,
 				F4592CCA21AB8ADB0042F2AD /* Fragaria.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -196,6 +225,7 @@
 		F44DAD4623418A6800EF8C44 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F44FC9DF0E1EB69D00B5F70C /* ResultsSaver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResultsSaver.h; sourceTree = "<group>"; };
 		F44FC9E00E1EB69D00B5F70C /* ResultsSaver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResultsSaver.m; sourceTree = "<group>"; };
+		F451770325672E0B006C7628 /* apex.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = apex.plist; path = "../Fragaria/Fragaria/Additional Syntax Definitions/apex.plist"; sourceTree = "<group>"; };
 		F454D161126785EA00DC16D9 /* ApexController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApexController.h; sourceTree = "<group>"; };
 		F454D162126785EA00DC16D9 /* ApexController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApexController.m; sourceTree = "<group>"; };
 		F454D2DE1267E0AF00DC16D9 /* redLight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = redLight.png; sourceTree = "<group>"; };
@@ -316,6 +346,7 @@
 			files = (
 				F4592CBF21A24A8C0042F2AD /* Fragaria.framework in Frameworks */,
 				F4F897B4134CD84C00699880 /* libxml2.2.dylib in Frameworks */,
+				F45176FA25672843006C7628 /* FragariaDefaultsCoordinator.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				F4BAD5750AF717D200E335DF /* Security.framework in Frameworks */,
 				F4CD50770B0C18BC00345D9E /* QuartzCore.framework in Frameworks */,
@@ -419,6 +450,7 @@
 		29B97314FDCFA39411CA2CEA /* AppExplorer */ = {
 			isa = PBXGroup;
 			children = (
+				F451770325672E0B006C7628 /* apex.plist */,
 				F4119DAC237BCED0003E3134 /* SoqlXplorer.entitlements */,
 				F4CA096621A1E8DE00CC9238 /* Fragaria.xcodeproj */,
 				F4F897B3134CD84C00699880 /* libxml2.2.dylib */,
@@ -564,6 +596,8 @@
 				F4CA097A21A1E8DE00CC9238 /* Fragaria Swift.app */,
 				F4CA097C21A1E8DE00CC9238 /* Fragaria.framework */,
 				F4CA097E21A1E8DE00CC9238 /* Fragaria Tests.xctest */,
+				F45176F725672843006C7628 /* FragariaDefaultsCoordinator.framework */,
+				F45176F925672843006C7628 /* FragariaDefaultsCoordinatorTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -623,6 +657,7 @@
 				8D11072E0486CEB800E47090 /* Frameworks */,
 				F4D9DD1A0AD8A13E0065EA2D /* CopyFiles */,
 				A032B494B1AAF92B4D715985 /* [CP] Embed Pods Frameworks */,
+				F451770225672DBE006C7628 /* Copy Syntax Definitions */,
 			);
 			buildRules = (
 			);
@@ -694,6 +729,20 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		F45176F725672843006C7628 /* FragariaDefaultsCoordinator.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = FragariaDefaultsCoordinator.framework;
+			remoteRef = F45176F625672843006C7628 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F45176F925672843006C7628 /* FragariaDefaultsCoordinatorTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = FragariaDefaultsCoordinatorTests.xctest;
+			remoteRef = F45176F825672843006C7628 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		F4CA097221A1E8DE00CC9238 /* Fragaria Complex.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
