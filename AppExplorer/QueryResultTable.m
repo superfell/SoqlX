@@ -1,4 +1,4 @@
-// Copyright (c) 2008,2012,2014,2018 Simon Fell
+// Copyright (c) 2008,2012,2014,2018,2020 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -26,6 +26,7 @@
 #import "SearchQueryResult.h"
 #import <ZKSforce/ZKAddress.h>
 #import "QueryColumns.h"
+#import "NilsLastSortDescriptor.h"
 
 @interface QueryResultTable ()
 - (NSArray *)createTableColumns:(ZKQueryResult *)qr;
@@ -85,6 +86,7 @@
     [self willChangeValueForKey:@"hasCheckedRows"];
     queryResult = qr;
     wrapper = [[EditableQueryResultWrapper alloc] initWithQueryResult:qr];
+    wrapper.describer = self.describer;
     [self didChangeValueForKey:@"hasCheckedRows"];
     [wrapper addObserver:self forKeyPath:@"hasCheckedRows" options:0 context:nil];
     int idxToDelete=0;
@@ -123,6 +125,14 @@
     col.resizingMask = NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask;
     if ([identifier hasSuffix:@"Id"])
         col.width = 165;
+    col.sortDescriptorPrototype = [NilsLastSortDescriptor sortDescriptorWithKey:label ascending:YES comparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        if ([obj1 isKindOfClass:[NSString class]] && [obj2 isKindOfClass:[NSString class]]) {
+            NSString *s1 = (NSString *)obj1;
+            NSString *s2 = (NSString *)obj2;
+            return [s1 compare:s2 options:NSCaseInsensitiveSearch];
+        }
+        return [obj1 compare:obj2];
+    }];
     return col;
 }
 

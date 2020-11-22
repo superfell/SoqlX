@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2015,2018 Simon Fell
+// Copyright (c) 2007-2015,2018,2020 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -22,6 +22,8 @@
 #import "EditableQueryResultWrapper.h"
 #import "QueryResultCell.h"
 #import <ZKSforce/ZKQueryResult+NSTableView.h>
+#import <ZKSforce/ZKSObject.h>
+#import "SObject.h"
 
 NSString *DELETE_COLUMN_IDENTIFIER = @"row__delete";
 NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
@@ -196,7 +198,7 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
         return @([checkedRows containsObject:@(rowIdx)]);
     if ([tc.identifier isEqualToString:ERROR_COLUMN_IDENTIFIER])
         return rowErrors[@(rowIdx)];
-    return [result tableView:view objectValueForTableColumn:tc row:rowIdx];
+    return [self columnValue:tc.identifier atRow:rowIdx];
 }
 
 - (BOOL)allowEdit:(NSTableColumn *)aColumn {
@@ -277,10 +279,39 @@ NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
 
 - (NSCell *)tableView:(NSTableView *)tableView dataCellForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
     if (tableColumn == nil) return nil;
-    id v = [result tableView:tableView objectValueForTableColumn:tableColumn row:row];
-    if ([v isKindOfClass:[ZKQueryResult class]]) 
+    id v = [self columnValue:tableColumn.identifier atRow:row];
+    if ([v isKindOfClass:[ZKQueryResult class]])
         return imageCell;
     return [tableColumn dataCellForRow:row];
+}
+
+- (void)tableView:(NSTableView *)tableView sortDescriptorsDidChange:(NSArray<NSSortDescriptor *> *)oldDescriptors {
+    NSLog(@"sortDescriptorsDidChange: %@", tableView.sortDescriptors);
+//    NSMutableArray *wrapped = [NSMutableArray arrayWithCapacity:result.records.count];
+    describeProvider p = self.describer;
+    //for (ZKSObject *row in result.records) {
+      //  [wrapped addObject:[SObject wrap:row provider:p]];
+    //}
+    for (ZKSObject *row in result.records) {
+        row.provider = p;
+    }
+    NSArray *sorted = [result.records sortedArrayUsingDescriptors:tableView.sortDescriptors];
+    ZKQueryResult *r = [[ZKQueryResult alloc] initWithRecords:sorted size:result.size done:result.done queryLocator:result.queryLocator];
+    self.queryResult = r;
+    [tableView reloadData];
+}
+
+-(id)columnValue:(NSString *)col atRow:(NSUInteger)row {
+    NSArray *fieldPath = [col componentsSeparatedByString:@"."];
+    NSObject *val = result.records[row];
+    for (NSString *step in fieldPath) {
+        if ([val isKindOfClass:[ZKSObject class]] || [val isKindOfClass:[SObject class]]) {
+            val = [(ZKSObject *)val fieldValue:step];
+        } else {
+            val = [val valueForKey:step];
+        }
+    }
+    return val;
 }
 
 @end

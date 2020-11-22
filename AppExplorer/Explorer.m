@@ -279,8 +279,16 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
         self->detailsController.prefsPrefix = userId;
     }];
 
-    descDataSource = [[DescribeListDataSource alloc] init];
+    DescribeListDataSource *dds = [[DescribeListDataSource alloc] init];
+    descDataSource = dds;
     descDataSource.delegate = self;
+    rootResults.describer = ^ZKDescribeSObject *(NSString *type) {
+        ZKDescribeSObject *o = [dds cachedDescribe:type];
+        if (o == nil) {
+            [dds prioritizeDescribe:type];
+        }
+        return o;
+    };
     [apexController setSforceClient:sforce];
     [descDataSource setSforce:sforce];
     describeList.dataSource = descDataSource;
@@ -571,7 +579,9 @@ typedef enum SoqlParsePosition {
 
 - (IBAction)queryResultDoubleClicked:(id)sender {
     NSInteger cc = [sender clickedColumn];
-    if (cc > -1) {
+    NSInteger cr = [sender clickedRow];
+    NSLog(@"double clicked row=%ld col=%ld", cr,cc);
+    if (cc > -1 && cr > -1) {
         NSTableColumn *c = rootTableView.tableColumns[cc];
         NSObject *val = [[rootResults.queryResult  records][[sender clickedRow]] fieldValue:c.identifier];
         if ([val isKindOfClass:[ZKQueryResult class]]) {

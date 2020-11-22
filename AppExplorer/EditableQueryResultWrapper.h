@@ -21,6 +21,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import <ZKSforce/ZKQueryResult.h>
+#import "SObject.h"
 
 extern NSString *DELETE_COLUMN_IDENTIFIER;
 extern NSString *ERROR_COLUMN_IDENTIFIER;
@@ -46,6 +47,7 @@ extern NSArray  *ALL_APP_COLUMN_IDENTIFIERS;
 -(instancetype)initWithQueryResult:(ZKQueryResult *)qr NS_DESIGNATED_INITIALIZER;
 -(instancetype)init NS_UNAVAILABLE;
 
+@property describeProvider describer;
 @property (copy) ZKQueryResult *queryResult;
 @property  BOOL                 editable;
 @property (weak) NSObject<EditableQueryResultWrapperDelegate> *delegate;

@@ -23,6 +23,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "SObject.h"
 
 @class ZKQueryResult;
 @class EditableQueryResultWrapper;
@@ -43,6 +44,7 @@
 @property (weak, readonly) EditableQueryResultWrapper *wrapper;
 @property (strong) ZKQueryResult *queryResult;
 @property (weak) id delegate;
+@property describeProvider describer;
 
 @property (readonly) BOOL hasCheckedRows;
 -(void)showHideErrorColumn;
