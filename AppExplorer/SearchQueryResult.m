@@ -34,13 +34,4 @@
                                          queryLocator:nil];
 }
 
-- (id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(NSInteger)rowIdx {
-    // handle the SObject__Type column used in search results.
-    if ([tc.identifier isEqualToString:@"SObject__Type"]) {
-        ZKSObject *r = records[rowIdx];
-        return [r type];
-    }
-    return [super tableView:view objectValueForTableColumn:tc row:rowIdx];
-}
-
 @end
