@@ -81,6 +81,11 @@
 		F4DD94540AFEED9500B0E3AC /* SchemaController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DD94520AFEED9500B0E3AC /* SchemaController.m */; };
 		F4DE40652562079100FBA200 /* QueryColumnsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DE40642562079100FBA200 /* QueryColumnsTest.m */; };
 		F4DE40692562088B00FBA200 /* ZKSforce.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4DE40682562088B00FBA200 /* ZKSforce.framework */; };
+		F4E0F2B7256F123A00446C2B /* SObjectTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E0F2AC256F115E00446C2B /* SObjectTest.m */; };
+		F4E0F2B9256F127B00446C2B /* SObject.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D8DC782569CFF7002C9FC1 /* SObject.m */; };
+		F4E0F2BC256F15A500446C2B /* QRWrapperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E0F2BB256F15A500446C2B /* QRWrapperTest.m */; };
+		F4E0F2BE256F17DF00446C2B /* EditableQueryResultWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D6E1880BD70DA200813881 /* EditableQueryResultWrapper.m */; };
+		F4E0F2C0256F183E00446C2B /* QueryResultCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CF73E70D49BDDB001001F2 /* QueryResultCell.m */; };
 		F4E319492198ECE3009B8C4F /* querySavePanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4E319432198ECE3009B8C4F /* querySavePanel.xib */; };
 		F4E3194B2198ECE3009B8C4F /* ReportDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4E319472198ECE3009B8C4F /* ReportDocument.xib */; };
 		F4E3194E2198EF4E009B8C4F /* ProgressWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4E3194C2198EF4E009B8C4F /* ProgressWindow.xib */; };
@@ -329,6 +334,8 @@
 		F4DE4053256205D300FBA200 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F4DE40642562079100FBA200 /* QueryColumnsTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QueryColumnsTest.m; sourceTree = "<group>"; };
 		F4DE40682562088B00FBA200 /* ZKSforce.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ZKSforce.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F4E0F2AC256F115E00446C2B /* SObjectTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SObjectTest.m; sourceTree = "<group>"; };
+		F4E0F2BB256F15A500446C2B /* QRWrapperTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QRWrapperTest.m; sourceTree = "<group>"; };
 		F4E319442198ECE3009B8C4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/querySavePanel.xib; sourceTree = "<group>"; };
 		F4E319482198ECE3009B8C4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ReportDocument.xib; sourceTree = "<group>"; };
 		F4E3194D2198EF4E009B8C4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ProgressWindow.xib; sourceTree = "<group>"; };
@@ -637,6 +644,8 @@
 			children = (
 				F4DE40642562079100FBA200 /* QueryColumnsTest.m */,
 				F4DE4053256205D300FBA200 /* Info.plist */,
+				F4E0F2AC256F115E00446C2B /* SObjectTest.m */,
+				F4E0F2BB256F15A500446C2B /* QRWrapperTest.m */,
 			);
 			path = SoqlXplorerTests;
 			sourceTree = "<group>";
@@ -984,6 +993,11 @@
 			files = (
 				F4408FF02562F4C1005E8BB7 /* QueryColumns.m in Sources */,
 				F4DE40652562079100FBA200 /* QueryColumnsTest.m in Sources */,
+				F4E0F2B9256F127B00446C2B /* SObject.m in Sources */,
+				F4E0F2B7256F123A00446C2B /* SObjectTest.m in Sources */,
+				F4E0F2C0256F183E00446C2B /* QueryResultCell.m in Sources */,
+				F4E0F2BC256F15A500446C2B /* QRWrapperTest.m in Sources */,
+				F4E0F2BE256F17DF00446C2B /* EditableQueryResultWrapper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
