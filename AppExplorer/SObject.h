@@ -22,34 +22,13 @@
 #import <Foundation/Foundation.h>
 #import <ZKSforce/ZKSObject.h>
 
-@class ZKDescribeSObject;
+extern NSString *_Nonnull DELETE_COLUMN_IDENTIFIER;
+extern NSString *_Nonnull ERROR_COLUMN_IDENTIFIER;
+extern NSString *_Nonnull TYPE_COLUMN_IDENTIFIER;
 
-NS_ASSUME_NONNULL_BEGIN
+@interface ZKSObject (SoqlX)
 
-typedef  ZKDescribeSObject *_Nonnull(^describeProvider)(NSString *);
-
-@interface SObject : NSObject
-
-+(instancetype)wrap:(id)src provider:(describeProvider)d;
-
--(instancetype)initWithSObject:(ZKSObject *)src prodivder:(describeProvider)d NS_DESIGNATED_INITIALIZER;
--(instancetype)init NS_UNAVAILABLE;
-
-@property (readonly) ZKSObject *src;
-@property (readonly) describeProvider describer;
-
-@property NSString *updateError;
-@property BOOL deleteChecked;
-
--(id)typedValueOf:(NSString *)field;
+@property BOOL checked;
+@property NSString *_Nullable errorMsg;
 
 @end
-
-@interface ZKSObject()
-@property BOOL deleteChecked;
-@property NSString *updateErrorMsg;
-@property describeProvider describer;
-@end
-
-
-NS_ASSUME_NONNULL_END

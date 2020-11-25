@@ -289,6 +289,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
         }
         return o;
     };
+    childResults.describer = rootResults.describer;
     [apexController setSforceClient:sforce];
     [descDataSource setSforce:sforce];
     describeList.dataSource = descDataSource;
@@ -971,8 +972,7 @@ typedef enum SoqlParsePosition {
         [self updateProgress:NO];
         ZKSaveResult *sr = result[0];
         if (sr.success) {
-            NSInteger r = tr.table.clickedRow;
-            [tr removeRowAtIndex:r];
+            [tr removeRowWithId:theId];
             [self setRowsLoadedStatusText:tr.queryResult timing:execTime];
         } else {
             NSAlert *a = [[NSAlert alloc] init];

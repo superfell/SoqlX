@@ -19,29 +19,21 @@
 // THE SOFTWARE.
 //
 
-#import "NilsLastSortDescriptor.h"
+#import <Foundation/Foundation.h>
+#import "SObject.h"
 
-@implementation NilsLastSortDescriptor
+NS_ASSUME_NONNULL_BEGIN
 
-- (NSComparisonResult)compareObject:(id)object1 toObject:(id)object2 {
-    id val1 = [object1 valueForKeyPath:self.key];
-    id val2 = [object2 valueForKeyPath:self.key];
-    if (val1 == val2) {
-        return NSOrderedSame;
-    }
-    NSComparisonResult r;
-    if (val1 == nil) {
-        r = NSOrderedDescending;
-    } else if (val2 == nil) {
-        r = NSOrderedAscending;
-    } else {
-        r = self.comparator(val1,val2);
-    }
-    return self.ascending ? r : -r;
-}
+typedef  ZKDescribeSObject *_Nullable(^describeProvider)(NSString *_Nonnull);
 
--(id)reversedSortDescriptor {
-    return [[[self class] alloc] initWithKey:self.key ascending:!self.ascending comparator:self.comparator];
-}
+// A SortDescriptor that works directly with SObjects so that it can use the
+// typed value of fields.
+@interface SObjectSortDescriptor : NSSortDescriptor
+
+-(instancetype)initWithKey:(NSString *)key ascending:(BOOL)ascending describer:(describeProvider)d NS_DESIGNATED_INITIALIZER;
+
+@property describeProvider describer;
 
 @end
+
+NS_ASSUME_NONNULL_END

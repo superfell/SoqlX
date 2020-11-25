@@ -23,7 +23,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "SObject.h"
+#import "SObjectSortDescriptor.h"
 
 @class ZKQueryResult;
 @class EditableQueryResultWrapper;
@@ -31,14 +31,13 @@
 @interface QueryResultTable : NSObject {
     id                           __weak delegate;
     NSTableView                  *__weak table;
-    ZKQueryResult                *queryResult;
     EditableQueryResultWrapper   *wrapper;
 }
 
 - (instancetype)initForTableView:(NSTableView *)view NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
-- (void)removeRowAtIndex:(NSInteger)row;
+- (void)removeRowWithId:(NSString *)recordId;
 
 @property (weak, readonly) NSTableView *table;
 @property (weak, readonly) EditableQueryResultWrapper *wrapper;
@@ -47,7 +46,9 @@
 @property describeProvider describer;
 
 @property (readonly) BOOL hasCheckedRows;
+
 -(void)showHideErrorColumn;
 -(void)replaceQueryResult:(ZKQueryResult *)queryResult;    // this is like setQR, except it doesn't reset everything
+
 @end
 
