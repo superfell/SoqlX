@@ -43,18 +43,17 @@
     return self;
 }
 
-- (void)removeRowWithId:(NSString *)recordId {
-    NSUInteger row = [self.queryResult.records indexOfObjectPassingTest:^BOOL(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        return [[obj id] isEqualToString:recordId];
-    }];
-    if (row == NSNotFound) {
-        return;
+- (NSUInteger)removeRowsWithIds:(NSSet<NSString*>*)recordIds {
+    NSArray *filtered = [self.queryResult.records filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id  _Nullable evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
+        return ![recordIds containsObject:[evaluatedObject id]];
+    }]];
+    NSUInteger removedCount = self.queryResult.records.count - filtered.count;
+    if (removedCount > 0) {
+        ZKQueryResult *before = self.queryResult;
+        ZKQueryResult *nr = [[ZKQueryResult alloc] initWithRecords:filtered size:before.size-removedCount done:before.done queryLocator:before.queryLocator];
+        [self setQueryResult:nr];
     }
-    ZKQueryResult *before = self.queryResult;
-    NSMutableArray *rows = [NSMutableArray arrayWithArray:before.records];
-    [rows removeObjectAtIndex:row];
-    ZKQueryResult *nr = [[ZKQueryResult alloc] initWithRecords:rows size:before.size-1 done:before.done queryLocator:before.queryLocator];
-    [self setQueryResult:nr];
+    return removedCount;
 }
 
 -(NSArray *)allSystemColumnIdentifiers {

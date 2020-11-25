@@ -93,16 +93,18 @@
 -(void)deletesFinished:(NSArray<ZKSObject*>*)rows {
     // save errors to table
     [self.table.wrapper clearErrors];
+    NSMutableSet<NSString*> *successIds = [NSMutableSet setWithCapacity:rows.count];
     for (NSUInteger idx = 0; idx < rows.count; idx++) {
         ZKSaveResult *sr = self.results[idx];
         ZKSObject *so = rows[idx];
         if (sr.success) {
-            [self.table.wrapper removeRowWithId:so.id];
+            [successIds addObject:so.id];
             so.checked = NO;
         } else {
             so.errorMsg = sr.description;
         }
     }
+    [self.table removeRowsWithIds:successIds];
     [self.table showHideErrorColumn];
     
     // remove the progress sheet, and tidy up

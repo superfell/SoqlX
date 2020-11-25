@@ -104,8 +104,8 @@
     [self showHideErrorColumn];
 }
 
-- (void)removeRowWithId:(NSString *)recordId {
-    [wrapper removeRowWithId:recordId];
+- (void)removeRowsWithIds:(NSSet<NSString*> *)recordIds {
+    [wrapper removeRowsWithIds:recordIds];
     [self updateTable];
 }
 

@@ -37,7 +37,7 @@
 - (instancetype)initForTableView:(NSTableView *)view NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
-- (void)removeRowWithId:(NSString *)recordId;
+- (void)removeRowsWithIds:(NSSet<NSString*> *)recordIds;
 
 @property (weak, readonly) NSTableView *table;
 @property (weak, readonly) EditableQueryResultWrapper *wrapper;

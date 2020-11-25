@@ -49,8 +49,8 @@
 
 - (BOOL)allowEdit:(NSTableColumn *)aColumn;
 
-// mutate results in place.
-- (void)removeRowWithId:(NSString *)recordId;
+// remove row(s), returns the number of rows removed.
+- (NSUInteger)removeRowsWithIds:(NSSet<NSString*>*)recordIds;
 
 // pass through to QueryResult
 @property (readonly) NSInteger      size;

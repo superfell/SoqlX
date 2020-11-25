@@ -972,7 +972,7 @@ typedef enum SoqlParsePosition {
         [self updateProgress:NO];
         ZKSaveResult *sr = result[0];
         if (sr.success) {
-            [tr removeRowWithId:theId];
+            [tr removeRowsWithIds:[NSSet setWithObject:theId]];
             [self setRowsLoadedStatusText:tr.queryResult timing:execTime];
         } else {
             NSAlert *a = [[NSAlert alloc] init];
