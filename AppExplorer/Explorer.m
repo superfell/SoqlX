@@ -962,32 +962,6 @@ typedef enum SoqlParsePosition {
     [self showSelectedIdInBrowser:childTableView];
 }
 
-- (void)deleteSelectedRowInTable:(QueryResultTable *)tr {
-    NSString *theId = [self idOfSelectedRowInTableVew:tr.table primaryIdOnly:YES];
-    if (theId == nil) return;
-    [self updateProgress:YES];
-    NSDate *started = [NSDate date];
-    [sforce delete:@[theId] failBlock:[self errorHandler] completeBlock:^(NSArray *result) {
-        NSString *execTime = [self execTimeSince:started];
-        [self updateProgress:NO];
-        ZKSaveResult *sr = result[0];
-        if (sr.success) {
-            [tr removeRowsWithIds:[NSSet setWithObject:theId]];
-            [self setRowsLoadedStatusText:tr.queryResult timing:execTime];
-        } else {
-            NSAlert *a = [[NSAlert alloc] init];
-            a.messageText = sr.message;
-            a.informativeText = sr.statusCode;
-            [a runModal];
-        }
-    }];
-}
-
-- (IBAction)deleteSelectedRow:(id)sender {
-    QueryResultTable *t = [sender tag] == 1 ? rootResults : childResults;
-    [self deleteSelectedRowInTable:t];
-}
-
 // NSTabView delegate
 - (void)tabView:(NSTabView *)tab didSelectTabViewItem:(NSTabViewItem *)item {
     if ([item.identifier isEqualToString:schemaTabId]) {

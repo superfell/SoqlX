@@ -87,7 +87,6 @@
 - (IBAction)queryResultDoubleClicked:(id)sender;
 - (IBAction)showSelectedIdFronRootInBrowser:(id)sender;
 - (IBAction)showSelectedIdFronChildInBrowser:(id)sender;
-- (IBAction)deleteSelectedRow:(id)sender;
 - (IBAction)deleteCheckedRows:(id)sender;
 - (IBAction)filterSObjectListView:(id)sender;
 - (IBAction)updateDetailsRecentSelection:(id)sender;
