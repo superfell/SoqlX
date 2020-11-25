@@ -40,12 +40,10 @@
 @property  BOOL              editable;
 @property (weak) NSObject<EditableQueryResultWrapperDelegate> *delegate;
 
-@property (readonly) BOOL       hasCheckedRows;
-- (void)setChecked:(BOOL)checked onRowWithIndex:(NSUInteger)index;
+@property (readonly) BOOL hasCheckedRows;
 
 @property (readonly) BOOL hasErrors;
 - (void)clearErrors;
-- (void)addError:(NSString *)errMsg onRowWithRowIndex:(NSUInteger)index;
 
 - (BOOL)allowEdit:(NSTableColumn *)aColumn;
 

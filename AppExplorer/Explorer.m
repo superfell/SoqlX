@@ -581,10 +581,9 @@ typedef enum SoqlParsePosition {
 - (IBAction)queryResultDoubleClicked:(id)sender {
     NSInteger cc = [sender clickedColumn];
     NSInteger cr = [sender clickedRow];
-    NSLog(@"double clicked row=%ld col=%ld", cr,cc);
     if (cc > -1 && cr > -1) {
         NSTableColumn *c = rootTableView.tableColumns[cc];
-        NSObject *val = [[rootResults.queryResult  records][[sender clickedRow]] fieldValue:c.identifier];
+        NSObject *val = [[rootResults.queryResult records][[sender clickedRow]] fieldValue:c.identifier];
         if ([val isKindOfClass:[ZKQueryResult class]]) {
             ZKQueryResult *qr = (ZKQueryResult *)val;
             [self openChildTableView];

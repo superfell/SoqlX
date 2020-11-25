@@ -73,7 +73,7 @@
 
 -(void)showHideErrorColumn {
     NSTableColumn *ec = [table tableColumnWithIdentifier:ERROR_COLUMN_IDENTIFIER];
-    BOOL hasErrors = [wrapper hasErrors];
+    BOOL hasErrors = wrapper.hasErrors;
     ec.hidden = !hasErrors;
     [table reloadData];
 }

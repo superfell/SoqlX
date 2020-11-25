@@ -77,13 +77,6 @@
     [self didChangeValueForKey:@"hasCheckedRows"];
 }
 
-- (void)setChecked:(BOOL)checked onRowWithIndex:(NSUInteger)index {
-    [self willChangeValueForKey:@"hasCheckedRows"];
-    ZKSObject *row = self.queryResult.records[index];
-    row.checked = checked;
-    [self didChangeValueForKey:@"hasCheckedRows"];
-}
-
 - (BOOL)hasErrors {
     for (ZKSObject *row in self.queryResult.records) {
         if (row.errorMsg.length > 0) {
@@ -98,13 +91,6 @@
     for (ZKSObject *row in self.queryResult.records) {
         row.errorMsg = nil;
     }
-    [self didChangeValueForKey:@"hasErrors"];
-}
-
-- (void)addError:(NSString *)errMsg onRowWithRowIndex:(NSUInteger)index {
-    [self willChangeValueForKey:@"hasErrors"];
-    ZKSObject *row = self.queryResult.records[index];
-    row.errorMsg = errMsg;
     [self didChangeValueForKey:@"hasErrors"];
 }
 
@@ -169,11 +155,11 @@
     ZKSObject *row = self.queryResult.records[rowIndex];
     BOOL isDelete = [aTableColumn.identifier isEqualToString:DELETE_COLUMN_IDENTIFIER];
     if (isDelete) {
-        [self setChecked:!row.checked onRowWithIndex:rowIndex];
+        [self willChangeValueForKey:@"hasCheckedRows"];
+        row.checked = !row.checked;
+        [self didChangeValueForKey:@"hasCheckedRows"];
     } else {
-        if (self.delegate != nil && [self.delegate respondsToSelector:@selector(dataChangedOnObject:field:value:)]) {
-            [self.delegate dataChangedOnObject:row field:aTableColumn.identifier value:anObject];
-        }
+        [self.delegate dataChangedOnObject:row field:aTableColumn.identifier value:anObject];
     }
 }
 
