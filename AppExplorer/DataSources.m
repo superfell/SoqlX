@@ -369,6 +369,9 @@
     if ([item isKindOfClass:[ZKDescribeGlobalSObject class]]) {
         c.zkTextXOffset = 18;
         c.zkImage = [self iconForType:[item name]];
+        if (![self hasDescribe:[item name]]) {
+            c.textColor = [c.textColor colorWithAlphaComponent:0.75];
+        }
 
     } else if ([item isKindOfClass:[ZKDescribeField class]]) {
         if ([item fieldMatchesFilter:filter]) {
