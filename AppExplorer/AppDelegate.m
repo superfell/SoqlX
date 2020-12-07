@@ -113,8 +113,12 @@
         [alert runModal];
         return;
     }
-    NSURL *instanceUrl = [NSURL URLWithString:[NSString stringWithFormat:@"https://%@/services/Soap/u/%d.0", url.host, DEFAULT_API_VERSION]];
     NSString *sid = [url.path substringFromIndex:6]; // remove /sid/ prefix
+    [self openWithSession:sid host:url.host andVersion:DEFAULT_API_VERSION];
+}
+
+-(void)openWithSession:(NSString *)sid host:(NSString *)host andVersion:(int)apiVersion {
+    NSURL *instanceUrl = [NSURL URLWithString:[NSString stringWithFormat:@"https://%@/services/Soap/u/%d.0", host, apiVersion]];
     SessionIdAuthInfo *auth = [[SessionIdAuthInfo alloc] initWithUrl:instanceUrl sessionId:sid];
     ZKSforceClient *c = [[ZKSforceClient alloc] init];
     [c setClientId:[ZKLoginController appClientId]];
@@ -126,6 +130,11 @@
     
     // This call is used to validate that we were given a valid client, and that the auth info is usable.
     [c currentUserInfoWithFailBlock:^(NSError *result) {
+        if ([result.userInfo[ZKSoapFaultCodeKey] hasSuffix:@":UNSUPPORTED_API_VERSION"]) {
+            NSLog(@"Login failed with %@ on API Version %d, retrying with version %d", result, apiVersion, apiVersion-1);
+            [self openWithSession:sid host:host andVersion:apiVersion-1];
+            return;
+        }
         NSAlert *alert = [[NSAlert alloc] init];
         alert.messageText = @"Invalid parameters";
         alert.informativeText = result.localizedDescription;
