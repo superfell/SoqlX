@@ -1,4 +1,4 @@
-// Copyright (c) 2009,2018 Simon Fell
+// Copyright (c) 2009,2018,2020 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -20,116 +20,97 @@
 //
 
 #import "BulkDelete.h"
+#import <ZKSforce/ZKSforce.h>
 #import "ProgressController.h"
 #import "EditableQueryResultWrapper.h"
-#import <ZKSforce/ZKSforce.h>
 #import "QueryResultTable.h"
 
 @interface BulkDelete ()
--(void)doDeleteFrom:(NSInteger)start length:(NSInteger)length;
+-(NSArray<ZKSObject*>*)extractRows:(EditableQueryResultWrapper *)dataSource;
+-(void)deleteInChunks:(NSArray<ZKSObject*>*)rows start:(NSUInteger)start chunk:(NSUInteger)chunkSize;
+-(void)deletesFinished:(NSArray<ZKSObject*>*)rows;
 
-@property (strong) QueryResultTable *table;
+@property ProgressController  *progress;
+@property ZKSforceClient      *client;
+
+@property NSMutableArray      *results;
+@property QueryResultTable    *table;
+
 @end
 
 @implementation BulkDelete
 
-@synthesize table;
-
 -(instancetype)initWithClient:(ZKSforceClient *)c {
     self = [super init];
-    progress = [[ProgressController alloc] init];
-    queue = [[NSOperationQueue alloc] init];
-    queue.maxConcurrentOperationCount = 1;
-    client = c;
+    self.progress = [[ProgressController alloc] init];
+    self.client = c;
     return self;
 }
 
--(void)extractRows:(EditableQueryResultWrapper *)dataSource {
-    NSSet *idxSet = [dataSource indexesOfCheckedRows];
-    ZKQueryResult *data = [dataSource queryResult];
-    NSMutableArray *ia  = [NSMutableArray arrayWithCapacity:idxSet.count];
-    NSMutableArray *ids = [NSMutableArray arrayWithCapacity:idxSet.count];
-    for (NSNumber *idx in idxSet) {
-        [ia addObject:idx];
-        ZKSObject *row = [data records][idx.integerValue];
-        [ids addObject:[row id]];
-    }
-    indexes = ia;
-    sfdcIds = ids;
-    results = [NSMutableArray arrayWithCapacity:idxSet.count];
-}
-
 -(void)performBulkDelete:(QueryResultTable *)queryResultTable window:(NSWindow *)modalWindow {
+    NSArray<ZKSObject*> *toDelete = [self extractRows:queryResultTable.wrapper];
     self.table = queryResultTable;
-    EditableQueryResultWrapper *dataSource = queryResultTable.wrapper;
-    progress.progressLabel = [NSString stringWithFormat:@"Deleting %lu rows", (unsigned long)[dataSource numCheckedRows]];
-    progress.progressValue = 1.0;
-    [modalWindow beginSheet:progress.progressWindow completionHandler:nil];
-    [self extractRows:dataSource];
+    self.progress.progressLabel = [NSString stringWithFormat:@"Deleting %lu rows", (unsigned long)toDelete.count];
+    self.progress.progressValue = 1.0;
+    [modalWindow beginSheet:self.progress.progressWindow completionHandler:nil];
 
-    // enqueue delete operations
-    NSInteger start = 0;
-    NSInteger chunk = 50;
-    do {
-        NSInteger len = indexes.count - start;
-        if (len > chunk) len = chunk;
-        NSBlockOperation *op = [NSBlockOperation blockOperationWithBlock:^{
-            [self doDeleteFrom:start length:len];
-        }];
-        [queue addOperation:op];
-        start += len;
-    } while (start < indexes.count);
+    // chunk up delete requests.
+    self.results = [NSMutableArray arrayWithCapacity:toDelete.count];
+    [self deleteInChunks:toDelete start:0 chunk:50];
 }
 
--(void)deletesFinished {
-    int cnt = 0;
-    // save errors to table
-    [table.wrapper clearErrors];
-    NSMutableArray *deleted = [NSMutableArray array];
-    for (ZKSaveResult *r in results) {
-        NSNumber *idx = indexes[cnt];
-        if (r.success) {
-            [deleted addObject:idx];
-            [table.wrapper setChecked:NO onRowWithIndex:idx];
-        } else {
-            [table.wrapper addError:r.description forRowIndex:idx];
+-(NSArray<ZKSObject*>*)extractRows:(EditableQueryResultWrapper *)dataSource {
+    NSMutableArray<ZKSObject*> *checked = [NSMutableArray array];
+    for (ZKSObject *row in dataSource.records) {
+        if (row.checked) {
+            [checked addObject:row];
         }
-        ++cnt;
     }
-    [table showHideErrorColumn];
-    // remove the successfully deleted rows from the queryResults.
-    NSArray *sorted = [deleted sortedArrayUsingSelector:@selector(compare:)];
-    id ctx = [table.wrapper createMutatingRowsContext];
-    NSNumber *idx;
-    NSEnumerator *e = [sorted reverseObjectEnumerator];
-    while (idx = [e nextObject])
-        [table.wrapper remmoveRowAtIndex:idx.integerValue context:ctx];
-    [table.wrapper updateRowsFromContext:ctx];
-    [table replaceQueryResult:[table.wrapper queryResult]];
-    
-    // remove the progress sheet, and tidy up
-    [NSApp endSheet:progress.progressWindow];
-    [progress.progressWindow orderOut:self];
-     // we're outa here
+    return checked;
 }
 
--(void)aboutToDeleteFromIndex:(NSNumber *)idx {
-    NSString *l = [NSString stringWithFormat:@"Deleting %d of %ld rows", idx.intValue, (unsigned long)indexes.count];
-    progress.progressLabel = l;
-}
-
--(void)doDeleteFrom:(NSInteger)start length:(NSInteger)length {
-    [self performSelectorOnMainThread:@selector(aboutToDeleteFromIndex:) withObject:@(start+length) waitUntilDone:NO];
-    NSArray *ids = [sfdcIds subarrayWithRange:NSMakeRange(start, length)];
-    [client delete:ids failBlock:^(NSError *result) {
+-(void)deleteInChunks:(NSArray<ZKSObject*>*)rows start:(NSUInteger)start chunk:(NSUInteger)chunkSize {
+    NSUInteger end = MIN(start+chunkSize, rows.count);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSString *l = [NSString stringWithFormat:@"Deleting %ld of %ld rows", (unsigned long)end, rows.count];
+        self.progress.progressLabel = l;
+    });
+    NSArray *ids = [[rows subarrayWithRange:NSMakeRange(start, end-start)] valueForKey:@"id"];
+    [self.client delete:ids failBlock:^(NSError *result) {
         [[NSAlert alertWithError:result] runModal];
     } completeBlock:^(NSArray *res) {
-        [self->results addObjectsFromArray:res];
-        if (self->results.count == self->sfdcIds.count) {
+        [self.results addObjectsFromArray:res];
+        if (end == rows.count) {
             // all done, lets wrap up
-            [self performSelectorOnMainThread:@selector(deletesFinished) withObject:nil waitUntilDone:NO];
+            [self performSelectorOnMainThread:@selector(deletesFinished:) withObject:rows waitUntilDone:NO];
+        } else {
+            [self deleteInChunks:rows start:end chunk:chunkSize];
         }
     }];
+}
+
+
+-(void)deletesFinished:(NSArray<ZKSObject*>*)rows {
+    // save errors to table
+    [self.table.wrapper clearErrors];
+    NSMutableSet<NSString*> *successIds = [NSMutableSet setWithCapacity:rows.count];
+    for (NSUInteger idx = 0; idx < rows.count; idx++) {
+        ZKSaveResult *sr = self.results[idx];
+        ZKSObject *so = rows[idx];
+        if (sr.success) {
+            [successIds addObject:so.id];
+            so.checked = NO;
+        } else {
+            so.errorMsg = sr.description;
+        }
+    }
+    [self.table removeRowsWithIds:successIds];
+    [self.table showHideErrorColumn];
+    
+    // remove the progress sheet, and tidy up
+    [NSApp endSheet:self.progress.progressWindow];
+    [self.progress.progressWindow orderOut:self];
+     // we're outa here
 }
 
 @end

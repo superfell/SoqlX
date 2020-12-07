@@ -1,4 +1,4 @@
-// Copyright (c) 2012 Simon Fell
+// Copyright (c) 2020 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -19,19 +19,27 @@
 // THE SOFTWARE.
 //
 
-#import "SearchQueryResult.h"
-#import <ZKSforce/ZKSObject.h>
-#import <ZKSforce/ZKQueryResult+NSTableView.h>
-#import <ZKSforce/ZKSearchResult.h>
-#import <ZKSforce/ZKSearchRecord.h>
+#import <objc/runtime.h>
+#import "SObject.h"
 
-@implementation SearchQueryResult
+NSString *DELETE_COLUMN_IDENTIFIER = @"row__delete";
+NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
+NSString *TYPE_COLUMN_IDENTIFIER = @"row__type";
 
-+(instancetype)searchQueryResults:(ZKSearchResult *)searchResults {
-    return [[SearchQueryResult alloc] initWithRecords:[searchResults.searchRecords valueForKey:@"record"]
-                                                 size:(int)searchResults.searchRecords.count
-                                                 done:TRUE
-                                         queryLocator:nil];
+@implementation ZKSObject (SoqlX)
+
+-(void)setChecked:(BOOL)checked {
+    objc_setAssociatedObject(self, @selector(setChecked:), @(checked), OBJC_ASSOCIATION_RETAIN);
+}
+-(BOOL)checked {
+    return [objc_getAssociatedObject(self, @selector(setChecked:)) boolValue];
+}
+
+-(void)setErrorMsg:(NSString*)msg {
+    objc_setAssociatedObject(self, @selector(setErrorMsg:), msg, OBJC_ASSOCIATION_RETAIN);
+}
+-(NSString*)errorMsg {
+    return objc_getAssociatedObject(self, @selector(setErrorMsg:));
 }
 
 @end

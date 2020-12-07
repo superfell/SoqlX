@@ -9,7 +9,7 @@ target 'SoqlXplorer' do
 
   # Pods for SoqlXplorer
   pod 'Sparkle', '~> 1.22'
-  pod 'ZKSforce', '~> 50.0.0'
+  pod 'ZKSforce', '~> 50.1.0'
 end
 
 target 'SoqlXplorerTests' do
@@ -17,5 +17,5 @@ target 'SoqlXplorerTests' do
   use_frameworks!
 
   # Pods for SoqlXplorer
-  pod 'ZKSforce', '~> 50.0.0'
+  pod 'ZKSforce', '~> 50.1.0'
 end

@@ -25,16 +25,7 @@
 @class QueryResultTable;
 @class ZKSforceClient;
 
-@interface BulkDelete : NSObject {
-    ProgressController  *progress;
-    NSOperationQueue    *queue;
-    
-    NSArray             *indexes;
-    NSArray             *sfdcIds;
-    NSMutableArray      *results;
-    ZKSforceClient      *client;
-    QueryResultTable    *table;
-}
+@interface BulkDelete : NSObject
 
 -(instancetype)initWithClient:(ZKSforceClient *)client NS_DESIGNATED_INITIALIZER;
 -(instancetype)init NS_UNAVAILABLE;

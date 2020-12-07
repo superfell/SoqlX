@@ -1,4 +1,4 @@
-// Copyright (c) 2012 Simon Fell
+// Copyright (c) 2020 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -19,19 +19,21 @@
 // THE SOFTWARE.
 //
 
-#import "SearchQueryResult.h"
-#import <ZKSforce/ZKSObject.h>
-#import <ZKSforce/ZKQueryResult+NSTableView.h>
-#import <ZKSforce/ZKSearchResult.h>
-#import <ZKSforce/ZKSearchRecord.h>
+#import <Foundation/Foundation.h>
+#import "SObject.h"
 
-@implementation SearchQueryResult
+NS_ASSUME_NONNULL_BEGIN
 
-+(instancetype)searchQueryResults:(ZKSearchResult *)searchResults {
-    return [[SearchQueryResult alloc] initWithRecords:[searchResults.searchRecords valueForKey:@"record"]
-                                                 size:(int)searchResults.searchRecords.count
-                                                 done:TRUE
-                                         queryLocator:nil];
-}
+typedef  ZKDescribeSObject *_Nullable(^describeProvider)(NSString *_Nonnull);
+
+// A SortDescriptor that works directly with SObjects so that it can use the
+// typed value of fields.
+@interface SObjectSortDescriptor : NSSortDescriptor
+
+-(instancetype)initWithKey:(NSString *)key ascending:(BOOL)ascending describer:(describeProvider)d NS_DESIGNATED_INITIALIZER;
+
+@property describeProvider describer;
 
 @end
+
+NS_ASSUME_NONNULL_END

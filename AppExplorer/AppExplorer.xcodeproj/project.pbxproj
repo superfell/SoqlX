@@ -75,10 +75,17 @@
 		F4D7833415D5F46600D00BB9 /* BaseUserBasedController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D7833315D5F46600D00BB9 /* BaseUserBasedController.m */; };
 		F4D7834615D82C8200D00BB9 /* Login.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4D7834515D82C8200D00BB9 /* Login.xib */; };
 		F4D7836B15D8814C00D00BB9 /* ZKDescribe_Reporting.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D7836A15D8814C00D00BB9 /* ZKDescribe_Reporting.m */; };
+		F4D8DC792569CFF7002C9FC1 /* SObject.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D8DC782569CFF7002C9FC1 /* SObject.m */; };
+		F4D8DC87256AD4E2002C9FC1 /* SObjectSortDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D8DC86256AD4E2002C9FC1 /* SObjectSortDescriptor.m */; };
 		F4DD944B0AFEEC9400B0E3AC /* SchemaView.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DD94490AFEEC9400B0E3AC /* SchemaView.m */; };
 		F4DD94540AFEED9500B0E3AC /* SchemaController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DD94520AFEED9500B0E3AC /* SchemaController.m */; };
 		F4DE40652562079100FBA200 /* QueryColumnsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DE40642562079100FBA200 /* QueryColumnsTest.m */; };
 		F4DE40692562088B00FBA200 /* ZKSforce.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4DE40682562088B00FBA200 /* ZKSforce.framework */; };
+		F4E0F2B7256F123A00446C2B /* SObjectTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E0F2AC256F115E00446C2B /* SObjectTest.m */; };
+		F4E0F2B9256F127B00446C2B /* SObject.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D8DC782569CFF7002C9FC1 /* SObject.m */; };
+		F4E0F2BC256F15A500446C2B /* QRWrapperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E0F2BB256F15A500446C2B /* QRWrapperTest.m */; };
+		F4E0F2BE256F17DF00446C2B /* EditableQueryResultWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D6E1880BD70DA200813881 /* EditableQueryResultWrapper.m */; };
+		F4E0F2C0256F183E00446C2B /* QueryResultCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CF73E70D49BDDB001001F2 /* QueryResultCell.m */; };
 		F4E319492198ECE3009B8C4F /* querySavePanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4E319432198ECE3009B8C4F /* querySavePanel.xib */; };
 		F4E3194B2198ECE3009B8C4F /* ReportDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4E319472198ECE3009B8C4F /* ReportDocument.xib */; };
 		F4E3194E2198EF4E009B8C4F /* ProgressWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4E3194C2198EF4E009B8C4F /* ProgressWindow.xib */; };
@@ -315,6 +322,10 @@
 		F4D7834515D82C8200D00BB9 /* Login.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = Login.xib; path = ../common/Login.xib; sourceTree = "<group>"; };
 		F4D7836915D8814C00D00BB9 /* ZKDescribe_Reporting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKDescribe_Reporting.h; sourceTree = "<group>"; };
 		F4D7836A15D8814C00D00BB9 /* ZKDescribe_Reporting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZKDescribe_Reporting.m; sourceTree = "<group>"; };
+		F4D8DC772569CFF7002C9FC1 /* SObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SObject.h; sourceTree = "<group>"; };
+		F4D8DC782569CFF7002C9FC1 /* SObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SObject.m; sourceTree = "<group>"; };
+		F4D8DC85256AD4E2002C9FC1 /* SObjectSortDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SObjectSortDescriptor.h; sourceTree = "<group>"; };
+		F4D8DC86256AD4E2002C9FC1 /* SObjectSortDescriptor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SObjectSortDescriptor.m; sourceTree = "<group>"; };
 		F4DD94480AFEEC9400B0E3AC /* SchemaView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchemaView.h; sourceTree = "<group>"; };
 		F4DD94490AFEEC9400B0E3AC /* SchemaView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SchemaView.m; sourceTree = "<group>"; };
 		F4DD94510AFEED9500B0E3AC /* SchemaController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SchemaController.h; sourceTree = "<group>"; };
@@ -323,6 +334,8 @@
 		F4DE4053256205D300FBA200 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F4DE40642562079100FBA200 /* QueryColumnsTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QueryColumnsTest.m; sourceTree = "<group>"; };
 		F4DE40682562088B00FBA200 /* ZKSforce.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ZKSforce.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F4E0F2AC256F115E00446C2B /* SObjectTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SObjectTest.m; sourceTree = "<group>"; };
+		F4E0F2BB256F15A500446C2B /* QRWrapperTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QRWrapperTest.m; sourceTree = "<group>"; };
 		F4E319442198ECE3009B8C4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/querySavePanel.xib; sourceTree = "<group>"; };
 		F4E319482198ECE3009B8C4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ReportDocument.xib; sourceTree = "<group>"; };
 		F4E3194D2198EF4E009B8C4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ProgressWindow.xib; sourceTree = "<group>"; };
@@ -384,8 +397,16 @@
 				F413C6530AACABD5000A8CDC /* DataSources.m */,
 				F4FCF8230B644DDD003C4A5C /* DetailsController.h */,
 				F4FCF8240B644DDD003C4A5C /* DetailsController.m */,
+				F4D8DC772569CFF7002C9FC1 /* SObject.h */,
+				F4D8DC782569CFF7002C9FC1 /* SObject.m */,
 				F4D6E1870BD70DA200813881 /* EditableQueryResultWrapper.h */,
 				F4D6E1880BD70DA200813881 /* EditableQueryResultWrapper.m */,
+				F4D8DC85256AD4E2002C9FC1 /* SObjectSortDescriptor.h */,
+				F4D8DC86256AD4E2002C9FC1 /* SObjectSortDescriptor.m */,
+				F4408FED2562F4C1005E8BB7 /* QueryColumns.h */,
+				F4408FEE2562F4C1005E8BB7 /* QueryColumns.m */,
+				F4CF71F20D4704EE001001F2 /* QueryResultTable.h */,
+				F4CF71F30D4704EE001001F2 /* QueryResultTable.m */,
 				F45DDFDC0AABBA6100ED0BA0 /* Explorer.h */,
 				F45DDFDB0AABBA6100ED0BA0 /* Explorer.m */,
 				F494FA3C0F7EFDD2001216EC /* GlossShader */,
@@ -396,10 +417,6 @@
 				F4C877F90F395DB4000075D4 /* ProgressController.m */,
 				F49741EE0D554DB500DD77F4 /* QueryListController.h */,
 				F49741EF0D554DB500DD77F4 /* QueryListController.m */,
-				F4408FED2562F4C1005E8BB7 /* QueryColumns.h */,
-				F4408FEE2562F4C1005E8BB7 /* QueryColumns.m */,
-				F4CF71F20D4704EE001001F2 /* QueryResultTable.h */,
-				F4CF71F30D4704EE001001F2 /* QueryResultTable.m */,
 				F44FC9DF0E1EB69D00B5F70C /* ResultsSaver.h */,
 				F44FC9E00E1EB69D00B5F70C /* ResultsSaver.m */,
 				F4FDA6CA0B39162300A541E5 /* SchemaReportClasses */,
@@ -627,6 +644,8 @@
 			children = (
 				F4DE40642562079100FBA200 /* QueryColumnsTest.m */,
 				F4DE4053256205D300FBA200 /* Info.plist */,
+				F4E0F2AC256F115E00446C2B /* SObjectTest.m */,
+				F4E0F2BB256F15A500446C2B /* QRWrapperTest.m */,
 			);
 			path = SoqlXplorerTests;
 			sourceTree = "<group>";
@@ -925,6 +944,7 @@
 				F46D91070B33DFC800913AD2 /* StandAloneTableHeaderView.m in Sources */,
 				F4FDA6DA0B3916DE00A541E5 /* ReportDocument.m in Sources */,
 				F45C7EDD0B5FDA5200F93DD7 /* SchemaProtocol.m in Sources */,
+				F4D8DC792569CFF7002C9FC1 /* SObject.m in Sources */,
 				F4FCF8260B644DDD003C4A5C /* DetailsController.m in Sources */,
 				F4CD3DAD0B85701100084479 /* ZKLoginController.m in Sources */,
 				F4CD3DBA0B8572DB00084479 /* credential.m in Sources */,
@@ -948,6 +968,7 @@
 				F494FA490F7EFE22001216EC /* RRGlossCausticShader.m in Sources */,
 				F494FA4A0F7EFE22001216EC /* RRLuminanceFromRGBComponents.m in Sources */,
 				F454D163126785EA00DC16D9 /* ApexController.m in Sources */,
+				F4D8DC87256AD4E2002C9FC1 /* SObjectSortDescriptor.m in Sources */,
 				F4AC556715996D8500F5CA45 /* zkApexClient.m in Sources */,
 				F4AC556815996D8500F5CA45 /* ZKCodeCoverageResult.m in Sources */,
 				F4AC556915996D8500F5CA45 /* ZKCodeLocation.m in Sources */,
@@ -972,6 +993,11 @@
 			files = (
 				F4408FF02562F4C1005E8BB7 /* QueryColumns.m in Sources */,
 				F4DE40652562079100FBA200 /* QueryColumnsTest.m in Sources */,
+				F4E0F2B9256F127B00446C2B /* SObject.m in Sources */,
+				F4E0F2B7256F123A00446C2B /* SObjectTest.m in Sources */,
+				F4E0F2C0256F183E00446C2B /* QueryResultCell.m in Sources */,
+				F4E0F2BC256F15A500446C2B /* QRWrapperTest.m in Sources */,
+				F4E0F2BE256F17DF00446C2B /* EditableQueryResultWrapper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

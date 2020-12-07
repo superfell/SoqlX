@@ -78,7 +78,7 @@
     describes = [[NSMutableDictionary alloc] init];
     sortedDescribes = [[NSMutableDictionary alloc] init];
     icons = [[NSMutableDictionary alloc] init];
-    priorityDescribes = [[NSMutableArray alloc] init];
+    priorityDescribes = [[NSMutableSet alloc] init];
     
     NSMutableDictionary *byname = [NSMutableDictionary dictionary];
     for (ZKDescribeGlobalSObject *o in types)
@@ -245,7 +245,6 @@
     NSArray *toDescribe = descGlobalSobjects.allKeys;
     NSArray __block *leftTodo = toDescribe;
     NSArray __block *alreadyDescribed = nil;
-    NSArray __block *priority = nil;
     NSMutableDictionary<NSString*, NSNumber*> __block *errors = [[NSMutableDictionary alloc] init];
 
     // allow for the batch size to get halved all the way to one, and then allow a few more attempts
@@ -272,18 +271,21 @@
         }
         NSMutableArray *batch = [NSMutableArray arrayWithCapacity:batchSize];
         alreadyDescribed = self->describes.allKeys;
-        // take ownership of the list priority describes
-        priority = self->priorityDescribes;
-        self->priorityDescribes = [[NSMutableArray alloc] init];
-        for (NSString *item in priority) {
-            if ([alreadyDescribed containsObject:item]) {
-                continue;
+        
+        NSMutableArray *priority = [[NSMutableArray alloc] init];
+        for (NSString *name in alreadyDescribed) {
+            [self->priorityDescribes removeObject:name];
+        }
+        for (NSString *item in self->priorityDescribes) {
+            [priority addObject:item];
+            if (priority.count >= batchSize) {
+                break;
             }
-            [batch addObject:item];
         }
-        if (batch.count > 0) {
-            NSLog(@"Found priority describes for %@", batch);
+        if (priority.count > 0) {
+            NSLog(@"Found priority describes for %@", priority);
         }
+        [batch addObjectsFromArray:priority];
         NSInteger i;
         for (i=leftTodo.count-1; i >= 0 && batch.count < batchSize; i--) {
             NSString *item = leftTodo[i];
@@ -291,25 +293,24 @@
                 continue;
             }
             [batch addObject:item];
-            if (batch.count >= batchSize) break;
         }
         if (batch.count > 0) {
             [self->sforce describeSObjects:batch failBlock:^(NSError *err) {
                 NSLog(@"Failed to describe %@: %@", batch, err);
                 for (NSString *failedSObject in batch) {
                     int count = [errors[failedSObject] intValue] + 1;
-                    errors[failedSObject] = [NSNumber numberWithInt:count];
+                    errors[failedSObject] = @(count);
                     if (count >= MAX_ERRORS_BEFORE_GIVING_UP) {
                         [self.delegate describe:failedSObject failed:err];
                     }
                 }
-                [self->priorityDescribes addObjectsFromArray:priority];
                 batchSize = MAX(1, batchSize / 2);
                 describeNextBatch();
             } completeBlock:^(NSArray *result) {
                 [self addDescribesToCache:result];
                 for (NSString *sobject in batch) {
                     [errors removeObjectForKey:sobject];
+                    [self->priorityDescribes removeObject:sobject];
                 }
                 if (priority.count > 0) {
                     [self.delegate prioritizedDescribesCompleted:priority];

@@ -41,7 +41,7 @@
     NSMutableDictionary     *describes;
     NSMutableDictionary     *sortedDescribes;
     NSMutableDictionary     *icons;
-    NSMutableArray          *priorityDescribes;
+    NSMutableSet<NSString*> *priorityDescribes;
     
     NSString                *filter;
     NSArray                 *filteredTypes;

@@ -1,4 +1,4 @@
-// Copyright (c) 2012 Simon Fell
+// Copyright (c) 2020 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -19,19 +19,16 @@
 // THE SOFTWARE.
 //
 
-#import "SearchQueryResult.h"
+#import <Foundation/Foundation.h>
 #import <ZKSforce/ZKSObject.h>
-#import <ZKSforce/ZKQueryResult+NSTableView.h>
-#import <ZKSforce/ZKSearchResult.h>
-#import <ZKSforce/ZKSearchRecord.h>
 
-@implementation SearchQueryResult
+extern NSString *_Nonnull DELETE_COLUMN_IDENTIFIER;
+extern NSString *_Nonnull ERROR_COLUMN_IDENTIFIER;
+extern NSString *_Nonnull TYPE_COLUMN_IDENTIFIER;
 
-+(instancetype)searchQueryResults:(ZKSearchResult *)searchResults {
-    return [[SearchQueryResult alloc] initWithRecords:[searchResults.searchRecords valueForKey:@"record"]
-                                                 size:(int)searchResults.searchRecords.count
-                                                 done:TRUE
-                                         queryLocator:nil];
-}
+@interface ZKSObject (SoqlX)
+
+@property BOOL checked;
+@property NSString *_Nullable errorMsg;
 
 @end

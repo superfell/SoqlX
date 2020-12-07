@@ -1,4 +1,4 @@
-// Copyright (c) 2012 Simon Fell
+// Copyright (c) 2020 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -19,19 +19,26 @@
 // THE SOFTWARE.
 //
 
-#import "SearchQueryResult.h"
-#import <ZKSforce/ZKSObject.h>
-#import <ZKSforce/ZKQueryResult+NSTableView.h>
-#import <ZKSforce/ZKSearchResult.h>
-#import <ZKSforce/ZKSearchRecord.h>
+#import <XCTest/XCTest.h>
+#import "SObject.h"
 
-@implementation SearchQueryResult
+@interface SObjectTest : XCTestCase
+@end
 
-+(instancetype)searchQueryResults:(ZKSearchResult *)searchResults {
-    return [[SearchQueryResult alloc] initWithRecords:[searchResults.searchRecords valueForKey:@"record"]
-                                                 size:(int)searchResults.searchRecords.count
-                                                 done:TRUE
-                                         queryLocator:nil];
+@implementation SObjectTest
+
+-(void)testChecked {
+    ZKSObject *o = [ZKSObject withType:@"Task"];
+    XCTAssertFalse(o.checked);
+    o.checked = YES;
+    XCTAssertTrue(o.checked);
+}
+
+-(void)testErrorMessage {
+    ZKSObject *o = [ZKSObject withType:@"Task"];
+    XCTAssertNil(o.errorMsg);
+    o.errorMsg = @"boom";
+    XCTAssertEqualObjects(@"boom", o.errorMsg);
 }
 
 @end

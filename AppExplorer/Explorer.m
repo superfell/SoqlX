@@ -279,8 +279,17 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
         self->detailsController.prefsPrefix = userId;
     }];
 
-    descDataSource = [[DescribeListDataSource alloc] init];
+    DescribeListDataSource *dds = [[DescribeListDataSource alloc] init];
+    descDataSource = dds;
     descDataSource.delegate = self;
+    rootResults.describer = ^ZKDescribeSObject *(NSString *type) {
+        ZKDescribeSObject *o = [dds cachedDescribe:type];
+        if (o == nil) {
+            [dds prioritizeDescribe:type];
+        }
+        return o;
+    };
+    childResults.describer = rootResults.describer;
     [apexController setSforceClient:sforce];
     [descDataSource setSforce:sforce];
     describeList.dataSource = descDataSource;
@@ -571,9 +580,10 @@ typedef enum SoqlParsePosition {
 
 - (IBAction)queryResultDoubleClicked:(id)sender {
     NSInteger cc = [sender clickedColumn];
-    if (cc > -1) {
+    NSInteger cr = [sender clickedRow];
+    if (cc > -1 && cr > -1) {
         NSTableColumn *c = rootTableView.tableColumns[cc];
-        NSObject *val = [[rootResults.queryResult  records][[sender clickedRow]] fieldValue:c.identifier];
+        NSObject *val = [[rootResults.queryResult records][[sender clickedRow]] fieldValue:c.identifier];
         if ([val isKindOfClass:[ZKQueryResult class]]) {
             ZKQueryResult *qr = (ZKQueryResult *)val;
             [self openChildTableView];
@@ -949,33 +959,6 @@ typedef enum SoqlParsePosition {
 
 - (IBAction)showSelectedIdFronChildInBrowser:(id)sender {
     [self showSelectedIdInBrowser:childTableView];
-}
-
-- (void)deleteSelectedRowInTable:(QueryResultTable *)tr {
-    NSString *theId = [self idOfSelectedRowInTableVew:tr.table primaryIdOnly:YES];
-    if (theId == nil) return;
-    [self updateProgress:YES];
-    NSDate *started = [NSDate date];
-    [sforce delete:@[theId] failBlock:[self errorHandler] completeBlock:^(NSArray *result) {
-        NSString *execTime = [self execTimeSince:started];
-        [self updateProgress:NO];
-        ZKSaveResult *sr = result[0];
-        if (sr.success) {
-            NSInteger r = tr.table.clickedRow;
-            [tr removeRowAtIndex:r];
-            [self setRowsLoadedStatusText:tr.queryResult timing:execTime];
-        } else {
-            NSAlert *a = [[NSAlert alloc] init];
-            a.messageText = sr.message;
-            a.informativeText = sr.statusCode;
-            [a runModal];
-        }
-    }];
-}
-
-- (IBAction)deleteSelectedRow:(id)sender {
-    QueryResultTable *t = [sender tag] == 1 ? rootResults : childResults;
-    [self deleteSelectedRowInTable:t];
 }
 
 // NSTabView delegate

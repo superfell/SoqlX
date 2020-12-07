@@ -1,4 +1,4 @@
-// Copyright (c) 2008,2012,2014,2018 Simon Fell
+// Copyright (c) 2008,2012,2014,2018,2020 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -20,12 +20,11 @@
 //
 
 #import "QueryResultTable.h"
-#import <ZKSforce/ZKSObject.h>
-#import <ZKSforce/ZKQueryResult.h>
+#import <ZKSforce/ZKSforce.h>
 #import "EditableQueryResultWrapper.h"
 #import "SearchQueryResult.h"
-#import <ZKSforce/ZKAddress.h>
 #import "QueryColumns.h"
+#import "SObjectSortDescriptor.h"
 
 @interface QueryResultTable ()
 - (NSArray *)createTableColumns:(ZKQueryResult *)qr;
@@ -47,7 +46,7 @@
 }
 
 - (ZKQueryResult *)queryResult {
-    return queryResult;
+    return wrapper.queryResult;
 }
 
 - (EditableQueryResultWrapper *)wrapper {
@@ -70,20 +69,19 @@
     table.delegate = wrapper;
     table.dataSource = wrapper;
     [self showHideErrorColumn];
-    [table reloadData];
 }
 
 -(void)showHideErrorColumn {
     NSTableColumn *ec = [table tableColumnWithIdentifier:ERROR_COLUMN_IDENTIFIER];
-    BOOL hasErrors = [wrapper hasErrors];
+    BOOL hasErrors = wrapper.hasErrors;
     ec.hidden = !hasErrors;
+    [table reloadData];
 }
 
 - (void)setQueryResult:(ZKQueryResult *)qr {
-    if (qr == queryResult) return;
+    if (qr == wrapper.queryResult) return;
     [wrapper removeObserver:self forKeyPath:@"hasCheckedRows"];
     [self willChangeValueForKey:@"hasCheckedRows"];
-    queryResult = qr;
     wrapper = [[EditableQueryResultWrapper alloc] initWithQueryResult:qr];
     [self didChangeValueForKey:@"hasCheckedRows"];
     [wrapper addObserver:self forKeyPath:@"hasCheckedRows" options:0 context:nil];
@@ -102,17 +100,12 @@
 }
 
 -(void)replaceQueryResult:(ZKQueryResult *)qr {
-    queryResult = qr;
-    [wrapper setQueryResult:queryResult];
+    [wrapper setQueryResult:qr];
     [self showHideErrorColumn];
-    [table reloadData];
 }
 
-- (void)removeRowAtIndex:(NSInteger)row {
-    if (row >= [wrapper records].count) return;
-    id ctx = [wrapper createMutatingRowsContext];
-    [wrapper remmoveRowAtIndex:row context:ctx];
-    [wrapper updateRowsFromContext:ctx];
+- (void)removeRowsWithIds:(NSSet<NSString*> *)recordIds {
+    [wrapper removeRowsWithIds:recordIds];
     [self updateTable];
 }
 
@@ -123,14 +116,15 @@
     col.resizingMask = NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask;
     if ([identifier hasSuffix:@"Id"])
         col.width = 165;
+    col.sortDescriptorPrototype = [[SObjectSortDescriptor alloc] initWithKey:identifier ascending:YES describer:self.describer];
     return col;
 }
 
 - (NSArray *)createTableColumns:(ZKQueryResult *)qr {
     QueryColumns *qcols = [[QueryColumns alloc] initWithResult:qr];
-    if (qcols.isSearchResult)
-        [table addTableColumn:[self createTableColumnWithIdentifier:@"SObject__Type" label:@"Type"]];
-    
+    if (qcols.isSearchResult) {
+        [table addTableColumn:[self createTableColumnWithIdentifier:TYPE_COLUMN_IDENTIFIER label:@"Type"]];
+    }
     for (NSString *colName in qcols.names) {
         NSTableColumn *col = [self createTableColumnWithIdentifier:colName label:colName];
         [table addTableColumn:col];
