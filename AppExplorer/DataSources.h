@@ -20,21 +20,16 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "IconProvider.h"
 #import <ZKSforce/ZKSforce.h>
-#include <stdatomic.h>
+#import "IconProvider.h"
+#import "Describer.h"
 
 @class ZKSforceClient;
 @class ZKDescribeSObject;
 @class ZKDescribeField;
 @class ZKDescribeGlobalTheme;
 
-@protocol DescribeListDataSourceDelegate
--(void)prioritizedDescribesCompleted:(NSArray *)prioritizedSObjects;
--(void)describe:(NSString *)sobject failed:(NSError *)err;
-@end
-
-@interface DescribeListDataSource : NSObject<NSOutlineViewDataSource, NSOutlineViewDelegate, IconProvider> {
+@interface DescribeListDataSource : NSObject<NSOutlineViewDataSource, NSOutlineViewDelegate, IconProvider, DescriberDelegate> {
     NSArray                 *types;
     NSDictionary            *descGlobalSobjects;
     ZKSforceClient          *sforce;
@@ -48,10 +43,9 @@
     NSOutlineView           *outlineView;
     
     NSSortDescriptor        *fieldSortOrder;
-    atomic_int               stopBackgroundDescribes;
 }
 
-@property (weak) NSObject<DescribeListDataSourceDelegate> *delegate;
+@property (weak) NSObject<DescriberDelegate> *delegate;
 
 - (void)setSforce:(ZKSforceClient *)sf;
 - (void)setTypes:(ZKDescribeGlobalTheme *)t view:(NSOutlineView *)ov;

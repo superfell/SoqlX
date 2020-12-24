@@ -25,13 +25,14 @@
 #import "ZKDescribeThemeItem+ZKFindResource.h"
 #import "Prefs.h"
 #import "ZKXsdAnyType.h"
-
+#import "Describer.h"
 
 @interface DescribeListDataSource ()
 -(void)updateFilter;
 -(void)prefsChanged:(NSNotification *)notif;
--(void)startBackgroundDescribes;
+@property Describer *describer;
 @end
+
 
 @interface ZKDescribeField (ZKDataSourceHelpers)
 -(BOOL)fieldMatchesFilter:(NSString *)filter;
@@ -60,7 +61,7 @@
     self = [super init];
     fieldSortOrder = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(prefsChanged:) name:NSUserDefaultsDidChangeNotification object:nil];
-    stopBackgroundDescribes = 0;
+    self.describer = [[Describer alloc] init];
     return self;
 }
 
@@ -78,7 +79,6 @@
     describes = [[NSMutableDictionary alloc] init];
     sortedDescribes = [[NSMutableDictionary alloc] init];
     icons = [[NSMutableDictionary alloc] init];
-    priorityDescribes = [[NSMutableSet alloc] init];
     
     NSMutableDictionary *byname = [NSMutableDictionary dictionary];
     for (ZKDescribeGlobalSObject *o in types)
@@ -95,7 +95,7 @@
             [self->outlineView reloadItem:byname[tn]];
         }];
     }
-    [self startBackgroundDescribes];
+    [self.describer describe:t withClient:sforce andDelegate:self];
     [self updateFilter];
 }
 
@@ -108,7 +108,7 @@
 }
 
 - (void)prioritizeDescribe:(NSString *)type {
-    [priorityDescribes addObject:type.lowercaseString];
+    [self.describer prioritize:type];
 }
 
 -(void)setFilteredTypes:(NSArray *)t {
@@ -203,8 +203,8 @@
 
     NSMutableSet *todo = [NSMutableSet setWithArray:types];
     [todo minusSet:[NSSet setWithArray:describes.allKeys]];
-    if (todo.count > 0) {
-        [priorityDescribes addObjectsFromArray:[todo allObjects]];
+    for (NSString *name in todo) {
+        [self.describer prioritize:name];
     }
     void(^__block next)(int idx) = nil;
     next = ^(int idx) {
@@ -221,7 +221,6 @@
     };
     next(0);
 }
-
 
 -(void)addDescribesToCache:(NSArray *)newDescribes {
     NSMutableArray *sorted = [NSMutableArray arrayWithCapacity:newDescribes.count];
@@ -241,95 +240,22 @@
     [self updateFilter];
 }
 
--(void)startBackgroundDescribes {
-    NSArray *toDescribe = descGlobalSobjects.allKeys;
-    NSArray __block *leftTodo = toDescribe;
-    NSArray __block *alreadyDescribed = nil;
-    NSMutableDictionary<NSString*, NSNumber*> __block *errors = [[NSMutableDictionary alloc] init];
-
-    // allow for the batch size to get halved all the way to one, and then allow a few more attempts
-    const int MAX_ERRORS_BEFORE_GIVING_UP = 10;
-    const int DEFAULT_DESC_BATCH = 16;
-    int __block batchSize = DEFAULT_DESC_BATCH;
-    typedef void (^nextBlock)(void);
-    nextBlock __block describeNextBatch;
-    
-    describeNextBatch = ^{
-        if (leftTodo.count == 0 || (atomic_fetch_add(&self->stopBackgroundDescribes, 0) > 0)) {
-            NSLog(@"Background describes completed");
-            // sanity check we got everything
-            if (self->descGlobalSobjects.count != self->describes.count) {
-                NSLog(@"Background describe finished, but there are still missing describes");
-                for (NSString *k in self->descGlobalSobjects.allKeys) {
-                    if (self->describes[k] == nil) {
-                        NSLog(@"\t%@", k);
-                    }
-                }
-            }
-            describeNextBatch = nil;
-            return;
-        }
-        NSMutableArray *batch = [NSMutableArray arrayWithCapacity:batchSize];
-        alreadyDescribed = self->describes.allKeys;
-        
-        NSMutableArray *priority = [[NSMutableArray alloc] init];
-        for (NSString *name in alreadyDescribed) {
-            [self->priorityDescribes removeObject:name];
-        }
-        for (NSString *item in self->priorityDescribes) {
-            [priority addObject:item];
-            if (priority.count >= batchSize) {
-                break;
-            }
-        }
-        if (priority.count > 0) {
-            NSLog(@"Found priority describes for %@", priority);
-        }
-        [batch addObjectsFromArray:priority];
-        NSInteger i;
-        for (i=leftTodo.count-1; i >= 0 && batch.count < batchSize; i--) {
-            NSString *item = leftTodo[i];
-            if ([alreadyDescribed containsObject:item] || [errors[item] intValue] >= MAX_ERRORS_BEFORE_GIVING_UP) {
-                continue;
-            }
-            [batch addObject:item];
-        }
-        if (batch.count > 0) {
-            [self->sforce describeSObjects:batch failBlock:^(NSError *err) {
-                NSLog(@"Failed to describe %@: %@", batch, err);
-                for (NSString *failedSObject in batch) {
-                    int count = [errors[failedSObject] intValue] + 1;
-                    errors[failedSObject] = @(count);
-                    if (count >= MAX_ERRORS_BEFORE_GIVING_UP) {
-                        [self.delegate describe:failedSObject failed:err];
-                    }
-                }
-                batchSize = MAX(1, batchSize / 2);
-                describeNextBatch();
-            } completeBlock:^(NSArray *result) {
-                [self addDescribesToCache:result];
-                for (NSString *sobject in batch) {
-                    [errors removeObjectForKey:sobject];
-                    [self->priorityDescribes removeObject:sobject];
-                }
-                if (priority.count > 0) {
-                    [self.delegate prioritizedDescribesCompleted:priority];
-                }
-                batchSize = MIN(DEFAULT_DESC_BATCH, MAX(2, batchSize * 3/2));
-                leftTodo = [leftTodo subarrayWithRange:NSMakeRange(0, i+1)];
-                describeNextBatch();
-            }];
-        } else {
-            // ensure the complete sanity check is done.
-            leftTodo = [leftTodo subarrayWithRange:NSMakeRange(0, i+1)];
-            describeNextBatch();
-        }
-    };
-    describeNextBatch();
+-(void)stopBackgroundDescribe {
+    [self.describer stop];
 }
 
--(void)stopBackgroundDescribe {
-    atomic_fetch_add(&stopBackgroundDescribes, 1);
+// DescriberDelegate
+-(void)described:(NSArray<ZKDescribeSObject*> *)sobjects {
+    [self addDescribesToCache:sobjects];
+    [self.delegate described:sobjects];
+}
+
+-(void)prioritizedDescribesCompleted:(NSArray *)prioritizedSObjects {
+    [self.delegate prioritizedDescribesCompleted:prioritizedSObjects];
+}
+
+-(void)describe:(NSString *)sobject failed:(NSError *)err {
+    [self.delegate describe:sobject failed:err];
 }
 
 // for use in an outline view

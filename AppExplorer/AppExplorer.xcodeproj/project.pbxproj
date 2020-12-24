@@ -33,6 +33,10 @@
 		F45C7EEB0B5FDB5F00F93DD7 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F45C7EEA0B5FDB5F00F93DD7 /* WebKit.framework */; };
 		F45DDFDD0AABBA6100ED0BA0 /* Explorer.m in Sources */ = {isa = PBXBuildFile; fileRef = F45DDFDB0AABBA6100ED0BA0 /* Explorer.m */; };
 		F46D91070B33DFC800913AD2 /* StandAloneTableHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F46D91010B33DFC800913AD2 /* StandAloneTableHeaderView.m */; };
+		F48804CB2592ADE7001D56F6 /* Describer.m in Sources */ = {isa = PBXBuildFile; fileRef = F48804CA2592ADE7001D56F6 /* Describer.m */; };
+		F48804D92592BB33001D56F6 /* CaseInsensitiveStringKey.m in Sources */ = {isa = PBXBuildFile; fileRef = F48804D82592BB33001D56F6 /* CaseInsensitiveStringKey.m */; };
+		F48804DD2592BE57001D56F6 /* CaseInsensitiveKeyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F48804DC2592BE57001D56F6 /* CaseInsensitiveKeyTest.m */; };
+		F48804DF2592BE63001D56F6 /* CaseInsensitiveStringKey.m in Sources */ = {isa = PBXBuildFile; fileRef = F48804D82592BB33001D56F6 /* CaseInsensitiveStringKey.m */; };
 		F48B6B8C1969E68700496C82 /* Prefs.m in Sources */ = {isa = PBXBuildFile; fileRef = F48B6B8B1969E68700496C82 /* Prefs.m */; };
 		F494FA470F7EFE22001216EC /* RRCausticColorMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = F494FA400F7EFE22001216EC /* RRCausticColorMatcher.m */; };
 		F494FA480F7EFE22001216EC /* RRExponentialFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = F494FA420F7EFE22001216EC /* RRExponentialFunction.m */; };
@@ -246,6 +250,11 @@
 		F45DDFDC0AABBA6100ED0BA0 /* Explorer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Explorer.h; sourceTree = "<group>"; };
 		F46D91000B33DFC800913AD2 /* StandAloneTableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = StandAloneTableHeaderView.h; path = ../common/StandAloneTableHeaderView.h; sourceTree = SOURCE_ROOT; };
 		F46D91010B33DFC800913AD2 /* StandAloneTableHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = StandAloneTableHeaderView.m; path = ../common/StandAloneTableHeaderView.m; sourceTree = SOURCE_ROOT; };
+		F48804C92592ADE7001D56F6 /* Describer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Describer.h; sourceTree = "<group>"; };
+		F48804CA2592ADE7001D56F6 /* Describer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Describer.m; sourceTree = "<group>"; };
+		F48804D72592BB33001D56F6 /* CaseInsensitiveStringKey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CaseInsensitiveStringKey.h; sourceTree = "<group>"; };
+		F48804D82592BB33001D56F6 /* CaseInsensitiveStringKey.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CaseInsensitiveStringKey.m; sourceTree = "<group>"; };
+		F48804DC2592BE57001D56F6 /* CaseInsensitiveKeyTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CaseInsensitiveKeyTest.m; sourceTree = "<group>"; };
 		F48B6B8A1969E68700496C82 /* Prefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Prefs.h; sourceTree = "<group>"; };
 		F48B6B8B1969E68700496C82 /* Prefs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Prefs.m; sourceTree = "<group>"; };
 		F494FA3F0F7EFE22001216EC /* RRCausticColorMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RRCausticColorMatcher.h; path = ../common/RRCausticColorMatcher.h; sourceTree = SOURCE_ROOT; };
@@ -395,6 +404,10 @@
 				F4CD3DB80B8572DB00084479 /* credential.m */,
 				F413C6520AACABD5000A8CDC /* DataSources.h */,
 				F413C6530AACABD5000A8CDC /* DataSources.m */,
+				F48804C92592ADE7001D56F6 /* Describer.h */,
+				F48804CA2592ADE7001D56F6 /* Describer.m */,
+				F48804D72592BB33001D56F6 /* CaseInsensitiveStringKey.h */,
+				F48804D82592BB33001D56F6 /* CaseInsensitiveStringKey.m */,
 				F4FCF8230B644DDD003C4A5C /* DetailsController.h */,
 				F4FCF8240B644DDD003C4A5C /* DetailsController.m */,
 				F4D8DC772569CFF7002C9FC1 /* SObject.h */,
@@ -646,6 +659,7 @@
 				F4DE4053256205D300FBA200 /* Info.plist */,
 				F4E0F2AC256F115E00446C2B /* SObjectTest.m */,
 				F4E0F2BB256F15A500446C2B /* QRWrapperTest.m */,
+				F48804DC2592BE57001D56F6 /* CaseInsensitiveKeyTest.m */,
 			);
 			path = SoqlXplorerTests;
 			sourceTree = "<group>";
@@ -936,6 +950,7 @@
 				F45DDFDD0AABBA6100ED0BA0 /* Explorer.m in Sources */,
 				F413C6540AACABD5000A8CDC /* DataSources.m in Sources */,
 				F4DD944B0AFEEC9400B0E3AC /* SchemaView.m in Sources */,
+				F48804D92592BB33001D56F6 /* CaseInsensitiveStringKey.m in Sources */,
 				F4DD94540AFEED9500B0E3AC /* SchemaController.m in Sources */,
 				F458CEB20AFF2442008A20A9 /* SObjectBox.m in Sources */,
 				F412575D0B098593001622AC /* WeightedSObject.m in Sources */,
@@ -962,6 +977,7 @@
 				F428A2D30F677BC3007BD862 /* BlueView.m in Sources */,
 				F4FAFB660F68CAFD00ECC9BB /* HighlightTextFieldCell.m in Sources */,
 				F4BF72A70F79E58C0089F459 /* NSWindow_additions.m in Sources */,
+				F48804CB2592ADE7001D56F6 /* Describer.m in Sources */,
 				F4B461FF0F79EB850099C434 /* FieldResizer.m in Sources */,
 				F494FA470F7EFE22001216EC /* RRCausticColorMatcher.m in Sources */,
 				F494FA480F7EFE22001216EC /* RRExponentialFunction.m in Sources */,
@@ -992,8 +1008,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				F4408FF02562F4C1005E8BB7 /* QueryColumns.m in Sources */,
+				F48804DD2592BE57001D56F6 /* CaseInsensitiveKeyTest.m in Sources */,
 				F4DE40652562079100FBA200 /* QueryColumnsTest.m in Sources */,
 				F4E0F2B9256F127B00446C2B /* SObject.m in Sources */,
+				F48804DF2592BE63001D56F6 /* CaseInsensitiveStringKey.m in Sources */,
 				F4E0F2B7256F123A00446C2B /* SObjectTest.m in Sources */,
 				F4E0F2C0256F183E00446C2B /* QueryResultCell.m in Sources */,
 				F4E0F2BC256F15A500446C2B /* QRWrapperTest.m in Sources */,

@@ -37,7 +37,7 @@
 @class QueryResultTable;
 @class ApexController;
 
-@interface Explorer : NSObject<EditableQueryResultWrapperDelegate, NSWindowDelegate, NSTabViewDelegate, QueryTextListViewDelegate, ZKLoginControllerDelegate, ZKBaseClientDelegate, DescribeListDataSourceDelegate>
+@interface Explorer : NSObject<EditableQueryResultWrapperDelegate, NSWindowDelegate, NSTabViewDelegate, QueryTextListViewDelegate, ZKLoginControllerDelegate, ZKBaseClientDelegate, DescriberDelegate>
 {
     // old world order, needs modernizing
     IBOutlet NSOutlineView          *describeList;
