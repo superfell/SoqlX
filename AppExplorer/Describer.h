@@ -28,7 +28,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol DescriberDelegate
 -(void)described:(NSArray<ZKDescribeSObject*> *)sobjects;
--(void)prioritizedDescribesCompleted:(NSArray<ZKDescribeSObject*> *)prioritizedSObjects;
 -(void)describe:(NSString *)sobject failed:(NSError *)err;
 @end
 

@@ -250,10 +250,6 @@
     [self.delegate described:sobjects];
 }
 
--(void)prioritizedDescribesCompleted:(NSArray *)prioritizedSObjects {
-    [self.delegate prioritizedDescribesCompleted:prioritizedSObjects];
-}
-
 -(void)describe:(NSString *)sobject failed:(NSError *)err {
     [self.delegate describe:sobject failed:err];
 }

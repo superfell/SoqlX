@@ -373,10 +373,6 @@ typedef enum SoqlParsePosition {
     return entity;
 }
 
--(void)prioritizedDescribesCompleted:(NSArray *)prioritizedSObjects {
-  //  covered by described call below.
-}
-
 - (void)described:(nonnull NSArray<ZKDescribeSObject *> *)sobjects {
     [self colorize];
 }

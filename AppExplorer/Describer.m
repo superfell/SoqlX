@@ -137,9 +137,6 @@
                     [self.priorityDescribes removeObject:sobject];
                 }
                 [delegate described:result];
-                if (priority.count > 0) {
-                    [delegate prioritizedDescribesCompleted:[priority valueForKey:@"value"]];
-                }
                 batchSize = MIN(DEFAULT_DESC_BATCH, MAX(2, batchSize * 3/2));
                 leftTodo = [leftTodo subarrayWithRange:NSMakeRange(0, i+1)];
                 describeNextBatch();
