@@ -37,7 +37,11 @@
     self.priorityDescribes = [[NSMutableSet alloc] init];
     self.describes = [[NSMutableDictionary alloc] init];
     stopBackgroundDescribes = 0;
-    NSArray *neededDescribes = [theme.global.sobjects valueForKey:@"name"];
+    NSArray *neededDescribes = [[theme.global.sobjects valueForKey:@"name"]
+                                sortedArrayUsingDescriptors:@[[NSSortDescriptor
+                                                               sortDescriptorWithKey:@"description"
+                                                               ascending:NO
+                                                               selector:@selector(caseInsensitiveCompare:)]]];
     NSMutableArray<CaseInsensitiveStringKey*> *describeKeys = [NSMutableArray arrayWithCapacity:neededDescribes.count];
     for (NSString *n in neededDescribes) {
         [describeKeys addObject:[CaseInsensitiveStringKey of:n]];
