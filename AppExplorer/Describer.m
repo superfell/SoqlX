@@ -25,10 +25,10 @@
 @interface Describer ()
 @property NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> *describes;
 @property NSMutableSet<CaseInsensitiveStringKey*> *priorityDescribes;
+@property BOOL stopDescribes;
 
 -(void)startBackgroundDescribesOf:(NSArray<CaseInsensitiveStringKey*>*)sobjectNames
-                       withClient:(ZKSforceClient*)c
-                      andDelegate:(NSObject<DescriberDelegate> *)delegate;
+                       withClient:(ZKSforceClient*)c;
 @end
 
 @implementation  Describer
@@ -36,7 +36,8 @@
 -(void)describe:(ZKDescribeGlobalTheme*)theme withClient:(ZKSforceClient*)c andDelegate:(NSObject<DescriberDelegate> *)delegate {
     self.priorityDescribes = [[NSMutableSet alloc] init];
     self.describes = [[NSMutableDictionary alloc] init];
-    stopBackgroundDescribes = 0;
+    self.delegate = delegate;
+    self.stopDescribes = NO;
     NSArray *neededDescribes = [[theme.global.sobjects valueForKey:@"name"]
                                 sortedArrayUsingDescriptors:@[[NSSortDescriptor
                                                                sortDescriptorWithKey:@"description"
@@ -46,7 +47,7 @@
     for (NSString *n in neededDescribes) {
         [describeKeys addObject:[CaseInsensitiveStringKey of:n]];
     }
-    [self startBackgroundDescribesOf:describeKeys withClient:c andDelegate:delegate];
+    [self startBackgroundDescribesOf:describeKeys withClient:c];
 }
 
 -(void)prioritize:(NSString *)name {
@@ -61,12 +62,12 @@
 }
 
 -(void)stop {
-    atomic_fetch_add(&stopBackgroundDescribes, 1);
+    self.stopDescribes = YES;
+    self.delegate = nil;
 }
 
 -(void)startBackgroundDescribesOf:(NSArray<CaseInsensitiveStringKey*>*)toDescribe
-                       withClient:(ZKSforceClient*)sforce
-                      andDelegate:(NSObject<DescriberDelegate> *)delegate {
+                       withClient:(ZKSforceClient*)sforce {
 
     NSArray<CaseInsensitiveStringKey*> __block *leftTodo = toDescribe;
     NSMutableDictionary<CaseInsensitiveStringKey*, NSNumber*> __block *errors = [[NSMutableDictionary alloc] init];
@@ -79,7 +80,12 @@
     nextBlock __block describeNextBatch;
     
     describeNextBatch = ^{
-        if (leftTodo.count == 0 || (atomic_fetch_add(&self->stopBackgroundDescribes, 0) > 0)) {
+        if (self.stopDescribes) {
+            NSLog(@"Stopping background describes with %lu left todo", (unsigned long)leftTodo.count);
+            describeNextBatch = nil;
+            return;
+        }
+        if (leftTodo.count == 0) {
             NSLog(@"Background describes completed");
             // sanity check we got everything
             if (toDescribe.count != self.describes.count) {
@@ -127,7 +133,7 @@
                     int count = [errors[failedSObject] intValue] + 1;
                     errors[failedSObject] = @(count);
                     if (count >= MAX_ERRORS_BEFORE_GIVING_UP) {
-                        [delegate describe:failedSObject.value failed:err];
+                        [self.delegate describe:failedSObject.value failed:err];
                     }
                 }
                 batchSize = MAX(1, batchSize / 2);
@@ -140,7 +146,7 @@
                     [errors removeObjectForKey:sobject];
                     [self.priorityDescribes removeObject:sobject];
                 }
-                [delegate described:result];
+                [self.delegate described:result];
                 batchSize = MIN(DEFAULT_DESC_BATCH, MAX(2, batchSize * 3/2));
                 leftTodo = [leftTodo subarrayWithRange:NSMakeRange(0, i+1)];
                 describeNextBatch();

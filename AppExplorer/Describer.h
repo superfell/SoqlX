@@ -20,7 +20,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#include <stdatomic.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -31,12 +30,14 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)describe:(NSString *)sobject failed:(NSError *)err;
 @end
 
-@interface Describer : NSObject {
-    atomic_int stopBackgroundDescribes;
-}
+@interface Describer : NSObject
+
+@property (weak) NSObject<DescriberDelegate> *delegate;
+
 -(void)describe:(ZKDescribeGlobalTheme*)theme withClient:(ZKSforceClient*)c andDelegate:(NSObject<DescriberDelegate> *)delegate;
 -(void)prioritize:(NSString *)name;
 -(void)stop;
+
 @end
 
 NS_ASSUME_NONNULL_END
