@@ -313,6 +313,16 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     }];
 }
 
+- (void)refreshMetadata:(id)sender {
+    [sforce describeGlobalThemeWithFailBlock:^(NSError *result) {
+        [[NSAlert alertWithError:result] runModal];
+    } completeBlock:^(ZKDescribeGlobalTheme *result) {
+        [self willChangeValueForKey:@"SObjects"];
+        [self.describeDataSource refreshDescribes:result view:self->describeList];
+        [self didChangeValueForKey:@"SObjects"];
+    }];
+}
+
 - (void)setSoqlString:(NSString *)str {
     NSAttributedString *s = [[NSAttributedString alloc]
                              initWithString:str
