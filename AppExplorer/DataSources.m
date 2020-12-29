@@ -118,6 +118,14 @@
     sforce = sf;
 }
 
+- (NSUInteger)describedCount {
+    return describes.count;
+}
+
+- (NSUInteger)totalCount {
+    return types.count;
+}
+
 -(void)setFilteredTypes:(NSArray<ZKDescribeGlobalSObject*> *)t {
     NSArray *old = filteredTypes;
     filteredTypes = t;

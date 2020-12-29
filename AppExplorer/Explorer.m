@@ -385,6 +385,8 @@ typedef enum SoqlParsePosition {
 
 - (void)described:(nonnull NSArray<ZKDescribeSObject *> *)sobjects {
     [self colorize];
+    NSString *msg = [NSString stringWithFormat:@"Described %lu/%lu SObjects", (unsigned long)descDataSource.describedCount, (unsigned long)descDataSource.totalCount];
+    [self setStatusText:msg];
 }
 
 - (void)colorize {
