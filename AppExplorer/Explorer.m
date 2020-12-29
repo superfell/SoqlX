@@ -114,7 +114,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 +(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
     NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
     if ([key isEqualToString:@"canQueryMore"])
-        return [paths setByAddingObjectsFromArray:@[@"currentResults", @"rowsLoadedStatusText"]];
+        return [paths setByAddingObjectsFromArray:@[@"rootResults.queryResult"]];
     if ([key isEqualToString:@"titleUserInfo"])
         return [paths setByAddingObjectsFromArray:@[@"sforce", @"queryFilename", @"apexFilename", @"selectedTabViewIdentifier"]];
     return paths;
@@ -134,11 +134,11 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     describeList.doubleAction = @selector(describeItemClicked:);    
     rootTableView.target = self;
     rootTableView.doubleAction = @selector(queryResultDoubleClicked:);
-    rootResults = [[QueryResultTable alloc] initForTableView:rootTableView];
-    rootResults.delegate = self;
-    [rootResults addObserver:self forKeyPath:@"hasCheckedRows" options:0 context:nil];
-    childResults = [[QueryResultTable alloc] initForTableView:childTableView];
-    childResults.delegate = self;
+    self.rootResults = [[QueryResultTable alloc] initForTableView:rootTableView];
+    self.rootResults.delegate = self;
+    [self.rootResults addObserver:self forKeyPath:@"hasCheckedRows" options:0 context:nil];
+    self.childResults = [[QueryResultTable alloc] initForTableView:childTableView];
+    self.childResults.delegate = self;
     [self collapseChildTableView];
     
     queryListController.delegate = self;
@@ -151,7 +151,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 - (void)dealloc {
     [detailsController removeObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE];
     [queryListController removeObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE];
-    [rootResults removeObserver:self forKeyPath:@"hasCheckedRows"];
+    [self.rootResults removeObserver:self forKeyPath:@"hasCheckedRows"];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -282,14 +282,14 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     DescribeListDataSource *dds = [[DescribeListDataSource alloc] init];
     descDataSource = dds;
     descDataSource.delegate = self;
-    rootResults.describer = ^ZKDescribeSObject *(NSString *type) {
+    self.rootResults.describer = ^ZKDescribeSObject *(NSString *type) {
         ZKDescribeSObject *o = [dds cachedDescribe:type];
         if (o == nil) {
             [dds prioritizeDescribe:type];
         }
         return o;
     };
-    childResults.describer = rootResults.describer;
+    self.childResults.describer = self.rootResults.describer;
     [apexController setSforceClient:sforce];
     [descDataSource setSforce:sforce];
     describeList.dataSource = descDataSource;
@@ -301,8 +301,8 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     [self updateProgress:NO];
     [self willChangeValueForKey:@"isLoggedIn"];
     [self didChangeValueForKey:@"isLoggedIn"];
-    [rootResults setQueryResult:nil];
-    [childResults setQueryResult:nil];
+    [self.rootResults setQueryResult:nil];
+    [self.childResults setQueryResult:nil];
 
     [sforce describeGlobalThemeWithFailBlock:^(NSError *result) {
         [[NSAlert alertWithError:result] runModal];
@@ -568,14 +568,14 @@ typedef enum SoqlParsePosition {
             if ([qr records].count == 0) {
                 self.statusText = [NSString stringWithFormat:@"Count query result is %ld rows %@", (long)[qr size], time];
             } else {
-                self->rootResults.queryResult = qr;
-                [self->childResults setQueryResult:nil];
+                self.rootResults.queryResult = qr;
+                [self.childResults setQueryResult:nil];
                 [self setRowsLoadedStatusText:qr timing:time];
             }
         } else {
             self.statusText = [NSString stringWithFormat:@"Query returned 0 rows %@", time];
-            [self->rootResults setQueryResult:nil];
-            [self->childResults setQueryResult:nil];
+            [self.rootResults setQueryResult:nil];
+            [self.childResults setQueryResult:nil];
         }
     };
     if ([query.lowercaseString hasPrefix:@"find "]) {
@@ -595,11 +595,11 @@ typedef enum SoqlParsePosition {
     NSInteger cr = [sender clickedRow];
     if (cc > -1 && cr > -1) {
         NSTableColumn *c = rootTableView.tableColumns[cc];
-        NSObject *val = [[rootResults.queryResult records][[sender clickedRow]] fieldValue:c.identifier];
+        NSObject *val = [[self.rootResults.queryResult records][[sender clickedRow]] fieldValue:c.identifier];
         if ([val isKindOfClass:[ZKQueryResult class]]) {
             ZKQueryResult *qr = (ZKQueryResult *)val;
             [self openChildTableView];
-            childResults.queryResult = qr;
+            self.childResults.queryResult = qr;
         } else {
             [rootTableView editColumn:[sender clickedColumn] row:[sender clickedRow] withEvent:nil select:YES]; 
         }
@@ -755,7 +755,7 @@ typedef enum SoqlParsePosition {
 
 // Called via "Save Query Results" Menu item
 -(void)saveQueryResults:(id)sender {
-    ResultsSaver *saver = [[ResultsSaver alloc] initWithResults:rootResults client:sforce];
+    ResultsSaver *saver = [[ResultsSaver alloc] initWithResults:self.rootResults client:sforce];
     [saver save:myWindow];
 }
 
@@ -767,7 +767,7 @@ typedef enum SoqlParsePosition {
         return ![self schemaViewIsActive];
     }
     if (theAction == @selector(saveQueryResults:)) {
-        return (rootResults.queryResult.size > 0) && ![self schemaViewIsActive];
+        return (self.rootResults.queryResult.size > 0) && ![self schemaViewIsActive];
     }
     if (theAction == @selector(executeQuery:)) {
         return [self isLoggedIn];
@@ -790,15 +790,15 @@ typedef enum SoqlParsePosition {
 }
 
 - (BOOL)canQueryMore {
-    return [rootResults.queryResult queryLocator] != nil;
+    return [self.rootResults.queryResult queryLocator] != nil;
 }
 
 - (BOOL)hasSelectedForDelete {    
-    return [rootResults.wrapper hasCheckedRows];
+    return [self.rootResults.wrapper hasCheckedRows];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if (object == rootResults) {
+    if (object == self.rootResults) {
         [self willChangeValueForKey:@"hasSelectedForDelete"];
         [self didChangeValueForKey:@"hasSelectedForDelete"];
     } else if (object == detailsController) {
@@ -815,7 +815,7 @@ typedef enum SoqlParsePosition {
 
 - (IBAction)deleteCheckedRows:(id)sender {
     BulkDelete *bd = [[BulkDelete alloc] initWithClient:sforce];
-    [bd performBulkDelete:rootResults window:myWindow];
+    [bd performBulkDelete:self.rootResults window:myWindow];
 }
 
 - (void)dataChangedOnObject:(ZKSObject *)anObject field:(NSString *)fieldName value:(id)newValue {
@@ -849,14 +849,14 @@ typedef enum SoqlParsePosition {
     [self updateProgress:YES];
     self.isQuerying = YES;
     NSDate *started = [NSDate date];
-    [sforce queryMore:[rootResults.queryResult queryLocator]
+    [sforce queryMore:[self.rootResults.queryResult queryLocator]
             failBlock:[self errorHandler]
         completeBlock:^(ZKQueryResult *next) {
             NSString *execTime = [self execTimeSince:started];
-            NSMutableArray *allRecs = [NSMutableArray arrayWithArray:[self->rootResults.queryResult records]];
+            NSMutableArray *allRecs = [NSMutableArray arrayWithArray:[self.rootResults.queryResult records]];
             [allRecs addObjectsFromArray:[next records]];
             ZKQueryResult * total = [[ZKQueryResult alloc] initWithRecords:allRecs size:[next size] done:[next done] queryLocator:[next queryLocator]];
-            self->rootResults.queryResult = total;
+            self.rootResults.queryResult = total;
             [self setRowsLoadedStatusText:total timing:execTime];
             [self updateProgress:NO];
             self.isQuerying = NO;
