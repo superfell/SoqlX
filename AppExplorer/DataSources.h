@@ -50,6 +50,7 @@
 
 - (void)setSforce:(ZKSforceClient *)sf;
 - (void)setTypes:(ZKDescribeGlobalTheme *)t view:(NSOutlineView *)ov;
+- (void)refreshDescribes:(ZKDescribeGlobalTheme*)t view:(NSOutlineView *)ov;
 - (void)stopBackgroundDescribe;
 
 // access/trigger the desc cache

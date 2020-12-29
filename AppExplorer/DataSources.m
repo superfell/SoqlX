@@ -75,6 +75,17 @@
 
 - (void)setTypes:(ZKDescribeGlobalTheme *)t view:(NSOutlineView *)ov {
     outlineView = ov;
+    [self initializeWithTheme:t];
+}
+
+- (void)refreshDescribes:(ZKDescribeGlobalTheme*)t view:(NSOutlineView *)ov {
+    outlineView = ov;
+    [self.describer stop];
+    self.describer = [[Describer alloc] init];
+    [self initializeWithTheme:t];
+}
+
+- (void)initializeWithTheme:(ZKDescribeGlobalTheme*)t {
     types = t.global.sobjects;
     describes = [[NSMutableDictionary alloc] init];
     sortedDescribes = [[NSMutableDictionary alloc] init];
