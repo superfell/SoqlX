@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2014,2016,2018,2019 Simon Fell
+// Copyright (c) 2006,2014,2016,2018,2019,2020 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -107,11 +107,7 @@
     sforce = sf;
 }
 
-- (void)prioritizeDescribe:(NSString *)type {
-    [self.describer prioritize:type];
-}
-
--(void)setFilteredTypes:(NSArray *)t {
+-(void)setFilteredTypes:(NSArray<ZKDescribeGlobalSObject*> *)t {
     NSArray *old = filteredTypes;
     filteredTypes = t;
     if (![old isEqualToArray:t])
@@ -152,16 +148,12 @@
     [self updateFilter];
 }
 
-- (NSArray *)SObjects {
+- (void)prioritizeDescribe:(NSString *)type {
+    [self.describer prioritize:type];
+}
+
+- (NSArray<ZKDescribeGlobalSObject*> *)SObjects {
     return types;
-}
-
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)v {
-    return filteredTypes.count;
-}
-
-- (id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(int)rowIdx {
-    return [filteredTypes[rowIdx] name];
 }
 
 - (BOOL)isTypeDescribable:(NSString *)type {
@@ -197,11 +189,11 @@
     }];
 }
 
-- (void)enumerateDescribes:(NSArray *)types
+- (void)enumerateDescribes:(NSArray<NSString*> *)types
                  failBlock:(ZKFailWithErrorBlock)failBlock
              describeBlock:(void(^)(ZKDescribeSObject *desc, BOOL isLast, BOOL *stop))describeBlock {
 
-    NSMutableSet *todo = [NSMutableSet setWithArray:types];
+    NSMutableSet<NSString*> *todo = [NSMutableSet setWithArray:types];
     [todo minusSet:[NSSet setWithArray:describes.allKeys]];
     for (NSString *name in todo) {
         [self.describer prioritize:name];
@@ -222,19 +214,13 @@
     next(0);
 }
 
--(void)addDescribesToCache:(NSArray *)newDescribes {
-    NSMutableArray *sorted = [NSMutableArray arrayWithCapacity:newDescribes.count];
-    for (ZKDescribeSObject * d in newDescribes) {
-        [sorted addObject:[d.fields sortedArrayUsingDescriptors:@[fieldSortOrder]]];
-    }
-    int i = 0;
+-(void)addDescribesToCache:(NSArray<ZKDescribeSObject*> *)newDescribes {
     for (ZKDescribeSObject *d in newDescribes) {
         NSString *k = d.name.lowercaseString;
         if (self->describes[k] == nil) {
             self->describes[k] = d;
-            self->sortedDescribes[k] = sorted[i];
+            self->sortedDescribes[k] = [d.fields sortedArrayUsingDescriptors:@[fieldSortOrder]];
         }
-        i++;
         [outlineView reloadItem:descGlobalSobjects[k] reloadChildren:YES];
     }
     [self updateFilter];
@@ -252,6 +238,15 @@
 
 -(void)describe:(NSString *)sobject failed:(NSError *)err {
     [self.delegate describe:sobject failed:err];
+}
+
+// for use in an table view
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)v {
+    return filteredTypes.count;
+}
+
+- (id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(int)rowIdx {
+    return [filteredTypes[rowIdx] name];
 }
 
 // for use in an outline view

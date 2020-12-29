@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2014,2018 Simon Fell
+// Copyright (c) 2006-2014,2018,2020 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -30,18 +30,20 @@
 @class ZKDescribeGlobalTheme;
 
 @interface DescribeListDataSource : NSObject<NSOutlineViewDataSource, NSOutlineViewDelegate, IconProvider, DescriberDelegate> {
-    NSArray                 *types;
-    NSDictionary            *descGlobalSobjects;
     ZKSforceClient          *sforce;
-    NSMutableDictionary     *describes;
-    NSMutableDictionary     *sortedDescribes;
-    NSMutableDictionary     *icons;
+
+    NSArray<ZKDescribeGlobalSObject*>                   *types;
+    NSDictionary<NSString*,ZKDescribeGlobalSObject*>    *descGlobalSobjects;
     
-    NSString                *filter;
-    NSArray                 *filteredTypes;
-    NSOutlineView           *outlineView;
-    
+    NSMutableDictionary<NSString*,ZKDescribeSObject*>           *describes;
+    NSMutableDictionary<NSString*,NSArray<ZKDescribeField*>*>   *sortedDescribes;
+    NSMutableDictionary<NSString*,NSImage*>                     *icons;
     NSSortDescriptor        *fieldSortOrder;
+
+    NSString                            *filter;
+    NSArray<ZKDescribeGlobalSObject*>   *filteredTypes;
+
+    NSOutlineView           *outlineView;
 }
 
 @property (weak) NSObject<DescriberDelegate> *delegate;
@@ -55,7 +57,7 @@
        failBlock:(ZKFailWithErrorBlock)failBlock
    completeBlock:(ZKCompleteDescribeSObjectBlock)completeBlock;
 
-- (void)enumerateDescribes:(NSArray *)types
+- (void)enumerateDescribes:(NSArray<NSString*> *)types
                  failBlock:(ZKFailWithErrorBlock)failBlock
              describeBlock:(void(^)(ZKDescribeSObject *desc, BOOL isLast, BOOL *stop))describeBlock;
 
@@ -69,7 +71,7 @@
 // filter the view
 @property (copy) NSString *filter;
 
-@property (readonly, copy) NSArray *SObjects;
+@property (readonly, copy) NSArray<ZKDescribeGlobalSObject*> *SObjects;
 
 @end;
 
