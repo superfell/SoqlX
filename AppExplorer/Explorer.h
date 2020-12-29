@@ -55,8 +55,6 @@
     ZKSforceClient                  *sforce;
     DescribeListDataSource          *descDataSource;
 
-    QueryResultTable                *rootResults;
-    QueryResultTable                *childResults;
     CGFloat                         uncollapsedDividerPosition;
     
     ZKLoginController               *loginController;
@@ -117,6 +115,9 @@
 @property (readonly, strong) DescribeListDataSource *describeDataSource;
 @property (readonly, strong) NSString *selectedSObjectName;
 - (void)updateProgress:(BOOL)show;
+
+@property (strong) QueryResultTable *rootResults;
+@property (strong) QueryResultTable *childResults;
 
 @property BOOL isQuerying;
 @property BOOL isEditing;
