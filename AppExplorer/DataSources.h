@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2014,2018 Simon Fell
+// Copyright (c) 2006-2014,2018,2020 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -20,41 +20,37 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "IconProvider.h"
 #import <ZKSforce/ZKSforce.h>
-#include <stdatomic.h>
+#import "IconProvider.h"
+#import "Describer.h"
 
 @class ZKSforceClient;
 @class ZKDescribeSObject;
 @class ZKDescribeField;
 @class ZKDescribeGlobalTheme;
 
-@protocol DescribeListDataSourceDelegate
--(void)prioritizedDescribesCompleted:(NSArray *)prioritizedSObjects;
--(void)describe:(NSString *)sobject failed:(NSError *)err;
-@end
-
-@interface DescribeListDataSource : NSObject<NSOutlineViewDataSource, NSOutlineViewDelegate, IconProvider> {
-    NSArray                 *types;
-    NSDictionary            *descGlobalSobjects;
+@interface DescribeListDataSource : NSObject<NSOutlineViewDataSource, NSOutlineViewDelegate, IconProvider, DescriberDelegate> {
     ZKSforceClient          *sforce;
-    NSMutableDictionary     *describes;
-    NSMutableDictionary     *sortedDescribes;
-    NSMutableDictionary     *icons;
-    NSMutableSet<NSString*> *priorityDescribes;
+
+    NSArray<ZKDescribeGlobalSObject*>                   *types;
+    NSDictionary<NSString*,ZKDescribeGlobalSObject*>    *descGlobalSobjects;
     
-    NSString                *filter;
-    NSArray                 *filteredTypes;
-    NSOutlineView           *outlineView;
-    
+    NSMutableDictionary<NSString*,ZKDescribeSObject*>           *describes;
+    NSMutableDictionary<NSString*,NSArray<ZKDescribeField*>*>   *sortedDescribes;
+    NSMutableDictionary<NSString*,NSImage*>                     *icons;
     NSSortDescriptor        *fieldSortOrder;
-    atomic_int               stopBackgroundDescribes;
+
+    NSString                            *filter;
+    NSArray<ZKDescribeGlobalSObject*>   *filteredTypes;
+
+    NSOutlineView           *outlineView;
 }
 
-@property (weak) NSObject<DescribeListDataSourceDelegate> *delegate;
+@property (weak) NSObject<DescriberDelegate> *delegate;
 
 - (void)setSforce:(ZKSforceClient *)sf;
 - (void)setTypes:(ZKDescribeGlobalTheme *)t view:(NSOutlineView *)ov;
+- (void)refreshDescribes:(ZKDescribeGlobalTheme*)t view:(NSOutlineView *)ov;
 - (void)stopBackgroundDescribe;
 
 // access/trigger the desc cache
@@ -62,7 +58,7 @@
        failBlock:(ZKFailWithErrorBlock)failBlock
    completeBlock:(ZKCompleteDescribeSObjectBlock)completeBlock;
 
-- (void)enumerateDescribes:(NSArray *)types
+- (void)enumerateDescribes:(NSArray<NSString*> *)types
                  failBlock:(ZKFailWithErrorBlock)failBlock
              describeBlock:(void(^)(ZKDescribeSObject *desc, BOOL isLast, BOOL *stop))describeBlock;
 
@@ -76,7 +72,7 @@
 // filter the view
 @property (copy) NSString *filter;
 
-@property (readonly, copy) NSArray *SObjects;
+@property (readonly, copy) NSArray<ZKDescribeGlobalSObject*> *SObjects;
 
 @end;
 

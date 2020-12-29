@@ -37,7 +37,7 @@
 @class QueryResultTable;
 @class ApexController;
 
-@interface Explorer : NSObject<EditableQueryResultWrapperDelegate, NSWindowDelegate, NSTabViewDelegate, QueryTextListViewDelegate, ZKLoginControllerDelegate, ZKBaseClientDelegate, DescribeListDataSourceDelegate>
+@interface Explorer : NSObject<EditableQueryResultWrapperDelegate, NSWindowDelegate, NSTabViewDelegate, QueryTextListViewDelegate, ZKLoginControllerDelegate, ZKBaseClientDelegate, DescriberDelegate>
 {
     // old world order, needs modernizing
     IBOutlet NSOutlineView          *describeList;
@@ -90,6 +90,7 @@
 - (IBAction)deleteCheckedRows:(id)sender;
 - (IBAction)filterSObjectListView:(id)sender;
 - (IBAction)updateDetailsRecentSelection:(id)sender;
+- (IBAction)refreshMetadata:(id)sender;
 
 // If not nil the soql query is asocicated with a file. i.e. it was loaded from, or saved to.
 @property (strong) NSURL *queryFilename;
