@@ -65,9 +65,11 @@
 -(BOOL)isTypeDescribable:(NSString *)type;
 -(BOOL)hasDescribe:(NSString *)type;
 -(ZKDescribeSObject *)cachedDescribe:(NSString *)type;
-
 -(void)prioritizeDescribe:(NSString *)type;
 -(NSImage *)iconForType:(NSString *)sobjectName;
+
+-(NSUInteger)describedCount;
+-(NSUInteger)totalCount;
 
 // filter the view
 @property (copy) NSString *filter;
