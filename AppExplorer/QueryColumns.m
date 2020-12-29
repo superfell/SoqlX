@@ -128,7 +128,7 @@
         }
         if ([val isKindOfClass:[ZKAddress class]]) {
             if (![qc hasChildNames])
-                [qc addChildColsWithNames:@[@"street", @"city", @"state", @"stateCode", @"country", @"countryCode", @"postalCode"]];
+                [qc addChildColsWithNames:@[@"street", @"city", @"state", @"stateCode", @"country", @"countryCode", @"postalCode", @"geocodeAccuracy", @"longitude", @"latitude"]];
 
         } else if ([val isKindOfClass:[ZKLocation class]]) {
             if (![qc hasChildNames])
