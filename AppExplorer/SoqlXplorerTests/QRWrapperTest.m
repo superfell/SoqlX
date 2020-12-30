@@ -57,6 +57,9 @@
     XCTAssertFalse(self.w.hasCheckedRows);
     NSTableView *t = [[NSTableView alloc] init];
     [self.w tableView:t didClickTableColumn:[[NSTableColumn alloc] initWithIdentifier:DELETE_COLUMN_IDENTIFIER]];
+    XCTAssertFalse(self.w.hasCheckedRows);
+    self.w.editable = YES;
+    [self.w tableView:t didClickTableColumn:[[NSTableColumn alloc] initWithIdentifier:DELETE_COLUMN_IDENTIFIER]];
     XCTAssertTrue(self.w.hasCheckedRows);
     for (ZKSObject *r in self.w.queryResult.records) {
         XCTAssertTrue(r.checked);
