@@ -117,6 +117,8 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
         return [paths setByAddingObjectsFromArray:@[@"rootResults.queryResult"]];
     if ([key isEqualToString:@"titleUserInfo"])
         return [paths setByAddingObjectsFromArray:@[@"sforce", @"queryFilename", @"apexFilename", @"selectedTabViewIdentifier"]];
+    if ([key isEqualToString:@"hasSelectedForDelete"])
+        return [paths setByAddingObjectsFromArray:@[@"rootResults.hasCheckedRows"]];
     return paths;
 }
 
@@ -136,7 +138,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     rootTableView.doubleAction = @selector(queryResultDoubleClicked:);
     self.rootResults = [[QueryResultTable alloc] initForTableView:rootTableView];
     self.rootResults.delegate = self;
-    [self.rootResults addObserver:self forKeyPath:@"hasCheckedRows" options:0 context:nil];
     self.childResults = [[QueryResultTable alloc] initForTableView:childTableView];
     self.childResults.delegate = self;
     [self collapseChildTableView];
@@ -151,7 +152,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 - (void)dealloc {
     [detailsController removeObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE];
     [queryListController removeObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE];
-    [self.rootResults removeObserver:self forKeyPath:@"hasCheckedRows"];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -794,14 +794,11 @@ typedef enum SoqlParsePosition {
 }
 
 - (BOOL)hasSelectedForDelete {    
-    return [self.rootResults.wrapper hasCheckedRows];
+    return self.rootResults.hasCheckedRows;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if (object == self.rootResults) {
-        [self willChangeValueForKey:@"hasSelectedForDelete"];
-        [self didChangeValueForKey:@"hasSelectedForDelete"];
-    } else if (object == detailsController) {
+    if (object == detailsController) {
         [self.detailsRecentSelector setSelected:[change[NSKeyValueChangeNewKey] boolValue] forSegment:0];
     } else if (object == queryListController) {
         [self.detailsRecentSelector setSelected:[change[NSKeyValueChangeNewKey] boolValue] forSegment:1];
