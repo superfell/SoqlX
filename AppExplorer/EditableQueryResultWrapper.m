@@ -70,6 +70,7 @@
 }
 
 - (void)setChecksOnAllRows:(BOOL)checked {
+    if (!self.editable) return;
     [self willChangeValueForKey:@"hasCheckedRows"];
     for (ZKSObject *row in self.queryResult.records) {
         row.checked = checked;
@@ -145,10 +146,9 @@
 - (void)tableView:(NSTableView *)aTableView
     setObjectValue:(id)anObject
     forTableColumn:(NSTableColumn *)aTableColumn
-    row:(NSInteger)rowIndex
-{
-    BOOL allow = [self allowEdit:aTableColumn];
-    if (!allow) return;
+    row:(NSInteger)rowIndex {
+    
+    if (![self allowEdit:aTableColumn]) return;
     if ([aTableColumn.identifier isEqualToString:@"Id"]) 
         return;    // Id column is not really editable
 
