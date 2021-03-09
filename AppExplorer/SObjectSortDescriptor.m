@@ -66,6 +66,10 @@
         val1 = @([(ZKQueryResult *)val1 size]);
         val2 = @([(ZKQueryResult *)val2 size]);
     }
+    if ([[val1 class] isSubclassOfClass:[ZKXmlDeserializer class]]) {
+        val1 = [val1 description];
+        val2 = [val2 description];
+    }
     return [val1 compare:val2];
 }
 
