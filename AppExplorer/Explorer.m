@@ -168,7 +168,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 -(void)updateCallCount:(ZKSforceClient *)c {
     ZKLimitInfoHeader *h = c.lastLimitInfoHeader;
     ZKLimitInfo *api = [h limitInfoOfType:@"API REQUESTS"];
-    NSString *newVal = (api == nil) ? nil : [NSString stringWithFormat:@"Org API calls %d/%d", [api current], [api limit]];
+    NSString *newVal = (api == nil) ? nil : [NSString stringWithFormat:@"Org API calls %ld/%ld", (long)[api current], (long)[api limit]];
     dispatch_async(dispatch_get_main_queue(), ^{
         self.apiCallCountText = newVal;
     });
