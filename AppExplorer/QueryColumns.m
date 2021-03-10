@@ -24,6 +24,7 @@
 #import <ZKSforce/ZKLocation.h>
 #import <ZKSforce/ZKAddress.h>
 #import <ZKSforce/ZKQueryResult.h>
+#import <ZKSforce/ZKComplexTypeFieldInfo.h>
 #import "SearchQueryResult.h"
 
 @interface QueryColumn : NSObject {
@@ -126,14 +127,12 @@
         if (!(val == nil || val == [NSNull null])) {
             qc.hasSeenValue = YES;
         }
-        if ([val isKindOfClass:[ZKAddress class]]) {
-            if (![qc hasChildNames])
-                [qc addChildColsWithNames:@[@"street", @"city", @"state", @"stateCode", @"country", @"countryCode", @"postalCode", @"geocodeAccuracy", @"longitude", @"latitude"]];
-
-        } else if ([val isKindOfClass:[ZKLocation class]]) {
-            if (![qc hasChildNames])
-                [qc addChildColsWithNames:@[@"longitude", @"latitude"]];
-
+        if ((![qc hasChildNames]) && [[val class] respondsToSelector:@selector(wsdlSchema)]) {
+            NSArray<ZKComplexTypeFieldInfo*> *fields = [[[val class] wsdlSchema] fieldsIncludingParents];
+            if (fields.count > 1) {
+                NSArray<NSString*> *propertyNames = [fields valueForKey:@"propertyName"];
+                [qc addChildColsWithNames:propertyNames];
+            }
         } else if ([val isKindOfClass:[ZKSObject class]]) {
             [QueryColumns addColumnsFromSObject:(ZKSObject *)val withPrefix:fullName to:qc];
         }

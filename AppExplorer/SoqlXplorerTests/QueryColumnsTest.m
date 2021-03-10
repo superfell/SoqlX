@@ -156,7 +156,7 @@
     ZKQueryResult *qr = [[ZKQueryResult alloc] initWithXmlElement:xml];
     QueryColumns *qc = [[QueryColumns alloc] initWithResult:qr];
     XCTAssertFalse(qc.isSearchResult);
-    XCTAssertEqualObjects((@[@"firstName",@"MailingAddress.street", @"MailingAddress.city", @"MailingAddress.state", @"MailingAddress.stateCode", @"MailingAddress.country", @"MailingAddress.countryCode", @"MailingAddress.postalCode",@"MailingAddress.geocodeAccuracy",@"MailingAddress.longitude", @"MailingAddress.latitude"]), qc.names);
+    XCTAssertEqualObjects(([NSSet setWithArray:@[@"firstName",@"MailingAddress.street", @"MailingAddress.city", @"MailingAddress.state", @"MailingAddress.stateCode", @"MailingAddress.country", @"MailingAddress.countryCode", @"MailingAddress.postalCode",@"MailingAddress.geocodeAccuracy",@"MailingAddress.longitude", @"MailingAddress.latitude"]]), [NSSet setWithArray:qc.names]);
 }
 
 - (void)setUp {
