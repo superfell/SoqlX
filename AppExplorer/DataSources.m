@@ -354,32 +354,45 @@
     self = [super init];
     sobject = s;
     NSMutableArray<Row*> *items = [NSMutableArray arrayWithObjects:
-                                   [Row row:@"Name"           val: s.name],
+                                   [Row row:@"Name"             val: s.name],
                                    [Row row:@"Label"            val: s.label],
                                    [Row row:@"PluralLabel"      val: s.labelPlural],
                                    [Row row:@"Key Prefix"       val: s.keyPrefix],
                                    [Row row:@"Custom"           val: s.custom ? @"Yes" : @""],
+                                   [Row row:@"Custom Setting"   val: s.customSetting ? @"Yes" : @""],
                                    [Row row:@"Createable"       val: s.createable ? @"Yes" : @""],
                                    [Row row:@"Updateable"       val: s.updateable ? @"Yes" : @""],
+                                   [Row row:@"Deep Cloneable"   val: s.deepCloneable ? @"Yes" : @""],
                                    [Row row:@"Activateable"     val: s.activateable ? @"Yes" : @""],
                                    [Row row:@"Deletable"        val: s.deletable ? @"Yes" : @""],
                                    [Row row:@"Undeletable"      val: s.undeletable ? @"Yes" : @""],
                                    [Row row:@"Mergeable"        val: s.mergeable ? @"Yes" : @""],
                                    [Row row:@"Queryable"        val: s.queryable ? @"Yes" : @""],
                                    [Row row:@"Retrieveable"     val: s.retrieveable ? @"Yes" : @""],
+                                   [Row row:@"ID Enabled"       val: s.idEnabled ? @"Yes" : @""],
                                    [Row row:@"Searchable"       val: s.searchable ? @"Yes" : @""],
                                    [Row row:@"Layoutable"       val: s.layoutable ? @"Yes" : @""],
+                                   [Row row:@"Compact Layoutable"       val: s.compactLayoutable ? @"Yes" : @""],
+                                   [Row row:@"Search Layoutable"       val: s.searchLayoutable ? @"Yes" : @""],
                                    [Row row:@"Replicateable"    val: s.replicateable ? @"Yes" : @""],
                                    [Row row:@"Triggerable"      val: s.triggerable ? @"Yes" : @""],
                                    [Row row:@"MRU Enabled"      val: s.mruEnabled ? @"Yes" : @""],
+                                   [Row row:@"Feed Enabled"     val: s.feedEnabled ? @"Yes" : @""],
                                    [Row row:@"Has Subtypes"     val: s.hasSubtypes ? @"Yes" : @""],
+                                   [Row row:@"Is Subtype"       val: s.isSubtype ? @"Yes" : @""],
+                                   [Row row:@"Is Interface"     val: s.isInterface ? @"Yes" : @""],
+                                   [Row row:@"Implemented By"   val: s.implementedBy],
+                                   [Row row:@"Implements Interfaces"    val: s.implementsInterfaces],
+                                   [Row row:@"Default Implementation"   val: s.defaultImplementation],
                                    [Row row:@"Associate Entity Type"    val: s.associateEntityType],
                                    [Row row:@"Associate Parent Entity"  val: s.associateParentEntity],
+                                   [Row row:@"Data Translation Enabled" val: s.dataTranslationEnabled ? @"Yes" : @""],
+                                   [Row row:@"Deprecated And Hidden"    val: s.deprecatedAndHidden ? @"Yes" : @""],
                                    [Row row:@"URL for Edit"     val: s.urlEdit],
                                    [Row row:@"URL for Detail"   val: s.urlDetail],
                                    [Row row:@"URL for New"      val: s.urlNew],
                                 nil];
-    
+
     NSArray *cr = s.childRelationships;
     if (cr.count > 0) {
         NSString *sectionTitle = [NSString stringWithFormat:@"Relationships to %@", s.name];
@@ -417,10 +430,10 @@
 - (instancetype)initWithDescribe:(ZKDescribeField *)f {
     self = [super init];
     field = f;
-    titles = [NSArray arrayWithObjects:
-               [Row row:@"Name"                 val: f.name],
+    titles = @[[Row row:@"Name"                 val: f.name],
                [Row row:@"Label"                val: f.label],
                [Row row:@"Type"                 val: f.type],
+               [Row row:@"Soap Type"            val: f.soapType],
                [Row row:@"Custom"               val: f.custom? @"Yes" : @""],
                [Row row:@"Help Text"            val: f.inlineHelpText],
                [Row row:@"Length"               val: fmtInt(f.length)],
@@ -428,12 +441,14 @@
                [Row row:@"Scale"                val: fmtInt(f.scale)],
                [Row row:@"Precision"            val: fmtInt(f.precision)],
                [Row row:@"Byte Length"          val: fmtInt(f.byteLength)],
+               [Row row:@"High Scale Number"    val: f.highScaleNumber? @"Yes" : @""],
                [Row row:@"Default Value"        val: f.defaultValueAsString],
+               [Row row:@"Encrypted"            val: f.encrypted? @"Yes" : @""],
                [Row row:@"Createable"           val: f.createable? @"Yes" : @""],
                [Row row:@"Updatable"            val: f.updateable? @"Yes" : @""],
                [Row row:@"Cascade Delete"       val: f.cascadeDelete? @"Yes" : @""],
                [Row row:@"Restricted Delete"    val: f.restrictedDelete? @"Yes" : @""],
-               [Row row:@"Default On Create"    val: f.defaultedOnCreate? @"Yes" : @""],
+               [Row row:@"Defaulted On Create"  val: f.defaultedOnCreate? @"Yes" : @""],
                [Row row:@"Calculated"           val: f.calculated? @"Yes" : @""],
                [Row row:@"AutoNumber"           val: f.autoNumber? @"Yes" : @""],
                [Row row:@"Unique"               val: f.unique? @"Yes" : @""],
@@ -451,19 +466,29 @@
                [Row row:@"Nillable"             val: f.nillable? @"Yes" : @""],
                [Row row:@"Compound FieldName"   val: f.compoundFieldName],
                [Row row:@"Name Pointing"        val: f.namePointing? @"Yes" : @""],
+               [Row row:@"Mask"                 val: f.mask],
+               [Row row:@"Mask Type"            val: f.maskType],
                [Row row:@"Extra TypeInfo"       val: f.extraTypeInfo],
                [Row row:@"Reference To"         val: [f.referenceTo componentsJoinedByString:@", "]],
                [Row row:@"Relationship Name"    val: f.relationshipName],
+               [Row row:@"Polymorphic Foreign Key"   val: f.polymorphicForeignKey? @"Yes" : @""],
+               [Row row:@"Reference Target Field"    val: f.referenceTargetField],
                [Row row:@"Dependent Picklist"   val: f.dependentPicklist? @"Yes" : @""],
                [Row row:@"Controller Name"      val: f.controllerName],
                [Row row:@"Restricted Picklist"  val: f.restrictedPicklist? @"Yes" : @""],
                [Row row:@"Query By Distance"    val: f.queryByDistance? @"Yes" : @""],
                [Row row:@"Value Formula"        val: f.calculatedFormula],
                [Row row:@"Default Formula"      val: f.defaultValueFormula],
+               [Row row:@"Formula Treat Null as Zero"   val: f.formulaTreatNullNumberAsZero? @"Yes" : @""],
+               [Row row:@"AI Prediction Field"          val: f.aiPredictionField? @"Yes" : @""],
+               [Row row:@"Data Translation Enabled"     val: f.dataTranslationEnabled? @"Yes" : @""],
+               [Row row:@"Deprecated And Hidden"        val: f.deprecatedAndHidden? @"Yes" : @""],
+               [Row row:@"Extra Type Info"              val: f.extraTypeInfo],
+               [Row row:@"Search Prefilterable"         val: f.searchPrefilterable? @"Yes" : @""],
                [Row row:@"Relationship Order (CJOs)"             val: fmtInt(f.relationshipOrder)],
                [Row row:@"Write Requires Read on Master (CJOs)"  val: f.writeRequiresMasterRead? @"Yes" : @""],
                [Row row:@"Display Location in Decimal"           val: f.displayLocationInDecimal? @"Yes" : @""],
-               nil];
+               ];
 
     return self;
 }
