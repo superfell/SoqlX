@@ -164,9 +164,14 @@
         if ([ar success]) {
             self.apexTextField.syntaxErrors = @[];
         } else {
+            NSLog(@"Exec Apex returned error at line:%d, column:%d message:%@", ar.line, ar.column, ar.resultText);
             MGSSyntaxError *err = [[MGSSyntaxError alloc] init];
-            err.line = ar.line;
-            err.character = ar.column;
+            if (ar.line >= 0) {
+                err.line = ar.line;
+            }
+            if (ar.column >= 0) {
+                err.character = ar.column;
+            }
             err.errorDescription = ar.resultText;
             self.apexTextField.syntaxErrors = @[err];
         }
