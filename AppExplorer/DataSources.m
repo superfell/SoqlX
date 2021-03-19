@@ -330,29 +330,79 @@
 
 @end
 
-@implementation SObjectDataSource
+@implementation Row
 
++(instancetype) row:(NSString *)l val:(NSString *)v {
+    Row *r = [[self alloc] init];
+    r.label = l;
+    r.val = v;
+    return r;
+}
+
++(instancetype) titleRow:(NSAttributedString *)l val:(NSString*)v {
+    Row *r = [[self alloc] init];
+    r.label = l;
+    r.val = v;
+    return r;
+}
+
+@end
+
+@implementation SObjectDataSource
 
 - (instancetype)initWithDescribe:(ZKDescribeSObject *)s {
     self = [super init];
     sobject = s;
-    
-    NSMutableArray *t = [NSMutableArray arrayWithObjects:@"Name", @"Label", @"PluralLabel", @"Key Prefix", @"Custom", 
-                @"Createable", @"Updateable", @"Activateable", @"Deletable", @"Undeletable", 
-                @"Mergeable", @"Queryable", @"Retrieveable", @"Searchable", @"Layoutable",
-                @"Replicateable", @"Triggerable", @"MRU Enabled", @"Has Subtypes",
-                @"Associate Entity Type", @"Associate Parent Entity",
-                @"URL for Edit", @"URL for Detail", @"URL for New", nil];
+    NSMutableArray<Row*> *items = [NSMutableArray arrayWithObjects:
+                                   [Row row:@"Name"             val: s.name],
+                                   [Row row:@"Label"            val: s.label],
+                                   [Row row:@"PluralLabel"      val: s.labelPlural],
+                                   [Row row:@"Key Prefix"       val: s.keyPrefix],
+                                   [Row row:@"Custom"           val: s.custom ? @"Yes" : @""],
+                                   [Row row:@"Custom Setting"   val: s.customSetting ? @"Yes" : @""],
+                                   [Row row:@"Createable"       val: s.createable ? @"Yes" : @""],
+                                   [Row row:@"Updateable"       val: s.updateable ? @"Yes" : @""],
+                                   [Row row:@"Deep Cloneable"   val: s.deepCloneable ? @"Yes" : @""],
+                                   [Row row:@"Activateable"     val: s.activateable ? @"Yes" : @""],
+                                   [Row row:@"Deletable"        val: s.deletable ? @"Yes" : @""],
+                                   [Row row:@"Undeletable"      val: s.undeletable ? @"Yes" : @""],
+                                   [Row row:@"Mergeable"        val: s.mergeable ? @"Yes" : @""],
+                                   [Row row:@"Queryable"        val: s.queryable ? @"Yes" : @""],
+                                   [Row row:@"Retrieveable"     val: s.retrieveable ? @"Yes" : @""],
+                                   [Row row:@"ID Enabled"       val: s.idEnabled ? @"Yes" : @""],
+                                   [Row row:@"Searchable"       val: s.searchable ? @"Yes" : @""],
+                                   [Row row:@"Layoutable"       val: s.layoutable ? @"Yes" : @""],
+                                   [Row row:@"Compact Layoutable"       val: s.compactLayoutable ? @"Yes" : @""],
+                                   [Row row:@"Search Layoutable"       val: s.searchLayoutable ? @"Yes" : @""],
+                                   [Row row:@"Replicateable"    val: s.replicateable ? @"Yes" : @""],
+                                   [Row row:@"Triggerable"      val: s.triggerable ? @"Yes" : @""],
+                                   [Row row:@"MRU Enabled"      val: s.mruEnabled ? @"Yes" : @""],
+                                   [Row row:@"Feed Enabled"     val: s.feedEnabled ? @"Yes" : @""],
+                                   [Row row:@"Has Subtypes"     val: s.hasSubtypes ? @"Yes" : @""],
+                                   [Row row:@"Is Subtype"       val: s.isSubtype ? @"Yes" : @""],
+                                   [Row row:@"Is Interface"     val: s.isInterface ? @"Yes" : @""],
+                                   [Row row:@"Implemented By"   val: s.implementedBy],
+                                   [Row row:@"Implements Interfaces"    val: s.implementsInterfaces],
+                                   [Row row:@"Default Implementation"   val: s.defaultImplementation],
+                                   [Row row:@"Associate Entity Type"    val: s.associateEntityType],
+                                   [Row row:@"Associate Parent Entity"  val: s.associateParentEntity],
+                                   [Row row:@"Data Translation Enabled" val: s.dataTranslationEnabled ? @"Yes" : @""],
+                                   [Row row:@"Deprecated And Hidden"    val: s.deprecatedAndHidden ? @"Yes" : @""],
+                                   [Row row:@"URL for Edit"     val: s.urlEdit],
+                                   [Row row:@"URL for Detail"   val: s.urlDetail],
+                                   [Row row:@"URL for New"      val: s.urlNew],
+                                nil];
+
     NSArray *cr = s.childRelationships;
     if (cr.count > 0) {
-        NSString *sectionTitle = [NSString stringWithFormat:@"Relationships to %@", sobject.name];
+        NSString *sectionTitle = [NSString stringWithFormat:@"Relationships to %@", s.name];
         NSAttributedString *boldTitle = [[NSAttributedString alloc] initWithString:sectionTitle attributes:@{NSFontAttributeName: [NSFont boldSystemFontOfSize:11]}];
-        [t addObject:boldTitle]; 
+        [items addObject:[Row titleRow:boldTitle val:@""]];
         for (ZKChildRelationship *r in cr) {
-            [t addObject:[NSString stringWithFormat:@"%@.%@", r.childSObject, r.field]];
+            [items addObject:[Row row:[NSString stringWithFormat:@"%@.%@", r.childSObject, r.field] val:r.relationshipName]];
         }
     }
-    titles = t;
+    titles = items;
     return self;
 }
 
@@ -367,38 +417,10 @@
 }
 
 -(id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(NSInteger)rowIdx {
-    if ([tc.identifier isEqualToString:@"title"])
-        return titles[rowIdx];
-
-    switch (rowIdx) {
-        case 0: return sobject.name;
-        case 1: return sobject.label;
-        case 2: return sobject.labelPlural;
-        case 3: return sobject.keyPrefix;
-        case 4: return sobject.custom ? @"Yes" : @"";
-        case 5: return sobject.createable ? @"Yes" : @"";
-        case 6: return sobject.updateable ? @"Yes" : @"";
-        case 7: return sobject.activateable ? @"Yes" : @"";
-        case 8: return sobject.deletable ? @"Yes" : @"";
-        case 9: return sobject.undeletable ? @"Yes" : @"";
-        case 10: return sobject.mergeable ? @"Yes" : @"";
-        case 11: return sobject.queryable ? @"Yes" : @"";
-        case 12: return sobject.retrieveable ? @"Yes" : @"";
-        case 13: return sobject.searchable ? @"Yes" : @"";
-        case 14: return sobject.layoutable ? @"Yes" : @"";
-        case 15: return sobject.replicateable ? @"Yes" : @"";
-        case 16: return sobject.triggerable ? @"Yes" : @"";
-        case 17: return sobject.mruEnabled ? @"Yes" : @"";
-        case 18: return sobject.hasSubtypes ? @"Yes" : @"";
-        case 19: return sobject.associateEntityType;
-        case 20: return sobject.associateParentEntity;
-        case 21: return sobject.urlEdit;
-        case 22: return sobject.urlDetail;
-        case 23: return sobject.urlNew;
-        case 24: return @""; // this is the Child Relationships title row
-    };
-    ZKChildRelationship *cr = sobject.childRelationships[rowIdx - 25];
-    return cr.relationshipName == nil ? @"" : cr.relationshipName;
+    if ([tc.identifier isEqualToString:@"title"]) {
+        return titles[rowIdx].label;
+    }
+    return titles[rowIdx].val;
 }
 
 @end
@@ -408,15 +430,66 @@
 - (instancetype)initWithDescribe:(ZKDescribeField *)f {
     self = [super init];
     field = f;
-    titles = @[@"Name", @"Label", @"Type", @"Custom", @"Help Text",
-                    @"Length", @"Digits", @"Scale", @"Precision", @"Byte Length",
-                    @"Default Value", @"Createable", @"Updatable", @"Cascade Delete", @"Restricted Delete",
-                    @"Default On Create", @"Calculated", @"AutoNumber",
-                    @"Unique", @"Case Sensitive", @"Name Pointing", @"Sortable", @"Groupable", @"Aggregatable", @"Permissionable",
-                    @"External Id", @"ID Lookup", @"Filterable", @"HTML Formatted", @"Name Field", @"Nillable", 
-                    @"Compound FieldName", @"Name Pointing", @"Extra TypeInfo", @"Reference To", @"Relationship Name",
-                    @"Dependent Picklist", @"Controller Name", @"Restricted Picklist", @"Query By Distance",
-                    @"Value Formula", @"Default Formula", @"Relationship Order (CJOs)", @"Write Requires Read on Master (CJOs)", @"Display Location in Decimal"];
+    titles = @[[Row row:@"Name"                 val: f.name],
+               [Row row:@"Label"                val: f.label],
+               [Row row:@"Type"                 val: f.type],
+               [Row row:@"Soap Type"            val: f.soapType],
+               [Row row:@"Custom"               val: f.custom? @"Yes" : @""],
+               [Row row:@"Help Text"            val: f.inlineHelpText],
+               [Row row:@"Length"               val: fmtInt(f.length)],
+               [Row row:@"Digits"               val: fmtInt(f.digits)],
+               [Row row:@"Scale"                val: fmtInt(f.scale)],
+               [Row row:@"Precision"            val: fmtInt(f.precision)],
+               [Row row:@"Byte Length"          val: fmtInt(f.byteLength)],
+               [Row row:@"High Scale Number"    val: f.highScaleNumber? @"Yes" : @""],
+               [Row row:@"Default Value"        val: f.defaultValueAsString],
+               [Row row:@"Encrypted"            val: f.encrypted? @"Yes" : @""],
+               [Row row:@"Createable"           val: f.createable? @"Yes" : @""],
+               [Row row:@"Updatable"            val: f.updateable? @"Yes" : @""],
+               [Row row:@"Cascade Delete"       val: f.cascadeDelete? @"Yes" : @""],
+               [Row row:@"Restricted Delete"    val: f.restrictedDelete? @"Yes" : @""],
+               [Row row:@"Defaulted On Create"  val: f.defaultedOnCreate? @"Yes" : @""],
+               [Row row:@"Calculated"           val: f.calculated? @"Yes" : @""],
+               [Row row:@"AutoNumber"           val: f.autoNumber? @"Yes" : @""],
+               [Row row:@"Unique"               val: f.unique? @"Yes" : @""],
+               [Row row:@"Case Sensitive"       val: f.caseSensitive? @"Yes" : @""],
+               [Row row:@"Name Pointing"        val: f.namePointing? @"Yes" : @""],
+               [Row row:@"Sortable"             val: f.sortable? @"Yes" : @""],
+               [Row row:@"Groupable"            val: f.groupable? @"Yes" : @""],
+               [Row row:@"Aggregatable"         val: f.aggregatable? @"Yes" : @""],
+               [Row row:@"Permissionable"       val: f.permissionable? @"Yes" : @""],
+               [Row row:@"External Id"          val: f.externalId? @"Yes" : @""],
+               [Row row:@"ID Lookup"            val: f.idLookup? @"Yes" : @""],
+               [Row row:@"Filterable"           val: f.filterable? @"Yes" : @""],
+               [Row row:@"HTML Formatted"       val: f.htmlFormatted? @"Yes" : @""],
+               [Row row:@"Name Field"           val: f.nameField? @"Yes" : @""],
+               [Row row:@"Nillable"             val: f.nillable? @"Yes" : @""],
+               [Row row:@"Compound FieldName"   val: f.compoundFieldName],
+               [Row row:@"Name Pointing"        val: f.namePointing? @"Yes" : @""],
+               [Row row:@"Mask"                 val: f.mask],
+               [Row row:@"Mask Type"            val: f.maskType],
+               [Row row:@"Extra TypeInfo"       val: f.extraTypeInfo],
+               [Row row:@"Reference To"         val: [f.referenceTo componentsJoinedByString:@", "]],
+               [Row row:@"Relationship Name"    val: f.relationshipName],
+               [Row row:@"Polymorphic Foreign Key"   val: f.polymorphicForeignKey? @"Yes" : @""],
+               [Row row:@"Reference Target Field"    val: f.referenceTargetField],
+               [Row row:@"Dependent Picklist"   val: f.dependentPicklist? @"Yes" : @""],
+               [Row row:@"Controller Name"      val: f.controllerName],
+               [Row row:@"Restricted Picklist"  val: f.restrictedPicklist? @"Yes" : @""],
+               [Row row:@"Query By Distance"    val: f.queryByDistance? @"Yes" : @""],
+               [Row row:@"Value Formula"        val: f.calculatedFormula],
+               [Row row:@"Default Formula"      val: f.defaultValueFormula],
+               [Row row:@"Formula Treat Null as Zero"   val: f.formulaTreatNullNumberAsZero? @"Yes" : @""],
+               [Row row:@"AI Prediction Field"          val: f.aiPredictionField? @"Yes" : @""],
+               [Row row:@"Data Translation Enabled"     val: f.dataTranslationEnabled? @"Yes" : @""],
+               [Row row:@"Deprecated And Hidden"        val: f.deprecatedAndHidden? @"Yes" : @""],
+               [Row row:@"Extra Type Info"              val: f.extraTypeInfo],
+               [Row row:@"Search Prefilterable"         val: f.searchPrefilterable? @"Yes" : @""],
+               [Row row:@"Relationship Order (CJOs)"             val: fmtInt(f.relationshipOrder)],
+               [Row row:@"Write Requires Read on Master (CJOs)"  val: f.writeRequiresMasterRead? @"Yes" : @""],
+               [Row row:@"Display Location in Decimal"           val: f.displayLocationInDecimal? @"Yes" : @""],
+               ];
+
     return self;
 }
 
@@ -430,65 +503,15 @@
     return titles.count;
 }
 
-NSObject *fmtInt(NSInteger v) {
-    return v == 0 ? @"": [NSNumber numberWithInteger:v];
+NSString *fmtInt(NSInteger v) {
+    return v == 0 ? @"": [[NSNumber numberWithInteger:v] stringValue];
 }
 
 - (id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(NSInteger)rowIdx {
-    if ([tc.identifier isEqualToString:@"title"])
-        return titles[rowIdx];
-    
-    if (field == nil) return @"";
-    switch (rowIdx) {
-        case 0 : return field.name;
-        case 1 : return field.label;
-        case 2 : return field.type;
-        case 3 : return field.custom? @"Yes" : @"";
-        case 4 : return field.inlineHelpText;
-        case 5 : return fmtInt(field.length);
-        case 6 : return fmtInt(field.digits);
-        case 7 : return fmtInt(field.scale);
-        case 8 : return fmtInt(field.precision);
-        case 9 : return fmtInt(field.byteLength);
-        case 10 : return field.defaultValueAsString;
-        case 11 : return field.createable? @"Yes" : @"";
-        case 12 : return field.updateable? @"Yes" : @"";
-        case 13 : return field.cascadeDelete? @"Yes" : @"";
-        case 14 : return field.restrictedDelete? @"Yes" : @"";
-        case 15 : return field.defaultedOnCreate? @"Yes" : @"";
-        case 16 : return field.calculated? @"Yes" : @"";
-        case 17 : return field.autoNumber? @"Yes" : @"";
-        case 18 : return field.unique? @"Yes" : @"";
-        case 19 : return field.caseSensitive? @"Yes" : @"";
-        case 20 : return field.namePointing? @"Yes" : @"";
-        case 21 : return field.sortable? @"Yes" : @"";
-        case 22 : return field.groupable? @"Yes" : @"";
-        case 23 : return field.aggregatable? @"Yes" : @"";
-        case 24 : return field.permissionable? @"Yes" : @"";
-        case 25 : return field.externalId? @"Yes" : @"";
-        case 26 : return field.idLookup? @"Yes" : @"";
-        case 27 : return field.filterable? @"Yes" : @"";
-        case 28 : return field.htmlFormatted? @"Yes" : @"";
-        case 29 : return field.nameField? @"Yes" : @"";
-        case 30 : return field.nillable? @"Yes" : @"";
-        case 31 : return field.compoundFieldName;
-        case 32 : return field.namePointing? @"Yes" : @"";
-        case 33 : return field.extraTypeInfo;
-        case 34 : return [field.referenceTo componentsJoinedByString:@", "];
-        case 35 : return field.relationshipName;
-        case 36 : return field.dependentPicklist? @"Yes" : @"";
-        case 37 : return field.controllerName;
-        case 38 : return field.restrictedPicklist? @"Yes" : @"";
-        case 39 : return field.queryByDistance? @"Yes" : @"";
-        case 40 : return field.calculatedFormula;
-        case 41 : return field.defaultValueFormula;
-        case 42 : return fmtInt(field.relationshipOrder);
-        case 43 : return field.writeRequiresMasterRead? @"Yes" : @"";
-        case 44 : return field.displayLocationInDecimal? @"Yes" : @"";
-        default:
-            NSLog(@"Unexpected rowId:%ld in SObjectFieldDataSource", (long)rowIdx);
+    if ([tc.identifier isEqualToString:@"title"]) {
+        return titles[rowIdx].label;
     }
-    return @"*****";
+    return titles[rowIdx].val;
 }
 
 @end

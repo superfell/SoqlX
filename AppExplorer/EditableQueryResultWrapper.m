@@ -203,6 +203,9 @@
             val = [val valueForKey:step];
         }
     }
+    if ([[val class] isSubclassOfClass:[ZKXmlDeserializer class]]) {
+        return val.description;
+    }
     return val;
 }
 

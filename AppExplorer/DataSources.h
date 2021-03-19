@@ -78,10 +78,16 @@
 
 @end;
 
+@interface Row : NSObject
+@property NSObject *label;
+@property NSString *val;
++(instancetype) row:(NSString *)l val:(NSString*)v;
++(instancetype) titleRow:(NSAttributedString *)l val:(NSString*)v;
+@end
 
 @interface SObjectDataSource : NSObject<NSTableViewDataSource> {
     ZKDescribeSObject    *sobject;
-    NSArray              *titles;
+    NSArray<Row*>        *titles;
 }
 - (instancetype)initWithDescribe:(ZKDescribeSObject *)s NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
@@ -90,7 +96,7 @@
 
 @interface SObjectFieldDataSource : NSObject<NSTableViewDataSource> {
     ZKDescribeField        *field;
-    NSArray                *titles;
+    NSArray<Row*>          *titles;
 }
 - (instancetype)initWithDescribe:(ZKDescribeField *)f NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
