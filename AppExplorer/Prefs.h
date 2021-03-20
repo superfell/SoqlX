@@ -39,3 +39,6 @@ extern NSString *PREF_QUIT_ON_LAST_WINDOW_CLOSE;
 
 // The number of recent queries we should keep in the list.
 extern NSString *PREF_MAX_RECENT_QUERIES;
+
+// In the details window should we filter out empty property values?
+extern NSString *PREF_FILTER_EMPY_PROPS;

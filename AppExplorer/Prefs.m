@@ -27,3 +27,4 @@ NSString *PREF_SKIP_ADDRESS_FIELDS = @"SkipAddressFieldsInGeneratedQueries";
 NSString *PREF_TEXT_SIZE = @"TextSize";
 NSString *PREF_QUIT_ON_LAST_WINDOW_CLOSE = @"QuitOnLastWindowClose";
 NSString *PREF_MAX_RECENT_QUERIES = @"MaxRecentQueries";
+NSString *PREF_FILTER_EMPY_PROPS = @"DetailsFilterEmptyProps";

@@ -22,6 +22,7 @@
 #import "DetailsController.h"
 #import "NSWindow_additions.h"
 #import "NSTableView_additions.h"
+#import "DataSources.h"
 
 static NSString *SHOWING_DETAILS = @"details";
 
@@ -44,13 +45,16 @@ static NSString *SHOWING_DETAILS = @"details";
     return [self dataSource].description;
 }
 
--(NSObject *)dataSource {
+-(DetailDataSource *)dataSource {
     return detailsTable.dataSource;
 }
 
--(void)setDataSource:(NSObject<NSTableViewDataSource> *)aValue {
+-(void)setDataSource:(DetailDataSource *)aValue {
     dataSourceRef = aValue;
     detailsTable.dataSource = aValue;
+    aValue.onChange = ^void(DetailDataSource*ds) {
+        [self->detailsTable reloadData];
+    };
 }
 
 - (void)setIcon:(NSImage *)image {

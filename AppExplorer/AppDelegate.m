@@ -49,6 +49,7 @@
     defaults[PREF_SORTED_FIELD_LIST] = @YES;
     defaults[PREF_QUIT_ON_LAST_WINDOW_CLOSE] = @YES;
     defaults[PREF_MAX_RECENT_QUERIES] = @10;
+    defaults[PREF_FILTER_EMPY_PROPS] = @YES;
     
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
     [defs registerDefaults:defaults];

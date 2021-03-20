@@ -336,6 +336,7 @@
     Row *r = [[self alloc] init];
     r.label = l;
     r.val = v;
+    r.isEmpty = v.length == 0;
     return r;
 }
 
@@ -343,7 +344,54 @@
     Row *r = [[self alloc] init];
     r.label = l;
     r.val = v;
+    r.isEmpty = NO;
     return r;
+}
+
+@end
+
+@interface DetailDataSource()
+@property NSArray<Row*> *allRows;
+@property NSArray<Row*> *activeRows;
+@end
+
+@implementation DetailDataSource
+
+-(instancetype) init {
+    self = [super init];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applyFilter)
+                                                 name:NSUserDefaultsDidChangeNotification
+                                               object:nil];
+    return self;
+}
+
+-(void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+-(void)applyFilter {
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:PREF_FILTER_EMPY_PROPS]) {
+        NSPredicate *p = [NSPredicate predicateWithFormat:@"isEmpty=NO"];
+        self.activeRows = [self.allRows filteredArrayUsingPredicate:p];
+    } else {
+        self.activeRows = self.allRows;
+    }
+    if (self.onChange != nil) {
+        self.onChange(self);
+    }
+}
+
+// for use in a table view
+-(NSInteger)numberOfRowsInTableView:(NSTableView *)view {
+    return self.activeRows.count;
+}
+
+-(id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(NSInteger)rowIdx {
+    if ([tc.identifier isEqualToString:@"title"]) {
+        return self.activeRows[rowIdx].label;
+    }
+    return self.activeRows[rowIdx].val;
 }
 
 @end
@@ -402,25 +450,13 @@
             [items addObject:[Row row:[NSString stringWithFormat:@"%@.%@", r.childSObject, r.field] val:r.relationshipName]];
         }
     }
-    titles = items;
+    self.allRows = items;
+    [self applyFilter];
     return self;
 }
 
-
 - (NSString *)description {
     return [NSString stringWithFormat:@"SObject : %@", sobject.name];
-}
-
-// for use in a table view
--(NSInteger)numberOfRowsInTableView:(NSTableView *)view {
-    return titles.count;
-}
-
--(id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(NSInteger)rowIdx {
-    if ([tc.identifier isEqualToString:@"title"]) {
-        return titles[rowIdx].label;
-    }
-    return titles[rowIdx].val;
 }
 
 @end
@@ -430,7 +466,7 @@
 - (instancetype)initWithDescribe:(ZKDescribeField *)f {
     self = [super init];
     field = f;
-    titles = @[[Row row:@"Name"                 val: f.name],
+    NSArray *items = @[[Row row:@"Name"         val: f.name],
                [Row row:@"Label"                val: f.label],
                [Row row:@"Type"                 val: f.type],
                [Row row:@"Soap Type"            val: f.soapType],
@@ -489,29 +525,18 @@
                [Row row:@"Write Requires Read on Master (CJOs)"  val: f.writeRequiresMasterRead? @"Yes" : @""],
                [Row row:@"Display Location in Decimal"           val: f.displayLocationInDecimal? @"Yes" : @""],
                ];
-
+    
+    self.allRows = items;
+    [self applyFilter];
     return self;
 }
-
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"Field : %@.%@", field.sobject.name, field.name];
 }
 
-// for use in a table view
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)view {
-    return titles.count;
-}
-
 NSString *fmtInt(NSInteger v) {
     return v == 0 ? @"": [[NSNumber numberWithInteger:v] stringValue];
-}
-
-- (id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(NSInteger)rowIdx {
-    if ([tc.identifier isEqualToString:@"title"]) {
-        return titles[rowIdx].label;
-    }
-    return titles[rowIdx].val;
 }
 
 @end

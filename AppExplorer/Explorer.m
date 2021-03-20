@@ -887,7 +887,7 @@ typedef enum SoqlParsePosition {
 
 - (IBAction)selectedSObjectChanged:(id)sender {
     id selectedItem = [describeList itemAtRow:describeList.selectedRow];
-    NSObject<NSTableViewDataSource> *dataSource = nil;
+    DetailDataSource *dataSource = nil;
     if ([selectedItem isKindOfClass:[ZKDescribeGlobalSObject class]]) {
         // sobject
         if (![descDataSource hasDescribe:[selectedItem name]]) {
