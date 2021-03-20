@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -294,16 +294,16 @@
         <customObject id="340" userLabel="SUUpdater" customClass="SUUpdater"/>
         <window title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="prefs" animationBehavior="default" id="343" userLabel="Preferences">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
-            <rect key="contentRect" x="710" y="756" width="435" height="283"/>
+            <rect key="contentRect" x="710" y="756" width="435" height="290"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <value key="minSize" type="size" width="213" height="100"/>
             <value key="maxSize" type="size" width="1500" height="1200"/>
             <view key="contentView" id="344">
-                <rect key="frame" x="0.0" y="0.0" width="435" height="283"/>
+                <rect key="frame" x="0.0" y="0.0" width="435" height="290"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="345">
-                        <rect key="frame" x="18" y="247" width="399" height="18"/>
+                        <rect key="frame" x="18" y="254" width="399" height="18"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="395" id="NWB-ki-jpc"/>
                         </constraints>
@@ -320,7 +320,7 @@
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="1686">
-                        <rect key="frame" x="18" y="207" width="399" height="18"/>
+                        <rect key="frame" x="18" y="214" width="399" height="18"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="395" id="iGz-jk-4SO"/>
                         </constraints>
@@ -337,7 +337,7 @@
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="1692">
-                        <rect key="frame" x="18" y="187" width="399" height="18"/>
+                        <rect key="frame" x="18" y="194" width="399" height="18"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="395" id="TlY-Lz-2gu"/>
                         </constraints>
@@ -353,8 +353,25 @@
                             </binding>
                         </connections>
                     </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="snb-S8-oRC">
+                        <rect key="frame" x="18" y="174" width="399" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="395" id="PRm-9D-lXV"/>
+                        </constraints>
+                        <buttonCell key="cell" type="check" title="Filter unset properties in the details window" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="hVe-f4-hif">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <binding destination="354" name="value" keyPath="values.DetailsFilterEmptyProps" id="UPW-gA-E5h">
+                                <dictionary key="options">
+                                    <bool key="NSValidatesImmediately" value="YES"/>
+                                </dictionary>
+                            </binding>
+                        </connections>
+                    </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="YDz-10-l7r">
-                        <rect key="frame" x="18" y="227" width="399" height="18"/>
+                        <rect key="frame" x="18" y="234" width="399" height="18"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="283" id="cTm-Pa-U0s"/>
                         </constraints>
@@ -371,7 +388,7 @@
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="sdA-fY-fqy">
-                        <rect key="frame" x="18" y="167" width="399" height="18"/>
+                        <rect key="frame" x="18" y="154" width="399" height="18"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="395" id="dhy-x5-xhz"/>
                         </constraints>
@@ -388,7 +405,7 @@
                         </connections>
                     </button>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1rW-mR-B3p">
-                        <rect key="frame" x="18" y="80" width="254" height="16"/>
+                        <rect key="frame" x="18" y="67" width="254" height="16"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="Nak-Bf-mUO">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -399,7 +416,7 @@
                         </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="N4F-3N-8jr">
-                        <rect key="frame" x="18" y="104" width="254" height="16"/>
+                        <rect key="frame" x="18" y="91" width="254" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="250" id="3M5-4e-pFG"/>
                         </constraints>
@@ -410,7 +427,7 @@
                         </textFieldCell>
                     </textField>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cX7-EX-NvD">
-                        <rect key="frame" x="303" y="71" width="118" height="32"/>
+                        <rect key="frame" x="303" y="58" width="118" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="428-Ol-3WZ"/>
                         </constraints>
@@ -423,7 +440,7 @@
                         </connections>
                     </button>
                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="L8r-v1-FRe">
-                        <rect key="frame" x="18" y="125" width="115" height="25"/>
+                        <rect key="frame" x="18" y="112" width="115" height="25"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="lessThanOrEqual" priority="555" constant="110" id="aym-4L-dYP"/>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="bfd-hu-eq1"/>
@@ -448,7 +465,7 @@
                         </connections>
                     </popUpButton>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UE6-jo-hRU">
-                        <rect key="frame" x="136" y="131" width="281" height="16"/>
+                        <rect key="frame" x="136" y="118" width="281" height="16"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="Max number of recent queries to keep" id="06p-b1-oSX">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -472,13 +489,15 @@ Gw
                 <constraints>
                     <constraint firstAttribute="trailing" secondItem="YDz-10-l7r" secondAttribute="trailing" constant="20" symbolic="YES" id="308-tM-JHq"/>
                     <constraint firstItem="345" firstAttribute="top" secondItem="344" secondAttribute="top" constant="20" symbolic="YES" id="6Pf-6u-HKv"/>
+                    <constraint firstItem="snb-S8-oRC" firstAttribute="leading" secondItem="1692" secondAttribute="leading" id="9wI-je-ACR"/>
                     <constraint firstItem="cX7-EX-NvD" firstAttribute="leading" secondItem="359" secondAttribute="leading" id="BmE-ow-fc3"/>
-                    <constraint firstItem="sdA-fY-fqy" firstAttribute="top" secondItem="1692" secondAttribute="bottom" constant="6" symbolic="YES" id="Bxy-HW-Bed"/>
+                    <constraint firstItem="1692" firstAttribute="bottom" secondItem="snb-S8-oRC" secondAttribute="top" constant="-6" id="Bxy-HW-Bed"/>
                     <constraint firstItem="UE6-jo-hRU" firstAttribute="leading" secondItem="L8r-v1-FRe" secondAttribute="trailing" constant="8" symbolic="YES" id="DWg-QJ-Z85"/>
                     <constraint firstItem="YDz-10-l7r" firstAttribute="top" secondItem="345" secondAttribute="bottom" constant="6" symbolic="YES" id="DdH-qq-I9g"/>
                     <constraint firstItem="1rW-mR-B3p" firstAttribute="top" secondItem="N4F-3N-8jr" secondAttribute="bottom" constant="8" symbolic="YES" id="Ev4-Tv-0wD"/>
                     <constraint firstAttribute="bottom" secondItem="359" secondAttribute="bottom" constant="20" symbolic="YES" id="GIB-SB-1Ln"/>
                     <constraint firstItem="L8r-v1-FRe" firstAttribute="leading" secondItem="344" secondAttribute="leading" constant="20" symbolic="YES" id="Ifs-6M-Y88"/>
+                    <constraint firstAttribute="trailing" secondItem="snb-S8-oRC" secondAttribute="trailing" constant="20" symbolic="YES" id="KuG-Z7-cAR"/>
                     <constraint firstItem="cX7-EX-NvD" firstAttribute="centerY" secondItem="1rW-mR-B3p" secondAttribute="centerY" id="Q26-g5-YFq"/>
                     <constraint firstAttribute="trailing" secondItem="UE6-jo-hRU" secondAttribute="trailing" constant="20" symbolic="YES" id="QB2-aL-CDe"/>
                     <constraint firstAttribute="trailing" secondItem="359" secondAttribute="trailing" constant="20" symbolic="YES" id="RFK-Bp-E5s"/>
@@ -494,6 +513,7 @@ Gw
                     <constraint firstItem="UE6-jo-hRU" firstAttribute="firstBaseline" secondItem="L8r-v1-FRe" secondAttribute="firstBaseline" id="gHq-Ue-Jqc"/>
                     <constraint firstItem="N4F-3N-8jr" firstAttribute="top" secondItem="L8r-v1-FRe" secondAttribute="bottom" constant="8" symbolic="YES" id="hXc-h5-iiq"/>
                     <constraint firstItem="345" firstAttribute="leading" secondItem="344" secondAttribute="leading" constant="20" symbolic="YES" id="jS4-MH-E5L"/>
+                    <constraint firstItem="sdA-fY-fqy" firstAttribute="top" secondItem="snb-S8-oRC" secondAttribute="bottom" constant="6" symbolic="YES" id="kLn-px-JlV"/>
                     <constraint firstItem="N4F-3N-8jr" firstAttribute="trailing" secondItem="1rW-mR-B3p" secondAttribute="trailing" id="mZx-FB-Fac"/>
                     <constraint firstItem="N4F-3N-8jr" firstAttribute="leading" secondItem="344" secondAttribute="leading" constant="20" symbolic="YES" id="niN-Cf-cuR"/>
                     <constraint firstAttribute="trailing" secondItem="cX7-EX-NvD" secondAttribute="trailing" constant="20" symbolic="YES" id="prG-KY-aor"/>
@@ -501,7 +521,7 @@ Gw
                     <constraint firstItem="1686" firstAttribute="top" secondItem="YDz-10-l7r" secondAttribute="bottom" constant="6" symbolic="YES" id="uw7-ZV-Zox"/>
                 </constraints>
             </view>
-            <point key="canvasLocation" x="496.5" y="517.5"/>
+            <point key="canvasLocation" x="-756" y="31"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="354" userLabel="Shared Defaults"/>
         <customObject id="1677" userLabel="App Delegate" customClass="AppDelegate"/>

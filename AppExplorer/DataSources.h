@@ -81,22 +81,27 @@
 @interface Row : NSObject
 @property NSObject *label;
 @property NSString *val;
+@property BOOL isEmpty;
 +(instancetype) row:(NSString *)l val:(NSString*)v;
 +(instancetype) titleRow:(NSAttributedString *)l val:(NSString*)v;
 @end
 
-@interface SObjectDataSource : NSObject<NSTableViewDataSource> {
+// Base class that does most of the work for the SObject & Field details data sources
+@interface DetailDataSource : NSObject<NSTableViewDataSource>
+@property (copy) void (^onChange)(DetailDataSource*);
+@end
+
+
+@interface SObjectDataSource : DetailDataSource {
     ZKDescribeSObject    *sobject;
-    NSArray<Row*>        *titles;
 }
 - (instancetype)initWithDescribe:(ZKDescribeSObject *)s NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 @end;
 
 
-@interface SObjectFieldDataSource : NSObject<NSTableViewDataSource> {
+@interface SObjectFieldDataSource : DetailDataSource {
     ZKDescribeField        *field;
-    NSArray<Row*>          *titles;
 }
 - (instancetype)initWithDescribe:(ZKDescribeField *)f NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;

@@ -21,6 +21,8 @@
 
 #import "BaseUserBasedController.h"
 
+@class DetailDataSource;
+
 @interface DetailsController : BaseWindowToggleController<NSWindowDelegate> {
 	IBOutlet NSTableView		*detailsTable;
     NSObject                    *dataSourceRef;
@@ -29,7 +31,6 @@
 - (NSString *)title;
 - (void)setIcon:(NSImage *)image;
 
-- (NSObject<NSTableViewDataSource> *)dataSource;
-- (void)setDataSource:(NSObject<NSTableViewDataSource> *)aValue;
+@property (nonatomic,strong) DetailDataSource *dataSource;
 
 @end
