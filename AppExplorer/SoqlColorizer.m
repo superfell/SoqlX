@@ -50,6 +50,7 @@ static ColorizerStyle *style;
 typedef ZKDescribeSObject*(^describe)(NSString *sobjectName);
 
 typedef struct {
+    From *from;
     ZKDescribeSObject *desc;
     describe describer;
 } Context;
@@ -59,7 +60,8 @@ typedef struct {
 @end
 
 @interface ZKDescribeSObject (Colorize)
--(NSDictionary<CaseInsensitiveStringKey*,ZKDescribeField*>*)parentRelationships;
+-(NSDictionary<CaseInsensitiveStringKey*,ZKDescribeField*>*)parentRelationshipsByName;
+-(NSDictionary<CaseInsensitiveStringKey*,ZKChildRelationship*>*)childRelationshipsByName;
 @end
     
 @implementation SoqlColorizer
@@ -92,7 +94,7 @@ typedef struct {
         }
         return nil;
     };
-    Context ctx = { nil, d };
+    Context ctx = { nil, nil, d };
     [q colorize:soqlTextStorage desc:&ctx];
 };
 @end
@@ -104,9 +106,14 @@ typedef struct {
 @end
 
 @implementation SelectQuery (Colorize)
+-(Context)queryContext:(Context*)parentCtx {
+    ZKDescribeSObject *d = parentCtx->describer(self.from.sobject.name.val);
+    Context c = {self.from, d, parentCtx->describer};
+    return c;
+}
+
 -(void)colorize:(NSTextStorage*)txt desc:(Context*)ctx {
-    ZKDescribeSObject *d = ctx->describer(self.from.sobject.name.val);
-    Context qCtx = {d,ctx->describer};
+    Context qCtx = [self queryContext:ctx];
     [txt addAttributes:style.keyWord range:self.loc];
     for (Expr *f in self.selectExprs) {
         [f colorize:txt desc:&qCtx];
@@ -118,6 +125,22 @@ typedef struct {
     [self.where colorize:txt desc:&qCtx];
 }
 @end
+
+@implementation NestedSelectQuery (Colorize)
+-(Context)queryContext:(Context*)parentCtx {
+    NSString *from = self.from.sobject.name.val;
+    ZKDescribeSObject *d = parentCtx->describer(from);
+    // for nested selected the from may be a relationship from the parent rather than an exact type.
+    if (d == nil && parentCtx->desc != nil) {
+        ZKChildRelationship *cr = [parentCtx->desc childRelationshipsByName][[CaseInsensitiveStringKey of:from]];
+        if (cr != nil) {
+            d = parentCtx->describer(cr.childSObject);
+        }
+    }
+    Context c = {self.from, d, parentCtx->describer};
+    return c;
+}
+@end
     
 @implementation SelectField (Colorize)
 -(void)colorize:(NSTextStorage*)txt desc:(Context*)ctx {
@@ -126,7 +149,11 @@ typedef struct {
     NSArray<PositionedString*> *path = self.name;
     // The first step in the path is optionally the object name, e.g.
     // select account.name from account is valid.
-    if ([path[0].val caseInsensitiveCompare:obj.name] == NSOrderedSame) {
+    // It may also be the alias for the object name, e.g.
+    // select a.name from account a
+    NSString *firstStep = path[0].val;
+    if ([firstStep caseInsensitiveCompare:obj.name] == NSOrderedSame
+         || [firstStep caseInsensitiveCompare:ctx->from.sobject.alias.val] == NSOrderedSame) {
         path = [path subarrayWithRange:NSMakeRange(1, path.count-1)];
         if (path.count == 0) {
             // if they've only specified the object name, then that's not valid.
@@ -136,7 +163,7 @@ typedef struct {
     for (PositionedString *f in path) {
         if ([obj fieldWithName:f.val] == nil) {
             // see if its a relationship instead
-            ZKDescribeField *df = [[obj parentRelationships] objectForKey:[CaseInsensitiveStringKey of:f.val]];
+            ZKDescribeField *df = [obj parentRelationshipsByName][[CaseInsensitiveStringKey of:f.val]];
             if (df == nil || f == self.name.lastObject) {
                 [txt addAttributes:style.underlined range:NSUnionRange(f.loc, [self.name lastObject].loc)];
                 return;
@@ -219,8 +246,8 @@ typedef struct {
 
 @implementation ZKDescribeSObject (Colorize)
 
--(NSDictionary<CaseInsensitiveStringKey*,ZKDescribeField*>*)parentRelationships {
-    NSDictionary<CaseInsensitiveStringKey*,ZKDescribeField*>* r = objc_getAssociatedObject(self, @selector(parentRelationships));
+-(NSDictionary<CaseInsensitiveStringKey*,ZKDescribeField*>*)parentRelationshipsByName {
+    NSDictionary<CaseInsensitiveStringKey*,ZKDescribeField*>* r = objc_getAssociatedObject(self, @selector(parentRelationshipsByName));
     if (r == nil) {
         NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeField*>* pr = [NSMutableDictionary dictionary];
         for (ZKDescribeField *f in self.fields) {
@@ -229,7 +256,20 @@ typedef struct {
             }
         }
         r = pr;
-        objc_setAssociatedObject(self, @selector(parentRelationships), r, OBJC_ASSOCIATION_RETAIN);
+        objc_setAssociatedObject(self, @selector(parentRelationshipsByName), r, OBJC_ASSOCIATION_RETAIN);
+    }
+    return r;
+}
+
+-(NSDictionary<CaseInsensitiveStringKey*,ZKChildRelationship*>*)childRelationshipsByName {
+    NSDictionary<CaseInsensitiveStringKey*,ZKChildRelationship*>* r = objc_getAssociatedObject(self, @selector(childRelationshipsByName));
+    if (r == nil) {
+        NSMutableDictionary<CaseInsensitiveStringKey*,ZKChildRelationship*>* cr = [NSMutableDictionary dictionaryWithCapacity:self.childRelationships.count];
+        for (ZKChildRelationship *r in self.childRelationships) {
+            [cr setObject:r forKey:[CaseInsensitiveStringKey of:r.relationshipName]];
+        }
+        r = cr;
+        objc_setAssociatedObject(self, @selector(childRelationshipsByName), r, OBJC_ASSOCIATION_RETAIN);
     }
     return r;
 }
