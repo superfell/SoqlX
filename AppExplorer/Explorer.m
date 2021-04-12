@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2015,2018,2019 Simon Fell
+// Copyright (c) 2006-2015,2018,2019,2021 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -34,6 +34,7 @@
 #import "ZKDescribeThemeItem+ZKFindResource.h"
 #import "Prefs.h"
 #import "AppDelegate.h"
+#import "SoqlColorizer.h"
 
 static NSString *soqlTabId = @"soql";
 static NSString *schemaTabId = @"schema";
@@ -60,50 +61,9 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 @property (strong) ZKDescribeGlobalSObject *previousColorizedDescribe;
 
 @property (strong) ZKSforceClient *sforce;
-
+@property (strong) SoqlColorizer *colorizer;
 @end
 
-
-@interface ColorizerStyle : NSObject
-
-@property (strong) NSColor *fieldColor;
-@property (strong) NSColor *keywordColor;
-@property (strong) NSNumber *underlineStyle;
-@property (strong) NSDictionary *underlined;
-@property (strong) NSDictionary *noUnderline;
-
-+(ColorizerStyle *)style;
-
-@end
-
-@implementation ColorizerStyle
-
-@synthesize fieldColor, keywordColor, underlineStyle, underlined, noUnderline;
-
--(instancetype)init {
-    self = [super init];
-    self.fieldColor = [NSColor colorNamed:@"soql.field"];
-    self.keywordColor = [NSColor colorNamed:@"soql.keyword"];
-    
-    self.underlineStyle = [NSNumber numberWithInteger:(NSUnderlineStyleSingle | NSUnderlinePatternDot | NSUnderlineByWord)];
-    self.underlined = @{
-                        NSUnderlineStyleAttributeName: underlineStyle,
-                        NSUnderlineStyleAttributeName: [NSColor redColor],
-                        };
-    self.noUnderline = @{ [NSNumber numberWithInt:NSUnderlineStyleNone] :NSUnderlineStyleAttributeName };
-    return self;
-}
-
-+(ColorizerStyle *)style {
-    static ColorizerStyle *instance;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        instance = [[ColorizerStyle alloc] init];
-    });
-    return instance;
-}
-
-@end
 
 @implementation Explorer
 
@@ -147,6 +107,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     [detailsController addObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE options:NSKeyValueObservingOptionNew context:nil];
     
     [self setSoqlString:[[NSUserDefaults standardUserDefaults] stringForKey:@"soql"]];
+    self.colorizer = [SoqlColorizer new];
 }
 
 - (void)dealloc {
@@ -346,18 +307,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     return soql.textStorage.string;
 }
 
-typedef enum SoqlParsePosition {
-    sppStart,
-    sppFields,
-    sppFrom,
-    sppWhere,
-    sppWhereAndOr,
-    sppWhereNot,
-    sppWhereField,
-    sppWhereOperator,
-    sppWhereLiteral
-} SoqlParsePosition;
-    
 -(void)textDidChange:(NSNotification *)notification {
     [self colorize];
 }
@@ -390,77 +339,7 @@ typedef enum SoqlParsePosition {
 }
 
 - (void)colorize {
-    ColorizerStyle *style = [ColorizerStyle style];
-    
-    NSTextStorage *soqlTextStorage = soql.textStorage;
-    NSString *soqlText = soqlTextStorage.string;
-    NSString *entity = [self parseEntityName:soqlText];
-    ZKDescribeSObject *desc = nil;
-    if (entity != nil) {
-        if ([descDataSource hasDescribe:entity])
-            desc = [descDataSource cachedDescribe:entity];
-        else if ([descDataSource isTypeDescribable:entity]) {
-            [descDataSource prioritizeDescribe:entity];
-        }
-    }
-    __block SoqlParsePosition p = sppStart;
-
-    // we can skip setting the text attributes on anything that appears before this cut off as its the same as what we did last time around.
-    NSUInteger alreadyProcessed = [soqlText commonPrefixWithString:self.previouslyColorized options:0].length;
-    // when the desribe turns up, start again
-    if (self.previousColorizedDescribe != desc)
-        alreadyProcessed = 0;
-
-    [self enumerateWordsInString:soqlText withBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
-        BOOL isKeyword = NO, underline = NO;
-        if (p == sppStart && NSOrderedSame == [substring caseInsensitiveCompare:@"select"]) {
-            p = sppFields;
-            isKeyword = YES;
-        } else if (p == sppFields) {
-            if (NSOrderedSame == [substring caseInsensitiveCompare:@"from"]) {
-                p = sppFrom;
-                isKeyword = YES;
-            } else { 
-                if (desc != nil && [desc fieldWithName:substring] == nil) underline = YES;
-            }
-        } else if (p == sppFrom) {
-            if (NSOrderedSame == [substring caseInsensitiveCompare:@"where"]) {
-                p = sppWhere;
-                isKeyword = YES;
-            } else if (desc == nil) {
-                underline = YES;
-            }
-        } else if (p == sppWhere || p == sppWhereLiteral || p == sppWhereAndOr) {
-            if (NSOrderedSame == [substring caseInsensitiveCompare:@"not"]) {
-                p = sppWhereNot;
-                isKeyword = YES;
-            } else if ((NSOrderedSame == [substring caseInsensitiveCompare:@"and"]) || (NSOrderedSame == [substring caseInsensitiveCompare:@"or"])) {
-                p = sppWhereAndOr;
-                isKeyword = YES;
-            } else {
-                p = sppWhereField;
-                if (desc != nil && [desc fieldWithName:substring] == nil) underline = YES;
-            }
-        } else if (p == sppWhereNot) {
-            p = sppWhereField;
-            if (desc != nil && [desc fieldWithName:substring] == nil) underline = YES;
-        } else if (p == sppWhereField) {
-            p = sppWhereOperator;
-            isKeyword = YES;
-        } else if (p == sppWhereOperator) {
-            p = sppWhereLiteral;
-        } else if (p == sppWhereLiteral) {
-            p = sppWhere;
-        }
-
-        if ((substringRange.length + substringRange.location) >= alreadyProcessed) {
-            // These 2 calls are the expensive part of this, so only do them once we past the comon prefix of what we processed last time [as that won't change]
-            [soqlTextStorage addAttributes:underline ? style.underlined : style.noUnderline range:substringRange];
-            [soqlTextStorage addAttribute:NSForegroundColorAttributeName value:isKeyword ? style.keywordColor : style.fieldColor range:substringRange];
-        }
-    }];
-    self.previouslyColorized = [NSString stringWithString:soqlText];
-    self.previousColorizedDescribe = desc;
+    [self.colorizer color:soql describes:descDataSource];
 }
 
 -(NSString *)removeSuffix:(NSString *)suffix from:(NSString *)src {
