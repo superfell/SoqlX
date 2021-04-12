@@ -1,0 +1,124 @@
+// Copyright (c) 2021 Simon Fell
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+
+
+#import <XCTest/XCTest.h>
+#import <ZKSforce/ZKSforce.h>
+#import "SoqlColorizer.h"
+
+@interface SoqlColorizerTests : XCTestCase
+
+@end
+
+@implementation SoqlColorizerTests
+
+describer descs;
+
+- (void)setUp {
+    // Put setup code here. This method is called before the invocation of each test method in the class.
+    ZKDescribeField *fAccount = [ZKDescribeField new];
+    fAccount.referenceTo = @[@"Account"];
+    fAccount.name = @"AccountId";
+    fAccount.relationshipName = @"Account";
+    fAccount.namePointing = NO;
+    ZKDescribeField *fName = [ZKDescribeField new];
+    fName.name = @"Name";
+    ZKDescribeSObject *contact = [ZKDescribeSObject new];
+    contact.name = @"Contact";
+    contact.fields = @[fAccount,fName];
+    
+    ZKDescribeSObject *account = [ZKDescribeSObject new];
+    account.name = @"Account";
+    account.fields = @[fName];
+    ZKChildRelationship *contacts = [ZKChildRelationship new];
+    contacts.childSObject = @"Contact";
+    contacts.relationshipName = @"Contacts";
+    account.childRelationships = @[contacts];
+    
+    descs = ^ZKDescribeSObject*(NSString *n) {
+        if ([n caseInsensitiveCompare:@"account"] == NSOrderedSame) {
+            return account;
+        }
+        if ([n caseInsensitiveCompare:@"contact"] == NSOrderedSame) {
+            return contact;
+        }
+        return nil;
+    };
+}
+
+- (void)tearDown {
+    // Put teardown code here. This method is called after the invocation of each test method in the class.
+}
+
+typedef struct {
+    SoqlTokenType token;
+    NSRange loc;
+} TokenPos;
+
+-(NSString *)tokenName:(SoqlTokenType)t {
+    switch (t) {
+        case TKeyword: return @"Keyword";
+        case TField: return @"Field";
+        case TFunc: return @"Func";
+        case TLiteral: return @"Literal";
+        case TError: return @"Error";
+    }
+}
+
+- (void)testColorTokens {
+    NSArray<NSString*>* queries = @[
+        @"select name from account where name='bob'",
+        @"select namer from account where name='bob'",
+        @"select name from case where LastModifiedDate >= YESTERDAY",
+        @"select name from case c",
+        @"select id,(select name from contacts),name from account where name in ('bob','eve','alice')",
+        @"select name from account where id in (select accountId from contact)",
+        @"select account.city from contact where name LIKE 'b%'",
+        @"select account.city from contact where name LIKE 'b%' OR name='eve'",
+        @"select c.account.city from contact c where name LIKE 'b%'",
+        @"select (select c.name from contacts c),name from account a where a.name>='bob'",
+        @"select account.name from account where name > 'bob'",
+        @"select a.name from account a where name > 'bob'"];
+
+    
+    SoqlColorizer *c = [SoqlColorizer new];
+    __block NSMutableString *results = [NSMutableString stringWithCapacity:1024];
+    
+    for (NSString *q in queries) {
+        [results appendString:q];
+        [results appendString:@"\n"];
+        [c enumerateTokens:q describes:descs block:^void(SoqlTokenType t, NSRange loc) {
+            [results appendFormat:@"%15@ %3lu:%-3lu\t%@\n",
+                [[self tokenName:t] stringByPaddingToLength:10 withString:@" " startingAtIndex:0],
+                loc.location, loc.length, [q substringWithRange:loc]];
+        }];
+        [results appendString:@"\n"];
+    }
+    NSError *err = nil;
+    NSString *thisFile = [NSString stringWithUTF8String:__FILE__];
+    NSString *outFile = [[thisFile stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"color_test.txt"];
+    [results writeToFile:outFile atomically:YES encoding:NSUTF8StringEncoding error:&err];
+    XCTAssertNil(err);
+    // git diff file and commit if valid.
+}
+
+
+@end

@@ -21,8 +21,23 @@
 
 #import <Foundation/Foundation.h>
 
+@class ZKDescribeSObject;
 @class DescribeListDataSource;
+
+typedef ZKDescribeSObject*(^describer)(NSString *sobjectName);
+
+typedef NS_ENUM(uint16_t, SoqlTokenType) {
+    TKeyword,
+    TField,
+    TFunc,
+    TLiteral,
+    TError  // not really a token type, can be applied to any token
+};
+
+typedef void(^tokenCallback)(SoqlTokenType type, NSRange loc);
+
 
 @interface SoqlColorizer : NSObject
 -(void)color:(NSTextView *)view describes:(DescribeListDataSource*)d;
+-(void)enumerateTokens:(NSString *)soql describes:(describer)d block:(tokenCallback)cb;
 @end

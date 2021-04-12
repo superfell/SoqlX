@@ -19,5 +19,6 @@ target 'SoqlXplorerTests' do
 
   # Pods for SoqlXplorer
   pod 'ZKSforce', '~> 51.0.1'
+  pod 'ZKParser', :path => '~/Github/ZKParser/'
   # pod 'ZKSforce', :path => '~/Github/zkSforce/'
 end

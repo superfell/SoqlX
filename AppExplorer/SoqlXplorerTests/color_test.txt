@@ -1,0 +1,104 @@
+select name from account where name='bob'
+Keyword      0:41 	select name from account where name='bob'
+Field        7:4  	name
+Field       17:7  	account
+Field       31:4  	name
+Literal     36:5  	'bob'
+
+select namer from account where name='bob'
+Keyword      0:42 	select namer from account where name='bob'
+Field        7:5  	namer
+Error        7:5  	namer
+Field       18:7  	account
+Field       32:4  	name
+Literal     37:5  	'bob'
+
+select name from case where LastModifiedDate >= YESTERDAY
+Keyword      0:57 	select name from case where LastModifiedDate >= YESTERDAY
+Field        7:4  	name
+Error        7:4  	name
+Field       17:4  	case
+Error       17:4  	case
+Field       28:16 	LastModifiedDate
+Error       28:16 	LastModifiedDate
+Literal     48:9  	YESTERDAY
+
+select name from case c
+Keyword      0:23 	select name from case c
+Field        7:4  	name
+Error        7:4  	name
+Field       17:6  	case c
+Error       17:4  	case
+
+select id,(select name from contacts),name from account where name in ('bob','eve','alice')
+Keyword      0:91 	select id,(select name from contacts),name from account where name in ('bob','eve','alice')
+Field        7:2  	id
+Error        7:2  	id
+Keyword     11:25 	select name from contacts
+Field       18:4  	name
+Field       28:8  	contacts
+Field       38:4  	name
+Field       48:7  	account
+Field       62:4  	name
+Literal     70:21 	('bob','eve','alice')
+
+select name from account where id in (select accountId from contact)
+Keyword      0:68 	select name from account where id in (select accountId from contact)
+Field        7:4  	name
+Field       17:7  	account
+Field       31:2  	id
+Error       31:2  	id
+Keyword     38:29 	select accountId from contact
+Field       45:9  	accountId
+Field       60:7  	contact
+
+select account.city from contact where name LIKE 'b%'
+Keyword      0:53 	select account.city from contact where name LIKE 'b%'
+Field        7:12 	account.city
+Error       15:4  	city
+Field       25:7  	contact
+Field       39:4  	name
+Literal     49:4  	'b%'
+
+select account.city from contact where name LIKE 'b%' OR name='eve'
+Keyword      0:67 	select account.city from contact where name LIKE 'b%' OR name='eve'
+Field        7:12 	account.city
+Error       15:4  	city
+Field       25:7  	contact
+Field       39:4  	name
+Literal     49:4  	'b%'
+Field       57:4  	name
+Literal     62:5  	'eve'
+
+select c.account.city from contact c where name LIKE 'b%'
+Keyword      0:57 	select c.account.city from contact c where name LIKE 'b%'
+Field        7:14 	c.account.city
+Error       17:4  	city
+Field       27:9  	contact c
+Field       43:4  	name
+Literal     53:4  	'b%'
+
+select (select c.name from contacts c),name from account a where a.name>='bob'
+Keyword      0:78 	select (select c.name from contacts c),name from account a where a.name>='bob'
+Keyword      8:29 	select c.name from contacts c
+Field       15:6  	c.name
+Field       27:10 	contacts c
+Field       39:4  	name
+Field       49:9  	account a
+Field       65:6  	a.name
+Literal     73:5  	'bob'
+
+select account.name from account where name > 'bob'
+Keyword      0:51 	select account.name from account where name > 'bob'
+Field        7:12 	account.name
+Field       25:7  	account
+Field       39:4  	name
+Literal     46:5  	'bob'
+
+select a.name from account a where name > 'bob'
+Keyword      0:47 	select a.name from account a where name > 'bob'
+Field        7:6  	a.name
+Field       19:9  	account a
+Field       35:4  	name
+Literal     42:5  	'bob'
+

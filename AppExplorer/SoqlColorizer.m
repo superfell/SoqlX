@@ -47,16 +47,14 @@
 
 static ColorizerStyle *style;
 
-typedef ZKDescribeSObject*(^describe)(NSString *sobjectName);
-
 typedef struct {
     From *from;
     ZKDescribeSObject *desc;
-    describe describer;
+    describer describer;
 } Context;
 
 @interface Expr (Colorize)
--(void)colorize:(NSTextStorage*)view desc:(Context*)desc;
+-(void)enumerateTokens:(Context*)ctx block:(tokenCallback)b;
 @end
 
 @interface ZKDescribeSObject (Colorize)
@@ -77,31 +75,54 @@ typedef struct {
 }
 
 -(void)color:(NSTextView *)view describes:(DescribeListDataSource *)describes {
-    NSTextStorage *soqlTextStorage = view.textStorage;
-    NSString *soqlText = soqlTextStorage.string;
-
-    NSError *parseErr = nil;
-    SelectQuery *q = [self.soqlParser parse:soqlText error:&parseErr];
-    if (parseErr != nil) {
-        NSLog(@"parse error: %@", parseErr);
-        return;
-    }
-    describe d = ^ZKDescribeSObject*(NSString *name) {
-        if ([describes hasDescribe:name])
+    describer d = ^ZKDescribeSObject*(NSString *name) {
+        if ([describes hasDescribe:name]) {
             return [describes cachedDescribe:name];
-        else if ([describes isTypeDescribable:name]) {
+        }
+        if ([describes isTypeDescribable:name]) {
             [describes prioritizeDescribe:name];
         }
         return nil;
     };
-    Context ctx = { nil, nil, d };
-    [q colorize:soqlTextStorage desc:&ctx];
+    NSTextStorage *txt = view.textStorage;
+    tokenCallback color = ^void(SoqlTokenType t, NSRange loc) {
+        switch (t) {
+            case TKeyword:
+                [txt addAttributes:style.keyWord range:loc];
+                break;
+            case TField:
+                [txt addAttributes:style.field range:loc];
+                break;
+            case TFunc:
+                [txt addAttributes:style.field range:loc];
+                break;
+            case TLiteral:
+                [txt addAttributes:style.literal range:loc];
+                break;
+            case TError:
+                [txt addAttributes:style.underlined range:loc];
+                break;
+        }
+    };
+    [self enumerateTokens:txt.string describes:d block:color];
 };
+
+-(void)enumerateTokens:(NSString *)soql describes:(describer)d block:(tokenCallback)cb {
+    NSError *parseErr = nil;
+    SelectQuery *q = [self.soqlParser parse:soql error:&parseErr];
+    if (parseErr != nil) {
+        NSLog(@"parse error: %@", parseErr);
+        return;
+    }
+    Context ctx = { nil, nil, d };
+    [q enumerateTokens:&ctx block:cb];
+}
+
 @end
 
 @implementation Expr (Colorize)
--(void)colorize:(NSTextStorage*)view desc:(Context*)ctx {
-    NSAssert(false, @"colorize not implemented for type %@", [self class]);
+-(void)enumerateTokens:(Context*)ctx block:(tokenCallback)b {
+    NSAssert(false, @"enumerateTokens not implemented for type %@", [self class]);
 }
 @end
 
@@ -112,17 +133,20 @@ typedef struct {
     return c;
 }
 
--(void)colorize:(NSTextStorage*)txt desc:(Context*)ctx {
+-(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
     Context qCtx = [self queryContext:ctx];
-    [txt addAttributes:style.keyWord range:self.loc];
+    cb(TKeyword, self.loc);
     for (Expr *f in self.selectExprs) {
-        [f colorize:txt desc:&qCtx];
+        [f enumerateTokens:&qCtx block:cb];
     }
-    [txt addAttributes:style.field range:self.from.loc];
+    cb(TField, self.from.loc);
+    if (qCtx.desc == nil) {
+        cb(TError, self.from.sobject.name.loc);
+    }
     for (OrderBy *o in self.orderBy.items) {
-        [o.field colorize:txt desc:&qCtx];
+        [o.field enumerateTokens:&qCtx block:cb];
     }
-    [self.where colorize:txt desc:&qCtx];
+    [self.where enumerateTokens:&qCtx block:cb];
 }
 @end
 
@@ -143,8 +167,8 @@ typedef struct {
 @end
     
 @implementation SelectField (Colorize)
--(void)colorize:(NSTextStorage*)txt desc:(Context*)ctx {
-    [txt addAttributes:style.field range:self.loc];
+-(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
+    cb(TField, self.loc);
     ZKDescribeSObject *obj = ctx->desc;
     NSArray<PositionedString*> *path = self.name;
     // The first step in the path is optionally the object name, e.g.
@@ -157,7 +181,7 @@ typedef struct {
         path = [path subarrayWithRange:NSMakeRange(1, path.count-1)];
         if (path.count == 0) {
             // if they've only specified the object name, then that's not valid.
-            [txt addAttributes:style.underlined range:self.name[0].loc];
+            cb(TError, self.name[0].loc);
         }
     }
     for (PositionedString *f in path) {
@@ -165,7 +189,7 @@ typedef struct {
             // see if its a relationship instead
             ZKDescribeField *df = [obj parentRelationshipsByName][[CaseInsensitiveStringKey of:f.val]];
             if (df == nil || f == self.name.lastObject) {
-                [txt addAttributes:style.underlined range:NSUnionRange(f.loc, [self.name lastObject].loc)];
+                cb(TError, NSUnionRange(f.loc, [self.name lastObject].loc));
                 return;
             }
             if (df.namePointing) {
@@ -180,45 +204,45 @@ typedef struct {
 @end
 
 @implementation SelectFunc (Colorize)
--(void)colorize:(NSTextStorage*)txt desc:(Context*)ctx {
+-(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
     for (Expr *e in self.args) {
-        [e colorize:txt desc:ctx];
+        [e enumerateTokens:ctx block:cb];
     }
     if (self.alias != nil) {
-        [txt addAttributes:style.field range:self.alias.loc];
+        cb(TField, self.alias.loc);
     }
 }
 @end
 
 @implementation NotExpr (Colorize)
--(void)colorize:(NSTextStorage*)txt desc:(Context*)ctx {
-    [self.expr colorize:txt desc:ctx];
+-(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
+    [self.expr enumerateTokens:ctx block:cb];
 }
 @end
 
 @implementation ComparisonExpr (Colorize)
--(void)colorize:(NSTextStorage*)txt desc:(Context*)ctx {
-    [self.left colorize:txt desc:ctx];
-    [self.right colorize:txt desc:ctx];
+-(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
+    [self.left enumerateTokens:ctx block:cb];
+    [self.right enumerateTokens:ctx block:cb];
 }
 @end
 
 @implementation OpAndOrExpr (Colorize)
--(void)colorize:(NSTextStorage*)txt desc:(Context*)ctx {
-    [self.leftExpr colorize:txt desc:ctx];
-    [self.rightExpr colorize:txt desc:ctx];
+-(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
+    [self.leftExpr enumerateTokens:ctx block:cb];
+    [self.rightExpr enumerateTokens:ctx block:cb];
 }
 @end
 
 @implementation LiteralValue (Colorize)
--(void)colorize:(NSTextStorage*)txt desc:(Context*)ctx {
-    [txt addAttributes:style.literal range:self.loc];
+-(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
+    cb(TLiteral, self.loc);
 }
 @end
 
 @implementation LiteralValueArray (Colorize)
--(void)colorize:(NSTextStorage*)txt desc:(Context*)ctx {
-    [txt addAttributes:style.literal range:self.loc];
+-(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
+    cb(TLiteral, self.loc);
 }
 @end
 
@@ -237,9 +261,12 @@ typedef struct {
                         };
     self.noUnderline = @{ NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone) };
     
-    self.keyWord = @{ NSForegroundColorAttributeName:self.keywordColor, NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone)};
-    self.field =   @{ NSForegroundColorAttributeName:self.fieldColor,   NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone)};
-    self.literal = @{ NSForegroundColorAttributeName:self.literalColor, NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone)};
+    // TODO, why is colorNamed:@ returning nil in unit tests?
+    if (self.keywordColor != nil) {
+        self.keyWord = @{ NSForegroundColorAttributeName:self.keywordColor, NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone)};
+        self.field =   @{ NSForegroundColorAttributeName:self.fieldColor,   NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone)};
+        self.literal = @{ NSForegroundColorAttributeName:self.literalColor, NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone)};
+    }
     return self;
 }
 @end
