@@ -1,70 +1,70 @@
 select name from account where name='bob'
 Keyword      0:41 	select name from account where name='bob'
-Field        7:4  	name
 Field       17:7  	account
+Field        7:4  	name
 Field       31:4  	name
 Literal     36:5  	'bob'
 
 select namer from account where name='bob'
 Keyword      0:42 	select namer from account where name='bob'
+Field       18:7  	account
 Field        7:5  	namer
 Error        7:5  	namer
-Field       18:7  	account
 Field       32:4  	name
 Literal     37:5  	'bob'
 
 select name from case where LastModifiedDate >= YESTERDAY
 Keyword      0:57 	select name from case where LastModifiedDate >= YESTERDAY
-Field        7:4  	name
-Error        7:4  	name
 Field       17:4  	case
 Error       17:4  	case
+Field        7:4  	name
+Error        7:4  	name
 Field       28:16 	LastModifiedDate
 Error       28:16 	LastModifiedDate
 Literal     48:9  	YESTERDAY
 
 select name from case c
 Keyword      0:23 	select name from case c
-Field        7:4  	name
-Error        7:4  	name
 Field       17:6  	case c
 Error       17:4  	case
+Field        7:4  	name
+Error        7:4  	name
 
 select id,(select name from contacts),name from account where name in ('bob','eve','alice')
 Keyword      0:91 	select id,(select name from contacts),name from account where name in ('bob','eve','alice')
+Field       48:7  	account
 Field        7:2  	id
 Error        7:2  	id
 Keyword     11:25 	select name from contacts
-Field       18:4  	name
 Field       28:8  	contacts
+Field       18:4  	name
 Field       38:4  	name
-Field       48:7  	account
 Field       62:4  	name
 Literal     70:21 	('bob','eve','alice')
 
 select name from account where id in (select accountId from contact)
 Keyword      0:68 	select name from account where id in (select accountId from contact)
-Field        7:4  	name
 Field       17:7  	account
+Field        7:4  	name
 Field       31:2  	id
 Error       31:2  	id
 Keyword     38:29 	select accountId from contact
-Field       45:9  	accountId
 Field       60:7  	contact
+Field       45:9  	accountId
 
 select account.city from contact where name LIKE 'b%'
 Keyword      0:53 	select account.city from contact where name LIKE 'b%'
+Field       25:7  	contact
 Field        7:12 	account.city
 Error       15:4  	city
-Field       25:7  	contact
 Field       39:4  	name
 Literal     49:4  	'b%'
 
 select account.city from contact where name LIKE 'b%' OR name='eve'
 Keyword      0:67 	select account.city from contact where name LIKE 'b%' OR name='eve'
+Field       25:7  	contact
 Field        7:12 	account.city
 Error       15:4  	city
-Field       25:7  	contact
 Field       39:4  	name
 Literal     49:4  	'b%'
 Field       57:4  	name
@@ -72,33 +72,108 @@ Literal     62:5  	'eve'
 
 select c.account.city from contact c where name LIKE 'b%'
 Keyword      0:57 	select c.account.city from contact c where name LIKE 'b%'
+Field       27:9  	contact c
 Field        7:14 	c.account.city
 Error       17:4  	city
-Field       27:9  	contact c
 Field       43:4  	name
 Literal     53:4  	'b%'
 
 select (select c.name from contacts c),name from account a where a.name>='bob'
 Keyword      0:78 	select (select c.name from contacts c),name from account a where a.name>='bob'
-Keyword      8:29 	select c.name from contacts c
-Field       15:6  	c.name
-Field       27:10 	contacts c
-Field       39:4  	name
 Field       49:9  	account a
+Keyword      8:29 	select c.name from contacts c
+Field       27:10 	contacts c
+Field       15:6  	c.name
+Field       39:4  	name
 Field       65:6  	a.name
 Literal     73:5  	'bob'
 
 select account.name from account where name > 'bob'
 Keyword      0:51 	select account.name from account where name > 'bob'
-Field        7:12 	account.name
 Field       25:7  	account
+Field        7:12 	account.name
 Field       39:4  	name
 Literal     46:5  	'bob'
 
 select a.name from account a where name > 'bob'
 Keyword      0:47 	select a.name from account a where name > 'bob'
-Field        7:6  	a.name
 Field       19:9  	account a
+Field        7:6  	a.name
 Field       35:4  	name
 Literal     42:5  	'bob'
+
+select max(name) from account where CALENDARY_YEAR(createdDate) > 2018
+Keyword      0:70 	select max(name) from account where CALENDARY_YEAR(createdDate) > 2018
+Field       22:7  	account
+Func         7:3  	max
+Field       11:4  	name
+Func        36:14 	CALENDARY_YEAR
+Field       51:11 	createdDate
+Error       51:11 	createdDate
+Literal     66:4  	2018
+
+SELECT count() FROM Contact c, c.Account a WHERE a.name = 'MyriadPubs'
+Keyword      0:70 	SELECT count() FROM Contact c, c.Account a WHERE a.name = 'MyriadPubs'
+Field       20:9  	Contact c
+Field       31:11 	c.Account a
+Func         7:5  	count
+Field       49:6  	a.name
+Literal     58:12 	'MyriadPubs'
+
+SELECT count() FROM Contact WHERE account.name = 'Salesforce.com'
+Keyword      0:65 	SELECT count() FROM Contact WHERE account.name = 'Salesforce.com'
+Field       20:7  	Contact
+Func         7:5  	count
+Field       34:12 	account.name
+Literal     49:16 	'Salesforce.com'
+
+SELECT count() FROM Contact c, c.Account a, a.CreatedBy u WHERE u.alias = 'Sfell'
+Keyword      0:81 	SELECT count() FROM Contact c, c.Account a, a.CreatedBy u WHERE u.alias = 'Sfell'
+Field       20:9  	Contact c
+Field       31:11 	c.Account a
+Field       44:13 	a.CreatedBy u
+Error       46:9  	CreatedBy
+Func         7:5  	count
+Field       64:7  	u.alias
+Error       64:7  	u.alias
+Literal     74:7  	'Sfell'
+
+SELECT count() FROM Contact c, a.CreatedBy u, c.Account a WHERE u.alias = 'Sfell'
+Keyword      0:81 	SELECT count() FROM Contact c, a.CreatedBy u, c.Account a WHERE u.alias = 'Sfell'
+Field       20:9  	Contact c
+Field       31:13 	a.CreatedBy u
+Error       31:11 	a.CreatedBy
+Field       46:11 	c.Account a
+Func         7:5  	count
+Field       64:7  	u.alias
+Error       64:7  	u.alias
+Literal     74:7  	'Sfell'
+
+SELECT count() FROM Contact c, c.CreatedBy u, c.Account a WHERE u.alias = 'Sfell' and a.Name > 'a'
+Keyword      0:98 	SELECT count() FROM Contact c, c.CreatedBy u, c.Account a WHERE u.alias = 'Sfell' and a.Name > 'a'
+Field       20:9  	Contact c
+Field       31:13 	c.CreatedBy u
+Error       33:9  	CreatedBy
+Field       46:11 	c.Account a
+Func         7:5  	count
+Field       64:7  	u.alias
+Error       64:7  	u.alias
+Literal     74:7  	'Sfell'
+Field       86:6  	a.Name
+Literal     95:3  	'a'
+
+SELECT count() FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and a.alias='Sfell'
+Keyword      0:111	SELECT count() FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and a.alias='Sfell'
+Field       20:9  	Contact x
+Field       31:21 	x.Account.CreatedBy u
+Error       41:9  	CreatedBy
+Field       54:13 	x.CreatedBy a
+Error       56:9  	CreatedBy
+Func         7:5  	count
+Field       74:7  	u.alias
+Error       74:7  	u.alias
+Literal     84:7  	'Sfell'
+Field       96:7  	a.alias
+Error       96:7  	a.alias
+Literal    104:7  	'Sfell'
 

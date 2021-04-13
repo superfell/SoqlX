@@ -47,10 +47,13 @@
 
 static ColorizerStyle *style;
 
+typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasMap;
+
 typedef struct {
-    From *from;
-    ZKDescribeSObject *desc;
-    describer describer;
+    From                *from;      // this can probably go away one aliases is done fully.
+    ZKDescribeSObject   *desc;      // the describe of the driving/primary object for the current query.
+    AliasMap            *aliases;   // map of alias to the object describe.
+    describer           describer;  // a function to get describe results.
 } Context;
 
 @interface Expr (Colorize)
@@ -114,7 +117,7 @@ typedef struct {
         NSLog(@"parse error: %@", parseErr);
         return;
     }
-    Context ctx = { nil, nil, d };
+    Context ctx = { nil, nil, nil, d };
     [q enumerateTokens:&ctx block:cb];
 }
 
@@ -129,24 +132,67 @@ typedef struct {
 @implementation SelectQuery (Colorize)
 -(Context)queryContext:(Context*)parentCtx {
     ZKDescribeSObject *d = parentCtx->describer(self.from.sobject.name.val);
-    Context c = {self.from, d, parentCtx->describer};
+    Context c = {self.from, d, nil, parentCtx->describer};
     return c;
 }
 
+-(void)enumerateFrom:(Context *)ctx block:(tokenCallback)cb {
+    cb(TField, self.from.sobject.loc);
+    if (ctx->desc == nil) {
+        cb(TError, self.from.sobject.name.loc);
+    }
+    AliasMap *aliases = nil;
+    if (self.from.sobject.alias.length > 0 || self.from.relatedObjects.count > 0) {
+        aliases = [AliasMap dictionaryWithCapacity:self.from.relatedObjects.count + 1];
+    }
+    if (self.from.sobject.alias.length > 0 && ctx->desc != nil) {
+        aliases[[CaseInsensitiveStringKey of:self.from.sobject.alias.val]] = ctx->desc;
+    }
+    // TODO, this has a large overlap with the code below, and this chunk should probably be done once
+    // based on a visit to the From, rather than doing it with every potential alias reference.
+    for (SelectField *related in ctx->from.relatedObjects) {
+        cb(TField, related.loc);
+        // first path segment can be an alias or a relationship on the primary object.
+        CaseInsensitiveStringKey *firstKey = [CaseInsensitiveStringKey of:related.name[0].val];
+        NSArray<PositionedString*> *path = related.name;
+        ZKDescribeSObject *curr = aliases[firstKey];
+        if (curr != nil) {
+            path = [path subarrayWithRange:NSMakeRange(1,path.count-1)];
+        } else {
+            curr = ctx->desc;
+        }
+        for (PositionedString *step in path) {
+            ZKDescribeField *df = [curr parentRelationshipsByName][[CaseInsensitiveStringKey of:step.val]];
+            if (df == nil) {
+                cb(TError, NSUnionRange(step.loc, related.name.lastObject.loc));
+                curr = nil;
+                break;
+            }
+            if (df.namePointing) {
+                // polymorphic rel, valid fields are from Name, not any of the actual related types.
+                curr = ctx->describer(@"Name");
+            } else {
+                curr = ctx->describer(df.referenceTo[0]);
+            }
+        }
+        if (curr != nil) {
+            aliases[[CaseInsensitiveStringKey of:related.alias.val]] = curr;
+        }
+    }
+    ctx->aliases = aliases;
+}
+
 -(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
-    Context qCtx = [self queryContext:ctx];
     cb(TKeyword, self.loc);
+    Context qCtx = [self queryContext:ctx];
+    [self enumerateFrom:&qCtx block:cb];
     for (Expr *f in self.selectExprs) {
         [f enumerateTokens:&qCtx block:cb];
     }
-    cb(TField, self.from.loc);
-    if (qCtx.desc == nil) {
-        cb(TError, self.from.sobject.name.loc);
-    }
+    [self.where enumerateTokens:&qCtx block:cb];
     for (OrderBy *o in self.orderBy.items) {
         [o.field enumerateTokens:&qCtx block:cb];
     }
-    [self.where enumerateTokens:&qCtx block:cb];
 }
 @end
 
@@ -161,7 +207,7 @@ typedef struct {
             d = parentCtx->describer(cr.childSObject);
         }
     }
-    Context c = {self.from, d, parentCtx->describer};
+    Context c = {self.from, d, nil, parentCtx->describer};
     return c;
 }
 @end
@@ -169,19 +215,39 @@ typedef struct {
 @implementation SelectField (Colorize)
 -(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
     cb(TField, self.loc);
-    ZKDescribeSObject *obj = ctx->desc;
-    NSArray<PositionedString*> *path = self.name;
+    
     // The first step in the path is optionally the object name, e.g.
-    // select account.name from account is valid.
+    // select account.name from account
     // It may also be the alias for the object name, e.g.
     // select a.name from account a
+    // It may also be the alias for a relationship specified in the from clause
+    // e.g. SELECT count() FROM Contact c, c.Account a WHERE a.name = 'MyriadPubs'
+    // these can be chained, but need to be in dependency order
+    // e.g.SELECT count() FROM Contact c, c.Account a, a.CreatedBy u WHERE u.alias = 'Sfell'
+    // but is an error if they're not in the right order
+    // e.g.SELECT count() FROM Contact c, a.CreatedBy u, c.Account a WHERE u.alias = 'Sfell'
+    // they can also reference multiple paths
+    // e.g. SELECT count() FROM Contact c, c.CreatedBy u, c.Account a WHERE u.alias = 'Sfell' and a.Name > 'a'
+    // or follow multiple relationships in one go
+    // SELECT count() FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and a.alias='Sfell'
+    
+    ZKDescribeSObject *obj = ctx->desc;
+    NSArray<PositionedString*> *path = self.name;
     NSString *firstStep = path[0].val;
-    if ([firstStep caseInsensitiveCompare:obj.name] == NSOrderedSame
-         || [firstStep caseInsensitiveCompare:ctx->from.sobject.alias.val] == NSOrderedSame) {
+    // this deals with the direct object name
+    if ([firstStep caseInsensitiveCompare:obj.name] == NSOrderedSame) {
         path = [path subarrayWithRange:NSMakeRange(1, path.count-1)];
         if (path.count == 0) {
             // if they've only specified the object name, then that's not valid.
             cb(TError, self.name[0].loc);
+        }
+    } else {
+        // We can use the alias map to resolve the alias. enumeratorFrom populated this from all the related objects in
+        // the from clause.
+        ZKDescribeSObject *a = ctx->aliases[[CaseInsensitiveStringKey of:firstStep]];
+        if (a != nil) {
+            obj = a;
+            path = [path subarrayWithRange:NSMakeRange(1,path.count-1)];
         }
     }
     for (PositionedString *f in path) {
@@ -205,6 +271,7 @@ typedef struct {
 
 @implementation SelectFunc (Colorize)
 -(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
+    cb(TFunc, self.name.loc);
     for (Expr *e in self.args) {
         [e enumerateTokens:ctx block:cb];
     }

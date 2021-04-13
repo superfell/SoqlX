@@ -96,7 +96,17 @@ typedef struct {
         @"select c.account.city from contact c where name LIKE 'b%'",
         @"select (select c.name from contacts c),name from account a where a.name>='bob'",
         @"select account.name from account where name > 'bob'",
-        @"select a.name from account a where name > 'bob'"];
+        @"select a.name from account a where name > 'bob'",
+        @"select max(name) from account where CALENDARY_YEAR(createdDate) > 2018",
+        // example from https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_soql_alias.htm
+        @"SELECT count() FROM Contact c, c.Account a WHERE a.name = 'MyriadPubs'",
+        // a less convoluted example of the same query
+        @"SELECT count() FROM Contact WHERE account.name = 'Salesforce.com'",
+        // more related convoluted examples, described in SoqlColorizer
+        @"SELECT count() FROM Contact c, c.Account a, a.CreatedBy u WHERE u.alias = 'Sfell'",
+        @"SELECT count() FROM Contact c, a.CreatedBy u, c.Account a WHERE u.alias = 'Sfell'",
+        @"SELECT count() FROM Contact c, c.CreatedBy u, c.Account a WHERE u.alias = 'Sfell' and a.Name > 'a'",
+        @"SELECT count() FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and a.alias='Sfell'"];
 
     
     SoqlColorizer *c = [SoqlColorizer new];
