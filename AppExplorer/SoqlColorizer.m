@@ -50,7 +50,7 @@ static ColorizerStyle *style;
 typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasMap;
 
 typedef struct {
-    From                *from;      // this can probably go away one aliases is done fully.
+//    From                *from;      // this can probably go away one aliases is done fully.
     ZKDescribeSObject   *desc;      // the describe of the driving/primary object for the current query.
     AliasMap            *aliases;   // map of alias to the object describe.
     describer           describer;  // a function to get describe results.
@@ -117,7 +117,7 @@ typedef struct {
         NSLog(@"parse error: %@", parseErr);
         return;
     }
-    Context ctx = { nil, nil, nil, d };
+    Context ctx = { nil, nil, d };
     [q enumerateTokens:&ctx block:cb];
 }
 
@@ -132,7 +132,7 @@ typedef struct {
 @implementation SelectQuery (Colorize)
 -(Context)queryContext:(Context*)parentCtx {
     ZKDescribeSObject *d = parentCtx->describer(self.from.sobject.name.val);
-    Context c = {self.from, d, nil, parentCtx->describer};
+    Context c = {d, nil, parentCtx->describer};
     return c;
 }
 
@@ -150,7 +150,7 @@ typedef struct {
     }
     // TODO, this has a large overlap with the code below, and this chunk should probably be done once
     // based on a visit to the From, rather than doing it with every potential alias reference.
-    for (SelectField *related in ctx->from.relatedObjects) {
+    for (SelectField *related in self.from.relatedObjects) {
         cb(TField, related.loc);
         // first path segment can be an alias or a relationship on the primary object.
         CaseInsensitiveStringKey *firstKey = [CaseInsensitiveStringKey of:related.name[0].val];
@@ -207,7 +207,7 @@ typedef struct {
             d = parentCtx->describer(cr.childSObject);
         }
     }
-    Context c = {self.from, d, nil, parentCtx->describer};
+    Context c = {d, nil, parentCtx->describer};
     return c;
 }
 @end
