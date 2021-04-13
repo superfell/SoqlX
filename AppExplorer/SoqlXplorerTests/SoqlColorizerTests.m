@@ -112,7 +112,8 @@ typedef struct {
         @"SELECT name FROM contact order by name asc",
         @"SELECT name FROM contact order by name asc nulls last",
         @"SELECT name FROM contact order by name asc nulls last, account.name desc",
-        @"SELECT name FROM contact x order by name asc nulls last, x.account.name desc"];
+        @"SELECT name FROM contact x order by name asc nulls last, x.account.name desc",
+        @"SELECT subject, TYPEOF what WHEN account Then id,BillingCity,createdBy.alias WHEN opportunity then name,nextStep ELSE id,email END FROM Task"];
 
     
     SoqlColorizer *c = [SoqlColorizer new];

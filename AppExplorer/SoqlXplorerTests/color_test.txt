@@ -228,3 +228,30 @@ Field        7:4  	name
 Field       36:4  	name
 Field       57:14 	x.account.name
 
+SELECT subject, TYPEOF what WHEN account Then id,BillingCity,createdBy.alias WHEN opportunity then name,nextStep ELSE id,email END FROM Task
+Keyword      0:140	SELECT subject, TYPEOF what WHEN account Then id,BillingCity,createdBy.alias WHEN opportunity then name,nextStep ELSE id,email END FROM Task
+Field      136:4  	Task
+Error      136:4  	Task
+Field        7:7  	subject
+Error        7:7  	subject
+Field       23:4  	what
+Error       23:4  	what
+Field       33:7  	account
+Error       33:7  	account
+Field       46:2  	id
+Error       46:2  	id
+Field       49:11 	BillingCity
+Error       49:11 	BillingCity
+Field       61:15 	createdBy.alias
+Error       61:15 	createdBy.alias
+Field       82:11 	opportunity
+Error       82:11 	opportunity
+Field       99:4  	name
+Error       99:4  	name
+Field      104:8  	nextStep
+Error      104:8  	nextStep
+Field      118:2  	id
+Error      118:2  	id
+Field      121:5  	email
+Error      121:5  	email
+

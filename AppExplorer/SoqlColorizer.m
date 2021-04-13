@@ -291,6 +291,43 @@ typedef struct {
 }
 @end
 
+@implementation TypeOf (Colorize)
+-(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
+    cb(TField, self.relationship.loc);
+    ZKDescribeField *relField = [ctx->desc parentRelationshipsByName][[CaseInsensitiveStringKey of:self.relationship.val]];
+    if (relField == nil) {
+        cb(TError, self.relationship.loc);
+    }
+    for (TypeOfWhen *w in self.whens) {
+        cb(TField, w.objectType.loc);
+        ZKDescribeSObject *d = ctx->describer(w.objectType.val);
+        if (d == nil) {
+            cb(TError, w.objectType.loc);
+        } else {
+            BOOL validRefTo = FALSE;
+            for (NSString *refTo in relField.referenceTo) {
+                if ([refTo caseInsensitiveCompare:d.name] == NSOrderedSame) {
+                    validRefTo = TRUE;
+                    break;
+                }
+            }
+            if (!validRefTo) {
+                cb(TError, w.objectType.loc);
+            }
+        }
+        Context childCtx = { d, ctx->aliases, ctx->describer };
+        for (SelectField *f in w.select) {
+            [f enumerateTokens:&childCtx block:cb];
+        }
+    }
+    ZKDescribeSObject *d = ctx->describer(@"Name");
+    Context childCtx = { d, ctx->aliases, ctx->describer };
+    for (SelectField *e in self.elses) {
+        [e enumerateTokens:&childCtx block:cb];
+    }
+}
+@end
+
 @implementation NotExpr (Colorize)
 -(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
     [self.expr enumerateTokens:ctx block:cb];
