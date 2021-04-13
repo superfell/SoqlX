@@ -178,4 +178,27 @@ Error       96:7  	a.alias
 Literal    104:7  	'Sfell'
 
 SELECT x.name FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and (a.alias='Sfell' or x.MailingCity IN('SF','LA'))order by x.name desc nulls first
+Keyword      0:175	SELECT x.name FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and (a.alias='Sfell' or x.MailingCity IN('SF','LA'))order by x.name desc nulls first
+Field       19:9  	Contact x
+Field       30:21 	x.Account.CreatedBy u
+Error       40:9  	CreatedBy
+Field       53:13 	x.CreatedBy a
+Error       55:9  	CreatedBy
+Field        7:6  	x.name
+Field       73:7  	u.alias
+Error       73:7  	u.alias
+Literal     83:7  	'Sfell'
+Field       96:7  	a.alias
+Error       96:7  	a.alias
+Literal    104:7  	'Sfell'
+Field      115:13 	x.MailingCity
+Error      117:11 	MailingCity
+Literal    131:11 	('SF','LA')
+Field      152:6  	x.name
+
+SELECT account.name.name FROM account
+Keyword      0:37 	SELECT account.name.name FROM account
+Field       30:7  	account
+Field        7:17 	account.name.name
+Error       19:5  	.name
 

@@ -197,6 +197,9 @@ typedef struct {
 @end
 
 @implementation NestedSelectQuery (Colorize)
+//
+// TODO when this is a nest select in the select list, the from can only be a relationship.
+//
 -(Context)queryContext:(Context*)parentCtx {
     NSString *from = self.from.sobject.name.val;
     ZKDescribeSObject *d = parentCtx->describer(from);
@@ -263,6 +266,13 @@ typedef struct {
                 obj = ctx->describer(@"Name");
             } else {
                 obj = ctx->describer(df.referenceTo[0]);
+            }
+        } else {
+            // its a field, it better be the last item on the path.
+            if (f != path.lastObject) {
+                NSRange fEnd = NSMakeRange(f.loc.location+f.loc.length,1);
+                cb(TError, NSUnionRange(fEnd, path.lastObject.loc));
+                return;
             }
         }
     }
