@@ -108,7 +108,11 @@ typedef struct {
         @"SELECT count() FROM Contact c, c.CreatedBy u, c.Account a WHERE u.alias = 'Sfell' and a.Name > 'a'",
         @"SELECT count() FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and a.alias='Sfell'",
         @"SELECT x.name FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and (a.alias='Sfell' or x.MailingCity IN('SF','LA'))order by x.name desc nulls first",
-        @"SELECT account.name.name FROM account"];
+        @"SELECT account.name.name FROM account",
+        @"SELECT name FROM contact order by name asc",
+        @"SELECT name FROM contact order by name asc nulls last",
+        @"SELECT name FROM contact order by name asc nulls last, account.name desc",
+        @"SELECT name FROM contact x order by name asc nulls last, x.account.name desc"];
 
     
     SoqlColorizer *c = [SoqlColorizer new];

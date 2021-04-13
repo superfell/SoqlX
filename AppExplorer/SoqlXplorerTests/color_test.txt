@@ -202,3 +202,29 @@ Field       30:7  	account
 Field        7:17 	account.name.name
 Error       19:5  	.name
 
+SELECT name FROM contact order by name asc
+Keyword      0:42 	SELECT name FROM contact order by name asc
+Field       17:7  	contact
+Field        7:4  	name
+Field       34:4  	name
+
+SELECT name FROM contact order by name asc nulls last
+Keyword      0:53 	SELECT name FROM contact order by name asc nulls last
+Field       17:7  	contact
+Field        7:4  	name
+Field       34:4  	name
+
+SELECT name FROM contact order by name asc nulls last, account.name desc
+Keyword      0:72 	SELECT name FROM contact order by name asc nulls last, account.name desc
+Field       17:7  	contact
+Field        7:4  	name
+Field       34:4  	name
+Field       55:12 	account.name
+
+SELECT name FROM contact x order by name asc nulls last, x.account.name desc
+Keyword      0:76 	SELECT name FROM contact x order by name asc nulls last, x.account.name desc
+Field       17:9  	contact x
+Field        7:4  	name
+Field       36:4  	name
+Field       57:14 	x.account.name
+
