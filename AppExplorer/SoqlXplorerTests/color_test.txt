@@ -177,3 +177,5 @@ Field       96:7  	a.alias
 Error       96:7  	a.alias
 Literal    104:7  	'Sfell'
 
+SELECT x.name FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and (a.alias='Sfell' or x.MailingCity IN('SF','LA'))order by x.name desc nulls first
+
