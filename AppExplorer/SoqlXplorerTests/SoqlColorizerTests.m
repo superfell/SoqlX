@@ -113,7 +113,12 @@ typedef struct {
         @"SELECT name FROM contact order by name asc nulls last",
         @"SELECT name FROM contact order by name asc nulls last, account.name desc",
         @"SELECT name FROM contact x order by name asc nulls last, x.account.name desc",
-        @"SELECT subject, TYPEOF what WHEN account Then id,BillingCity,createdBy.alias WHEN opportunity then name,nextStep ELSE id,email END FROM Task"];
+        @"SELECT subject, TYPEOF what WHEN account Then id,BillingCity,createdBy.alias WHEN opportunity then name,nextStep ELSE id,email END FROM Task",
+        @"SELECT calendar_year(createdDate), count(id) from case group by calendar_year(createdDate) order by calendar_year(createdDate) desc",
+        @"SELECT calendar_year(createdDate), count(id) from case group by rollup (calendar_year(createdDate)) order by calendar_year(createdDate) desc",
+        @"SELECT calendar_year(createdDate), count(id) from case group by cube( calendar_year(createdDate)) order by calendar_year(createdDate) desc",
+        @"SELECT email, count(id) from contact group by email order by email nulls last"
+    ];
 
     
     SoqlColorizer *c = [SoqlColorizer new];

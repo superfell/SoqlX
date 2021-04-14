@@ -255,3 +255,67 @@ Error      118:2  	id
 Field      121:5  	email
 Error      121:5  	email
 
+SELECT calendar_year(createdDate), count(id) from case group by calendar_year(createdDate) order by calendar_year(createdDate) desc
+Keyword      0:131	SELECT calendar_year(createdDate), count(id) from case group by calendar_year(createdDate) order by calendar_year(createdDate) desc
+Field       50:4  	case
+Error       50:4  	case
+Func         7:13 	calendar_year
+Field       21:11 	createdDate
+Error       21:11 	createdDate
+Func        35:5  	count
+Field       41:2  	id
+Error       41:2  	id
+Func        64:13 	calendar_year
+Field       78:11 	createdDate
+Error       78:11 	createdDate
+Func       100:13 	calendar_year
+Field      114:11 	createdDate
+Error      114:11 	createdDate
+
+SELECT calendar_year(createdDate), count(id) from case group by rollup (calendar_year(createdDate)) order by calendar_year(createdDate) desc
+Keyword      0:140	SELECT calendar_year(createdDate), count(id) from case group by rollup (calendar_year(createdDate)) order by calendar_year(createdDate) desc
+Field       50:4  	case
+Error       50:4  	case
+Func         7:13 	calendar_year
+Field       21:11 	createdDate
+Error       21:11 	createdDate
+Func        35:5  	count
+Field       41:2  	id
+Error       41:2  	id
+Func        72:13 	calendar_year
+Field       86:11 	createdDate
+Error       86:11 	createdDate
+Func       109:13 	calendar_year
+Field      123:11 	createdDate
+Error      123:11 	createdDate
+
+SELECT calendar_year(createdDate), count(id) from case group by cube( calendar_year(createdDate)) order by calendar_year(createdDate) desc
+Keyword      0:138	SELECT calendar_year(createdDate), count(id) from case group by cube( calendar_year(createdDate)) order by calendar_year(createdDate) desc
+Field       50:4  	case
+Error       50:4  	case
+Func         7:13 	calendar_year
+Field       21:11 	createdDate
+Error       21:11 	createdDate
+Func        35:5  	count
+Field       41:2  	id
+Error       41:2  	id
+Func        70:13 	calendar_year
+Field       84:11 	createdDate
+Error       84:11 	createdDate
+Func       107:13 	calendar_year
+Field      121:11 	createdDate
+Error      121:11 	createdDate
+
+SELECT email, count(id) from contact group by email order by email nulls last
+Keyword      0:77 	SELECT email, count(id) from contact group by email order by email nulls last
+Field       29:7  	contact
+Field        7:5  	email
+Error        7:5  	email
+Func        14:5  	count
+Field       20:2  	id
+Error       20:2  	id
+Field       46:5  	email
+Error       46:5  	email
+Field       61:5  	email
+Error       61:5  	email
+
