@@ -336,3 +336,38 @@ Literal     71:1  	1
 Field       82:5  	email
 Error       82:5  	email
 
+select a.name from account a where name > 'bob' LIMIt 5
+Keyword      0:55 	select a.name from account a where name > 'bob' LIMIt 5
+Field       19:9  	account a
+Field        7:6  	a.name
+Field       35:4  	name
+Literal     42:5  	'bob'
+Literal     54:1  	5
+
+select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5
+Keyword      0:64 	select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5
+Field       19:9  	account a
+Field        7:6  	a.name
+Field       35:4  	name
+Literal     42:5  	'bob'
+Literal     54:1  	5
+Literal     63:1  	5
+
+select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 FOR view
+Keyword      0:73 	select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 FOR view
+Field       19:9  	account a
+Field        7:6  	a.name
+Field       35:4  	name
+Literal     42:5  	'bob'
+Literal     54:1  	5
+Literal     63:1  	5
+
+select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 update viewstat
+Keyword      0:80 	select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 update viewstat
+Field       19:9  	account a
+Field        7:6  	a.name
+Field       35:4  	name
+Literal     42:5  	'bob'
+Literal     54:1  	5
+Literal     63:1  	5
+

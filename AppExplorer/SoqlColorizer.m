@@ -197,6 +197,7 @@ typedef struct {
     for (Expr *f in self.selectExprs) {
         [f enumerateTokens:&qCtx block:cb];
     }
+    // FilterScope ?
     [self.where enumerateTokens:&qCtx block:cb];
     if (self.withDataCategory.count > 0) {
         for (DataCategoryFilter *f in self.withDataCategory) {
@@ -210,6 +211,12 @@ typedef struct {
     [self.having enumerateTokens:&qCtx block:cb];
     for (OrderBy *o in self.orderBy.items) {
         [o.field enumerateTokens:&qCtx block:cb];
+    }
+    if (self.limit != nil) {
+        cb(TLiteral, self.limit.loc);
+    }
+    if (self.offset != nil) {
+        cb(TLiteral, self.offset.loc);
     }
 }
 @end
