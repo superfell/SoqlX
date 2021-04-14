@@ -148,8 +148,7 @@ typedef struct {
     if (self.from.sobject.alias.length > 0 && ctx->desc != nil) {
         aliases[[CaseInsensitiveStringKey of:self.from.sobject.alias.val]] = ctx->desc;
     }
-    // TODO, this has a large overlap with the code below, and this chunk should probably be done once
-    // based on a visit to the From, rather than doing it with every potential alias reference.
+    // TODO, this has a large overlap with the code for SelectField below.
     for (SelectField *related in self.from.relatedObjects) {
         cb(TField, related.loc);
         // first path segment can be an alias or a relationship on the primary object.
@@ -190,6 +189,14 @@ typedef struct {
         [f enumerateTokens:&qCtx block:cb];
     }
     [self.where enumerateTokens:&qCtx block:cb];
+    if (self.withDataCategory.count > 0) {
+        for (DataCategoryFilter *f in self.withDataCategory) {
+            cb(TField, f.category.loc);
+            for (PositionedString *v in f.values) {
+                cb(TField, v.loc);
+            }
+        }
+    }
     for (OrderBy *o in self.orderBy.items) {
         [o.field enumerateTokens:&qCtx block:cb];
     }
