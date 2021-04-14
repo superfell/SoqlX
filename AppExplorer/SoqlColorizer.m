@@ -129,6 +129,15 @@ typedef struct {
 }
 @end
 
+@implementation GroupBy (Colorize)
+-(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
+    // TODO fields in a groupBy must have the groupable property set.
+    for (Expr *g in self.fields) {
+        [g enumerateTokens:ctx block:cb];
+    }
+}
+@end
+
 @implementation SelectQuery (Colorize)
 -(Context)queryContext:(Context*)parentCtx {
     ZKDescribeSObject *d = parentCtx->describer(self.from.sobject.name.val);
@@ -197,6 +206,7 @@ typedef struct {
             }
         }
     }
+    [self.groupBy enumerateTokens:&qCtx block:cb];
     for (OrderBy *o in self.orderBy.items) {
         [o.field enumerateTokens:&qCtx block:cb];
     }
@@ -205,7 +215,7 @@ typedef struct {
 
 @implementation NestedSelectQuery (Colorize)
 //
-// TODO when this is a nest select in the select list, the from can only be a relationship.
+// TODO when this is a nested select in the select list, the from can only be a relationship.
 //
 -(Context)queryContext:(Context*)parentCtx {
     NSString *from = self.from.sobject.name.val;
@@ -366,6 +376,7 @@ typedef struct {
     cb(TLiteral, self.loc);
 }
 @end
+
 
 @implementation ColorizerStyle
 
