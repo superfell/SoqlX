@@ -319,3 +319,20 @@ Error       46:5  	email
 Field       61:5  	email
 Error       61:5  	email
 
+SELECT email, count(id) from contact group by email having count(id) > 1 order by email nulls last
+Keyword      0:98 	SELECT email, count(id) from contact group by email having count(id) > 1 order by email nulls last
+Field       29:7  	contact
+Field        7:5  	email
+Error        7:5  	email
+Func        14:5  	count
+Field       20:2  	id
+Error       20:2  	id
+Field       46:5  	email
+Error       46:5  	email
+Func        59:5  	count
+Field       65:2  	id
+Error       65:2  	id
+Literal     71:1  	1
+Field       82:5  	email
+Error       82:5  	email
+

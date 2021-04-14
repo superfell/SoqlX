@@ -207,6 +207,7 @@ typedef struct {
         }
     }
     [self.groupBy enumerateTokens:&qCtx block:cb];
+    [self.having enumerateTokens:&qCtx block:cb];
     for (OrderBy *o in self.orderBy.items) {
         [o.field enumerateTokens:&qCtx block:cb];
     }

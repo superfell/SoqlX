@@ -117,7 +117,9 @@ typedef struct {
         @"SELECT calendar_year(createdDate), count(id) from case group by calendar_year(createdDate) order by calendar_year(createdDate) desc",
         @"SELECT calendar_year(createdDate), count(id) from case group by rollup (calendar_year(createdDate)) order by calendar_year(createdDate) desc",
         @"SELECT calendar_year(createdDate), count(id) from case group by cube( calendar_year(createdDate)) order by calendar_year(createdDate) desc",
-        @"SELECT email, count(id) from contact group by email order by email nulls last"
+        @"SELECT email, count(id) from contact group by email order by email nulls last",
+        @"SELECT email, count(id) from contact group by email having count(id) > 1 order by email nulls last"
+
     ];
 
     
