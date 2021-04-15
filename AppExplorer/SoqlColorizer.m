@@ -50,10 +50,9 @@ static ColorizerStyle *style;
 typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasMap;
 
 typedef struct {
-//    From                *from;      // this can probably go away one aliases is done fully.
     ZKDescribeSObject   *desc;      // the describe of the driving/primary object for the current query.
     AliasMap            *aliases;   // map of alias to the object describe.
-    describer           describer;  // a function to get describe results.
+    NSObject<Describer> *describer;  // a function to get describe results.
 } Context;
 
 @interface Expr (Colorize)
@@ -77,18 +76,54 @@ typedef struct {
     return self;
 }
 
--(void)color:(NSTextView *)view describes:(DescribeListDataSource *)describes {
-    describer d = ^ZKDescribeSObject*(NSString *name) {
-        if ([describes hasDescribe:name]) {
-            return [describes cachedDescribe:name];
+- (void)textStorage:(NSTextStorage *)textStorage
+  didProcessEditing:(NSTextStorageEditActions)editedMask
+              range:(NSRange)editedRange
+     changeInLength:(NSInteger)delta {
+    [self color:textStorage];
+}
+
+// Delegate only.  Allows delegate to modify the list of completions that will be presented for the partial word at the given range.  Returning nil or a zero-length array suppresses completion.  Optionally may specify the index of the initially selected completion; default is 0, and -1 indicates no selection.
+- (NSArray<NSString *> *)textView:(NSTextView *)textView completions:(NSArray<NSString *> *)words forPartialWordRange:(NSRange)charRange indexOfSelectedItem:(nullable NSInteger *)index {
+    NSLog(@"textView completions: for range %lu-%lu '%@' selectedIndex %ld", charRange.location, charRange.length,
+          [textView.string substringWithRange:charRange], (long)*index);
+    NSRange effectiveRange;
+    NSString *txtPrefix = [[textView.string substringWithRange:charRange] lowercaseString];
+    completions c = [textView.textStorage attribute:@"completions" atIndex:charRange.location effectiveRange:&effectiveRange];
+    if (c != nil) {
+        NSLog(@"effectiveRange %lu-%lu '%@'", effectiveRange.location, effectiveRange.length, [textView.string substringWithRange:effectiveRange]);
+        *index =-1;
+        NSArray<NSString*>*items = c();
+        return [items filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id  _Nullable evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
+            return [[evaluatedObject lowercaseString] hasPrefix:txtPrefix];
+        }]];
+    }
+    return nil;
+}
+
+-(ZKDescribeSObject*)describe:(NSString*)obj; {
+    if ([self.describes hasDescribe:obj]) {
+        return [self.describes cachedDescribe:obj];
+    }
+    if ([self.describes isTypeDescribable:obj]) {
+        [self.describes prioritizeDescribe:obj];
+    }
+    return nil;
+}
+
+-(BOOL)knownSObject:(NSString*)obj {
+    return [self.describes isTypeDescribable:obj];
+}
+
+-(NSArray<NSString*>*)allSObjects {
+    return [self.describes.SObjects valueForKey:@"name"];
+}
+
+-(void)color:(NSTextStorage *)txt {
+    tokenCallback color = ^void(SoqlTokenType t, completions comps, NSString *error, NSRange loc) {
+        if (comps != nil) {
+            [txt addAttribute:@"completions" value:comps range:loc];
         }
-        if ([describes isTypeDescribable:name]) {
-            [describes prioritizeDescribe:name];
-        }
-        return nil;
-    };
-    NSTextStorage *txt = view.textStorage;
-    tokenCallback color = ^void(SoqlTokenType t, NSRange loc) {
         switch (t) {
             case TKeyword:
                 [txt addAttributes:style.keyWord range:loc];
@@ -104,13 +139,16 @@ typedef struct {
                 break;
             case TError:
                 [txt addAttributes:style.underlined range:loc];
+                if (error != nil) {
+                    [txt addAttribute:NSToolTipAttributeName value:error range:loc];
+                }
                 break;
         }
     };
-    [self enumerateTokens:txt.string describes:d block:color];
+    [self enumerateTokens:txt.string describes:self block:color];
 };
 
--(void)enumerateTokens:(NSString *)soql describes:(describer)d block:(tokenCallback)cb {
+-(void)enumerateTokens:(NSString *)soql describes:(NSObject<Describer>*)d block:(tokenCallback)cb {
     NSError *parseErr = nil;
     SelectQuery *q = [self.soqlParser parse:soql error:&parseErr];
     if (parseErr != nil) {
@@ -140,15 +178,21 @@ typedef struct {
 
 @implementation SelectQuery (Colorize)
 -(Context)queryContext:(Context*)parentCtx {
-    ZKDescribeSObject *d = parentCtx->describer(self.from.sobject.name.val);
+    ZKDescribeSObject *d = [parentCtx->describer describe:self.from.sobject.name.val];
     Context c = {d, nil, parentCtx->describer};
     return c;
 }
 
 -(void)enumerateFrom:(Context *)ctx block:(tokenCallback)cb {
-    cb(TField, self.from.sobject.loc);
+    cb(TField, nil, nil, self.from.sobject.loc);
     if (ctx->desc == nil) {
-        cb(TError, self.from.sobject.name.loc);
+        if (![ctx->describer knownSObject:self.from.sobject.name.val]) {
+            NSObject<Describer> *describer = ctx->describer;
+            cb(TError, ^NSArray<NSString*>*() {
+                return [describer allSObjects];
+            },
+            [NSString stringWithFormat:@"%@ does not exist, or is not accessible", self.from.sobject.name.val], self.from.sobject.name.loc);
+        }
     }
     AliasMap *aliases = nil;
     if (self.from.sobject.alias.length > 0 || self.from.relatedObjects.count > 0) {
@@ -159,7 +203,7 @@ typedef struct {
     }
     // TODO, this has a large overlap with the code for SelectField below.
     for (SelectField *related in self.from.relatedObjects) {
-        cb(TField, related.loc);
+        cb(TField, nil, nil, related.loc);
         // first path segment can be an alias or a relationship on the primary object.
         CaseInsensitiveStringKey *firstKey = [CaseInsensitiveStringKey of:related.name[0].val];
         NSArray<PositionedString*> *path = related.name;
@@ -172,15 +216,15 @@ typedef struct {
         for (PositionedString *step in path) {
             ZKDescribeField *df = [curr parentRelationshipsByName][[CaseInsensitiveStringKey of:step.val]];
             if (df == nil) {
-                cb(TError, NSUnionRange(step.loc, related.name.lastObject.loc));
+                cb(TError, nil, nil, NSUnionRange(step.loc, related.name.lastObject.loc));
                 curr = nil;
                 break;
             }
             if (df.namePointing) {
                 // polymorphic rel, valid fields are from Name, not any of the actual related types.
-                curr = ctx->describer(@"Name");
+                curr = [ctx->describer describe:@"Name"];
             } else {
-                curr = ctx->describer(df.referenceTo[0]);
+                curr = [ctx->describer describe:df.referenceTo[0]];
             }
         }
         if (curr != nil) {
@@ -191,7 +235,7 @@ typedef struct {
 }
 
 -(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
-    cb(TKeyword, self.loc);
+    cb(TKeyword, nil, nil, self.loc);
     Context qCtx = [self queryContext:ctx];
     [self enumerateFrom:&qCtx block:cb];
     for (Expr *f in self.selectExprs) {
@@ -201,9 +245,9 @@ typedef struct {
     [self.where enumerateTokens:&qCtx block:cb];
     if (self.withDataCategory.count > 0) {
         for (DataCategoryFilter *f in self.withDataCategory) {
-            cb(TField, f.category.loc);
+            cb(TField, nil, nil, f.category.loc);
             for (PositionedString *v in f.values) {
-                cb(TField, v.loc);
+                cb(TField, nil, nil, v.loc);
             }
         }
     }
@@ -213,10 +257,10 @@ typedef struct {
         [o.field enumerateTokens:&qCtx block:cb];
     }
     if (self.limit != nil) {
-        cb(TLiteral, self.limit.loc);
+        cb(TLiteral, nil, nil, self.limit.loc);
     }
     if (self.offset != nil) {
-        cb(TLiteral, self.offset.loc);
+        cb(TLiteral, nil, nil, self.offset.loc);
     }
 }
 @end
@@ -227,12 +271,12 @@ typedef struct {
 //
 -(Context)queryContext:(Context*)parentCtx {
     NSString *from = self.from.sobject.name.val;
-    ZKDescribeSObject *d = parentCtx->describer(from);
+    ZKDescribeSObject *d = [parentCtx->describer describe:from];
     // for nested selected the from may be a relationship from the parent rather than an exact type.
     if (d == nil && parentCtx->desc != nil) {
         ZKChildRelationship *cr = [parentCtx->desc childRelationshipsByName][[CaseInsensitiveStringKey of:from]];
         if (cr != nil) {
-            d = parentCtx->describer(cr.childSObject);
+            d = [parentCtx->describer describe:cr.childSObject];
         }
     }
     Context c = {d, nil, parentCtx->describer};
@@ -242,7 +286,7 @@ typedef struct {
     
 @implementation SelectField (Colorize)
 -(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
-    cb(TField, self.loc);
+    cb(TField, nil, nil, self.loc);
     
     // The first step in the path is optionally the object name, e.g.
     // select account.name from account
@@ -267,7 +311,7 @@ typedef struct {
         path = [path subarrayWithRange:NSMakeRange(1, path.count-1)];
         if (path.count == 0) {
             // if they've only specified the object name, then that's not valid.
-            cb(TError, self.name[0].loc);
+            cb(TError, nil, nil, self.name[0].loc);
         }
     } else {
         // We can use the alias map to resolve the alias. enumeratorFrom populated this from all the related objects in
@@ -283,20 +327,20 @@ typedef struct {
             // see if its a relationship instead
             ZKDescribeField *df = [obj parentRelationshipsByName][[CaseInsensitiveStringKey of:f.val]];
             if (df == nil || f == self.name.lastObject) {
-                cb(TError, NSUnionRange(f.loc, [self.name lastObject].loc));
+                cb(TError,nil, nil,  NSUnionRange(f.loc, [self.name lastObject].loc));
                 return;
             }
             if (df.namePointing) {
                 // polymorphic rel, valid fields are from Name, not any of the actual related types.
-                obj = ctx->describer(@"Name");
+                obj = [ctx->describer describe:@"Name"];
             } else {
-                obj = ctx->describer(df.referenceTo[0]);
+                obj = [ctx->describer describe:df.referenceTo[0]];
             }
         } else {
             // its a field, it better be the last item on the path.
             if (f != path.lastObject) {
                 NSRange fEnd = NSMakeRange(f.loc.location+f.loc.length,1);
-                cb(TError, NSUnionRange(fEnd, path.lastObject.loc));
+                cb(TError, nil, nil, NSUnionRange(fEnd, path.lastObject.loc));
                 return;
             }
         }
@@ -306,28 +350,28 @@ typedef struct {
 
 @implementation SelectFunc (Colorize)
 -(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
-    cb(TFunc, self.name.loc);
+    cb(TFunc, nil, nil, self.name.loc);
     for (Expr *e in self.args) {
         [e enumerateTokens:ctx block:cb];
     }
     if (self.alias != nil) {
-        cb(TField, self.alias.loc);
+        cb(TField, nil, nil, self.alias.loc);
     }
 }
 @end
 
 @implementation TypeOf (Colorize)
 -(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
-    cb(TField, self.relationship.loc);
+    cb(TField, nil, nil, self.relationship.loc);
     ZKDescribeField *relField = [ctx->desc parentRelationshipsByName][[CaseInsensitiveStringKey of:self.relationship.val]];
     if (relField == nil) {
-        cb(TError, self.relationship.loc);
+        cb(TError, nil, nil, self.relationship.loc);
     }
     for (TypeOfWhen *w in self.whens) {
-        cb(TField, w.objectType.loc);
-        ZKDescribeSObject *d = ctx->describer(w.objectType.val);
+        cb(TField, nil, nil, w.objectType.loc);
+        ZKDescribeSObject *d = [ctx->describer describe:w.objectType.val];
         if (d == nil) {
-            cb(TError, w.objectType.loc);
+            cb(TError, nil, nil, w.objectType.loc);
         } else {
             BOOL validRefTo = FALSE;
             for (NSString *refTo in relField.referenceTo) {
@@ -337,7 +381,7 @@ typedef struct {
                 }
             }
             if (!validRefTo) {
-                cb(TError, w.objectType.loc);
+                cb(TError, nil, nil, w.objectType.loc);
             }
         }
         Context childCtx = { d, ctx->aliases, ctx->describer };
@@ -345,7 +389,7 @@ typedef struct {
             [f enumerateTokens:&childCtx block:cb];
         }
     }
-    ZKDescribeSObject *d = ctx->describer(@"Name");
+    ZKDescribeSObject *d = [ctx->describer describe:@"Name"];
     Context childCtx = { d, ctx->aliases, ctx->describer };
     for (SelectField *e in self.elses) {
         [e enumerateTokens:&childCtx block:cb];
@@ -375,13 +419,13 @@ typedef struct {
 
 @implementation LiteralValue (Colorize)
 -(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
-    cb(TLiteral, self.loc);
+    cb(TLiteral, nil, nil, self.loc);
 }
 @end
 
 @implementation LiteralValueArray (Colorize)
 -(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
-    cb(TLiteral, self.loc);
+    cb(TLiteral,nil, nil,  self.loc);
 }
 @end
 

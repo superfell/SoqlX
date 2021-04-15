@@ -24,7 +24,11 @@
 @class ZKDescribeSObject;
 @class DescribeListDataSource;
 
-typedef ZKDescribeSObject*(^describer)(NSString *sobjectName);
+@protocol Describer
+-(ZKDescribeSObject*)describe:(NSString*)obj;   // returns the describe if we have it?
+-(BOOL)knownSObject:(NSString*)obj;             // is the object in the describeGlobal list of objects?
+-(NSArray<NSString*>*)allSObjects;
+@end
 
 typedef NS_ENUM(uint16_t, SoqlTokenType) {
     TKeyword,
@@ -34,10 +38,12 @@ typedef NS_ENUM(uint16_t, SoqlTokenType) {
     TError  // not really a token type, can be applied to any token
 };
 
-typedef void(^tokenCallback)(SoqlTokenType type, NSRange loc);
+typedef NSArray<NSString*>*(^completions)(void);
+typedef void(^tokenCallback)(SoqlTokenType type, completions comps, NSString *error, NSRange loc);
 
 
-@interface SoqlColorizer : NSObject
--(void)color:(NSTextView *)view describes:(DescribeListDataSource*)d;
--(void)enumerateTokens:(NSString *)soql describes:(describer)d block:(tokenCallback)cb;
+@interface SoqlColorizer : NSObject<Describer, NSTextViewDelegate, NSTextStorageDelegate>
+@property (strong,nonatomic) DescribeListDataSource* describes;
+-(void)color:(NSTextStorage *)view;
+-(void)enumerateTokens:(NSString *)soql describes:(NSObject<Describer>*)d block:(tokenCallback)cb;
 @end

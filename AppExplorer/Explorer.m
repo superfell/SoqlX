@@ -107,7 +107,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     [detailsController addObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE options:NSKeyValueObservingOptionNew context:nil];
     
     [self setSoqlString:[[NSUserDefaults standardUserDefaults] stringForKey:@"soql"]];
-    self.colorizer = [SoqlColorizer new];
 }
 
 - (void)dealloc {
@@ -257,6 +256,11 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     describeList.delegate = descDataSource;
     [describeList reloadData];
 
+    self.colorizer = [SoqlColorizer new];
+    self.colorizer.describes = descDataSource;
+    soql.textStorage.delegate = self.colorizer;
+    soql.delegate = self.colorizer;
+
     [schemaController setDescribeDataSource:descDataSource];
     [self colorize];
     [self updateProgress:NO];
@@ -339,7 +343,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 }
 
 - (void)colorize {
-    [self.colorizer color:soql describes:descDataSource];
+    [self.colorizer color:soql.textStorage];
 }
 
 -(NSString *)removeSuffix:(NSString *)suffix from:(NSString *)src {
