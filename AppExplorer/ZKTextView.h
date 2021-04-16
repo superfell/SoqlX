@@ -21,6 +21,9 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface ZKTextView : NSTextView
+@interface ZKTextView : NSTextView {
+    uint64_t lastEvent;
+    BOOL hasTyped;
+}
 
 @end

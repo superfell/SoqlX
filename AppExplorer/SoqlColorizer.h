@@ -44,6 +44,7 @@ typedef void(^tokenCallback)(SoqlTokenType type, completions comps, NSString *er
 
 @interface SoqlColorizer : NSObject<Describer, NSTextViewDelegate, NSTextStorageDelegate>
 @property (strong,nonatomic) DescribeListDataSource* describes;
--(void)color:(NSTextStorage *)view;
+@property (strong,nonatomic) NSTextStorage *txt;
+-(void)color;
 -(void)enumerateTokens:(NSString *)soql describes:(NSObject<Describer>*)d block:(tokenCallback)cb;
 @end

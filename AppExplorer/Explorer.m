@@ -258,8 +258,10 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
     self.colorizer = [SoqlColorizer new];
     self.colorizer.describes = descDataSource;
+    self.colorizer.txt = soql.textStorage;
     soql.textStorage.delegate = self.colorizer;
     soql.delegate = self.colorizer;
+    
 
     [schemaController setDescribeDataSource:descDataSource];
     [self colorize];
@@ -276,6 +278,10 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
         [self->descDataSource setTypes:result view:self->describeList];
         [self didChangeValueForKey:@"SObjects"];
     }];
+}
+
+-(void)highlightItemInSideBar:(id)sender {
+    NSLog(@"highlight Item in side bar %@", sender);
 }
 
 - (void)refreshMetadata:(id)sender {
@@ -311,10 +317,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     return soql.textStorage.string;
 }
 
--(void)textDidChange:(NSNotification *)notification {
-    [self colorize];
-}
-
 - (void)enumerateWordsInString:(NSString *)s withBlock:(void(^)(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop)) block {
     [s enumerateSubstringsInRange:NSMakeRange(0, s.length)
                           options:NSStringEnumerationByWords | NSStringEnumerationLocalized
@@ -343,7 +345,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 }
 
 - (void)colorize {
-    [self.colorizer color:soql.textStorage];
+    [self.colorizer color];
 }
 
 -(NSString *)removeSuffix:(NSString *)suffix from:(NSString *)src {

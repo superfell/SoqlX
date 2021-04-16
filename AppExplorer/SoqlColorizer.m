@@ -25,6 +25,8 @@
 #import <ZKParser/Soql.h>
 #import "DataSources.h"
 #import "CaseInsensitiveStringKey.h"
+#include <mach/mach_time.h>
+
 
 @interface SoqlColorizer()
 @property (strong,nonatomic) SoqlParser *soqlParser;
@@ -63,11 +65,21 @@ typedef struct {
 -(NSDictionary<CaseInsensitiveStringKey*,ZKDescribeField*>*)parentRelationshipsByName;
 -(NSDictionary<CaseInsensitiveStringKey*,ZKChildRelationship*>*)childRelationshipsByName;
 @end
-    
+
+static double ticksToMillis = 0;
+NSString *KeyCompletions = @"ZKCompletions";
+
 @implementation SoqlColorizer
 
 +(void)initialize {
     style = [ColorizerStyle new];
+    
+    // The first time we get here, ask the system
+    // how to convert mach time units to nanoseconds
+    mach_timebase_info_data_t timebase;
+    // to be completely pedantic, check the return code of this next call.
+    mach_timebase_info(&timebase);
+    ticksToMillis = (double)timebase.numer / timebase.denom / 1000000;
 }
 
 -(instancetype)init {
@@ -76,20 +88,45 @@ typedef struct {
     return self;
 }
 
-- (void)textStorage:(NSTextStorage *)textStorage
-  didProcessEditing:(NSTextStorageEditActions)editedMask
-              range:(NSRange)editedRange
-     changeInLength:(NSInteger)delta {
-    [self color:textStorage];
+-(void)textDidChange:(NSNotification *)notification {
+    [self color];
+}
+
+// Delegate only.
+- (BOOL)textView:(NSTextView *)textView clickedOnLink:(id)link atIndex:(NSUInteger)charIndex {
+    NSLog(@"clickedOnLink: %@ at %lu", link, charIndex);
+    return TRUE;
+}
+
+// Delegate only.
+- (void)textView:(NSTextView *)textView clickedOnCell:(id <NSTextAttachmentCell>)cell inRect:(NSRect)cellFrame atIndex:(NSUInteger)charIndex {
+    NSLog(@"clickedOnCell");
+}
+
+// Delegate only.
+- (void)textView:(NSTextView *)textView doubleClickedOnCell:(id <NSTextAttachmentCell>)cell inRect:(NSRect)cellFrame atIndex:(NSUInteger)charIndex {
+    NSLog(@"Double clickedOnCell");
+}
+
+- (NSMenu *)textView:(NSTextView *)view
+                menu:(NSMenu *)menu
+            forEvent:(NSEvent *)event
+             atIndex:(NSUInteger)charIndex {
+    NSLog(@"textViewMenu forEvent %@ atIndex %lu", event, charIndex);
+    [menu insertItemWithTitle:@"Show in Sidebar" action:@selector(highlightItemInSideBar:) keyEquivalent:@"" atIndex:0];
+    return menu;
 }
 
 // Delegate only.  Allows delegate to modify the list of completions that will be presented for the partial word at the given range.  Returning nil or a zero-length array suppresses completion.  Optionally may specify the index of the initially selected completion; default is 0, and -1 indicates no selection.
 - (NSArray<NSString *> *)textView:(NSTextView *)textView completions:(NSArray<NSString *> *)words forPartialWordRange:(NSRange)charRange indexOfSelectedItem:(nullable NSInteger *)index {
-    NSLog(@"textView completions: for range %lu-%lu '%@' selectedIndex %ld", charRange.location, charRange.length,
-          [textView.string substringWithRange:charRange], (long)*index);
+    NSLog(@"textView completions: for range %lu-%lu '%@' selectedIndex %ld textLength:%ld", charRange.location, charRange.length,
+          [textView.string substringWithRange:charRange], (long)*index, textView.textStorage.length);
+    if (charRange.length==0) {
+        return nil;
+    }
     NSRange effectiveRange;
     NSString *txtPrefix = [[textView.string substringWithRange:charRange] lowercaseString];
-    completions c = [textView.textStorage attribute:@"completions" atIndex:charRange.location effectiveRange:&effectiveRange];
+    completions c = [textView.textStorage attribute:KeyCompletions atIndex:charRange.location effectiveRange:&effectiveRange];
     if (c != nil) {
         NSLog(@"effectiveRange %lu-%lu '%@'", effectiveRange.location, effectiveRange.length, [textView.string substringWithRange:effectiveRange]);
         *index =-1;
@@ -119,10 +156,20 @@ typedef struct {
     return [self.describes.SObjects valueForKey:@"name"];
 }
 
--(void)color:(NSTextStorage *)txt {
+-(void)color {
+    uint64_t started = mach_absolute_time();
+    NSTextStorage *txt = self.txt;
+    [txt beginEditing];
+    NSRange all = NSMakeRange(0, txt.length);
+    [txt removeAttribute:NSToolTipAttributeName range:all];
+    [txt removeAttribute:NSCursorAttributeName range:all];
+    [txt removeAttribute:KeyCompletions range:all];
+    
+    __block double callbackTime = 0;
     tokenCallback color = ^void(SoqlTokenType t, completions comps, NSString *error, NSRange loc) {
+        uint64_t cs = mach_absolute_time();
         if (comps != nil) {
-            [txt addAttribute:@"completions" value:comps range:loc];
+            [txt addAttribute:KeyCompletions value:comps range:loc];
         }
         switch (t) {
             case TKeyword:
@@ -144,17 +191,23 @@ typedef struct {
                 }
                 break;
         }
+        callbackTime += (mach_absolute_time()-cs);
     };
     [self enumerateTokens:txt.string describes:self block:color];
+    [txt endEditing];
+    NSLog(@"colorizer tool %.3fms total, incallback %.3fms", (mach_absolute_time() - started)*ticksToMillis, callbackTime*ticksToMillis);
 };
 
 -(void)enumerateTokens:(NSString *)soql describes:(NSObject<Describer>*)d block:(tokenCallback)cb {
     NSError *parseErr = nil;
+    uint64_t started = mach_absolute_time();
+
     SelectQuery *q = [self.soqlParser parse:soql error:&parseErr];
     if (parseErr != nil) {
         NSLog(@"parse error: %@", parseErr);
         return;
     }
+    NSLog(@"parser took    %.3fms", (mach_absolute_time() - started)*ticksToMillis);
     Context ctx = { nil, nil, d };
     [q enumerateTokens:&ctx block:cb];
 }
@@ -191,7 +244,7 @@ typedef struct {
             cb(TError, ^NSArray<NSString*>*() {
                 return [describer allSObjects];
             },
-            [NSString stringWithFormat:@"%@ does not exist, or is not accessible", self.from.sobject.name.val], self.from.sobject.name.loc);
+            [NSString stringWithFormat:@"SObject %@ does not exist or is not accessible.", self.from.sobject.name.val], self.from.sobject.name.loc);
         }
     }
     AliasMap *aliases = nil;
