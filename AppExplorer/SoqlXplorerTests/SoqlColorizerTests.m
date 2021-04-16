@@ -28,9 +28,32 @@
 
 @end
 
+@interface TestDescriber : NSObject<Describer>
+@property (strong,nonatomic) NSArray<ZKDescribeSObject*>* objects;
+@end
+
+@implementation TestDescriber
+-(ZKDescribeSObject*)describe:(NSString*)obj {
+    for (ZKDescribeSObject *o in self.objects) {
+        if ([obj caseInsensitiveCompare:o.name] == NSOrderedSame) {
+            return o;
+        }
+    }
+    return nil;
+}
+-(BOOL)knownSObject:(NSString*)obj {
+    // simulate Case being valid, but not yet described.
+    return [obj caseInsensitiveCompare:@"Case"] || [self describe:obj] != nil;
+}
+
+-(NSArray<NSString*>*)allSObjects {
+    return [self.objects valueForKey:@"name"];
+}
+@end
+
 @implementation SoqlColorizerTests
 
-describer descs;
+NSObject<Describer> *descs;
 
 - (void)setUp {
     // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -53,15 +76,9 @@ describer descs;
     contacts.relationshipName = @"Contacts";
     account.childRelationships = @[contacts];
     
-    descs = ^ZKDescribeSObject*(NSString *n) {
-        if ([n caseInsensitiveCompare:@"account"] == NSOrderedSame) {
-            return account;
-        }
-        if ([n caseInsensitiveCompare:@"contact"] == NSOrderedSame) {
-            return contact;
-        }
-        return nil;
-    };
+    TestDescriber *d = [TestDescriber new];
+    d.objects = @[account, contact];
+    descs = d;
 }
 
 - (void)tearDown {
@@ -132,10 +149,10 @@ typedef struct {
     for (NSString *q in queries) {
         [results appendString:q];
         [results appendString:@"\n"];
-        [c enumerateTokens:q describes:descs block:^void(SoqlTokenType t, NSRange loc) {
-            [results appendFormat:@"%15@ %3lu:%-3lu\t%@\n",
+        [c enumerateTokens:q describes:descs block:^void(SoqlTokenType t, completions comps, NSString *error, NSRange loc) {
+            [results appendFormat:@"%15@ %3lu:%-3lu\t%@\t%@\n",
                 [[self tokenName:t] stringByPaddingToLength:10 withString:@" " startingAtIndex:0],
-                loc.location, loc.length, [q substringWithRange:loc]];
+                loc.location, loc.length, [q substringWithRange:loc], error == nil ? @"" : error];
         }];
         [results appendString:@"\n"];
     }

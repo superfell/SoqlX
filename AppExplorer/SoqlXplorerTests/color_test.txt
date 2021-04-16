@@ -1,373 +1,372 @@
 select name from account where name='bob'
-Keyword      0:41 	select name from account where name='bob'
-Field       17:7  	account
-Field        7:4  	name
-Field       31:4  	name
-Literal     36:5  	'bob'
+Keyword      0:41 	select name from account where name='bob'	
+Field       17:7  	account	
+Field        7:4  	name	
+Field       31:4  	name	
+Literal     36:5  	'bob'	
 
 select namer from account where name='bob'
-Keyword      0:42 	select namer from account where name='bob'
-Field       18:7  	account
-Field        7:5  	namer
-Error        7:5  	namer
-Field       32:4  	name
-Literal     37:5  	'bob'
+Keyword      0:42 	select namer from account where name='bob'	
+Field       18:7  	account	
+Field        7:5  	namer	
+Error        7:5  	namer	
+Field       32:4  	name	
+Literal     37:5  	'bob'	
 
 select name from case where LastModifiedDate >= YESTERDAY
-Keyword      0:57 	select name from case where LastModifiedDate >= YESTERDAY
-Field       17:4  	case
-Error       17:4  	case
-Field        7:4  	name
-Error        7:4  	name
-Field       28:16 	LastModifiedDate
-Error       28:16 	LastModifiedDate
-Literal     48:9  	YESTERDAY
+Keyword      0:57 	select name from case where LastModifiedDate >= YESTERDAY	
+Field       17:4  	case	
+Error       17:4  	case	case does not exist, or is not accessible
+Field        7:4  	name	
+Error        7:4  	name	
+Field       28:16 	LastModifiedDate	
+Error       28:16 	LastModifiedDate	
+Literal     48:9  	YESTERDAY	
 
 select name from case c
-Keyword      0:23 	select name from case c
-Field       17:6  	case c
-Error       17:4  	case
-Field        7:4  	name
-Error        7:4  	name
+Keyword      0:23 	select name from case c	
+Field       17:6  	case c	
+Error       17:4  	case	case does not exist, or is not accessible
+Field        7:4  	name	
+Error        7:4  	name	
 
 select id,(select name from contacts),name from account where name in ('bob','eve','alice')
-Keyword      0:91 	select id,(select name from contacts),name from account where name in ('bob','eve','alice')
-Field       48:7  	account
-Field        7:2  	id
-Error        7:2  	id
-Keyword     11:25 	select name from contacts
-Field       28:8  	contacts
-Field       18:4  	name
-Field       38:4  	name
-Field       62:4  	name
-Literal     70:21 	('bob','eve','alice')
+Keyword      0:91 	select id,(select name from contacts),name from account where name in ('bob','eve','alice')	
+Field       48:7  	account	
+Field        7:2  	id	
+Error        7:2  	id	
+Keyword     11:25 	select name from contacts	
+Field       28:8  	contacts	
+Field       18:4  	name	
+Field       38:4  	name	
+Field       62:4  	name	
+Literal     70:21 	('bob','eve','alice')	
 
 select name from account where id in (select accountId from contact)
-Keyword      0:68 	select name from account where id in (select accountId from contact)
-Field       17:7  	account
-Field        7:4  	name
-Field       31:2  	id
-Error       31:2  	id
-Keyword     38:29 	select accountId from contact
-Field       60:7  	contact
-Field       45:9  	accountId
+Keyword      0:68 	select name from account where id in (select accountId from contact)	
+Field       17:7  	account	
+Field        7:4  	name	
+Field       31:2  	id	
+Error       31:2  	id	
+Keyword     38:29 	select accountId from contact	
+Field       60:7  	contact	
+Field       45:9  	accountId	
 
 select account.city from contact where name LIKE 'b%'
-Keyword      0:53 	select account.city from contact where name LIKE 'b%'
-Field       25:7  	contact
-Field        7:12 	account.city
-Error       15:4  	city
-Field       39:4  	name
-Literal     49:4  	'b%'
+Keyword      0:53 	select account.city from contact where name LIKE 'b%'	
+Field       25:7  	contact	
+Field        7:12 	account.city	
+Error       15:4  	city	
+Field       39:4  	name	
+Literal     49:4  	'b%'	
 
 select account.city from contact where name LIKE 'b%' OR name='eve'
-Keyword      0:67 	select account.city from contact where name LIKE 'b%' OR name='eve'
-Field       25:7  	contact
-Field        7:12 	account.city
-Error       15:4  	city
-Field       39:4  	name
-Literal     49:4  	'b%'
-Field       57:4  	name
-Literal     62:5  	'eve'
+Keyword      0:67 	select account.city from contact where name LIKE 'b%' OR name='eve'	
+Field       25:7  	contact	
+Field        7:12 	account.city	
+Error       15:4  	city	
+Field       39:4  	name	
+Literal     49:4  	'b%'	
+Field       57:4  	name	
+Literal     62:5  	'eve'	
 
 select c.account.city from contact c where name LIKE 'b%'
-Keyword      0:57 	select c.account.city from contact c where name LIKE 'b%'
-Field       27:9  	contact c
-Field        7:14 	c.account.city
-Error       17:4  	city
-Field       43:4  	name
-Literal     53:4  	'b%'
+Keyword      0:57 	select c.account.city from contact c where name LIKE 'b%'	
+Field       27:9  	contact c	
+Field        7:14 	c.account.city	
+Error       17:4  	city	
+Field       43:4  	name	
+Literal     53:4  	'b%'	
 
 select (select c.name from contacts c),name from account a where a.name>='bob'
-Keyword      0:78 	select (select c.name from contacts c),name from account a where a.name>='bob'
-Field       49:9  	account a
-Keyword      8:29 	select c.name from contacts c
-Field       27:10 	contacts c
-Field       15:6  	c.name
-Field       39:4  	name
-Field       65:6  	a.name
-Literal     73:5  	'bob'
+Keyword      0:78 	select (select c.name from contacts c),name from account a where a.name>='bob'	
+Field       49:9  	account a	
+Keyword      8:29 	select c.name from contacts c	
+Field       27:10 	contacts c	
+Field       15:6  	c.name	
+Field       39:4  	name	
+Field       65:6  	a.name	
+Literal     73:5  	'bob'	
 
 select account.name from account where name > 'bob'
-Keyword      0:51 	select account.name from account where name > 'bob'
-Field       25:7  	account
-Field        7:12 	account.name
-Field       39:4  	name
-Literal     46:5  	'bob'
+Keyword      0:51 	select account.name from account where name > 'bob'	
+Field       25:7  	account	
+Field        7:12 	account.name	
+Field       39:4  	name	
+Literal     46:5  	'bob'	
 
 select a.name from account a where name > 'bob'
-Keyword      0:47 	select a.name from account a where name > 'bob'
-Field       19:9  	account a
-Field        7:6  	a.name
-Field       35:4  	name
-Literal     42:5  	'bob'
+Keyword      0:47 	select a.name from account a where name > 'bob'	
+Field       19:9  	account a	
+Field        7:6  	a.name	
+Field       35:4  	name	
+Literal     42:5  	'bob'	
 
 select max(name) from account where CALENDARY_YEAR(createdDate) > 2018
-Keyword      0:70 	select max(name) from account where CALENDARY_YEAR(createdDate) > 2018
-Field       22:7  	account
-Func         7:3  	max
-Field       11:4  	name
-Func        36:14 	CALENDARY_YEAR
-Field       51:11 	createdDate
-Error       51:11 	createdDate
-Literal     66:4  	2018
+Keyword      0:70 	select max(name) from account where CALENDARY_YEAR(createdDate) > 2018	
+Field       22:7  	account	
+Func         7:3  	max	
+Field       11:4  	name	
+Func        36:14 	CALENDARY_YEAR	
+Field       51:11 	createdDate	
+Error       51:11 	createdDate	
+Literal     66:4  	2018	
 
 SELECT count() FROM Contact c, c.Account a WHERE a.name = 'MyriadPubs'
-Keyword      0:70 	SELECT count() FROM Contact c, c.Account a WHERE a.name = 'MyriadPubs'
-Field       20:9  	Contact c
-Field       31:11 	c.Account a
-Func         7:5  	count
-Field       49:6  	a.name
-Literal     58:12 	'MyriadPubs'
+Keyword      0:70 	SELECT count() FROM Contact c, c.Account a WHERE a.name = 'MyriadPubs'	
+Field       20:9  	Contact c	
+Field       31:11 	c.Account a	
+Func         7:5  	count	
+Field       49:6  	a.name	
+Literal     58:12 	'MyriadPubs'	
 
 SELECT count() FROM Contact WHERE account.name = 'Salesforce.com'
-Keyword      0:65 	SELECT count() FROM Contact WHERE account.name = 'Salesforce.com'
-Field       20:7  	Contact
-Func         7:5  	count
-Field       34:12 	account.name
-Literal     49:16 	'Salesforce.com'
+Keyword      0:65 	SELECT count() FROM Contact WHERE account.name = 'Salesforce.com'	
+Field       20:7  	Contact	
+Func         7:5  	count	
+Field       34:12 	account.name	
+Literal     49:16 	'Salesforce.com'	
 
 SELECT count() FROM Contact c, c.Account a, a.CreatedBy u WHERE u.alias = 'Sfell'
-Keyword      0:81 	SELECT count() FROM Contact c, c.Account a, a.CreatedBy u WHERE u.alias = 'Sfell'
-Field       20:9  	Contact c
-Field       31:11 	c.Account a
-Field       44:13 	a.CreatedBy u
-Error       46:9  	CreatedBy
-Func         7:5  	count
-Field       64:7  	u.alias
-Error       64:7  	u.alias
-Literal     74:7  	'Sfell'
+Keyword      0:81 	SELECT count() FROM Contact c, c.Account a, a.CreatedBy u WHERE u.alias = 'Sfell'	
+Field       20:9  	Contact c	
+Field       31:11 	c.Account a	
+Field       44:13 	a.CreatedBy u	
+Error       46:9  	CreatedBy	
+Func         7:5  	count	
+Field       64:7  	u.alias	
+Error       64:7  	u.alias	
+Literal     74:7  	'Sfell'	
 
 SELECT count() FROM Contact c, a.CreatedBy u, c.Account a WHERE u.alias = 'Sfell'
-Keyword      0:81 	SELECT count() FROM Contact c, a.CreatedBy u, c.Account a WHERE u.alias = 'Sfell'
-Field       20:9  	Contact c
-Field       31:13 	a.CreatedBy u
-Error       31:11 	a.CreatedBy
-Field       46:11 	c.Account a
-Func         7:5  	count
-Field       64:7  	u.alias
-Error       64:7  	u.alias
-Literal     74:7  	'Sfell'
+Keyword      0:81 	SELECT count() FROM Contact c, a.CreatedBy u, c.Account a WHERE u.alias = 'Sfell'	
+Field       20:9  	Contact c	
+Field       31:13 	a.CreatedBy u	
+Error       31:11 	a.CreatedBy	
+Field       46:11 	c.Account a	
+Func         7:5  	count	
+Field       64:7  	u.alias	
+Error       64:7  	u.alias	
+Literal     74:7  	'Sfell'	
 
 SELECT count() FROM Contact c, c.CreatedBy u, c.Account a WHERE u.alias = 'Sfell' and a.Name > 'a'
-Keyword      0:98 	SELECT count() FROM Contact c, c.CreatedBy u, c.Account a WHERE u.alias = 'Sfell' and a.Name > 'a'
-Field       20:9  	Contact c
-Field       31:13 	c.CreatedBy u
-Error       33:9  	CreatedBy
-Field       46:11 	c.Account a
-Func         7:5  	count
-Field       64:7  	u.alias
-Error       64:7  	u.alias
-Literal     74:7  	'Sfell'
-Field       86:6  	a.Name
-Literal     95:3  	'a'
+Keyword      0:98 	SELECT count() FROM Contact c, c.CreatedBy u, c.Account a WHERE u.alias = 'Sfell' and a.Name > 'a'	
+Field       20:9  	Contact c	
+Field       31:13 	c.CreatedBy u	
+Error       33:9  	CreatedBy	
+Field       46:11 	c.Account a	
+Func         7:5  	count	
+Field       64:7  	u.alias	
+Error       64:7  	u.alias	
+Literal     74:7  	'Sfell'	
+Field       86:6  	a.Name	
+Literal     95:3  	'a'	
 
 SELECT count() FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and a.alias='Sfell'
-Keyword      0:111	SELECT count() FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and a.alias='Sfell'
-Field       20:9  	Contact x
-Field       31:21 	x.Account.CreatedBy u
-Error       41:9  	CreatedBy
-Field       54:13 	x.CreatedBy a
-Error       56:9  	CreatedBy
-Func         7:5  	count
-Field       74:7  	u.alias
-Error       74:7  	u.alias
-Literal     84:7  	'Sfell'
-Field       96:7  	a.alias
-Error       96:7  	a.alias
-Literal    104:7  	'Sfell'
+Keyword      0:111	SELECT count() FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and a.alias='Sfell'	
+Field       20:9  	Contact x	
+Field       31:21 	x.Account.CreatedBy u	
+Error       41:9  	CreatedBy	
+Field       54:13 	x.CreatedBy a	
+Error       56:9  	CreatedBy	
+Func         7:5  	count	
+Field       74:7  	u.alias	
+Error       74:7  	u.alias	
+Literal     84:7  	'Sfell'	
+Field       96:7  	a.alias	
+Error       96:7  	a.alias	
+Literal    104:7  	'Sfell'	
 
 SELECT x.name FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and (a.alias='Sfell' or x.MailingCity IN('SF','LA'))order by x.name desc nulls first
-Keyword      0:175	SELECT x.name FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and (a.alias='Sfell' or x.MailingCity IN('SF','LA'))order by x.name desc nulls first
-Field       19:9  	Contact x
-Field       30:21 	x.Account.CreatedBy u
-Error       40:9  	CreatedBy
-Field       53:13 	x.CreatedBy a
-Error       55:9  	CreatedBy
-Field        7:6  	x.name
-Field       73:7  	u.alias
-Error       73:7  	u.alias
-Literal     83:7  	'Sfell'
-Field       96:7  	a.alias
-Error       96:7  	a.alias
-Literal    104:7  	'Sfell'
-Field      115:13 	x.MailingCity
-Error      117:11 	MailingCity
-Literal    131:11 	('SF','LA')
-Field      152:6  	x.name
+Keyword      0:175	SELECT x.name FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and (a.alias='Sfell' or x.MailingCity IN('SF','LA'))order by x.name desc nulls first	
+Field       19:9  	Contact x	
+Field       30:21 	x.Account.CreatedBy u	
+Error       40:9  	CreatedBy	
+Field       53:13 	x.CreatedBy a	
+Error       55:9  	CreatedBy	
+Field        7:6  	x.name	
+Field       73:7  	u.alias	
+Error       73:7  	u.alias	
+Literal     83:7  	'Sfell'	
+Field       96:7  	a.alias	
+Error       96:7  	a.alias	
+Literal    104:7  	'Sfell'	
+Field      115:13 	x.MailingCity	
+Error      117:11 	MailingCity	
+Literal    131:11 	('SF','LA')	
+Field      152:6  	x.name	
 
 SELECT account.name.name FROM account
-Keyword      0:37 	SELECT account.name.name FROM account
-Field       30:7  	account
-Field        7:17 	account.name.name
-Error       19:5  	.name
+Keyword      0:37 	SELECT account.name.name FROM account	
+Field       30:7  	account	
+Field        7:17 	account.name.name	
+Error       19:5  	.name	
 
 SELECT name FROM contact order by name asc
-Keyword      0:42 	SELECT name FROM contact order by name asc
-Field       17:7  	contact
-Field        7:4  	name
-Field       34:4  	name
+Keyword      0:42 	SELECT name FROM contact order by name asc	
+Field       17:7  	contact	
+Field        7:4  	name	
+Field       34:4  	name	
 
 SELECT name FROM contact order by name asc nulls last
-Keyword      0:53 	SELECT name FROM contact order by name asc nulls last
-Field       17:7  	contact
-Field        7:4  	name
-Field       34:4  	name
+Keyword      0:53 	SELECT name FROM contact order by name asc nulls last	
+Field       17:7  	contact	
+Field        7:4  	name	
+Field       34:4  	name	
 
 SELECT name FROM contact order by name asc nulls last, account.name desc
-Keyword      0:72 	SELECT name FROM contact order by name asc nulls last, account.name desc
-Field       17:7  	contact
-Field        7:4  	name
-Field       34:4  	name
-Field       55:12 	account.name
+Keyword      0:72 	SELECT name FROM contact order by name asc nulls last, account.name desc	
+Field       17:7  	contact	
+Field        7:4  	name	
+Field       34:4  	name	
+Field       55:12 	account.name	
 
 SELECT name FROM contact x order by name asc nulls last, x.account.name desc
-Keyword      0:76 	SELECT name FROM contact x order by name asc nulls last, x.account.name desc
-Field       17:9  	contact x
-Field        7:4  	name
-Field       36:4  	name
-Field       57:14 	x.account.name
+Keyword      0:76 	SELECT name FROM contact x order by name asc nulls last, x.account.name desc	
+Field       17:9  	contact x	
+Field        7:4  	name	
+Field       36:4  	name	
+Field       57:14 	x.account.name	
 
 SELECT subject, TYPEOF what WHEN account Then id,BillingCity,createdBy.alias WHEN opportunity then name,nextStep ELSE id,email END FROM Task
-Keyword      0:140	SELECT subject, TYPEOF what WHEN account Then id,BillingCity,createdBy.alias WHEN opportunity then name,nextStep ELSE id,email END FROM Task
-Field      136:4  	Task
-Error      136:4  	Task
-Field        7:7  	subject
-Error        7:7  	subject
-Field       23:4  	what
-Error       23:4  	what
-Field       33:7  	account
-Error       33:7  	account
-Field       46:2  	id
-Error       46:2  	id
-Field       49:11 	BillingCity
-Error       49:11 	BillingCity
-Field       61:15 	createdBy.alias
-Error       61:15 	createdBy.alias
-Field       82:11 	opportunity
-Error       82:11 	opportunity
-Field       99:4  	name
-Error       99:4  	name
-Field      104:8  	nextStep
-Error      104:8  	nextStep
-Field      118:2  	id
-Error      118:2  	id
-Field      121:5  	email
-Error      121:5  	email
+Keyword      0:140	SELECT subject, TYPEOF what WHEN account Then id,BillingCity,createdBy.alias WHEN opportunity then name,nextStep ELSE id,email END FROM Task	
+Field      136:4  	Task	
+Field        7:7  	subject	
+Error        7:7  	subject	
+Field       23:4  	what	
+Error       23:4  	what	
+Field       33:7  	account	
+Error       33:7  	account	
+Field       46:2  	id	
+Error       46:2  	id	
+Field       49:11 	BillingCity	
+Error       49:11 	BillingCity	
+Field       61:15 	createdBy.alias	
+Error       61:15 	createdBy.alias	
+Field       82:11 	opportunity	
+Error       82:11 	opportunity	
+Field       99:4  	name	
+Error       99:4  	name	
+Field      104:8  	nextStep	
+Error      104:8  	nextStep	
+Field      118:2  	id	
+Error      118:2  	id	
+Field      121:5  	email	
+Error      121:5  	email	
 
 SELECT calendar_year(createdDate), count(id) from case group by calendar_year(createdDate) order by calendar_year(createdDate) desc
-Keyword      0:131	SELECT calendar_year(createdDate), count(id) from case group by calendar_year(createdDate) order by calendar_year(createdDate) desc
-Field       50:4  	case
-Error       50:4  	case
-Func         7:13 	calendar_year
-Field       21:11 	createdDate
-Error       21:11 	createdDate
-Func        35:5  	count
-Field       41:2  	id
-Error       41:2  	id
-Func        64:13 	calendar_year
-Field       78:11 	createdDate
-Error       78:11 	createdDate
-Func       100:13 	calendar_year
-Field      114:11 	createdDate
-Error      114:11 	createdDate
+Keyword      0:131	SELECT calendar_year(createdDate), count(id) from case group by calendar_year(createdDate) order by calendar_year(createdDate) desc	
+Field       50:4  	case	
+Error       50:4  	case	case does not exist, or is not accessible
+Func         7:13 	calendar_year	
+Field       21:11 	createdDate	
+Error       21:11 	createdDate	
+Func        35:5  	count	
+Field       41:2  	id	
+Error       41:2  	id	
+Func        64:13 	calendar_year	
+Field       78:11 	createdDate	
+Error       78:11 	createdDate	
+Func       100:13 	calendar_year	
+Field      114:11 	createdDate	
+Error      114:11 	createdDate	
 
 SELECT calendar_year(createdDate), count(id) from case group by rollup (calendar_year(createdDate)) order by calendar_year(createdDate) desc
-Keyword      0:140	SELECT calendar_year(createdDate), count(id) from case group by rollup (calendar_year(createdDate)) order by calendar_year(createdDate) desc
-Field       50:4  	case
-Error       50:4  	case
-Func         7:13 	calendar_year
-Field       21:11 	createdDate
-Error       21:11 	createdDate
-Func        35:5  	count
-Field       41:2  	id
-Error       41:2  	id
-Func        72:13 	calendar_year
-Field       86:11 	createdDate
-Error       86:11 	createdDate
-Func       109:13 	calendar_year
-Field      123:11 	createdDate
-Error      123:11 	createdDate
+Keyword      0:140	SELECT calendar_year(createdDate), count(id) from case group by rollup (calendar_year(createdDate)) order by calendar_year(createdDate) desc	
+Field       50:4  	case	
+Error       50:4  	case	case does not exist, or is not accessible
+Func         7:13 	calendar_year	
+Field       21:11 	createdDate	
+Error       21:11 	createdDate	
+Func        35:5  	count	
+Field       41:2  	id	
+Error       41:2  	id	
+Func        72:13 	calendar_year	
+Field       86:11 	createdDate	
+Error       86:11 	createdDate	
+Func       109:13 	calendar_year	
+Field      123:11 	createdDate	
+Error      123:11 	createdDate	
 
 SELECT calendar_year(createdDate), count(id) from case group by cube( calendar_year(createdDate)) order by calendar_year(createdDate) desc
-Keyword      0:138	SELECT calendar_year(createdDate), count(id) from case group by cube( calendar_year(createdDate)) order by calendar_year(createdDate) desc
-Field       50:4  	case
-Error       50:4  	case
-Func         7:13 	calendar_year
-Field       21:11 	createdDate
-Error       21:11 	createdDate
-Func        35:5  	count
-Field       41:2  	id
-Error       41:2  	id
-Func        70:13 	calendar_year
-Field       84:11 	createdDate
-Error       84:11 	createdDate
-Func       107:13 	calendar_year
-Field      121:11 	createdDate
-Error      121:11 	createdDate
+Keyword      0:138	SELECT calendar_year(createdDate), count(id) from case group by cube( calendar_year(createdDate)) order by calendar_year(createdDate) desc	
+Field       50:4  	case	
+Error       50:4  	case	case does not exist, or is not accessible
+Func         7:13 	calendar_year	
+Field       21:11 	createdDate	
+Error       21:11 	createdDate	
+Func        35:5  	count	
+Field       41:2  	id	
+Error       41:2  	id	
+Func        70:13 	calendar_year	
+Field       84:11 	createdDate	
+Error       84:11 	createdDate	
+Func       107:13 	calendar_year	
+Field      121:11 	createdDate	
+Error      121:11 	createdDate	
 
 SELECT email, count(id) from contact group by email order by email nulls last
-Keyword      0:77 	SELECT email, count(id) from contact group by email order by email nulls last
-Field       29:7  	contact
-Field        7:5  	email
-Error        7:5  	email
-Func        14:5  	count
-Field       20:2  	id
-Error       20:2  	id
-Field       46:5  	email
-Error       46:5  	email
-Field       61:5  	email
-Error       61:5  	email
+Keyword      0:77 	SELECT email, count(id) from contact group by email order by email nulls last	
+Field       29:7  	contact	
+Field        7:5  	email	
+Error        7:5  	email	
+Func        14:5  	count	
+Field       20:2  	id	
+Error       20:2  	id	
+Field       46:5  	email	
+Error       46:5  	email	
+Field       61:5  	email	
+Error       61:5  	email	
 
 SELECT email, count(id) from contact group by email having count(id) > 1 order by email nulls last
-Keyword      0:98 	SELECT email, count(id) from contact group by email having count(id) > 1 order by email nulls last
-Field       29:7  	contact
-Field        7:5  	email
-Error        7:5  	email
-Func        14:5  	count
-Field       20:2  	id
-Error       20:2  	id
-Field       46:5  	email
-Error       46:5  	email
-Func        59:5  	count
-Field       65:2  	id
-Error       65:2  	id
-Literal     71:1  	1
-Field       82:5  	email
-Error       82:5  	email
+Keyword      0:98 	SELECT email, count(id) from contact group by email having count(id) > 1 order by email nulls last	
+Field       29:7  	contact	
+Field        7:5  	email	
+Error        7:5  	email	
+Func        14:5  	count	
+Field       20:2  	id	
+Error       20:2  	id	
+Field       46:5  	email	
+Error       46:5  	email	
+Func        59:5  	count	
+Field       65:2  	id	
+Error       65:2  	id	
+Literal     71:1  	1	
+Field       82:5  	email	
+Error       82:5  	email	
 
 select a.name from account a where name > 'bob' LIMIt 5
-Keyword      0:55 	select a.name from account a where name > 'bob' LIMIt 5
-Field       19:9  	account a
-Field        7:6  	a.name
-Field       35:4  	name
-Literal     42:5  	'bob'
-Literal     54:1  	5
+Keyword      0:55 	select a.name from account a where name > 'bob' LIMIt 5	
+Field       19:9  	account a	
+Field        7:6  	a.name	
+Field       35:4  	name	
+Literal     42:5  	'bob'	
+Literal     54:1  	5	
 
 select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5
-Keyword      0:64 	select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5
-Field       19:9  	account a
-Field        7:6  	a.name
-Field       35:4  	name
-Literal     42:5  	'bob'
-Literal     54:1  	5
-Literal     63:1  	5
+Keyword      0:64 	select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5	
+Field       19:9  	account a	
+Field        7:6  	a.name	
+Field       35:4  	name	
+Literal     42:5  	'bob'	
+Literal     54:1  	5	
+Literal     63:1  	5	
 
 select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 FOR view
-Keyword      0:73 	select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 FOR view
-Field       19:9  	account a
-Field        7:6  	a.name
-Field       35:4  	name
-Literal     42:5  	'bob'
-Literal     54:1  	5
-Literal     63:1  	5
+Keyword      0:73 	select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 FOR view	
+Field       19:9  	account a	
+Field        7:6  	a.name	
+Field       35:4  	name	
+Literal     42:5  	'bob'	
+Literal     54:1  	5	
+Literal     63:1  	5	
 
 select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 update viewstat
-Keyword      0:80 	select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 update viewstat
-Field       19:9  	account a
-Field        7:6  	a.name
-Field       35:4  	name
-Literal     42:5  	'bob'
-Literal     54:1  	5
-Literal     63:1  	5
+Keyword      0:80 	select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 update viewstat	
+Field       19:9  	account a	
+Field        7:6  	a.name	
+Field       35:4  	name	
+Literal     42:5  	'bob'	
+Literal     54:1  	5	
+Literal     63:1  	5	
 
