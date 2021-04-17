@@ -39,7 +39,7 @@ typedef NS_ENUM(uint16_t, SoqlTokenType) {
 };
 
 typedef NSArray<NSString*>*(^completions)(void);
-typedef void(^tokenCallback)(SoqlTokenType type, completions comps, NSString *error, NSRange loc);
+typedef void(^tokenCallback)(SoqlTokenType type, NSRange loc, NSString *error, completions comps);
 
 
 @interface SoqlColorizer : NSObject<Describer, NSTextViewDelegate, NSTextStorageDelegate>

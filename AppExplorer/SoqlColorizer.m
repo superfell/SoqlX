@@ -126,7 +126,7 @@ NSString *KeyCompletions = @"ZKCompletions";
     }
     NSRange effectiveRange;
     NSString *txtPrefix = [[textView.string substringWithRange:charRange] lowercaseString];
-    completions c = [textView.textStorage attribute:KeyCompletions atIndex:charRange.location effectiveRange:&effectiveRange];
+    completions c = [textView.textStorage attribute:KeyCompletions atIndex:charRange.location + charRange.length-1 effectiveRange:&effectiveRange];
     if (c != nil) {
         NSLog(@"effectiveRange %lu-%lu '%@'", effectiveRange.location, effectiveRange.length, [textView.string substringWithRange:effectiveRange]);
         *index =-1;
@@ -134,6 +134,8 @@ NSString *KeyCompletions = @"ZKCompletions";
         return [items filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id  _Nullable evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
             return [[evaluatedObject lowercaseString] hasPrefix:txtPrefix];
         }]];
+    } else {
+        NSLog(@"no completions found at %lu-%lu", charRange.location, charRange.length);
     }
     return nil;
 }
@@ -166,7 +168,7 @@ NSString *KeyCompletions = @"ZKCompletions";
     [txt removeAttribute:KeyCompletions range:all];
     
     __block double callbackTime = 0;
-    tokenCallback color = ^void(SoqlTokenType t, completions comps, NSString *error, NSRange loc) {
+    tokenCallback color = ^void(SoqlTokenType t, NSRange loc, NSString *error,completions comps)  {
         uint64_t cs = mach_absolute_time();
         if (comps != nil) {
             [txt addAttribute:KeyCompletions value:comps range:loc];
@@ -203,11 +205,15 @@ NSString *KeyCompletions = @"ZKCompletions";
     uint64_t started = mach_absolute_time();
 
     SelectQuery *q = [self.soqlParser parse:soql error:&parseErr];
+    NSLog(@"parser took    %.3fms", (mach_absolute_time() - started)*ticksToMillis);
     if (parseErr != nil) {
         NSLog(@"parse error: %@", parseErr);
+        completions cfn = ^NSArray<NSString*>*() {
+            return parseErr.userInfo[@"Completions"];
+        };
+        cb(TError, NSMakeRange([parseErr.userInfo[@"Position"] integerValue], 1), parseErr.localizedDescription, cfn);
         return;
     }
-    NSLog(@"parser took    %.3fms", (mach_absolute_time() - started)*ticksToMillis);
     Context ctx = { nil, nil, d };
     [q enumerateTokens:&ctx block:cb];
 }
@@ -237,14 +243,17 @@ NSString *KeyCompletions = @"ZKCompletions";
 }
 
 -(void)enumerateFrom:(Context *)ctx block:(tokenCallback)cb {
-    cb(TField, nil, nil, self.from.sobject.loc);
+    cb(TField, self.from.sobject.loc, nil, nil);
     if (ctx->desc == nil) {
         if (![ctx->describer knownSObject:self.from.sobject.name.val]) {
             NSObject<Describer> *describer = ctx->describer;
-            cb(TError, ^NSArray<NSString*>*() {
+            cb(TError,
+               self.from.sobject.name.loc,
+               [NSString stringWithFormat:@"SObject %@ does not exist or is not accessible.", self.from.sobject.name.val],
+               ^NSArray<NSString*>*() {
                 return [describer allSObjects];
-            },
-            [NSString stringWithFormat:@"SObject %@ does not exist or is not accessible.", self.from.sobject.name.val], self.from.sobject.name.loc);
+            });
+            
         }
     }
     AliasMap *aliases = nil;
@@ -256,7 +265,7 @@ NSString *KeyCompletions = @"ZKCompletions";
     }
     // TODO, this has a large overlap with the code for SelectField below.
     for (SelectField *related in self.from.relatedObjects) {
-        cb(TField, nil, nil, related.loc);
+        cb(TField, related.loc, nil, nil);
         // first path segment can be an alias or a relationship on the primary object.
         CaseInsensitiveStringKey *firstKey = [CaseInsensitiveStringKey of:related.name[0].val];
         NSArray<PositionedString*> *path = related.name;
@@ -269,7 +278,7 @@ NSString *KeyCompletions = @"ZKCompletions";
         for (PositionedString *step in path) {
             ZKDescribeField *df = [curr parentRelationshipsByName][[CaseInsensitiveStringKey of:step.val]];
             if (df == nil) {
-                cb(TError, nil, nil, NSUnionRange(step.loc, related.name.lastObject.loc));
+                cb(TError, NSUnionRange(step.loc, related.name.lastObject.loc), nil, nil);
                 curr = nil;
                 break;
             }
@@ -288,7 +297,7 @@ NSString *KeyCompletions = @"ZKCompletions";
 }
 
 -(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
-    cb(TKeyword, nil, nil, self.loc);
+    cb(TKeyword, self.loc, nil, nil);
     Context qCtx = [self queryContext:ctx];
     [self enumerateFrom:&qCtx block:cb];
     for (Expr *f in self.selectExprs) {
@@ -298,9 +307,9 @@ NSString *KeyCompletions = @"ZKCompletions";
     [self.where enumerateTokens:&qCtx block:cb];
     if (self.withDataCategory.count > 0) {
         for (DataCategoryFilter *f in self.withDataCategory) {
-            cb(TField, nil, nil, f.category.loc);
+            cb(TField, f.category.loc, nil, nil);
             for (PositionedString *v in f.values) {
-                cb(TField, nil, nil, v.loc);
+                cb(TField, v.loc, nil, nil);
             }
         }
     }
@@ -310,10 +319,10 @@ NSString *KeyCompletions = @"ZKCompletions";
         [o.field enumerateTokens:&qCtx block:cb];
     }
     if (self.limit != nil) {
-        cb(TLiteral, nil, nil, self.limit.loc);
+        cb(TLiteral, self.limit.loc, nil, nil);
     }
     if (self.offset != nil) {
-        cb(TLiteral, nil, nil, self.offset.loc);
+        cb(TLiteral, self.offset.loc, nil, nil);
     }
 }
 @end
@@ -339,7 +348,7 @@ NSString *KeyCompletions = @"ZKCompletions";
     
 @implementation SelectField (Colorize)
 -(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
-    cb(TField, nil, nil, self.loc);
+    cb(TField, self.loc, nil, nil);
     
     // The first step in the path is optionally the object name, e.g.
     // select account.name from account
@@ -364,7 +373,19 @@ NSString *KeyCompletions = @"ZKCompletions";
         path = [path subarrayWithRange:NSMakeRange(1, path.count-1)];
         if (path.count == 0) {
             // if they've only specified the object name, then that's not valid.
-            cb(TError, nil, nil, self.name[0].loc);
+            cb(TError, self.name[0].loc,
+                   [NSString stringWithFormat:@"Need to add a field to the SObject %@", obj.name],
+                   ^NSArray<NSString*>*() {
+                        NSMutableArray<NSString*>* completions = [NSMutableArray arrayWithCapacity:obj.fields.count * 1.25];
+                        for (ZKDescribeField *f in obj.fields) {
+                            [completions addObject:[NSString stringWithFormat:@"%@.%@", obj.name, f.name]];
+                            if (f.relationshipName.length > 0) {
+                                [completions addObject:[NSString stringWithFormat:@"%@.%@", obj.name, f.relationshipName]];
+                            }
+                        }
+                        [completions sortUsingSelector:@selector(caseInsensitiveCompare:)];
+                        return completions;
+            });
         }
     } else {
         // We can use the alias map to resolve the alias. enumeratorFrom populated this from all the related objects in
@@ -379,9 +400,36 @@ NSString *KeyCompletions = @"ZKCompletions";
         if ([obj fieldWithName:f.val] == nil) {
             // see if its a relationship instead
             ZKDescribeField *df = [obj parentRelationshipsByName][[CaseInsensitiveStringKey of:f.val]];
-            if (df == nil || f == self.name.lastObject) {
-                cb(TError,nil, nil,  NSUnionRange(f.loc, [self.name lastObject].loc));
-                return;
+            if (obj != nil) {
+                if (df == nil) {
+                    cb(TError, NSUnionRange(f.loc, [self.name lastObject].loc),
+                       [NSString stringWithFormat:@"There is no field or relationship %@ on SObject %@", f.val, obj.name],
+                       ^NSArray<NSString*>*() {
+                        NSMutableArray *c = [NSMutableArray arrayWithArray:[obj.fields valueForKey:@"name"]];
+                        [c addObjectsFromArray:[obj.parentRelationshipsByName.allValues valueForKey:@"relationshipName"]];
+                        [c sortUsingSelector:@selector(caseInsensitiveCompare:)];
+                        return c;
+                    });
+                    return;
+                } else if (f == self.name.lastObject) {
+                    NSObject<Describer> *describer = ctx->describer;
+                    cb(TError, f.loc,
+                       [NSString stringWithFormat:@"%@ is a relationship, it should be followed by a field", df.relationshipName],
+                       ^NSArray<NSString*>*() {
+                            ZKDescribeSObject *relatedObject = [describer describe:df.referenceTo[0]]; // TODO or name;
+                            NSMutableArray<NSString*>* completions = [NSMutableArray arrayWithCapacity:relatedObject.fields.count * 1.25];
+                            for (ZKDescribeField *f in relatedObject.fields) {
+                                [completions addObject:[NSString stringWithFormat:@"Contact.%@.%@", df.relationshipName, f.name]];
+                                if (f.relationshipName.length > 0) {
+                                    [completions addObject:[NSString stringWithFormat:@"%@.%@", df.relationshipName, f.relationshipName]];
+                                }
+                            }
+                            [completions sortUsingSelector:@selector(caseInsensitiveCompare:)];
+                            NSLog(@"completions %@", completions);
+                            return completions;
+                    });
+                   return;
+               }
             }
             if (df.namePointing) {
                 // polymorphic rel, valid fields are from Name, not any of the actual related types.
@@ -393,7 +441,8 @@ NSString *KeyCompletions = @"ZKCompletions";
             // its a field, it better be the last item on the path.
             if (f != path.lastObject) {
                 NSRange fEnd = NSMakeRange(f.loc.location+f.loc.length,1);
-                cb(TError, nil, nil, NSUnionRange(fEnd, path.lastObject.loc));
+                cb(TError, NSUnionRange(fEnd, path.lastObject.loc),
+                   [NSString stringWithFormat:@"%@ is a field not a relationship, so should be the last item in the field path", f.val], nil);
                 return;
             }
         }
@@ -403,28 +452,40 @@ NSString *KeyCompletions = @"ZKCompletions";
 
 @implementation SelectFunc (Colorize)
 -(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
-    cb(TFunc, nil, nil, self.name.loc);
+    cb(TFunc, self.name.loc, nil, nil);
     for (Expr *e in self.args) {
         [e enumerateTokens:ctx block:cb];
     }
     if (self.alias != nil) {
-        cb(TField, nil, nil, self.alias.loc);
+        cb(TField, self.alias.loc, nil, nil);
     }
 }
 @end
 
 @implementation TypeOf (Colorize)
 -(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
-    cb(TField, nil, nil, self.relationship.loc);
-    ZKDescribeField *relField = [ctx->desc parentRelationshipsByName][[CaseInsensitiveStringKey of:self.relationship.val]];
-    if (relField == nil) {
-        cb(TError, nil, nil, self.relationship.loc);
+    cb(TField, self.relationship.loc, nil, nil);
+    ZKDescribeSObject *objDesc = ctx->desc;
+    ZKDescribeField *relField = nil;
+    if (objDesc != nil) {
+        relField = [objDesc parentRelationshipsByName][[CaseInsensitiveStringKey of:self.relationship.val]];
+        if (relField == nil) {
+            cb(TError, self.relationship.loc,
+               [NSString stringWithFormat:@"There is no relationship %@ on SObject %@", self.relationship.val, ctx->desc.name],
+               ^NSArray<NSString*>*() {
+                    return [objDesc.parentRelationshipsByName.allValues valueForKey:@"relationshipName"];
+            });
+        }
     }
     for (TypeOfWhen *w in self.whens) {
-        cb(TField, nil, nil, w.objectType.loc);
+        cb(TField, w.objectType.loc, nil, nil);
         ZKDescribeSObject *d = [ctx->describer describe:w.objectType.val];
         if (d == nil) {
-            cb(TError, nil, nil, w.objectType.loc);
+            cb(TError, w.objectType.loc,
+               [NSString stringWithFormat:@"The SObject %@ doesn't exist or is not accessible", w.objectType.val],
+               ^NSArray<NSString*>*() {
+                    return relField.referenceTo;
+            });
         } else {
             BOOL validRefTo = FALSE;
             for (NSString *refTo in relField.referenceTo) {
@@ -434,7 +495,11 @@ NSString *KeyCompletions = @"ZKCompletions";
                 }
             }
             if (!validRefTo) {
-                cb(TError, nil, nil, w.objectType.loc);
+                cb(TError, w.objectType.loc,
+                   [NSString stringWithFormat:@"The relationship %@ does not reference the %@ SObject", self.relationship.val, d.name],
+                   ^NSArray<NSString*>* {
+                        return relField.referenceTo;
+                });
             }
         }
         Context childCtx = { d, ctx->aliases, ctx->describer };
@@ -472,13 +537,13 @@ NSString *KeyCompletions = @"ZKCompletions";
 
 @implementation LiteralValue (Colorize)
 -(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
-    cb(TLiteral, nil, nil, self.loc);
+    cb(TLiteral, self.loc, nil, nil);
 }
 @end
 
 @implementation LiteralValueArray (Colorize)
 -(void)enumerateTokens:(Context*)ctx block:(tokenCallback)cb {
-    cb(TLiteral,nil, nil,  self.loc);
+    cb(TLiteral, self.loc, nil, nil);
 }
 @end
 
