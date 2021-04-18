@@ -26,28 +26,13 @@
 #import "DataSources.h"
 #import "CaseInsensitiveStringKey.h"
 #include <mach/mach_time.h>
-
+#import "ColorizerStyle.h"
 
 @interface SoqlColorizer()
 @property (strong,nonatomic) SoqlParser *soqlParser;
 @end
 
-@interface ColorizerStyle : NSObject
 
-@property (strong) NSColor *fieldColor;
-@property (strong) NSColor *keywordColor;
-@property (strong) NSColor *literalColor;
-@property (strong) NSNumber *underlineStyle;
-@property (strong) NSDictionary *underlined;
-@property (strong) NSDictionary *noUnderline;
-
-@property (strong) NSDictionary *keyWord;
-@property (strong) NSDictionary *field;
-@property (strong) NSDictionary *literal;
-
-@end
-
-static ColorizerStyle *style;
 
 typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasMap;
 
@@ -68,11 +53,12 @@ typedef struct {
 
 static double ticksToMillis = 0;
 NSString *KeyCompletions = @"ZKCompletions";
+static ColorizerStyle *style;
 
 @implementation SoqlColorizer
 
 +(void)initialize {
-    style = [ColorizerStyle new];
+    style = [ColorizerStyle styles];
     
     // The first time we get here, ask the system
     // how to convert mach time units to nanoseconds
@@ -547,31 +533,6 @@ NSString *KeyCompletions = @"ZKCompletions";
 }
 @end
 
-
-@implementation ColorizerStyle
-
--(instancetype)init {
-    self = [super init];
-    self.fieldColor = [NSColor colorNamed:@"soql.field"];
-    self.keywordColor = [NSColor colorNamed:@"soql.keyword"];
-    self.literalColor = [NSColor colorNamed:@"soql.literal"];
-    
-    self.underlineStyle = @(NSUnderlineStyleSingle | NSUnderlinePatternDot | NSUnderlineByWord);
-    self.underlined = @{
-                        NSUnderlineStyleAttributeName: self.underlineStyle,
-                        NSUnderlineColorAttributeName: [NSColor redColor],
-                        };
-    self.noUnderline = @{ NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone) };
-    
-    // TODO, why is colorNamed:@ returning nil in unit tests?
-    if (self.keywordColor != nil) {
-        self.keyWord = @{ NSForegroundColorAttributeName:self.keywordColor, NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone)};
-        self.field =   @{ NSForegroundColorAttributeName:self.fieldColor,   NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone)};
-        self.literal = @{ NSForegroundColorAttributeName:self.literalColor, NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone)};
-    }
-    return self;
-}
-@end
 
 @implementation ZKDescribeSObject (Colorize)
 

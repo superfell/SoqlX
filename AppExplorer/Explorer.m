@@ -35,6 +35,7 @@
 #import "Prefs.h"
 #import "AppDelegate.h"
 #import "SoqlColorizer.h"
+#import "SoqlTokenizer.h"
 
 static NSString *soqlTabId = @"soql";
 static NSString *schemaTabId = @"schema";
@@ -61,7 +62,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 @property (strong) ZKDescribeGlobalSObject *previousColorizedDescribe;
 
 @property (strong) ZKSforceClient *sforce;
-@property (strong) SoqlColorizer *colorizer;
+@property (strong) SoqlTokenizer *colorizer;
 @end
 
 
@@ -256,9 +257,9 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     describeList.delegate = descDataSource;
     [describeList reloadData];
 
-    self.colorizer = [SoqlColorizer new];
+    self.colorizer = [SoqlTokenizer new];
     self.colorizer.describes = descDataSource;
-    self.colorizer.txt = soql.textStorage;
+    self.colorizer.view = soql;
     soql.textStorage.delegate = self.colorizer;
     soql.delegate = self.colorizer;
     

@@ -149,7 +149,7 @@ typedef struct {
     for (NSString *q in queries) {
         [results appendString:q];
         [results appendString:@"\n"];
-        [c enumerateTokens:q describes:descs block:^void(SoqlTokenType t, completions comps, NSString *error, NSRange loc) {
+        [c enumerateTokens:q describes:descs block:^void(SoqlTokenType t, NSRange loc, NSString *error,completions comps ) {
             [results appendFormat:@"%15@ %3lu:%-3lu\t%@\t%@\n",
                 [[self tokenName:t] stringByPaddingToLength:10 withString:@" " startingAtIndex:0],
                 loc.location, loc.length, [q substringWithRange:loc], error == nil ? @"" : error];
