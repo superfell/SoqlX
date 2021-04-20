@@ -6,6 +6,8 @@
 //
 
 #import "ColorizerStyle.h"
+#import <objc/runtime.h>
+#import "CaseInsensitiveStringKey.h"
 
 static ColorizerStyle *style;
 
@@ -40,4 +42,38 @@ static ColorizerStyle *style;
     }
     return self;
 }
+@end
+
+
+
+@implementation ZKDescribeSObject (Colorize)
+
+-(NSDictionary<CaseInsensitiveStringKey*,ZKDescribeField*>*)parentRelationshipsByName {
+    NSDictionary<CaseInsensitiveStringKey*,ZKDescribeField*>* r = objc_getAssociatedObject(self, @selector(parentRelationshipsByName));
+    if (r == nil) {
+        NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeField*>* pr = [NSMutableDictionary dictionary];
+        for (ZKDescribeField *f in self.fields) {
+            if (f.relationshipName.length > 0) {
+                [pr setObject:f forKey:[CaseInsensitiveStringKey of:f.relationshipName]];
+            }
+        }
+        r = pr;
+        objc_setAssociatedObject(self, @selector(parentRelationshipsByName), r, OBJC_ASSOCIATION_RETAIN);
+    }
+    return r;
+}
+
+-(NSDictionary<CaseInsensitiveStringKey*,ZKChildRelationship*>*)childRelationshipsByName {
+    NSDictionary<CaseInsensitiveStringKey*,ZKChildRelationship*>* r = objc_getAssociatedObject(self, @selector(childRelationshipsByName));
+    if (r == nil) {
+        NSMutableDictionary<CaseInsensitiveStringKey*,ZKChildRelationship*>* cr = [NSMutableDictionary dictionaryWithCapacity:self.childRelationships.count];
+        for (ZKChildRelationship *r in self.childRelationships) {
+            [cr setObject:r forKey:[CaseInsensitiveStringKey of:r.relationshipName]];
+        }
+        r = cr;
+        objc_setAssociatedObject(self, @selector(childRelationshipsByName), r, OBJC_ASSOCIATION_RETAIN);
+    }
+    return r;
+}
+
 @end

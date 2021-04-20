@@ -23,3 +23,5 @@
 @property (strong,nonatomic) NSTextView *view;
 -(void)color;
 @end
+
+

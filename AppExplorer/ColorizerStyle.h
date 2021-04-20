@@ -6,6 +6,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <ZKSforce/ZKDescribeSObject.h>
+
+@class CaseInsensitiveStringKey;
+@class ZKDescribeField;
+@class ZKChildRelationship;
 
 @interface ColorizerStyle : NSObject
 +(instancetype)styles;
@@ -21,4 +26,9 @@
 @property (strong) NSDictionary *field;
 @property (strong) NSDictionary *literal;
 
+@end
+
+@interface ZKDescribeSObject (Colorize)
+-(NSDictionary<CaseInsensitiveStringKey*,ZKDescribeField*>*)parentRelationshipsByName;
+-(NSDictionary<CaseInsensitiveStringKey*,ZKChildRelationship*>*)childRelationshipsByName;
 @end
