@@ -32,38 +32,56 @@ typedef NS_ENUM(uint16_t, TokenType) {
     TTError
 };
 
-@interface Token : NSObject
-+(instancetype)txt:(NSString *)txt loc:(NSRange)l;
-@property (strong,nonatomic) NSString *txt;
+@interface Token : NSObject {
+    NSString *txt;
+}
++(instancetype)txt:(NSString *)fullString loc:(NSRange)tokenLoc;
 @property (assign,nonatomic) TokenType type;
 @property (assign,nonatomic) NSRange loc;
 @property (strong,nonatomic) NSObject *value;
 @property (strong,nonatomic) NSMutableArray<NSString*>* completions;
+@property (strong,nonatomic) NSString *tokenTxt;
 @end
 
 @implementation Token
 +(instancetype)txt:(NSString *)txt loc:(NSRange)r {
+    NSAssert(r.location+r.length <= txt.length, @"Token location out of range of string");
     Token *tkx = [self new];
-    tkx.txt = txt;
+    tkx->txt = txt;
     tkx.loc = r;
     tkx.completions = [NSMutableArray array];
     return tkx;
 }
--(BOOL)matches:(NSString *)txt caseSensitive:(BOOL)cs {
-    if (cs) {
-        return [txt isEqualToString:self.txt];
+-(NSString *)tokenTxt {
+    if (_tokenTxt == nil) {
+        _tokenTxt = [self->txt substringWithRange:self.loc];
     }
-    return [txt caseInsensitiveCompare:self.txt] == NSOrderedSame;
+    return _tokenTxt;
 }
+
+-(BOOL)matches:(NSString *)match caseSensitive:(BOOL)cs {
+    if (cs) {
+        return [self.tokenTxt isEqualToString:match];
+    }
+    return [self.tokenTxt caseInsensitiveCompare:match] == NSOrderedSame;
+}
+
 -(NSString *)description {
-    return [NSString stringWithFormat:@"%lu-%lu: %hu: %@: completions:%@", self.loc.location, self.loc.length, self.type, self.txt, [self.completions componentsJoinedByString:@", "]];
+    return [NSString stringWithFormat:@"%4lu-%-4lu: %2hu %@ completions %lu", self.loc.location, self.loc.length, self.type,
+            [self.tokenTxt stringByPaddingToLength:25 withString:@" " startingAtIndex:0], (unsigned long)self.completions.count];
 }
+
+-(Token*)tokenOf:(NSRange)r {
+    return [Token txt:txt loc:r];
+}
+
 @end
 
 @interface SoqlScanner : NSObject {
     NSString       *txt;
     NSUInteger      pos;
     NSCharacterSet *defSeparator;
+    NSCharacterSet *ws;
 }
 +(instancetype)withString:(NSString *)s;
 -(Token *)until:(NSCharacterSet*)sep;
@@ -72,56 +90,60 @@ typedef NS_ENUM(uint16_t, TokenType) {
 -(Token *)nextToken;
 -(Token *)peekToken;
 -(unichar)peek;
--(void)skipWs;
--(void)skip:(NSUInteger)n;
+// returns true if at EOF after skip.
+-(BOOL)skipWs;
+// returns true if at EOF after or during skip
+-(BOOL)skip:(NSUInteger)n;
+
 -(NSUInteger)posn;
--(NSString *)txtOf:(NSRange)r;
 -(BOOL)eof;
 
-@property (strong,nonatomic) NSString *error;
-@property (assign,nonatomic) NSInteger errorPos;
+-(NSString *)txtOf:(NSRange)r;
 @end
 
 @implementation SoqlScanner
 
 +(instancetype)withString:(NSString *)s {
     SoqlScanner *c = [SoqlScanner new];
-    c->txt = s;
+    c->txt = [s copy];
     c->pos = 0;
-    c->defSeparator = [NSCharacterSet characterSetWithCharactersInString:@" \r\n\t(,"];
+    c->defSeparator = [NSCharacterSet characterSetWithCharactersInString:@" \r\n\t(),"];
+    c->ws = [NSCharacterSet whitespaceAndNewlineCharacterSet];
     return c;
-}
-
--(void)setError:(NSString *)err {
-    _error = err;
-    self.errorPos = pos;
-}
-
--(BOOL)eof {
-    return pos >= txt.length;
 }
 
 -(NSString *)txtOf:(NSRange)r {
     return [txt substringWithRange:r];
 }
 
+-(Token*)tokenOf:(NSRange)r {
+    return [Token txt:txt loc:r];
+}
+
+-(BOOL)eof {
+    return pos >= txt.length;
+}
+
 -(NSUInteger)posn {
     return pos;
 }
 
--(void)skip:(NSUInteger)n {
+-(BOOL)skip:(NSUInteger)n {
     pos += n;
+    return [self eof];
 }
 
--(void)skipWs {
-    NSCharacterSet *ws = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+// Skips any whitespace chars. returns true if at EOF.
+-(BOOL)skipWs {
     for (; pos < txt.length; pos++) {
         unichar p = [txt characterAtIndex:pos];
         if (![ws characterIsMember:p]) {
-            return;
+            break;
         }
     }
+    return [self eof];
 }
+
 -(Token *)peekToken {
     NSUInteger start = pos;
     Token *t = [self nextToken];
@@ -135,20 +157,13 @@ typedef NS_ENUM(uint16_t, TokenType) {
 
 -(Token *)consume:(NSString *)txt caseSensitive:(BOOL)cs {
     Token *t = [self peekToken];
-    if (t.txt.length != txt.length) {
+    if (t.tokenTxt.length != txt.length) {
         return nil;
     }
-    BOOL match = NO;
-    if (cs) {
-        match = [t.txt isEqualToString:txt];
-    } else {
-        match = [t.txt caseInsensitiveCompare:txt] == NSOrderedSame;
-    }
-    if (match) {
+    if ([t matches:txt caseSensitive:cs]) {
         pos += txt.length;
         return t;
     }
-    [self setError:[NSString stringWithFormat:@"Expecting %@", txt]];
     return nil;
 }
 
@@ -157,12 +172,10 @@ typedef NS_ENUM(uint16_t, TokenType) {
     for (; pos < txt.length; pos++) {
         unichar p = [txt characterAtIndex:pos];
         if (![cs characterIsMember:p]) {
-            NSRange loc = NSMakeRange(start,pos-start);
-            return [Token txt:[txt substringWithRange:loc] loc:loc];
+            return [Token txt:txt loc:NSMakeRange(start,pos-start)];
         }
     }
-    NSRange loc = NSMakeRange(start, txt.length-start);
-    return [Token txt:[txt substringWithRange:loc] loc:loc];
+    return [Token txt:txt loc:NSMakeRange(start, txt.length-start)];
 }
 
 -(Token *)until:(NSCharacterSet *)sep {
@@ -170,19 +183,19 @@ typedef NS_ENUM(uint16_t, TokenType) {
     for (; pos < txt.length; pos++) {
         unichar p = [txt characterAtIndex:pos];
         if ([sep characterIsMember:p]) {
-            NSRange loc = NSMakeRange(start,pos-start);
-            return [Token txt:[txt substringWithRange:loc] loc:loc];
+            return [Token txt:txt loc:NSMakeRange(start,pos-start)];
         }
     }
-    NSRange loc = NSMakeRange(start, txt.length-start);
-    return [Token txt:[txt substringWithRange:loc] loc:loc];
+    return [Token txt:txt loc:NSMakeRange(start, txt.length-start)];
 }
 
 -(unichar)peek {
+    NSAssert(![self eof], @"Can't peek at EOF");
     return [txt characterAtIndex:pos];
 }
+
 -(NSString*)description {
-    return [txt substringFromIndex:pos];
+    return [self eof]? @"at EOF" : [txt substringFromIndex:pos];
 }
 @end
 
@@ -204,37 +217,46 @@ static NSString *KeyCompletions = @"completions";
 }
 
 -(void)scanExpr:(SoqlScanner*)sc {
-    [sc skipWs];
-    if ([sc eof]) {
-        return;
-    }
+    if ([sc skipWs]) return;
     [self scanFieldOrFunc:sc];
-    [sc skipWs];
+    if ([sc skipWs]) return;
     Token *op = sc.peekToken;
-    NSSet *ops = [NSSet setWithArray:@[@">=",@"=",@">",@"<",@"<=",@"!=",@"LIKE",@"IN",@"INCLUDES",@"EXCLUDES"]];
+    NSSet *ops = [NSSet setWithArray:@[@">=",@"=",@">",@"<",@"<=",@"!=",@"LIKE",@"IN",@"NOT IN",@"INCLUDES",@"EXCLUDES"]];
     [op.completions addObjectsFromArray:[ops allObjects]];
-    if (![ops containsObject:[op.txt uppercaseString]]) {
+    // TODO deal with NOT IN
+    if (![ops containsObject:[op.tokenTxt uppercaseString]]) {
         op.type = TTError;
         op.value = [NSString stringWithFormat:@"Expecting one of %@", ops];
         [self.tokens addObject:op];
-        [sc skip:op.txt.length];
+        [sc skip:op.loc.length];
         return;
     }
     op.type = TTOperator;
     [self.tokens addObject:op];
-    [sc skip:op.txt.length];
-    [sc skipWs];
-    NSArray<NSString*> *valueCompletions = @[@"\'\'", @"NULL", @"TRUE", @"FALSE", @"2020-04-16", @"2020-04-16T12:00:00Z", @"42", @"42.42"];
+    [sc skip:op.loc.length];
+    if ([sc skipWs]) return;
+    NSArray<NSString*> *valueCompletions = @[@"\'\'", @"NULL", @"TRUE", @"FALSE", @"2020-04-16", @"2020-04-16T12:00:00Z", @"42", @"42.42"]; // + dateTime literals.
     unichar x = [sc peek];
     if (x == '(') {
         [sc skip:1];
-        [sc skipWs];
-        if ([sc.peekToken.txt caseInsensitiveCompare:@"SELECT"] == NSOrderedSame) {
+        if ([sc skipWs]) return;
+        if ([sc.peekToken matches:@"SELECT" caseSensitive:NO]) {
             NSUInteger start = sc.posn;
             NSMutableArray *tokens = self.tokens;
             self.tokens = [NSMutableArray arrayWithCapacity:10];
             [self scanSelect:sc];
-            Token *t = [Token txt:[sc txtOf:NSMakeRange(start, sc.posn-start)] loc:NSMakeRange(start, sc.posn-start)];
+            [sc skipWs];
+            if ([sc eof] || [sc peek] != ')') {
+                Token *err = [sc tokenOf:NSMakeRange(sc.posn, sc.eof ? 0 : 1)];
+                err.type = TTError;
+                err.value = @"Expecting closing )";
+                [err.completions addObject:@")"];
+                self.tokens = tokens;
+                [self.tokens addObject:err];
+                return;
+            }
+            [sc skip:1];
+            Token *t = [sc tokenOf:NSMakeRange(start, sc.posn-start)];
             t.type = TTNestedSelect;
             t.value = self.tokens;
             self.tokens = tokens;
@@ -255,25 +277,25 @@ static NSString *KeyCompletions = @"completions";
         Token *literal = [sc nextToken];
         literal.type = TTLiteral;
         [literal.completions addObjectsFromArray:valueCompletions];
-
         [self.tokens addObject:literal];
     } else {
+        // should be date literals
         [self scanFieldOrFunc:sc];
     }
-    [sc skipWs];
+    if ([sc skipWs]) return;
     Token *next = [sc peekToken];
-    if ([next.txt caseInsensitiveCompare:@"AND"] == NSOrderedSame || [next.txt caseInsensitiveCompare:@"OR"] == NSOrderedSame) {
+    if ([next matches:@"AND" caseSensitive:NO] || [next matches:@"OR" caseSensitive:NO]) {
         next.type = TTOperator;
         [next.completions addObjectsFromArray:@[@"AND",@"OR"]];
         [self.tokens addObject:next];
-        [sc skip:next.txt.length];
+        [sc skip:next.loc.length];
         [self scanExpr:sc];
     }
 }
 
 -(void)scanWhere:(SoqlScanner*)sc {
     Token *n = [sc peekToken];
-    if ([n.txt caseInsensitiveCompare:@"WHERE"] == NSOrderedSame) {
+    if ([n matches:@"WHERE" caseSensitive:NO]) {
         [sc skip:5];
         n.type = TTKeyword;
         [self.tokens addObject:n];
@@ -283,11 +305,11 @@ static NSString *KeyCompletions = @"completions";
 }
 
 -(void)scanFrom:(SoqlScanner*)sc {
-    [sc skipWs];
+    if ([sc skipWs]) return;
     Token *t = [sc nextToken];
     t.type = TTSObject;
     [self.tokens addObject:t];
-    [sc skipWs];
+    if ([sc skipWs]) return;
     unichar n = [sc peek];
     while (n == ',') {
         [sc skip:1];
@@ -295,7 +317,7 @@ static NSString *KeyCompletions = @"completions";
         Token *rel = [sc nextToken];
         rel.type = TTSObjectRelation;
         [self.tokens addObject:rel];
-        [sc skipWs];
+        if ([sc skipWs]) return;
         n = [sc peek];
     }
     [self scanWhere:sc];
@@ -303,21 +325,21 @@ static NSString *KeyCompletions = @"completions";
 
 -(void)scanFieldOrFunc:(SoqlScanner*)sc {
     Token *t = [sc peekToken];
-    if ([t.txt containsString:@"."]) {
+    if ([t.tokenTxt containsString:@"."]) {
         t.type = TTFieldPath;
         [self.tokens addObject:t];
-        [sc skip:t.txt.length];
+        [sc skip:t.loc.length];
     } else {
         // field or func
-        [sc skip:t.txt.length];
+        [sc skip:t.loc.length];
         [sc skipWs];
-        if ([sc peek] == '(') {
+        if (![sc eof] && [sc peek] == '(') {
             // func
             Token *name = t;
             Token *rest = [sc until:[NSCharacterSet characterSetWithCharactersInString:@")"]];
             // TODO, this should be separate tokens for the args
             NSRange r = NSUnionRange(name.loc,rest.loc);
-            Token *fn = [Token txt:[sc txtOf:r] loc:r];
+            Token *fn = [sc tokenOf:r];
             fn.type = TTFunc;
             [sc skip:1];
             [self.tokens addObject:fn];
@@ -330,7 +352,7 @@ static NSString *KeyCompletions = @"completions";
 }
 
 -(void)scanSelectExprs:(SoqlScanner*)sc {
-    [sc skipWs];
+    if ([sc skipWs]) return;
     unichar n = [sc peek];
     if (n == '(') {
         NSUInteger start = sc.posn;
@@ -339,32 +361,32 @@ static NSString *KeyCompletions = @"completions";
         [sc skip:1];
         [self scanSelect:sc];
         [sc skipWs];
-        NSRange selectLoc = NSMakeRange(start,sc.posn+1);
-        Token *select = [Token txt:[sc txtOf:selectLoc] loc:selectLoc];
-        select.type = TTNestedSelect;
-        select.value = self.tokens;
-        self.tokens = currentTokens;
-        [self.tokens addObject:select];
-        unichar end = [sc peek];
-        if (end != ')') {
+        if ([sc eof] || [sc peek] != ')') {
             Token *err = [sc nextToken];
             err.type = TTError;
             err.value = @"Expecting closing )";
             [err.completions addObject:@")"];
+            self.tokens = currentTokens;
             [self.tokens addObject:err];
             return;
         }
         [sc skip:1];
+        NSRange selectLoc = NSMakeRange(start,sc.posn-start);
+        Token *select = [sc tokenOf:selectLoc];
+        select.type = TTNestedSelect;
+        select.value = self.tokens;
+        self.tokens = currentTokens;
+        [self.tokens addObject:select];
     } else {
         Token *t = [sc peekToken];
-        if ([t.txt caseInsensitiveCompare:@"TYPEOF"] == NSOrderedSame) {
+        if ([t matches:@"TYPEOF" caseSensitive:NO]) {
             [self scanTypeOf:sc];
         } else {
             [self scanFieldOrFunc:sc];
         }
     }
     [sc skipWs];
-    if ([sc peek] == ',') {
+    if (![sc eof] && [sc peek] == ',') {
         [sc skip:1];
         [self scanSelectExprs:sc];
     } else {
@@ -402,13 +424,15 @@ static NSString *KeyCompletions = @"completions";
     self.tokens = [NSMutableArray arrayWithCapacity:10];
     SoqlScanner *sc = [SoqlScanner withString:self.view.textStorage.string];
     [self scanSelect:sc];
-    
-    NSLog(@"parsed tokens\n%@", self.tokens);
     [self resolveTokens:self.tokens];
     NSLog(@"resolved tokens\n%@", self.tokens);
     NSTextStorage *txt = self.view.textStorage;
     NSRange before =  [self.view selectedRange];
     [txt beginEditing];
+    NSRange all = NSMakeRange(0,txt.length);
+    [txt removeAttribute:NSToolTipAttributeName range:all];
+    [txt addAttribute:NSForegroundColorAttributeName value:[NSColor whiteColor] range:all];
+    [txt removeAttribute:NSToolTipAttributeName range:all];
     [self applyTokens:self.tokens];
     [txt endEditing];
     [self.view setSelectedRange:before];
@@ -425,23 +449,21 @@ static NSString *KeyCompletions = @"completions";
         }
     }
     [tSObject.completions addObjectsFromArray:self.allSObjects];
-    if (![self knownSObject:tSObject.txt]) {
-        Token *err = [Token txt:tSObject.txt loc:tSObject.loc];
-        err.type = TTError;
-        err.value = [NSString stringWithFormat:@"The SObject '%@' does not exist or is inaccessible", tSObject.txt];
-        [tokens addObject:err];
+    if (![self knownSObject:tSObject.tokenTxt]) {
+        tSObject.type = TTError;
+        tSObject.value = [NSString stringWithFormat:@"The SObject '%@' does not exist or is inaccessible", tSObject.tokenTxt];
         return;
     }
     NSMutableArray<Token*> *newTokens = [NSMutableArray arrayWithCapacity:4];
-    ZKDescribeSObject *desc = [self describe:tSObject.txt];
+    ZKDescribeSObject *desc = [self describe:tSObject.tokenTxt];
     tSObject.value = desc;
     for (Token *sel in tokens) {
         if (sel.type == TTFieldPath) {
-            NSArray<NSString*>* path = [sel.txt componentsSeparatedByString:@"."];
+            NSArray<NSString*>* path = [sel.tokenTxt componentsSeparatedByString:@"."];
             NSInteger pos = sel.loc.location;
             ZKDescribeSObject *currentSObject = desc;
             for (NSString *step in path) {
-                Token *tStep = [Token txt:step loc:NSMakeRange(pos, step.length)];
+                Token *tStep = [tSObject tokenOf:NSMakeRange(pos, step.length)];
                 [tStep.completions addObjectsFromArray:[currentSObject valueForKeyPath:@"fields.name"]];
                 [tStep.completions addObjectsFromArray:[[[currentSObject parentRelationshipsByName] allValues] valueForKey:@"relationshipName"]];
                 ZKDescribeField *f = [currentSObject fieldWithName:step];
@@ -450,6 +472,8 @@ static NSString *KeyCompletions = @"completions";
                     if (rel == nil) {
                         tStep.type = TTError;
                         tStep.value = [NSString stringWithFormat:@"The SObject %@ doesn't contain a field or relationship called %@", desc.name, step];
+                        [newTokens addObject:tStep];
+                        break;
                     } else {
                         tStep.type = TTRelationship;
                         tStep.value = rel;
@@ -486,11 +510,11 @@ static NSString *KeyCompletions = @"completions";
             case TTFieldPath:
                 break;
             case TTKeyword:
-                [txt replaceCharactersInRange:t.loc withString:[t.txt uppercaseString]];
+                [txt replaceCharactersInRange:t.loc withString:[t.tokenTxt uppercaseString]];
                 [txt addAttributes:style.keyWord range:t.loc];
                 break;
             case TTOperator:
-                [txt replaceCharactersInRange:t.loc withString:[t.txt uppercaseString]];
+                [txt replaceCharactersInRange:t.loc withString:[t.tokenTxt uppercaseString]];
                 [txt addAttributes:style.keyWord range:t.loc];
                 break;
             case TTAlias:
@@ -514,6 +538,9 @@ static NSString *KeyCompletions = @"completions";
                 break;
             case TTError:
                 [txt addAttributes:style.underlined range:t.loc];
+                if (t.value != nil) {
+                    [txt addAttribute:NSToolTipAttributeName value:t.value range:t.loc];
+                }
                 break;
         }
     }
