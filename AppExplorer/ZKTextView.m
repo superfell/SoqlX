@@ -64,8 +64,11 @@ double ticksToMilliseconds;
 -(void)awakeFromNib {
     self.table.dataSource = self;
     self.table.delegate = self;
-    self.table.rowHeight = 21;
+    //self.table.rowHeight = 21;
+    self.table.usesAutomaticRowHeights = YES;
     self.table.refusesFirstResponder = YES;
+    self.table.selectionHighlightStyle = NSTableViewSelectionHighlightStyleSourceList;
+    self.tableScollView.verticalScroller.controlSize = NSControlSizeRegular;
 }
 
 // if the user pastes rich text, we want to treat it as plain text becuase
@@ -82,27 +85,44 @@ double ticksToMilliseconds;
 -(void)keyDown:(NSEvent *)event {
     lastEvent = mach_absolute_time();
     if (self.po.shown) {
-        if ([event modifierFlags] & NSEventModifierFlagNumericPad) { // arrow keys have this mask
-            NSString *theArrow = [event charactersIgnoringModifiers];
-            if ( [theArrow length] == 1 ) {
-                unichar keyChar = [theArrow characterAtIndex:0];
-                switch (keyChar) {
-                    case NSUpArrowFunctionKey: {
-                        NSInteger sel = self.table.selectedRow;
-                        if (sel > 0) {
-                            NSIndexSet *newSel = [NSIndexSet indexSetWithIndex:sel-1];
-                            [self.table selectRowIndexes:newSel byExtendingSelection:NO];
-                        }
-                        return;
-                    }
-                    case NSDownArrowFunctionKey: {
-                        NSInteger sel = self.table.selectedRow;
-                        NSIndexSet *newSel = [NSIndexSet indexSetWithIndex:sel+1];
-                        [self.table selectRowIndexes:newSel byExtendingSelection:NO];
-                        return;
-                    }
+        NSString *theArrow = [event charactersIgnoringModifiers];
+        if ( [theArrow length] == 1 ) {
+            unichar keyChar = [theArrow characterAtIndex:0];
+            NSLog(@"keyChar %d", keyChar);
+            BOOL isFinal = NO;
+            NSTextMovement movement;
+            switch (keyChar) {
+                case NSUpArrowFunctionKey:
+                case NSDownArrowFunctionKey:
+                case NSPageUpFunctionKey:
+                case NSPageDownFunctionKey:
+                    NSLog(@"Passing keyDown to table");
+                    [self.table keyDown:event];
+                    isFinal = NO;
+                    movement = NSTextMovementUp;
+                    break;
+                case NSTabCharacter:
+                    isFinal = YES;
+                    movement = NSTextMovementTab;
+                    break;
+                case NSCarriageReturnCharacter: {
+                    isFinal = YES;
+                    movement = NSTextMovementReturn;
+                    break;
+                default:
+                    hasTyped = TRUE;
+                    [super keyDown:event];
                 }
             }
+            NSInteger row = [self.table selectedRow];
+            if (row >= 0) {
+                NSString *c = self.completions[row];
+                [self insertCompletion:c forPartialWordRange:self.rangeForUserCompletion movement:movement isFinal:isFinal];
+                if (isFinal) {
+                    [self.po performClose:self];
+                }
+            }
+            return;
         }
     }
     hasTyped = TRUE;
@@ -116,14 +136,12 @@ double ticksToMilliseconds;
     NSPoint containerOrigin = [self textContainerOrigin];
     layoutRect.origin.x += containerOrigin.x;
     layoutRect.origin.y += containerOrigin.y;
-    NSLog(@"layoutRect %f %f %f %f", layoutRect.origin.x, layoutRect.origin.y, layoutRect.size.width, layoutRect.size.height);
     layoutRect.size.width +=2;
     [self.po showRelativeToRect:layoutRect ofView:self preferredEdge:NSRectEdgeMinY];
 }
 
 -(BOOL)isAtEndOfWord {
     NSRange r = [self selectedRange];
-    NSLog(@"selectedRanage %lu - %lu", r.location, r.length);
     if (r.location == 0) {
         return FALSE;
     }
@@ -133,7 +151,7 @@ double ticksToMilliseconds;
     NSString *txt = self.textStorage.string;
     unichar prev = [txt characterAtIndex:r.location-1];
     unichar next = [txt characterAtIndex:r.location];
-    return isblank(next) && !isblank(prev);
+    return (isblank(next) || next==',') && !isblank(prev);
 }
 
 -(void)checkIdle {
@@ -146,7 +164,11 @@ double ticksToMilliseconds;
             NSInteger sel = -1;
             self.completions = [self.delegate textView:self completions:[NSArray array] forPartialWordRange:[self rangeForUserCompletion] indexOfSelectedItem:&sel];
             [self.table reloadData];
-            [self showPopup];
+            if (self.completions.count > 0) {
+                [self.table scrollRowToVisible:0];
+                [self.table selectRowIndexes:[NSIndexSet indexSet] byExtendingSelection:NO];
+                [self showPopup];
+            }
         }
     }
 }
@@ -170,8 +192,8 @@ double ticksToMilliseconds;
         result.editable = NO;
         result.textColor = [NSColor whiteColor];
         result.font = [NSFont fontWithName:@"Arial" size:14];
-        result.drawsBackground = NO;
         result.bordered = NO;
+        result.drawsBackground = NO;
         result.maximumNumberOfLines = 1;
         
         // The identifier of the NSTextField instance is set to MyView.
@@ -185,7 +207,6 @@ double ticksToMilliseconds;
     if ([tableColumn.identifier isEqual:@"text"]) {
         result.stringValue = self.completions[row];
     } else {
-        
         result.stringValue = @"";
     }
 

@@ -53,7 +53,7 @@ static ColorizerStyle *style;
     if (r == nil) {
         NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeField*>* pr = [NSMutableDictionary dictionary];
         for (ZKDescribeField *f in self.fields) {
-            if (f.relationshipName.length > 0) {
+            if (f.relationshipName.length > 0 && f.referenceTo.count > 0) {
                 [pr setObject:f forKey:[CaseInsensitiveStringKey of:f.relationshipName]];
             }
         }

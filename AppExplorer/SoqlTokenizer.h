@@ -13,7 +13,7 @@
 @protocol Describer
 -(ZKDescribeSObject*)describe:(NSString*)obj;   // returns the describe if we have it?
 -(BOOL)knownSObject:(NSString*)obj;             // is the object in the describeGlobal list of objects?
--(NSArray<NSString*>*)allSObjects;
+-(NSArray<NSString*>*)allQueryableSObjects;
 @end
 
 

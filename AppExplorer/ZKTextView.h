@@ -28,4 +28,5 @@
 @property  (strong,nonatomic) IBOutlet NSViewController *pv;
 @property  (strong,nonatomic) IBOutlet NSPopover *po;
 @property  (strong,nonatomic) IBOutlet NSTableView *table;
+@property  (strong,nonatomic) IBOutlet NSScrollView *tableScollView;
 @end

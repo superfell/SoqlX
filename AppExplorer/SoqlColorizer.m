@@ -135,7 +135,7 @@ static ColorizerStyle *style;
     return [self.describes isTypeDescribable:obj];
 }
 
--(NSArray<NSString*>*)allSObjects {
+-(NSArray<NSString*>*)allQueryableSObjects {
     return [self.describes.SObjects valueForKey:@"name"];
 }
 
@@ -232,7 +232,7 @@ static ColorizerStyle *style;
                self.from.sobject.name.loc,
                [NSString stringWithFormat:@"SObject %@ does not exist or is not accessible.", self.from.sobject.name.val],
                ^NSArray<NSString*>*() {
-                return [describer allSObjects];
+                return [describer allQueryableSObjects];
             });
             
         }

@@ -448,7 +448,7 @@ static NSString *KeyCompletions = @"completions";
             break;
         }
     }
-    [tSObject.completions addObjectsFromArray:self.allSObjects];
+    [tSObject.completions addObjectsFromArray:self.allQueryableSObjects];
     if (![self knownSObject:tSObject.tokenTxt]) {
         tSObject.type = TTError;
         tSObject.value = [NSString stringWithFormat:@"The SObject '%@' does not exist or is inaccessible", tSObject.tokenTxt];
@@ -593,8 +593,8 @@ static NSString *KeyCompletions = @"completions";
     return [self.describes isTypeDescribable:obj];
 }
 
--(NSArray<NSString*>*)allSObjects {
-    return [self.describes.SObjects valueForKey:@"name"];
+-(NSArray<NSString*>*)allQueryableSObjects {
+    return [[self.describes.SObjects filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"queryable=true"]] valueForKey:@"name"];
 }
 
 
