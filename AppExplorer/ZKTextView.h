@@ -21,9 +21,11 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface ZKTextView : NSTextView {
+@interface ZKTextView : NSTextView<NSTableViewDataSource, NSTableViewDelegate> {
     uint64_t lastEvent;
     BOOL hasTyped;
 }
-
+@property  (strong,nonatomic) IBOutlet NSViewController *pv;
+@property  (strong,nonatomic) IBOutlet NSPopover *po;
+@property  (strong,nonatomic) IBOutlet NSTableView *table;
 @end

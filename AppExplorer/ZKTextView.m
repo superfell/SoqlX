@@ -26,6 +26,7 @@ double ticksToMilliseconds;
 
 @interface ZKTextView()
 @property (strong,nonatomic) NSTimer *idleCheckTimer;
+@property (strong,nonatomic) NSArray<NSString*>* completions;
 @end
 
 @implementation ZKTextView
@@ -42,6 +43,7 @@ double ticksToMilliseconds;
 - (instancetype)initWithFrame:(NSRect)frameRect textContainer:(nullable NSTextContainer *)container {
     self = [super initWithFrame:frameRect textContainer:container];
     self.idleCheckTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(checkIdle) userInfo:nil repeats:YES];
+    hasTyped = FALSE;
     return self;
 }
 
@@ -59,6 +61,13 @@ double ticksToMilliseconds;
     return self;
 }
 
+-(void)awakeFromNib {
+    self.table.dataSource = self;
+    self.table.delegate = self;
+    self.table.rowHeight = 21;
+    self.table.refusesFirstResponder = YES;
+}
+
 // if the user pastes rich text, we want to treat it as plain text becuase
 // we're controlling the formatting
 -(void)paste:(id)sender {
@@ -72,8 +81,44 @@ double ticksToMilliseconds;
 
 -(void)keyDown:(NSEvent *)event {
     lastEvent = mach_absolute_time();
+    if (self.po.shown) {
+        if ([event modifierFlags] & NSEventModifierFlagNumericPad) { // arrow keys have this mask
+            NSString *theArrow = [event charactersIgnoringModifiers];
+            if ( [theArrow length] == 1 ) {
+                unichar keyChar = [theArrow characterAtIndex:0];
+                switch (keyChar) {
+                    case NSUpArrowFunctionKey: {
+                        NSInteger sel = self.table.selectedRow;
+                        if (sel > 0) {
+                            NSIndexSet *newSel = [NSIndexSet indexSetWithIndex:sel-1];
+                            [self.table selectRowIndexes:newSel byExtendingSelection:NO];
+                        }
+                        return;
+                    }
+                    case NSDownArrowFunctionKey: {
+                        NSInteger sel = self.table.selectedRow;
+                        NSIndexSet *newSel = [NSIndexSet indexSetWithIndex:sel+1];
+                        [self.table selectRowIndexes:newSel byExtendingSelection:NO];
+                        return;
+                    }
+                }
+            }
+        }
+    }
     hasTyped = TRUE;
     [super keyDown:event];
+}
+
+-(void)showPopup {
+    NSRange sel = [self selectedRange];
+    NSRange theTextRange = [[self layoutManager] glyphRangeForCharacterRange:sel actualCharacterRange:NULL];
+    NSRect layoutRect = [[self layoutManager] boundingRectForGlyphRange:theTextRange inTextContainer:[self textContainer]];
+    NSPoint containerOrigin = [self textContainerOrigin];
+    layoutRect.origin.x += containerOrigin.x;
+    layoutRect.origin.y += containerOrigin.y;
+    NSLog(@"layoutRect %f %f %f %f", layoutRect.origin.x, layoutRect.origin.y, layoutRect.size.width, layoutRect.size.height);
+    layoutRect.size.width +=2;
+    [self.po showRelativeToRect:layoutRect ofView:self preferredEdge:NSRectEdgeMinY];
 }
 
 -(BOOL)isAtEndOfWord {
@@ -98,9 +143,54 @@ double ticksToMilliseconds;
         lastEvent = now;
         hasTyped = FALSE;
         if ([self isAtEndOfWord]) {
-            [self complete:self];
+            NSInteger sel = -1;
+            self.completions = [self.delegate textView:self completions:[NSArray array] forPartialWordRange:[self rangeForUserCompletion] indexOfSelectedItem:&sel];
+            [self.table reloadData];
+            [self showPopup];
         }
     }
+}
+
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
+    return self.completions.count;
+}
+
+- (NSView *)tableView:(NSTableView *)tableView
+   viewForTableColumn:(NSTableColumn *)tableColumn
+                  row:(NSInteger)row {
+ 
+    // Get an existing cell with the MyView identifier if it exists
+    NSTextField *result = [tableView makeViewWithIdentifier:@"MyView" owner:self];
+ 
+    // There is no existing cell to reuse so create a new one
+    if (result == nil) {
+        // Create the new NSTextField with a frame of the {0,0} with the width of the table.
+        // Note that the height of the frame is not really relevant, because the row height will modify the height.
+        result = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 10)];
+        result.editable = NO;
+        result.textColor = [NSColor whiteColor];
+        result.font = [NSFont fontWithName:@"Arial" size:14];
+        result.drawsBackground = NO;
+        result.bordered = NO;
+        result.maximumNumberOfLines = 1;
+        
+        // The identifier of the NSTextField instance is set to MyView.
+        // This allows the cell to be reused.
+        result.identifier = @"MyView";
+    }
+
+    // result is now guaranteed to be valid, either as a reused cell
+    // or as a new cell, so set the stringValue of the cell to the
+    // nameArray value at row
+    if ([tableColumn.identifier isEqual:@"text"]) {
+        result.stringValue = self.completions[row];
+    } else {
+        
+        result.stringValue = @"";
+    }
+
+    // Return the result
+    return result;
 }
 
 @end
