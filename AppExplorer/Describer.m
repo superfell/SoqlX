@@ -126,7 +126,7 @@
             [batch addObject:item];
         }
         if (batch.count > 0) {
-            NSLog(@"Describing %lu sobjects (%lu with priority)", (unsigned long)batch.count, (unsigned long)priority.count);
+            //NSLog(@"Describing %lu sobjects (%lu with priority)", (unsigned long)batch.count, (unsigned long)priority.count);
             [sforce describeSObjects:[batch valueForKey:@"value"] failBlock:^(NSError *err) {
                 NSLog(@"Failed to describe %@: %@", batch, err);
                 for (CaseInsensitiveStringKey *failedSObject in batch) {

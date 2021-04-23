@@ -69,6 +69,7 @@ double ticksToMilliseconds;
     self.table.refusesFirstResponder = YES;
     self.table.selectionHighlightStyle = NSTableViewSelectionHighlightStyleSourceList;
     self.tableScollView.verticalScroller.controlSize = NSControlSizeRegular;
+    self.automaticTextCompletionEnabled = NO;
 }
 
 // if the user pastes rich text, we want to treat it as plain text becuase
@@ -109,6 +110,11 @@ double ticksToMilliseconds;
                     isFinal = YES;
                     movement = NSTextMovementReturn;
                     break;
+                case 27:    // escape key // left arrow // right arrow
+                case NSLeftArrowFunctionKey:
+                case NSRightArrowFunctionKey:
+                    [self.po performClose:self];
+                    return;
                 default:
                     hasTyped = TRUE;
                     [super keyDown:event];
@@ -161,8 +167,7 @@ double ticksToMilliseconds;
         lastEvent = now;
         hasTyped = FALSE;
         if ([self isAtEndOfWord]) {
-            NSInteger sel = -1;
-            self.completions = [self.delegate textView:self completions:[NSArray array] forPartialWordRange:[self rangeForUserCompletion] indexOfSelectedItem:&sel];
+            self.completions = [(id<ZKTextViewDelegate>)self.delegate textView:self completionsForPartialWordRange:[self rangeForUserCompletion]];
             [self.table reloadData];
             if (self.completions.count > 0) {
                 [self.table scrollRowToVisible:0];
@@ -171,6 +176,12 @@ double ticksToMilliseconds;
             }
         }
     }
+}
+
+-(IBAction)completionDoubleClicked:(id)sender {
+    NSString *c = self.completions[[sender selectedRow]];
+    [self insertCompletion:c forPartialWordRange:self.rangeForUserCompletion movement:NSTextMovementOther isFinal:YES];
+    [self.po performClose:self];
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {

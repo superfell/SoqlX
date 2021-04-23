@@ -1196,14 +1196,14 @@ DQ
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <scrollView fixedFrame="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RPR-qu-LgX">
-                    <rect key="frame" x="0.0" y="0.0" width="472" height="283"/>
+                    <rect key="frame" x="0.0" y="0.0" width="461" height="283"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <clipView key="contentView" drawsBackground="NO" id="LsD-j1-HQO">
-                        <rect key="frame" x="1" y="1" width="455" height="281"/>
+                        <rect key="frame" x="1" y="1" width="444" height="281"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" viewBased="YES" id="HZD-mi-Iyd">
-                                <rect key="frame" x="0.0" y="0.0" width="455" height="281"/>
+                                <rect key="frame" x="0.0" y="0.0" width="444" height="281"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <size key="intercellSpacing" width="3" height="2"/>
                                 <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -1241,7 +1241,7 @@ DQ
                                             </tableCellView>
                                         </prototypeCellViews>
                                     </tableColumn>
-                                    <tableColumn identifier="text" editable="NO" width="426" minWidth="40" maxWidth="1000" id="vOK-MD-6nm">
+                                    <tableColumn identifier="text" editable="NO" width="415" minWidth="40" maxWidth="1000" id="vOK-MD-6nm">
                                         <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
                                             <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -1254,11 +1254,11 @@ DQ
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         <prototypeCellViews>
                                             <tableCellView id="Nfn-BV-9Rv">
-                                                <rect key="frame" x="27" y="1" width="426" height="17"/>
+                                                <rect key="frame" x="27" y="1" width="415" height="17"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="77R-HS-haX">
-                                                        <rect key="frame" x="0.0" y="1" width="426" height="16"/>
+                                                        <rect key="frame" x="0.0" y="1" width="415" height="16"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="fmA-IU-eeu">
                                                             <font key="font" usesAppearanceFont="YES"/>
@@ -1274,6 +1274,9 @@ DQ
                                         </prototypeCellViews>
                                     </tableColumn>
                                 </tableColumns>
+                                <connections>
+                                    <action trigger="doubleAction" selector="completionDoubleClicked:" target="930" id="phr-3M-aKG"/>
+                                </connections>
                             </tableView>
                         </subviews>
                         <nil key="backgroundColor"/>
@@ -1283,12 +1286,12 @@ DQ
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                     <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="edC-bg-1SP">
-                        <rect key="frame" x="456" y="1" width="15" height="281"/>
+                        <rect key="frame" x="445" y="1" width="15" height="281"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                 </scrollView>
             </subviews>
-            <point key="canvasLocation" x="-773" y="23"/>
+            <point key="canvasLocation" x="-734" y="-671"/>
         </customView>
     </objects>
     <resources>

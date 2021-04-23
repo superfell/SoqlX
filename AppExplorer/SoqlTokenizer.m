@@ -420,12 +420,12 @@ static NSString *KeyCompletions = @"completions";
 }
 
 -(void)color {
-    NSLog(@"starting color");
+    //NSLog(@"starting color");
     self.tokens = [NSMutableArray arrayWithCapacity:10];
     SoqlScanner *sc = [SoqlScanner withString:self.view.textStorage.string];
     [self scanSelect:sc];
     [self resolveTokens:self.tokens];
-    NSLog(@"resolved tokens\n%@", self.tokens);
+    //NSLog(@"resolved tokens\n%@", self.tokens);
     NSTextStorage *txt = self.view.textStorage;
     NSRange before =  [self.view selectedRange];
     [txt beginEditing];
@@ -548,9 +548,15 @@ static NSString *KeyCompletions = @"completions";
 
 
 // Delegate only.  Allows delegate to modify the list of completions that will be presented for the partial word at the given range.  Returning nil or a zero-length array suppresses completion.  Optionally may specify the index of the initially selected completion; default is 0, and -1 indicates no selection.
-- (NSArray<NSString *> *)textView:(NSTextView *)textView completions:(NSArray<NSString *> *)words forPartialWordRange:(NSRange)charRange indexOfSelectedItem:(nullable NSInteger *)index {
-    NSLog(@"textView completions: for range %lu-%lu '%@' selectedIndex %ld textLength:%ld", charRange.location, charRange.length,
-          [textView.string substringWithRange:charRange], (long)*index, textView.textStorage.length);
+-(NSArray<NSString *> *)textView:(NSTextView *)textView completions:(NSArray<NSString *> *)words forPartialWordRange:(NSRange)charRange indexOfSelectedItem:(nullable NSInteger *)index {
+    return nil;
+}
+
+// Not part of NSTextView delegate, a similar version that ZKTextView calls. It doesn't use the regular delegate one
+// because we need to return nil from that to supress the standard completions (via F5)
+-(NSArray<NSString *> *)textView:(NSTextView *)textView completionsForPartialWordRange:(NSRange)charRange {
+    NSLog(@"textView completions: for range %lu-%lu '%@' textLength:%ld", charRange.location, charRange.length,
+          [textView.string substringWithRange:charRange], textView.textStorage.length);
 
     NSString *txtPrefix = [[textView.string substringWithRange:charRange] lowercaseString];
     __block NSArray<NSString *>* completions = nil;
@@ -558,7 +564,6 @@ static NSString *KeyCompletions = @"completions";
         completions = value;
     }];
     if (completions != nil) {
-        *index =-1;
         NSLog(@"found %lu completions", (unsigned long)completions.count);
         NSMutableArray *withPrefix = [NSMutableArray arrayWithCapacity:completions.count];
         NSMutableArray *withoutPrefix = [NSMutableArray arrayWithCapacity:completions.count];
@@ -573,9 +578,8 @@ static NSString *KeyCompletions = @"completions";
         [withoutPrefix sortUsingSelector:@selector(caseInsensitiveCompare:)];
         [withPrefix addObjectsFromArray:withoutPrefix];
         return withPrefix;
-    } else {
-        NSLog(@"no completions found at %lu-%lu", charRange.location, charRange.length);
     }
+    NSLog(@"no completions found at %lu-%lu", charRange.location, charRange.length);
     return nil;
 }
 

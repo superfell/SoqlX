@@ -21,6 +21,10 @@
 
 #import <Cocoa/Cocoa.h>
 
+@protocol ZKTextViewDelegate <NSTextViewDelegate>
+-(NSArray<NSString*>*)textView:(NSTextView *)textView completionsForPartialWordRange:(NSRange)charRange;
+@end
+
 @interface ZKTextView : NSTextView<NSTableViewDataSource, NSTableViewDelegate> {
     uint64_t lastEvent;
     BOOL hasTyped;
@@ -29,4 +33,7 @@
 @property  (strong,nonatomic) IBOutlet NSPopover *po;
 @property  (strong,nonatomic) IBOutlet NSTableView *table;
 @property  (strong,nonatomic) IBOutlet NSScrollView *tableScollView;
+
+-(IBAction)completionDoubleClicked:(id)sender;
+
 @end
