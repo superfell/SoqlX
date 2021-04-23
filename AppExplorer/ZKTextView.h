@@ -21,8 +21,15 @@
 
 #import <Cocoa/Cocoa.h>
 
+@protocol ZKTextViewCompletion
+-(void)bindToView:(NSView*)v;
+-(NSString*)insertionText;
+-(NSString*)displayText;
+-(NSImage*)icon;
+@end
+
 @protocol ZKTextViewDelegate <NSTextViewDelegate>
--(NSArray<NSString*>*)textView:(NSTextView *)textView completionsForPartialWordRange:(NSRange)charRange;
+-(NSArray<id<ZKTextViewCompletion>>*)textView:(NSTextView *)textView completionsForPartialWordRange:(NSRange)charRange;
 @end
 
 @interface ZKTextView : NSTextView<NSTableViewDataSource, NSTableViewDelegate> {

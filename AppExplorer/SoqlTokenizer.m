@@ -32,6 +32,96 @@ typedef NS_ENUM(uint16_t, TokenType) {
     TTError
 };
 
+@interface Icons : NSObject
++(Icons*)icons;
+@property NSImage *field;
+@property NSImage *rel;
+@end
+
+@implementation Icons
+
+static Icons *iconInstance;
+
++(void)initialize {
+    iconInstance = [Icons new];
+    ColorizerStyle *style = [ColorizerStyle styles];
+    iconInstance.field = [NSImage imageWithSize:NSMakeSize(64, 64) flipped:NO drawingHandler:[self iconDrawingHandler:@"F" color:style.fieldColor]];
+    iconInstance.rel = [NSImage imageWithSize:NSMakeSize(64, 64) flipped:NO drawingHandler:[self iconDrawingHandler:@"R" color:style.literalColor]];
+}
+
++(BOOL(^)(NSRect))iconDrawingHandler:(NSString*)txt color:(NSColor *)color {
+    NSDictionary *txtStyle = @{
+        NSForegroundColorAttributeName: [NSColor whiteColor],
+        NSFontAttributeName: [NSFont boldSystemFontOfSize:48],
+    };
+    return ^BOOL(NSRect dstRect) {
+        CGContextRef const context = NSGraphicsContext.currentContext.graphicsPort;
+        CGPathRef box = CGPathCreateWithRoundedRect(CGRectInset(dstRect, 4, 4), 8, 8, nil);
+        [color setStroke];
+        [[color blendedColorWithFraction:0.75 ofColor:[NSColor blackColor]] setFill];
+        CGContextAddPath(context, box);
+        CGContextSetLineWidth(context, 6);
+        CGContextDrawPath(context, kCGPathFillStroke);
+        NSSize sz = [txt sizeWithAttributes:txtStyle];
+        NSRect txtRect = NSMakeRect((dstRect.size.width-sz.width)/2, ((dstRect.size.height-sz.height)/2)+1, sz.width, sz.height);
+        [txt drawInRect:txtRect withAttributes:txtStyle];
+        return YES;
+    };
+}
+
++(Icons*)icons {
+    return iconInstance;
+}
+@end
+
+@interface Completion : NSObject
++(NSArray<Completion*>*)completions:(NSArray<NSString*>*)txt type:(TokenType)t;
++(instancetype)txt:(NSString*)txt type:(TokenType)t;
++(instancetype)display:(NSString*)d insert:(NSString*)i type:(TokenType)t;
+@property (strong, nonatomic) NSString *displayText;
+@property (strong, nonatomic) NSString *insertionText;
+@property (assign, nonatomic) TokenType type;
+-(NSImage*)icon;
+@end
+
+@implementation Completion
++(NSArray<Completion*>*)completions:(NSArray<NSString*>*)txt type:(TokenType)ty {
+    NSMutableArray *r = [NSMutableArray arrayWithCapacity:txt.count];
+    for (NSString *t in txt) {
+        [r addObject:[Completion txt:t type:ty]];
+    }
+    return r;
+}
+
++(instancetype)txt:(NSString*)txt type:(TokenType)t {
+    return [self display:txt insert:txt type:t];
+}
+
++(instancetype)display:(NSString*)d insert:(NSString*)i type:(TokenType)t {
+    Completion *c = [self new];
+    c.displayText = d;
+    c.insertionText = i;
+    c.type = t;
+    return c;
+}
+-(NSString*)description {
+    return self.displayText;
+}
+-(NSComparisonResult)caseInsensitiveCompare:(Completion*)rhs {
+    return [self.displayText caseInsensitiveCompare:rhs.displayText];
+}
+
+static NSMutableArray *icons;
+
+-(NSImage*)icon {
+    switch (self.type) {
+        case TTField : return [Icons icons].field;
+        case TTRelationship: return [Icons icons].rel;
+        default: return nil;
+    }
+}
+@end
+
 @interface Token : NSObject {
     NSString *txt;
 }
@@ -39,7 +129,7 @@ typedef NS_ENUM(uint16_t, TokenType) {
 @property (assign,nonatomic) TokenType type;
 @property (assign,nonatomic) NSRange loc;
 @property (strong,nonatomic) NSObject *value;
-@property (strong,nonatomic) NSMutableArray<NSString*>* completions;
+@property (strong,nonatomic) NSMutableArray<Completion*>* completions;
 @property (strong,nonatomic) NSString *tokenTxt;
 @end
 
@@ -221,8 +311,8 @@ static NSString *KeyCompletions = @"completions";
     [self scanFieldOrFunc:sc];
     if ([sc skipWs]) return;
     Token *op = sc.peekToken;
-    NSSet *ops = [NSSet setWithArray:@[@">=",@"=",@">",@"<",@"<=",@"!=",@"LIKE",@"IN",@"NOT IN",@"INCLUDES",@"EXCLUDES"]];
-    [op.completions addObjectsFromArray:[ops allObjects]];
+    NSSet<NSString*>*ops = [NSSet setWithArray:@[@">=",@"=",@">",@"<",@"<=",@"!=",@"LIKE",@"IN",@"NOT IN",@"INCLUDES",@"EXCLUDES"]];
+    [op.completions addObjectsFromArray:[Completion completions:ops.allObjects type:TTOperator]];
     // TODO deal with NOT IN
     if (![ops containsObject:[op.tokenTxt uppercaseString]]) {
         op.type = TTError;
@@ -235,7 +325,9 @@ static NSString *KeyCompletions = @"completions";
     [self.tokens addObject:op];
     [sc skip:op.loc.length];
     if ([sc skipWs]) return;
-    NSArray<NSString*> *valueCompletions = @[@"\'\'", @"NULL", @"TRUE", @"FALSE", @"2020-04-16", @"2020-04-16T12:00:00Z", @"42", @"42.42"]; // + dateTime literals.
+    NSArray<Completion*>* valueCompletions = [Completion
+                                              completions:@[@"\'\'", @"NULL", @"TRUE", @"FALSE", @"2020-04-16", @"2020-04-16T12:00:00Z", @"42", @"42.42"]
+                                              type:TTLiteral];
     unichar x = [sc peek];
     if (x == '(') {
         [sc skip:1];
@@ -250,7 +342,7 @@ static NSString *KeyCompletions = @"completions";
                 Token *err = [sc tokenOf:NSMakeRange(sc.posn, sc.eof ? 0 : 1)];
                 err.type = TTError;
                 err.value = @"Expecting closing )";
-                [err.completions addObject:@")"];
+                [err.completions addObject:[Completion txt:@")" type:TTKeyword]];
                 self.tokens = tokens;
                 [self.tokens addObject:err];
                 return;
@@ -286,7 +378,8 @@ static NSString *KeyCompletions = @"completions";
     Token *next = [sc peekToken];
     if ([next matches:@"AND" caseSensitive:NO] || [next matches:@"OR" caseSensitive:NO]) {
         next.type = TTOperator;
-        [next.completions addObjectsFromArray:@[@"AND",@"OR"]];
+        [next.completions addObject:[Completion txt:@"AND" type:TTKeyword]];
+        [next.completions addObject:[Completion txt:@"OR" type:TTKeyword]];
         [self.tokens addObject:next];
         [sc skip:next.loc.length];
         [self scanExpr:sc];
@@ -365,7 +458,7 @@ static NSString *KeyCompletions = @"completions";
             Token *err = [sc nextToken];
             err.type = TTError;
             err.value = @"Expecting closing )";
-            [err.completions addObject:@")"];
+            [err.completions addObject:[Completion txt:@")" type:TTKeyword]];
             self.tokens = currentTokens;
             [self.tokens addObject:err];
             return;
@@ -397,7 +490,7 @@ static NSString *KeyCompletions = @"completions";
             [self scanFrom:sc];
         } else {
             from.type = TTError;
-            [from.completions addObject:@"FROM"];
+            [from.completions addObject:[Completion txt:@"FROM" type:TTKeyword]];
             from.value = @"expecting FROM";
             [self.tokens addObject:from];
         }
@@ -414,7 +507,7 @@ static NSString *KeyCompletions = @"completions";
     } else {
         t.type = TTError;
         t.value = @"Expected SELECT";
-        [t.completions addObject:@"SELECT"];
+        [t.completions addObject:[Completion txt:@"SELECT" type:TTKeyword]];
         [self.tokens addObject:t];
     }
 }
@@ -448,7 +541,7 @@ static NSString *KeyCompletions = @"completions";
             break;
         }
     }
-    [tSObject.completions addObjectsFromArray:self.allQueryableSObjects];
+    [tSObject.completions addObjectsFromArray:[Completion completions:self.allQueryableSObjects type:TTSObject]];
     if (![self knownSObject:tSObject.tokenTxt]) {
         tSObject.type = TTError;
         tSObject.value = [NSString stringWithFormat:@"The SObject '%@' does not exist or is inaccessible", tSObject.tokenTxt];
@@ -464,8 +557,10 @@ static NSString *KeyCompletions = @"completions";
             ZKDescribeSObject *currentSObject = desc;
             for (NSString *step in path) {
                 Token *tStep = [tSObject tokenOf:NSMakeRange(pos, step.length)];
-                [tStep.completions addObjectsFromArray:[currentSObject valueForKeyPath:@"fields.name"]];
-                [tStep.completions addObjectsFromArray:[[[currentSObject parentRelationshipsByName] allValues] valueForKey:@"relationshipName"]];
+                [tStep.completions addObjectsFromArray:[Completion completions:[currentSObject valueForKeyPath:@"fields.name"] type:TTField]];
+                [tStep.completions addObjectsFromArray:[Completion
+                                                        completions:[currentSObject.parentRelationshipsByName.allValues valueForKey:@"relationshipName"]
+                                                        type:TTRelationship]];
                 ZKDescribeField *f = [currentSObject fieldWithName:step];
                 if (f == nil) {
                     ZKDescribeField *rel = [currentSObject parentRelationshipsByName][[CaseInsensitiveStringKey of:step]];
@@ -554,7 +649,7 @@ static NSString *KeyCompletions = @"completions";
 
 // Not part of NSTextView delegate, a similar version that ZKTextView calls. It doesn't use the regular delegate one
 // because we need to return nil from that to supress the standard completions (via F5)
--(NSArray<NSString *> *)textView:(NSTextView *)textView completionsForPartialWordRange:(NSRange)charRange {
+-(NSArray*)textView:(NSTextView *)textView completionsForPartialWordRange:(NSRange)charRange {
     NSLog(@"textView completions: for range %lu-%lu '%@' textLength:%ld", charRange.location, charRange.length,
           [textView.string substringWithRange:charRange], textView.textStorage.length);
 

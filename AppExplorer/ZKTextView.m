@@ -26,7 +26,8 @@ double ticksToMilliseconds;
 
 @interface ZKTextView()
 @property (strong,nonatomic) NSTimer *idleCheckTimer;
-@property (strong,nonatomic) NSArray<NSString*>* completions;
+@property (strong,nonatomic) NSArray<id<ZKTextViewCompletion>>* completions;
+@property (assign,nonatomic) BOOL awake;
 @end
 
 @implementation ZKTextView
@@ -62,13 +63,18 @@ double ticksToMilliseconds;
 }
 
 -(void)awakeFromNib {
-    self.table.dataSource = self;
-    self.table.delegate = self;
-    self.table.rowHeight = 24;
-    self.table.refusesFirstResponder = YES;
-    self.table.selectionHighlightStyle = NSTableViewSelectionHighlightStyleSourceList;
-    self.tableScollView.verticalScroller.controlSize = NSControlSizeRegular;
-    self.automaticTextCompletionEnabled = NO;
+    // tableView makeView will call awakeFromNib on the owner, which is us, but we only want to initialize the tableview once.
+    if (!self.awake) {
+        NSLog(@"awakeFromNib");
+        self.table.dataSource = self;
+        self.table.delegate = self;
+        self.table.rowHeight = 24;
+        self.table.refusesFirstResponder = YES;
+        self.table.selectionHighlightStyle = NSTableViewSelectionHighlightStyleSourceList;
+        self.tableScollView.verticalScroller.controlSize = NSControlSizeRegular;
+        self.automaticTextCompletionEnabled = NO;
+        self.awake = YES;
+    }
 }
 
 // if the user pastes rich text, we want to treat it as plain text becuase
@@ -122,7 +128,7 @@ double ticksToMilliseconds;
             }
             NSInteger row = [self.table selectedRow];
             if (row >= 0) {
-                NSString *c = self.completions[row];
+                NSString *c = self.completions[row].insertionText;
                 [self insertCompletion:c forPartialWordRange:self.rangeForUserCompletion movement:movement isFinal:isFinal];
                 if (isFinal) {
                     [self.po performClose:self];
@@ -173,8 +179,8 @@ double ticksToMilliseconds;
                 NSString *selected = [self.string substringWithRange:partialWordRange];
                 NSInteger idx = 0;
                 NSInteger selIdx = -1;
-                for(NSString *c in self.completions) {
-                    if ([c caseInsensitiveCompare:selected] != NSOrderedAscending) {
+                for (id<ZKTextViewCompletion> c in self.completions) {
+                    if ([c.displayText caseInsensitiveCompare:selected] != NSOrderedAscending) {
                         selIdx = idx;
                         break;
                     }
@@ -188,8 +194,6 @@ double ticksToMilliseconds;
                     [self.table scrollRowToVisible:0];
                     [self.table selectRowIndexes:[NSIndexSet indexSet] byExtendingSelection:NO];
                 }
-                NSRect b = self.table.bounds;
-                NSLog(@"bounds %f %f %f %f", b.origin.x, b.origin.y, b.size.width, b.size.height);
                 [self showPopup];
             }
         }
@@ -211,8 +215,8 @@ double ticksToMilliseconds;
 }
 
 -(IBAction)completionDoubleClicked:(id)sender {
-    NSString *c = self.completions[[sender selectedRow]];
-    [self insertCompletion:c forPartialWordRange:self.rangeForUserCompletion movement:NSTextMovementOther isFinal:YES];
+    id<ZKTextViewCompletion> c = self.completions[[sender selectedRow]];
+    [self insertCompletion:c.insertionText forPartialWordRange:self.rangeForUserCompletion movement:NSTextMovementOther isFinal:YES];
     [self.po performClose:self];
 }
 
@@ -224,37 +228,11 @@ double ticksToMilliseconds;
    viewForTableColumn:(NSTableColumn *)tableColumn
                   row:(NSInteger)row {
  
-    // Get an existing cell with the MyView identifier if it exists
-    NSTextField *result = [tableView makeViewWithIdentifier:@"MyView" owner:self];
- 
-    // There is no existing cell to reuse so create a new one
-    if (result == nil) {
-        // Create the new NSTextField with a frame of the {0,0} with the width of the table.
-        // Note that the height of the frame is not really relevant, because the row height will modify the height.
-        result = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 32)];
-        result.editable = NO;
-        result.textColor = [NSColor whiteColor];
-        result.font = [NSFont fontWithName:@"Arial" size:14];
-        result.bordered = NO;
-        result.drawsBackground = NO;
-        result.maximumNumberOfLines = 1;
-        
-        // The identifier of the NSTextField instance is set to MyView.
-        // This allows the cell to be reused.
-        result.identifier = @"MyView";
-    }
-
-    // result is now guaranteed to be valid, either as a reused cell
-    // or as a new cell, so set the stringValue of the cell to the
-    // nameArray value at row
-    if ([tableColumn.identifier isEqual:@"text"]) {
-        result.stringValue = self.completions[row];
-    } else {
-        result.stringValue = @"";
-    }
-
-    // Return the result
-    return result;
+    NSTableCellView *v = [tableView makeViewWithIdentifier:@"MainCell" owner:self];
+    id<ZKTextViewCompletion> c = self.completions[row];
+    v.textField.stringValue = c.displayText;
+    v.imageView.image = c.icon;
+    return v;
 }
 
 @end
