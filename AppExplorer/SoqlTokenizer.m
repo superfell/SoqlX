@@ -558,26 +558,13 @@ static NSString *KeyCompletions = @"completions";
     NSLog(@"textView completions: for range %lu-%lu '%@' textLength:%ld", charRange.location, charRange.length,
           [textView.string substringWithRange:charRange], textView.textStorage.length);
 
-    NSString *txtPrefix = [[textView.string substringWithRange:charRange] lowercaseString];
     __block NSArray<NSString *>* completions = nil;
     [textView.textStorage enumerateAttribute:KeyCompletions inRange:charRange options:0 usingBlock:^(id  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
         completions = value;
     }];
     if (completions != nil) {
         NSLog(@"found %lu completions", (unsigned long)completions.count);
-        NSMutableArray *withPrefix = [NSMutableArray arrayWithCapacity:completions.count];
-        NSMutableArray *withoutPrefix = [NSMutableArray arrayWithCapacity:completions.count];
-        for (NSString *c in completions) {
-            if ((c.length >= txtPrefix.length) && ([[c substringToIndex:txtPrefix.length] caseInsensitiveCompare:txtPrefix] == NSOrderedSame)) {
-                [withPrefix addObject:c];
-            } else {
-                [withoutPrefix addObject:c];
-            }
-        }
-        [withPrefix sortUsingSelector:@selector(caseInsensitiveCompare:)];
-        [withoutPrefix sortUsingSelector:@selector(caseInsensitiveCompare:)];
-        [withPrefix addObjectsFromArray:withoutPrefix];
-        return withPrefix;
+        return [completions sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];;
     }
     NSLog(@"no completions found at %lu-%lu", charRange.location, charRange.length);
     return nil;

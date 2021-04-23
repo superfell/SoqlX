@@ -64,8 +64,7 @@ double ticksToMilliseconds;
 -(void)awakeFromNib {
     self.table.dataSource = self;
     self.table.delegate = self;
-    //self.table.rowHeight = 21;
-    self.table.usesAutomaticRowHeights = YES;
+    self.table.rowHeight = 24;
     self.table.refusesFirstResponder = YES;
     self.table.selectionHighlightStyle = NSTableViewSelectionHighlightStyleSourceList;
     self.tableScollView.verticalScroller.controlSize = NSControlSizeRegular;
@@ -118,6 +117,7 @@ double ticksToMilliseconds;
                 default:
                     hasTyped = TRUE;
                     [super keyDown:event];
+                    return;
                 }
             }
             NSInteger row = [self.table selectedRow];
@@ -167,15 +167,47 @@ double ticksToMilliseconds;
         lastEvent = now;
         hasTyped = FALSE;
         if ([self isAtEndOfWord]) {
-            self.completions = [(id<ZKTextViewDelegate>)self.delegate textView:self completionsForPartialWordRange:[self rangeForUserCompletion]];
-            [self.table reloadData];
+            NSRange partialWordRange = self.rangeForUserCompletion;
+            self.completions = [(id<ZKTextViewDelegate>)self.delegate textView:self completionsForPartialWordRange:partialWordRange];
             if (self.completions.count > 0) {
-                [self.table scrollRowToVisible:0];
-                [self.table selectRowIndexes:[NSIndexSet indexSet] byExtendingSelection:NO];
+                NSString *selected = [self.string substringWithRange:partialWordRange];
+                NSInteger idx = 0;
+                NSInteger selIdx = -1;
+                for(NSString *c in self.completions) {
+                    if ([c caseInsensitiveCompare:selected] != NSOrderedAscending) {
+                        selIdx = idx;
+                        break;
+                    }
+                    idx++;
+                }
+                [self.table reloadData];
+                if (selIdx >= 0) {
+                    [self.table scrollRowToVisible:selIdx];
+                    [self.table selectRowIndexes:[NSIndexSet indexSetWithIndex:selIdx] byExtendingSelection:NO];
+                } else {
+                    [self.table scrollRowToVisible:0];
+                    [self.table selectRowIndexes:[NSIndexSet indexSet] byExtendingSelection:NO];
+                }
+                NSRect b = self.table.bounds;
+                NSLog(@"bounds %f %f %f %f", b.origin.x, b.origin.y, b.size.width, b.size.height);
                 [self showPopup];
             }
         }
     }
+}
+
+// Usually returns the partial range from the most recent beginning of a word up to the insertion point.
+// May be overridden by subclassers to alter the range to be completed.  Returning (NSNotFound, 0) suppresses completion.
+-(NSRange)rangeForUserCompletion {
+    NSRange sel = self.selectedRange;
+    NSString *txt = self.string;
+    for (; sel.location > 0 ; sel.location--, sel.length++) {
+        unichar c = [txt characterAtIndex:sel.location-1];
+        if (isblank(c) || c ==',' || c =='.' || c =='(' || c == ')') {
+            break;
+        }
+    }
+    return sel;
 }
 
 -(IBAction)completionDoubleClicked:(id)sender {
@@ -199,7 +231,7 @@ double ticksToMilliseconds;
     if (result == nil) {
         // Create the new NSTextField with a frame of the {0,0} with the width of the table.
         // Note that the height of the frame is not really relevant, because the row height will modify the height.
-        result = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 10)];
+        result = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 32)];
         result.editable = NO;
         result.textColor = [NSColor whiteColor];
         result.font = [NSFont fontWithName:@"Arial" size:14];
