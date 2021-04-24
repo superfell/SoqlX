@@ -118,3 +118,49 @@ static NSMutableArray *icons;
 }
 
 @end
+
+@interface Tokens()
+@property (strong,nonatomic) NSMutableArray<Token*> *items;
+@end
+
+@implementation Tokens
+
+-(instancetype)init {
+    self = [super init];
+    self.items = [NSMutableArray arrayWithCapacity:10];
+    return self;
+}
+
+-(NSArray<Token*>*) tokens {
+    return self.items;
+}
+
+-(void)addToken:(Token*)t {
+    NSRange searchRange = NSMakeRange(0, self.items.count);
+    NSUInteger findIndex = [self.items indexOfObject:t
+                                        inSortedRange:searchRange
+                                              options:NSBinarySearchingInsertionIndex | NSBinarySearchingFirstEqual
+                                      usingComparator:^(id obj1, id obj2) {
+        Token *a = obj1;
+        Token *b = obj2;
+        if (a.loc.location == b.loc.location) {
+            if (a.loc.length > b.loc.length) {
+                return NSOrderedDescending;
+            } else if (a.loc.length < b.loc.length) {
+                return NSOrderedAscending;
+            }
+            return NSOrderedSame;
+        }
+        if (a.loc.location > b.loc.location) {
+            return NSOrderedDescending;
+        }
+        return NSOrderedAscending;
+    }];
+    [self.items insertObject:t atIndex:findIndex];
+}
+
+-(void)removeToken:(Token*)t {
+    [self.items removeObject:t];
+}
+
+@end

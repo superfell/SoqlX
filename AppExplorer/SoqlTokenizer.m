@@ -138,7 +138,7 @@
 @end
 
 @interface SoqlTokenizer()
-@property (strong,nonatomic) NSMutableArray<Token*> *tokens;
+@property (strong,nonatomic) Tokens *tokens;
 @property (strong,nonatomic) SoqlParser *soqlParser;
 @end
 
@@ -172,12 +172,12 @@ static NSString *KeyCompletions = @"completions";
     if (![ops containsObject:[op.tokenTxt uppercaseString]]) {
         op.type = TTError;
         op.value = [NSString stringWithFormat:@"Expecting one of %@", ops];
-        [self.tokens addObject:op];
+        [self.tokens addToken:op];
         [sc skip:op.loc.length];
         return;
     }
     op.type = TTOperator;
-    [self.tokens addObject:op];
+    [self.tokens addToken:op];
     [sc skip:op.loc.length];
     if ([sc skipWs]) return;
     NSArray<Completion*>* valueCompletions = [Completion
@@ -189,8 +189,8 @@ static NSString *KeyCompletions = @"completions";
         if ([sc skipWs]) return;
         if ([sc.peekToken matches:@"SELECT" caseSensitive:NO]) {
             NSUInteger start = sc.posn;
-            NSMutableArray *tokens = self.tokens;
-            self.tokens = [NSMutableArray arrayWithCapacity:10];
+            Tokens *tokens = self.tokens;
+            self.tokens = [Tokens new];
             [self scanSelect:sc];
             [sc skipWs];
             if ([sc eof] || [sc peek] != ')') {
@@ -199,7 +199,7 @@ static NSString *KeyCompletions = @"completions";
                 err.value = @"Expecting closing )";
                 [err.completions addObject:[Completion txt:@")" type:TTKeyword]];
                 self.tokens = tokens;
-                [self.tokens addObject:err];
+                [self.tokens addToken:err];
                 return;
             }
             [sc skip:1];
@@ -207,24 +207,24 @@ static NSString *KeyCompletions = @"completions";
             t.type = TTNestedSelect;
             t.value = self.tokens;
             self.tokens = tokens;
-            [self.tokens addObject:t];
+            [self.tokens addToken:t];
         } else {
             Token *literal = [sc until:[NSCharacterSet characterSetWithCharactersInString:@")"]];
             literal.type = TTLiteral;
-            [self.tokens addObject:literal];
+            [self.tokens addToken:literal];
         }
     } else if (x == '\'') {
         [sc skip:1];
         Token *literal = [sc until:[NSCharacterSet characterSetWithCharactersInString:@"\'"]];
         literal.type = TTLiteral;
         [literal.completions addObjectsFromArray:valueCompletions];
-        [self.tokens addObject:literal];
+        [self.tokens addToken:literal];
         [sc skip:1];
     } else if (x >= '0' && x <= '9') {
         Token *literal = [sc nextToken];
         literal.type = TTLiteral;
         [literal.completions addObjectsFromArray:valueCompletions];
-        [self.tokens addObject:literal];
+        [self.tokens addToken:literal];
     } else {
         // should be date literals
         [self scanFieldOrFunc:sc];
@@ -235,7 +235,7 @@ static NSString *KeyCompletions = @"completions";
         next.type = TTOperator;
         [next.completions addObject:[Completion txt:@"AND" type:TTKeyword]];
         [next.completions addObject:[Completion txt:@"OR" type:TTKeyword]];
-        [self.tokens addObject:next];
+        [self.tokens addToken:next];
         [sc skip:next.loc.length];
         [self scanExpr:sc];
     }
@@ -246,7 +246,7 @@ static NSString *KeyCompletions = @"completions";
     if ([n matches:@"WHERE" caseSensitive:NO]) {
         [sc skip:5];
         n.type = TTKeyword;
-        [self.tokens addObject:n];
+        [self.tokens addToken:n];
         [self scanExpr:sc];
     }
     // [self scan order by] etc
@@ -256,7 +256,7 @@ static NSString *KeyCompletions = @"completions";
     if ([sc skipWs]) return;
     Token *t = [sc nextToken];
     t.type = TTSObject;
-    [self.tokens addObject:t];
+    [self.tokens addToken:t];
     if ([sc skipWs]) return;
     unichar n = [sc peek];
     while (n == ',') {
@@ -264,7 +264,7 @@ static NSString *KeyCompletions = @"completions";
         [sc skipWs];
         Token *rel = [sc nextToken];
         rel.type = TTSObjectRelation;
-        [self.tokens addObject:rel];
+        [self.tokens addToken:rel];
         if ([sc skipWs]) return;
         n = [sc peek];
     }
@@ -275,7 +275,7 @@ static NSString *KeyCompletions = @"completions";
     Token *t = [sc peekToken];
     if ([t.tokenTxt containsString:@"."]) {
         t.type = TTFieldPath;
-        [self.tokens addObject:t];
+        [self.tokens addToken:t];
         [sc skip:t.loc.length];
     } else {
         // field or func
@@ -290,11 +290,11 @@ static NSString *KeyCompletions = @"completions";
             Token *fn = [sc tokenOf:r];
             fn.type = TTFunc;
             [sc skip:1];
-            [self.tokens addObject:fn];
+            [self.tokens addToken:fn];
         } else {
             // field after all
             t.type = TTFieldPath;
-            [self.tokens addObject:t];
+            [self.tokens addToken:t];
         }
     }
 }
@@ -304,8 +304,8 @@ static NSString *KeyCompletions = @"completions";
     unichar n = [sc peek];
     if (n == '(') {
         NSUInteger start = sc.posn;
-        NSMutableArray<Token*> *currentTokens = self.tokens;
-        self.tokens = [NSMutableArray arrayWithCapacity:10];
+        Tokens *currentTokens = self.tokens;
+        self.tokens = [Tokens new];
         [sc skip:1];
         [self scanSelect:sc];
         [sc skipWs];
@@ -315,7 +315,7 @@ static NSString *KeyCompletions = @"completions";
             err.value = @"Expecting closing )";
             [err.completions addObject:[Completion txt:@")" type:TTKeyword]];
             self.tokens = currentTokens;
-            [self.tokens addObject:err];
+            [self.tokens addToken:err];
             return;
         }
         [sc skip:1];
@@ -324,7 +324,7 @@ static NSString *KeyCompletions = @"completions";
         select.type = TTNestedSelect;
         select.value = self.tokens;
         self.tokens = currentTokens;
-        [self.tokens addObject:select];
+        [self.tokens addToken:select];
     } else {
         Token *t = [sc peekToken];
         if ([t matches:@"TYPEOF" caseSensitive:NO]) {
@@ -341,13 +341,13 @@ static NSString *KeyCompletions = @"completions";
         Token *from = [sc nextToken];
         if ([from matches:@"FROM" caseSensitive:NO]) {
             from.type = TTKeyword;
-            [self.tokens addObject:from];
+            [self.tokens addToken:from];
             [self scanFrom:sc];
         } else {
             from.type = TTError;
             [from.completions addObject:[Completion txt:@"FROM" type:TTKeyword]];
             from.value = @"expecting FROM";
-            [self.tokens addObject:from];
+            [self.tokens addToken:from];
         }
     }
 }
@@ -357,36 +357,36 @@ static NSString *KeyCompletions = @"completions";
     Token *t = [sc nextToken];
     if ([t matches:@"SELECT" caseSensitive:NO]) {
         t.type = TTKeyword;
-        [self.tokens addObject:t];
+        [self.tokens addToken:t];
         [self scanSelectExprs:sc];
     } else {
         t.type = TTError;
         t.value = @"Expected SELECT";
         [t.completions addObject:[Completion txt:@"SELECT" type:TTKeyword]];
-        [self.tokens addObject:t];
+        [self.tokens addToken:t];
     }
 }
 
 -(void)scanWithParser:(NSString*)input {
     NSError *err = nil;
-    [self.tokens addObjectsFromArray:[self.soqlParser parse:input error:&err]];
+    self.tokens = [self.soqlParser parse:input error:&err];
     if (err != nil) {
         // TODO setting an error on the insertion point when its at the end of the string is problematic
         Token *t = [Token txt:input loc:NSMakeRange([err.userInfo[@"Position"] integerValue]-1, 0)];
         t.type = TTError;
-        [self.tokens addObject:t];
+        [self.tokens addToken:t];
     }
 }
 
 -(void)color {
     //NSLog(@"starting color");
-    self.tokens = [NSMutableArray arrayWithCapacity:10];
+    //self.tokens = [NSMutableArray arrayWithCapacity:10];
     //SoqlScanner *sc = [SoqlScanner withString:self.view.textStorage.string];
     //[self scanSelect:sc];
     [self scanWithParser:self.view.textStorage.string];
     //NSLog(@"parsed tokens\n%@", self.tokens);
     [self resolveTokens:self.tokens];
-    NSLog(@"resolved tokens\n%@", self.tokens);
+    NSLog(@"resolved tokens\n%@", self.tokens.tokens);
     NSTextStorage *txt = self.view.textStorage;
     NSRange before =  [self.view selectedRange];
     [txt beginEditing];
@@ -399,16 +399,14 @@ static NSString *KeyCompletions = @"completions";
     [self.view setSelectedRange:before];
 }
 
--(void)resolveTokens:(NSMutableArray<Token*>*)tokens {
+-(void)resolveTokens:(Tokens*)tokens {
     // This is the 2nd pass that deals with resolving field/object/rel/alias/func tokens
-    Token *tSObject;
-    for (int i = 0; i < tokens.count; i++) {
-        if (tokens[i].type == TTSObject) {
-            tSObject = tokens[i];
-            // TODO, deal with aliases, relationships etc.s
-            break;
-        }
-    }
+    NSInteger idx = [tokens.tokens indexOfObjectPassingTest:^BOOL(Token * _Nonnull t, NSUInteger idx, BOOL * _Nonnull stop) {
+        return t.type == TTSObject;
+    }];
+    Token *tSObject = tokens.tokens[idx];
+    // TODO, deal with aliases, relationships etc.s
+
     [tSObject.completions addObjectsFromArray:[Completion completions:self.allQueryableSObjects type:TTSObject]];
     if (![self knownSObject:tSObject.tokenTxt]) {
         tSObject.type = TTError;
@@ -419,7 +417,7 @@ static NSString *KeyCompletions = @"completions";
     NSMutableArray<Token*> *delTokens = [NSMutableArray arrayWithCapacity:4];
     ZKDescribeSObject *desc = [self describe:tSObject.tokenTxt];
     tSObject.value = desc;
-    for (Token *sel in tokens) {
+    for (Token *sel in tokens.tokens) {
         if (sel.type == TTFieldPath) {
             [delTokens addObject:sel];
             NSArray<NSString*>* path = [sel.tokenTxt componentsSeparatedByString:@"."];
@@ -462,15 +460,17 @@ static NSString *KeyCompletions = @"completions";
         }
     }
     for (Token *t in delTokens) {
-        [tokens removeObject:t];
+        [tokens removeToken:t];
     }
-    [tokens addObjectsFromArray:newTokens];
+    for (Token *t in newTokens) {
+        [tokens addToken:t];
+    }
 }
 
--(void)applyTokens:(NSArray<Token*>*)tokens {
+-(void)applyTokens:(Tokens*)tokens {
     ColorizerStyle *style = [ColorizerStyle styles];
     NSTextStorage *txt = self.view.textStorage;
-    for (Token *t in tokens) {
+    for (Token *t in tokens.tokens) {
         if (t.completions.count > 0) {
             [txt addAttribute:KeyCompletions value:t.completions range:t.loc];
         }
@@ -503,7 +503,7 @@ static NSString *KeyCompletions = @"completions";
                 [txt addAttributes:style.literal range:t.loc];
                 break;
             case TTNestedSelect:
-                [self applyTokens:(NSArray<Token*>*)t.value];
+                [self applyTokens:(Tokens*)t.value];
                 break;
             case TTError:
                 [txt addAttributes:style.underlined range:t.loc];

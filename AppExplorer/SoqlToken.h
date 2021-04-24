@@ -60,3 +60,9 @@ typedef NS_ENUM(uint16_t, TokenType) {
 // Creates another Token from the same backing string.
 -(Token*)tokenOf:(NSRange)r;
 @end
+
+@interface Tokens : NSObject
+@property (strong,readonly,nonatomic) NSArray<Token*>* tokens;
+-(void)addToken:(Token*)t;
+-(void)removeToken:(Token*)t;
+@end
