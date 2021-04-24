@@ -109,8 +109,32 @@ static NSMutableArray *icons;
 }
 
 -(NSString *)description {
-    return [NSString stringWithFormat:@"%4lu-%-4lu: %2hu %@ completions %lu", self.loc.location, self.loc.length, self.type,
+    return [NSString stringWithFormat:@"%4lu-%-4lu: %@ %@ completions %lu", self.loc.location, self.loc.length,
+            [self.typeName stringByPaddingToLength:9 withString:@" " startingAtIndex:0],
             [self.tokenTxt stringByPaddingToLength:25 withString:@" " startingAtIndex:0], (unsigned long)self.completions.count];
+}
+
+-(NSString*)typeName {
+    switch (self.type) {
+        case TTKeyword: return @"Keyword";
+        case TTFieldPath: return @"FldPath";
+        case TTAlias: return @"Aias";
+        case TTRelationship: return @"Rel";
+        case TTField: return @"Field";
+        case TTFunc: return @"Func";
+        case TTNestedSelect: return @"NSelect";
+        case TTTypeOf: return @"TypeOf";
+        case TTSObject: return @"SObject";
+        case TTAliasDecl: return @"AliasDecl";
+        case TTSObjectRelation: return @"RelObj";
+        case TTOperator: return @"Op";
+        case TTLiteral: return @"Lit";
+        case TTLiteralList: return @"LitList";
+        case TTUsingScope: return @"Scope";
+        case TTDataCategory: return @"Cat";
+        case TTDataCategoryValue: return @"CatVal";
+        case TTError: return @"Error";
+    }
 }
 
 -(Token*)tokenOf:(NSRange)r {
