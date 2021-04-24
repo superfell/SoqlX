@@ -30,9 +30,7 @@ typedef NS_ENUM(uint16_t, TokenType) {
 };
 
 @interface Icons : NSObject
-+(Icons*)icons;
-@property NSImage *field;
-@property NSImage *rel;
++(NSImage*)iconFor:(TokenType)t;
 @end
 
 @interface Completion : NSObject

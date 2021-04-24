@@ -8,6 +8,10 @@
 #import "SoqlToken.h"
 #import "ColorizerStyle.h"
 
+@interface Icons()
+@property (strong,nonatomic) NSDictionary<NSNumber*, NSImage*> *icons;
+@end
+
 @implementation Icons
 
 static Icons *iconInstance;
@@ -15,8 +19,15 @@ static Icons *iconInstance;
 +(void)initialize {
     iconInstance = [Icons new];
     ColorizerStyle *style = [ColorizerStyle styles];
-    iconInstance.field = [NSImage imageWithSize:NSMakeSize(64, 64) flipped:NO drawingHandler:[self iconDrawingHandler:@"F" color:style.fieldColor]];
-    iconInstance.rel = [NSImage imageWithSize:NSMakeSize(64, 64) flipped:NO drawingHandler:[self iconDrawingHandler:@"R" color:style.literalColor]];
+    NSSize sz = NSMakeSize(64,64);
+    iconInstance.icons = @{
+        @(TTField) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"F" color:style.fieldColor]],
+        @(TTSObject) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"O" color:style.fieldColor]],
+        @(TTRelationship) : [NSImage imageWithSize:NSMakeSize(64, 64) flipped:NO drawingHandler:[self iconDrawingHandler:@"R" color:style.literalColor]],
+        @(TTLiteral) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"V" color:style.literalColor]],
+        @(TTOperator) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"Op" color:style.keywordColor]],
+        @(TTKeyword) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"K" color:style.keywordColor]],
+    };
 }
 
 +(BOOL(^)(NSRect))iconDrawingHandler:(NSString*)txt color:(NSColor *)color {
@@ -39,9 +50,10 @@ static Icons *iconInstance;
     };
 }
 
-+(Icons*)icons {
-    return iconInstance;
++(NSImage*)iconFor:(TokenType)t {
+    return iconInstance.icons[@(t)];
 }
+
 @end
 
 
@@ -75,11 +87,7 @@ static Icons *iconInstance;
 static NSMutableArray *icons;
 
 -(NSImage*)icon {
-    switch (self.type) {
-        case TTField : return [Icons icons].field;
-        case TTRelationship: return [Icons icons].rel;
-        default: return nil;
-    }
+    return [Icons iconFor:self.type];
 }
 @end
 
