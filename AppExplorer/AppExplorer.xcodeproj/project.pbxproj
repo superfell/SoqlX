@@ -104,6 +104,7 @@
 		F4E3194E2198EF4E009B8C4F /* ProgressWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4E3194C2198EF4E009B8C4F /* ProgressWindow.xib */; };
 		F4E8BB10184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E8BB0F184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m */; };
 		F4F286F5263372FE00CCEA7D /* SoqlToken.m in Sources */ = {isa = PBXBuildFile; fileRef = F4F286F4263372FE00CCEA7D /* SoqlToken.m */; };
+		F4F2870E26337DF000CCEA7D /* SoqlParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F4F2870A26337DEF00CCEA7D /* SoqlParser.m */; };
 		F4F75D940D4EFCEE00608927 /* QueryTextListView.m in Sources */ = {isa = PBXBuildFile; fileRef = F4F75D930D4EFCEE00608927 /* QueryTextListView.m */; };
 		F4F897B4134CD84C00699880 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F4F897B3134CD84C00699880 /* libxml2.2.dylib */; };
 		F4FAFB660F68CAFD00ECC9BB /* HighlightTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F4FAFB650F68CAFD00ECC9BB /* HighlightTextFieldCell.m */; };
@@ -370,6 +371,8 @@
 		F4E8BB0F184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ZKDescribeThemeItem+ZKFindResource.m"; sourceTree = "<group>"; };
 		F4F286F3263372FE00CCEA7D /* SoqlToken.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SoqlToken.h; sourceTree = "<group>"; };
 		F4F286F4263372FE00CCEA7D /* SoqlToken.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SoqlToken.m; sourceTree = "<group>"; };
+		F4F2870A26337DEF00CCEA7D /* SoqlParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SoqlParser.m; sourceTree = "<group>"; };
+		F4F2870B26337DEF00CCEA7D /* SoqlParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoqlParser.h; sourceTree = "<group>"; };
 		F4F75D920D4EFCEE00608927 /* QueryTextListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueryTextListView.h; sourceTree = "<group>"; };
 		F4F75D930D4EFCEE00608927 /* QueryTextListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QueryTextListView.m; sourceTree = "<group>"; };
 		F4F897B3134CD84C00699880 /* libxml2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.2.dylib; path = ../../../../../usr/lib/libxml2.2.dylib; sourceTree = "<group>"; };
@@ -412,6 +415,7 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				F4F2870926337DCC00CCEA7D /* SoqlSyntax */,
 				F454D161126785EA00DC16D9 /* ApexController.h */,
 				F454D162126785EA00DC16D9 /* ApexController.m */,
 				F4D7831C15D49F7B00D00BB9 /* AppDelegate.h */,
@@ -442,14 +446,6 @@
 				F4CF71F30D4704EE001001F2 /* QueryResultTable.m */,
 				F45DDFDC0AABBA6100ED0BA0 /* Explorer.h */,
 				F45DDFDB0AABBA6100ED0BA0 /* Explorer.m */,
-				F4F286F3263372FE00CCEA7D /* SoqlToken.h */,
-				F4F286F4263372FE00CCEA7D /* SoqlToken.m */,
-				F424A81B262B595C00AD4F42 /* SoqlTokenizer.h */,
-				F424A81C262B595C00AD4F42 /* SoqlTokenizer.m */,
-				F438E4A82623A8490010D90E /* SoqlColorizer.h */,
-				F438E4A92623A8490010D90E /* SoqlColorizer.m */,
-				F424A835262BCF1B00AD4F42 /* ColorizerStyle.h */,
-				F424A836262BCF1B00AD4F42 /* ColorizerStyle.m */,
 				F494FA3C0F7EFDD2001216EC /* GlossShader */,
 				F4B8AFC518A8540800FE114F /* IconProvider.h */,
 				F48B6B8A1969E68700496C82 /* Prefs.h */,
@@ -692,6 +688,23 @@
 				F4C889D12624F272006D606A /* SoqlColorizerTests.m */,
 			);
 			path = SoqlXplorerTests;
+			sourceTree = "<group>";
+		};
+		F4F2870926337DCC00CCEA7D /* SoqlSyntax */ = {
+			isa = PBXGroup;
+			children = (
+				F4F2870B26337DEF00CCEA7D /* SoqlParser.h */,
+				F4F2870A26337DEF00CCEA7D /* SoqlParser.m */,
+				F4F286F3263372FE00CCEA7D /* SoqlToken.h */,
+				F4F286F4263372FE00CCEA7D /* SoqlToken.m */,
+				F424A81B262B595C00AD4F42 /* SoqlTokenizer.h */,
+				F424A81C262B595C00AD4F42 /* SoqlTokenizer.m */,
+				F438E4A82623A8490010D90E /* SoqlColorizer.h */,
+				F438E4A92623A8490010D90E /* SoqlColorizer.m */,
+				F424A835262BCF1B00AD4F42 /* ColorizerStyle.h */,
+				F424A836262BCF1B00AD4F42 /* ColorizerStyle.m */,
+			);
+			name = SoqlSyntax;
 			sourceTree = "<group>";
 		};
 		F4FDA6CA0B39162300A541E5 /* SchemaReportClasses */ = {
@@ -1024,6 +1037,7 @@
 				F4AC556915996D8500F5CA45 /* ZKCodeLocation.m in Sources */,
 				F4F286F5263372FE00CCEA7D /* SoqlToken.m in Sources */,
 				F4AC556A15996D8500F5CA45 /* ZKCompileResult.m in Sources */,
+				F4F2870E26337DF000CCEA7D /* SoqlParser.m in Sources */,
 				F4AC556B15996D8500F5CA45 /* zkExecuteAnonResult.m in Sources */,
 				F4AC556C15996D8500F5CA45 /* ZKRunTestFailure.m in Sources */,
 				F4AC556D15996D8500F5CA45 /* zkRunTestResult.m in Sources */,

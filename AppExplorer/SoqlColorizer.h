@@ -21,30 +21,3 @@
 
 #import <Foundation/Foundation.h>
 
-@class ZKDescribeSObject;
-@class DescribeListDataSource;
-
-@protocol Describer
--(ZKDescribeSObject*)describe:(NSString*)obj;   // returns the describe if we have it?
--(BOOL)knownSObject:(NSString*)obj;             // is the object in the describeGlobal list of objects?
--(NSArray<NSString*>*)allQueryableSObjects;
-@end
-
-typedef NS_ENUM(uint16_t, SoqlTokenType) {
-    TKeyword,
-    TField,
-    TFunc,
-    TLiteral,
-    TError  // not really a token type, can be applied to any token
-};
-
-typedef NSArray<NSString*>*(^completions)(void);
-typedef void(^tokenCallback)(SoqlTokenType type, NSRange loc, NSString *error, completions comps);
-
-
-@interface SoqlColorizer : NSObject<Describer, NSTextViewDelegate, NSTextStorageDelegate>
-@property (strong,nonatomic) DescribeListDataSource* describes;
-@property (strong,nonatomic) NSTextStorage *txt;
--(void)color;
--(void)enumerateTokens:(NSString *)soql describes:(NSObject<Describer>*)d block:(tokenCallback)cb;
-@end

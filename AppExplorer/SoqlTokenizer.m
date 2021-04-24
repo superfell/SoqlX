@@ -5,16 +5,15 @@
 //  Created by Simon Fell on 4/17/21.
 //
 
-#import "SoqlTokenizer.h"
+#include <mach/mach_time.h>
+
 #import <objc/runtime.h>
-#import <ZKParser/SoqlParser.h>
-#import <ZKParser/Soql.h>
+#import "SoqlTokenizer.h"
 #import "DataSources.h"
 #import "CaseInsensitiveStringKey.h"
-#include <mach/mach_time.h>
 #import "ColorizerStyle.h"
 #import "SoqlToken.h"
-
+#import "SoqlParser.h"
 
 @interface SoqlScanner : NSObject {
     NSString       *txt;
@@ -140,11 +139,18 @@
 
 @interface SoqlTokenizer()
 @property (strong,nonatomic) NSMutableArray<Token*> *tokens;
+@property (strong,nonatomic) SoqlParser *soqlParser;
 @end
 
 @implementation SoqlTokenizer
 
 static NSString *KeyCompletions = @"completions";
+
+-(instancetype)init {
+    self = [super init];
+    self.soqlParser = [SoqlParser new];
+    return self;
+}
 
 -(void)textDidChange:(NSNotification *)notification {
     [self color];
@@ -361,13 +367,26 @@ static NSString *KeyCompletions = @"completions";
     }
 }
 
+-(void)scanWithParser:(NSString*)input {
+    NSError *err = nil;
+    [self.tokens addObjectsFromArray:[self.soqlParser parse:input error:&err]];
+    if (err != nil) {
+        // TODO setting an error on the insertion point when its at the end of the string is problematic
+        Token *t = [Token txt:input loc:NSMakeRange([err.userInfo[@"Position"] integerValue]-1, 0)];
+        t.type = TTError;
+        [self.tokens addObject:t];
+    }
+}
+
 -(void)color {
     //NSLog(@"starting color");
     self.tokens = [NSMutableArray arrayWithCapacity:10];
-    SoqlScanner *sc = [SoqlScanner withString:self.view.textStorage.string];
-    [self scanSelect:sc];
+    //SoqlScanner *sc = [SoqlScanner withString:self.view.textStorage.string];
+    //[self scanSelect:sc];
+    [self scanWithParser:self.view.textStorage.string];
+    //NSLog(@"parsed tokens\n%@", self.tokens);
     [self resolveTokens:self.tokens];
-    //NSLog(@"resolved tokens\n%@", self.tokens);
+    NSLog(@"resolved tokens\n%@", self.tokens);
     NSTextStorage *txt = self.view.textStorage;
     NSRange before =  [self.view selectedRange];
     [txt beginEditing];
@@ -397,10 +416,12 @@ static NSString *KeyCompletions = @"completions";
         return;
     }
     NSMutableArray<Token*> *newTokens = [NSMutableArray arrayWithCapacity:4];
+    NSMutableArray<Token*> *delTokens = [NSMutableArray arrayWithCapacity:4];
     ZKDescribeSObject *desc = [self describe:tSObject.tokenTxt];
     tSObject.value = desc;
     for (Token *sel in tokens) {
         if (sel.type == TTFieldPath) {
+            [delTokens addObject:sel];
             NSArray<NSString*>* path = [sel.tokenTxt componentsSeparatedByString:@"."];
             NSInteger pos = sel.loc.location;
             ZKDescribeSObject *currentSObject = desc;
@@ -440,6 +461,9 @@ static NSString *KeyCompletions = @"completions";
             break;
         }
     }
+    for (Token *t in delTokens) {
+        [tokens removeObject:t];
+    }
     [tokens addObjectsFromArray:newTokens];
 }
 
@@ -452,6 +476,7 @@ static NSString *KeyCompletions = @"completions";
         }
         switch (t.type) {
             case TTFieldPath:
+                [txt addAttributes:style.field range:t.loc];
                 break;
             case TTKeyword:
                 [txt replaceCharactersInRange:t.loc withString:[t.tokenTxt uppercaseString]];
@@ -485,6 +510,11 @@ static NSString *KeyCompletions = @"completions";
                 if (t.value != nil) {
                     [txt addAttribute:NSToolTipAttributeName value:t.value range:t.loc];
                 }
+                break;
+            case TTUsingScope:
+            case TTDataCategory:
+            case TTDataCategoryValue:
+                [txt addAttributes:style.field range:t.loc];
                 break;
         }
     }

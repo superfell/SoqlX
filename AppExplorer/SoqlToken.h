@@ -23,6 +23,9 @@ typedef NS_ENUM(uint16_t, TokenType) {
     TTOperator,
     TTLiteral,
     TTLiteralList,
+    TTUsingScope,
+    TTDataCategory,
+    TTDataCategoryValue,
     TTError
 };
 
