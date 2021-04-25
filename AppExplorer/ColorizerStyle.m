@@ -68,7 +68,9 @@ static ColorizerStyle *style;
     if (r == nil) {
         NSMutableDictionary<CaseInsensitiveStringKey*,ZKChildRelationship*>* cr = [NSMutableDictionary dictionaryWithCapacity:self.childRelationships.count];
         for (ZKChildRelationship *r in self.childRelationships) {
-            [cr setObject:r forKey:[CaseInsensitiveStringKey of:r.relationshipName]];
+            if (r.relationshipName.length > 0) {
+                [cr setObject:r forKey:[CaseInsensitiveStringKey of:r.relationshipName]];
+            }
         }
         r = cr;
         objc_setAssociatedObject(self, @selector(childRelationshipsByName), r, OBJC_ASSOCIATION_RETAIN);

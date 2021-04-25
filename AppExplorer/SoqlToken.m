@@ -163,6 +163,12 @@ static NSMutableArray *icons;
     return self;
 }
 
+-(Tokens*)subsetWithRange:(NSRange)r {
+    Tokens *s = [Tokens new];
+    [s.items addObjectsFromArray:[self.items subarrayWithRange:r]];
+    return s;
+}
+
 -(NSInteger)count {
     return self.items.count;
 }

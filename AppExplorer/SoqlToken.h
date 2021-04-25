@@ -64,4 +64,5 @@ typedef NS_ENUM(uint16_t, TokenType) {
 -(void)addToken:(Token*)t;
 -(void)removeToken:(Token*)t;
 -(NSInteger)count;
+-(Tokens*)subsetWithRange:(NSRange)r;
 @end

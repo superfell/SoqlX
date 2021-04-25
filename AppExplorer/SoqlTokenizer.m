@@ -73,27 +73,48 @@ static NSString *KeyCompletions = @"completions";
 }
 
 -(void)resolveTokens:(Tokens*)tokens {
-    // This is the 2nd pass that deals with resolving field/object/rel/alias/func tokens
-    Context *ctx = [Context new];
-    [self resolveFrom:tokens ctx:ctx];
-    NSLog(@"aliasMap %@", ctx.aliases);
+    // This is the 2nd pass that deals with resolving field/object/rel/alias/func tokens.
+    // To make dealing with nested selects easier we'll first collect up the tokens for nested selected
+    // and move then into the nested select token itself.
+    for (NSInteger idx = 0; idx < tokens.count; idx++) {
+        Token *t = tokens.tokens[idx];
+        if (t.type == TTNestedSelect) {
+            NSInteger start = idx+1;
+            NSInteger end = start;
+            NSUInteger selEnd = t.loc.location + t.loc.length;
+            for (; end < tokens.count && tokens.tokens[end].loc.location < selEnd ; end++) {
+            }
+            // TODO add cutSubset method
+            Tokens *childTokens = [tokens subsetWithRange:NSMakeRange(start,end-start)];
+            for (Token *ct in childTokens.tokens) {
+                [tokens removeToken:ct];
+            }
+            t.value = childTokens;
+        }
+    }
+    [self resolveTokens:tokens ctx:nil];
+}
 
-    [self resolveSelectExprs:tokens ctx:ctx];
+-(void)resolveTokens:(Tokens*)tokens ctx:(Context*)ctx {
+    Context *childCtx = [self resolveFrom:tokens parentCtx:ctx];
+    [self resolveSelectExprs:tokens ctx:childCtx];
 }
 
 -(void)resolveSelectExprs:(Tokens*)tokens ctx:(Context*)ctx {
     NSMutableArray<Token*> *newTokens = [NSMutableArray arrayWithCapacity:4];
     NSMutableArray<Token*> *delTokens = [NSMutableArray arrayWithCapacity:4];
-    for (Token *sel in tokens.tokens) {
-        if (sel.type == TTFieldPath) {
-            [delTokens addObject:sel];
-            [newTokens addObjectsFromArray:[self resolveFieldPath:sel ctx:ctx]];
-        } else if (sel.type == TTFunc) {
-        
-        } else if (sel.type == TTSObject) {
-            break;
-        }
-    }
+    [tokens.tokens enumerateObjectsUsingBlock:^(Token * _Nonnull sel, NSUInteger idx, BOOL * _Nonnull stop) {
+            if (sel.type == TTFieldPath) {
+                [delTokens addObject:sel];
+                [newTokens addObjectsFromArray:[self resolveFieldPath:sel ctx:ctx]];
+            } else if (sel.type == TTFunc) {
+            
+            } else if (sel.type == TTTypeOf) {
+
+            } else if (sel.type == TTNestedSelect) {
+                [self resolveTokens:(Tokens*)sel.value ctx:ctx];
+            }
+    }];
     for (Token *t in delTokens) {
         [tokens removeToken:t];
     }
@@ -216,29 +237,49 @@ static NSString *KeyCompletions = @"completions";
                                             type:TTRelationship]];
 }
 
--(void)resolveFrom:(Tokens*)tokens ctx:(Context*)ctx {
+-(Context*)resolveFrom:(Tokens*)tokens parentCtx:(Context*)parentCtx {
+    __block NSUInteger skipUntil = 0;
     NSInteger idx = [tokens.tokens indexOfObjectPassingTest:^BOOL(Token * _Nonnull t, NSUInteger idx, BOOL * _Nonnull stop) {
-        return t.type == TTSObject;
+        if (t.type == TTNestedSelect) {
+            skipUntil = t.loc.location + t.loc.length;
+        }
+        return (t.loc.location >= skipUntil) && (t.type == TTSObject);
     }];
+    Context *ctx = [Context new];
+    ctx.aliases = [AliasMap new];
     if (idx >= tokens.count) {
-        return;
+        return ctx;
     }
     Token *tSObject = tokens.tokens[idx];
-    ctx.aliases = [AliasMap new];
-    ctx.primary = [self describe:tSObject.tokenTxt];
-    [tSObject.completions addObjectsFromArray:[Completion completions:self.allQueryableSObjects type:TTSObject]];
-    if (![self knownSObject:tSObject.tokenTxt]) {
-        tSObject.type = TTError;
-        tSObject.value = [NSString stringWithFormat:@"The SObject '%@' does not exist or is inaccessible", tSObject.tokenTxt];
-        return;
-    }
-    if (ctx.primary == nil) {
-        return; // cant do anymore without the describe.
+    if (parentCtx == nil) {
+        ctx.primary = [self describe:tSObject.tokenTxt];
+        [tSObject.completions addObjectsFromArray:[Completion completions:self.allQueryableSObjects type:TTSObject]];
+        if (![self knownSObject:tSObject.tokenTxt]) {
+            tSObject.type = TTError;
+            tSObject.value = [NSString stringWithFormat:@"The SObject '%@' does not exist or is inaccessible", tSObject.tokenTxt];
+            return ctx;
+        }
+        if (ctx.primary == nil) {
+            return ctx; // cant do anymore without the describe.
+        }
+    } else {
+        // for a nested select the from is a child relationship not an object
+        [tSObject.completions addObjectsFromArray:[Completion completions:[parentCtx.primary.childRelationshipsByName.allKeys valueForKey:@"value"] type:TTRelationship]];
+        ZKChildRelationship * cr = parentCtx.primary.childRelationshipsByName[[CaseInsensitiveStringKey of:tSObject.tokenTxt]];
+        if (cr == nil) {
+            tSObject.type = TTError;
+            tSObject.value = [NSString stringWithFormat:@"The SObject '%@' does not have a child relationship called %@", parentCtx.primary.name, tSObject.tokenTxt];
+            return ctx;
+        }
+        tSObject.type = TTRelationship;
+        ctx.primary = [self describe:cr.childSObject];
     }
     // does the primary sobject have an alias?
-    Token *tSObjectAlias = tokens.tokens[idx+1];
-    if (tSObjectAlias.type == TTAliasDecl) {
-        ctx.aliases[[CaseInsensitiveStringKey of:tSObjectAlias.tokenTxt]] = ctx.primary;
+    if (tokens.count > idx+1) {
+        Token *tSObjectAlias = tokens.tokens[idx+1];
+        if (tSObjectAlias.type == TTAliasDecl) {
+            ctx.aliases[[CaseInsensitiveStringKey of:tSObjectAlias.tokenTxt]] = ctx.primary;
+        }
     }
     NSEnumerator<Token*> *e = [[tokens.tokens subarrayWithRange:NSMakeRange(idx, tokens.tokens.count-idx)] objectEnumerator];
     while (true) {
@@ -289,6 +330,7 @@ static NSString *KeyCompletions = @"completions";
             }
         }
     }
+    return ctx;
 }
 
 -(void)applyTokens:(Tokens*)tokens {
