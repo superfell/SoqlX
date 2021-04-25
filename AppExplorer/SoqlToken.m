@@ -163,6 +163,10 @@ static NSMutableArray *icons;
     return self;
 }
 
+-(NSInteger)count {
+    return self.items.count;
+}
+
 -(NSArray<Token*>*) tokens {
     return self.items;
 }

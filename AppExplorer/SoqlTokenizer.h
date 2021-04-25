@@ -16,12 +16,8 @@
 -(NSArray<NSString*>*)allQueryableSObjects;
 @end
 
-
-
 @interface SoqlTokenizer : NSObject<Describer, NSTextViewDelegate, NSTextStorageDelegate>
 @property (strong,nonatomic) DescribeListDataSource* describes;
 @property (strong,nonatomic) NSTextView *view;
 -(void)color;
 @end
-
-

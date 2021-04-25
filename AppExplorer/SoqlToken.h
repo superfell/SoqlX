@@ -63,4 +63,5 @@ typedef NS_ENUM(uint16_t, TokenType) {
 @property (strong,readonly,nonatomic) NSArray<Token*>* tokens;
 -(void)addToken:(Token*)t;
 -(void)removeToken:(Token*)t;
+-(NSInteger)count;
 @end
