@@ -84,12 +84,7 @@ static NSString *KeyCompletions = @"completions";
             NSUInteger selEnd = t.loc.location + t.loc.length;
             for (; end < tokens.count && tokens.tokens[end].loc.location < selEnd ; end++) {
             }
-            // TODO add cutSubset method
-            Tokens *childTokens = [tokens subsetWithRange:NSMakeRange(start,end-start)];
-            for (Token *ct in childTokens.tokens) {
-                [tokens removeToken:ct];
-            }
-            t.value = childTokens;
+            t.value = [tokens cutRange:NSMakeRange(start,end-start)];
         }
     }
     [self resolveTokens:tokens ctx:nil];

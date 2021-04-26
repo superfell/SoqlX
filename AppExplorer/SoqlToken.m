@@ -163,9 +163,10 @@ static NSMutableArray *icons;
     return self;
 }
 
--(Tokens*)subsetWithRange:(NSRange)r {
+-(Tokens*)cutRange:(NSRange)r {
     Tokens *s = [Tokens new];
     [s.items addObjectsFromArray:[self.items subarrayWithRange:r]];
+    [self.items removeObjectsInRange:r];
     return s;
 }
 

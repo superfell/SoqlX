@@ -64,5 +64,6 @@ typedef NS_ENUM(uint16_t, TokenType) {
 -(void)addToken:(Token*)t;
 -(void)removeToken:(Token*)t;
 -(NSInteger)count;
--(Tokens*)subsetWithRange:(NSRange)r;
+// remove the range of tokens from this collection and return then in a new collection of their own.
+-(Tokens*)cutRange:(NSRange)r;
 @end
