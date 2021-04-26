@@ -27,6 +27,7 @@ static Icons *iconInstance;
         @(TTLiteral) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"V" color:style.literalColor]],
         @(TTOperator) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"Op" color:style.keywordColor]],
         @(TTKeyword) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"K" color:style.keywordColor]],
+        @(TTTypeOf) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"T" color:style.keywordColor]],
     };
 }
 

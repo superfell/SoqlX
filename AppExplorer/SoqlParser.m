@@ -269,7 +269,7 @@ const NSString *KeySoqlText = @"soql";
         return r;
     }];
     ZKBaseParser *typeOf = [[f seq:@[
-                                tokenSeq(@"TYPEOF"), ws,
+                                tokenSeq(@"TYPEOF"), cut, ws,
                                 typeofRel, ws,
                                 [f oneOrMore:typeOfWhen separator:ws], maybeWs,
                                 [f zeroOrOne:typeOfElse], ws,

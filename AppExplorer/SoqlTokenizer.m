@@ -318,6 +318,7 @@ static NSString *KeyCompletions = @"completions";
     [t.completions addObjectsFromArray:[Completion
                                             completions:[obj.parentRelationshipsByName.allValues valueForKey:@"relationshipName"]
                                             type:TTRelationship]];
+    [t.completions addObject:[Completion txt:@"TYPEOF" type:TTTypeOf]];
 }
 
 -(Context*)resolveFrom:(Tokens*)tokens parentCtx:(Context*)parentCtx {
