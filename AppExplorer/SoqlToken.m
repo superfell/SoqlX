@@ -116,11 +116,15 @@ static NSMutableArray *icons;
     return [self.tokenTxt caseInsensitiveCompare:match] == NSOrderedSame;
 }
 
+-(BOOL)matches:(NSString *)match {
+    return [self.tokenTxt caseInsensitiveCompare:match] == NSOrderedSame;
+}
+
 -(NSString *)description {
     NSString *t = [NSString stringWithFormat:@"%4lu-%-4lu: %@ %@ completions %lu", self.loc.location, self.loc.length,
             [self.typeName stringByPaddingToLength:9 withString:@" " startingAtIndex:0],
             [self.tokenTxt stringByPaddingToLength:25 withString:@" " startingAtIndex:0], (unsigned long)self.completions.count];
-    if (self.type == TTChildSelect || self.type == TTSemiJoinSelect) {
+    if (self.type == TTChildSelect || self.type == TTSemiJoinSelect || self.type == TTTypeOf) {
         NSMutableString *c = [NSMutableString string];
         [c appendString:t];
         [c appendString:@"\n"];
@@ -198,10 +202,12 @@ static NSMutableArray *icons;
                                       usingComparator:^(id obj1, id obj2) {
         Token *a = obj1;
         Token *b = obj2;
+        // The array is sorted by ascending starting location. for cases where there are multiple
+        // tokens at the same starting location, there are sorted longest to shortest.
         if (a.loc.location == b.loc.location) {
-            if (a.loc.length > b.loc.length) {
+            if (a.loc.length < b.loc.length) {
                 return NSOrderedDescending;
-            } else if (a.loc.length < b.loc.length) {
+            } else if (a.loc.length > b.loc.length) {
                 return NSOrderedAscending;
             }
             return NSOrderedSame;

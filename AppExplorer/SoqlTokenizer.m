@@ -17,6 +17,17 @@
 
 typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasMap;
 
+@implementation NSArray (ZKCompareStrings)
+-(BOOL)containsStringIgnoringCase:(NSString *)item {
+    for (NSString *v in self) {
+        if ([item caseInsensitiveCompare:v] == NSOrderedSame) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+@end
+
 @interface Context : NSObject
 @property (strong,nonatomic) ZKDescribeSObject *primary;
 @property (strong,nonatomic) AliasMap *aliases;
@@ -75,11 +86,11 @@ static NSString *KeyCompletions = @"completions";
 
 -(void)resolveTokens:(Tokens*)tokens {
     // This is the 2nd pass that deals with resolving field/object/rel/alias/func tokens.
-    // To make dealing with nested selects easier we'll first collect up the tokens for nested selected
-    // and move then into the nested select token itself.
+    // To make dealing with some items that span many tokens, we'll collect them up and
+    // put then as child values instead. e.g. nested select, typeof
     for (NSInteger idx = 0; idx < tokens.count; idx++) {
         Token *t = tokens.tokens[idx];
-        if (t.type == TTChildSelect || t.type == TTSemiJoinSelect) {
+        if (t.type == TTChildSelect || t.type == TTSemiJoinSelect || t.type == TTTypeOf) {
             NSInteger start = idx+1;
             NSInteger end = start;
             NSUInteger selEnd = t.loc.location + t.loc.length;
@@ -102,7 +113,9 @@ static NSString *KeyCompletions = @"completions";
                 [newTokens addObjectsFromArray:[self resolveFieldPath:sel ctx:ctx]];
                 break;
             case TTFunc: // TODO
+                break;
             case TTTypeOf: // TODO
+                [newTokens addObjectsFromArray:[self resolveTypeOf:sel ctx:ctx]];
                 break;
             case TTChildSelect:
             case TTSemiJoinSelect:
@@ -118,6 +131,79 @@ static NSString *KeyCompletions = @"completions";
     for (Token *t in newTokens) {
         [tokens addToken:t];
     }
+}
+
+-(NSArray<Token*>*)resolveTypeOf:(Token*)typeOf ctx:(Context*)ctx {
+    if (ctx.primary == nil) {
+        return [NSArray array];
+    }
+    NSAssert([typeOf.value isKindOfClass:[Tokens class]], @"TypeOf token should have an child tokens value");
+    Tokens *tokens = (Tokens*) typeOf.value;
+    NSEnumerator<Token*> *e = tokens.tokens.objectEnumerator;
+    Token *t = e.nextObject;
+    if (t.type == TTKeyword) t = e.nextObject;  // TYPEOF
+    ZKDescribeField *relField = nil;
+    if (t.type == TTRelationship) {
+        BOOL found = FALSE;
+        for (ZKDescribeField *f in ctx.primary.fields) {
+            if (f.referenceTo.count > 1 && f.relationshipName.length > 0) {
+                [t.completions addObject:[Completion txt:f.relationshipName type:TTRelationship]];
+                if ([t.tokenTxt caseInsensitiveCompare:f.relationshipName] == NSOrderedSame) {
+                    found = TRUE;
+                    relField = f;
+                }
+            }
+        }
+        if (!found) {
+            t.type = TTError;
+            t.value = [NSString stringWithFormat:@"There is no polymorphic relationship '%@' on SObject %@", t.tokenTxt, ctx.primary.name];
+            return [NSArray array];
+        }
+    }
+    ZKDescribeSObject *originalPrimary = ctx.primary;
+    NSMutableArray<Token*>* newTokens = [NSMutableArray array];
+    t = e.nextObject;
+    while (t.type == TTKeyword && [t matches:@"WHEN" caseSensitive:NO]) {
+        t = e.nextObject;
+        if (t.type == TTSObject) {
+            [t.completions addObjectsFromArray:[Completion completions:relField.referenceTo type:TTSObject]];
+            if (![relField.referenceTo containsStringIgnoringCase:t.tokenTxt]) {
+                t.type = TTError;
+                t.value = [NSString stringWithFormat:@"%@ is not a reference to %@", relField.name, t.tokenTxt];
+                return newTokens;
+            }
+            ZKDescribeSObject *curr = [self describe:t.tokenTxt];
+            t = e.nextObject;
+            if (t.type == TTKeyword) t = e.nextObject; // THEN
+            ctx.primary = curr;
+            while (t.type == TTFieldPath) {
+                [newTokens addObjectsFromArray:[self resolveFieldPath:t ctx:ctx]];
+                t = e.nextObject;
+            }
+            ctx.primary = originalPrimary;
+        }
+    }
+    if (t.type == TTKeyword && [t matches:@"ELSE"]) {
+        ZKDescribeSObject *curr = [self describe:@"Name"];
+        t = e.nextObject;
+        ctx.primary = curr;
+        while (t.type == TTFieldPath) {
+            [newTokens addObjectsFromArray:[self resolveFieldPath:t ctx:ctx]];
+            t = e.nextObject;
+        }
+        ctx.primary = originalPrimary;
+    }
+    if (t.type != TTKeyword || ![t matches:@"END"]) {
+        t.type = TTError;
+        t.value = @"Expecting keyword END";
+    }
+    t = e.nextObject;
+    while (t != nil) {
+        t.type = TTError;
+        t.value = [NSString stringWithFormat:@"Unexpected token %@", t.tokenTxt];
+        t = e.nextObject;
+    }
+    return newTokens;
 }
 
 // The first step in the path is optionally the object name, e.g.
@@ -350,7 +436,6 @@ static NSString *KeyCompletions = @"completions";
                 [txt addAttributes:style.keyWord range:t.loc];
                 break;
             case TTAlias:
-            case TTTypeOf:
             case TTField:
             case TTRelationship:
             case TTSObject:
@@ -365,6 +450,7 @@ static NSString *KeyCompletions = @"completions";
             case TTLiteralList:
                 [txt addAttributes:style.literal range:t.loc];
                 break;
+            case TTTypeOf:
             case TTChildSelect:
             case TTSemiJoinSelect:
                 [self applyTokens:(Tokens*)t.value];

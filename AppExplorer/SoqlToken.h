@@ -55,6 +55,7 @@ typedef NS_ENUM(uint16_t, TokenType) {
 @property (strong,nonatomic) NSMutableArray<Completion*>* completions;
 @property (strong,nonatomic) NSString *tokenTxt;
 
+-(BOOL)matches:(NSString *)match;   // not case sensitive
 -(BOOL)matches:(NSString *)match caseSensitive:(BOOL)cs;
 // Creates another Token from the same backing string.
 -(Token*)tokenOf:(NSRange)r;

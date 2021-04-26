@@ -262,14 +262,20 @@ const NSString *KeySoqlText = @"soql";
         return r;
     }];
     ZKBaseParser *typeOfElse = [f seq:@[tokenSeq(@"ELSE"), ws, [f oneOrMore:fieldOnly separator:commaSep]]];
+    ZKBaseParser *typeofRel = [[ident copy] onMatch:^ZKParserResult *(ZKParserResult *r) {
+        Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
+        t.type = TTRelationship;
+        [r.userContext[KeyTokens] addToken:t];
+        return r;
+    }];
     ZKBaseParser *typeOf = [[f seq:@[
                                 tokenSeq(@"TYPEOF"), ws,
-                                ident, ws,
+                                typeofRel, ws,
                                 [f oneOrMore:typeOfWhen separator:ws], maybeWs,
                                 [f zeroOrOne:typeOfElse], ws,
                                 tokenSeq(@"END")]] onMatch:^ZKParserResult *(ZKArrayParserResult *r) {
-        Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.child[2].loc];
-        t.type = TTRelationship;
+        Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
+        t.type = TTTypeOf;
         [r.userContext[KeyTokens] addToken:t];
         return r;
     }];
