@@ -117,9 +117,20 @@ static NSMutableArray *icons;
 }
 
 -(NSString *)description {
-    return [NSString stringWithFormat:@"%4lu-%-4lu: %@ %@ completions %lu", self.loc.location, self.loc.length,
+    NSString *t = [NSString stringWithFormat:@"%4lu-%-4lu: %@ %@ completions %lu", self.loc.location, self.loc.length,
             [self.typeName stringByPaddingToLength:9 withString:@" " startingAtIndex:0],
             [self.tokenTxt stringByPaddingToLength:25 withString:@" " startingAtIndex:0], (unsigned long)self.completions.count];
+    if (self.type == TTChildSelect || self.type == TTSemiJoinSelect) {
+        NSMutableString *c = [NSMutableString string];
+        [c appendString:t];
+        [c appendString:@"\n"];
+        Tokens *children = (Tokens*)self.value;
+        for (Token *t in children.tokens) {
+            [c appendFormat:@"    %@\n", t];
+        }
+        return c;
+    }
+    return t;
 }
 
 -(NSString*)typeName {
@@ -130,7 +141,7 @@ static NSMutableArray *icons;
         case TTRelationship: return @"Rel";
         case TTField: return @"Field";
         case TTFunc: return @"Func";
-        case TTNestedSelect: return @"NSelect";
+        case TTChildSelect: return @"CSelect";
         case TTTypeOf: return @"TypeOf";
         case TTSObject: return @"SObject";
         case TTAliasDecl: return @"AliasDecl";
@@ -138,6 +149,7 @@ static NSMutableArray *icons;
         case TTOperator: return @"Op";
         case TTLiteral: return @"Lit";
         case TTLiteralList: return @"LitList";
+        case TTSemiJoinSelect: return @"SJSelect";
         case TTUsingScope: return @"Scope";
         case TTDataCategory: return @"Cat";
         case TTDataCategoryValue: return @"CatVal";
@@ -206,4 +218,12 @@ static NSMutableArray *icons;
     [self.items removeObject:t];
 }
 
+-(NSString *)description {
+    NSMutableString *s = [NSMutableString string];
+    for (Token *t in self.items) {
+        [s appendString:t.description];
+        [s appendString:@"\n"];
+    }
+    return s;
+}
 @end

@@ -20,6 +20,7 @@ typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasM
 @interface Context : NSObject
 @property (strong,nonatomic) ZKDescribeSObject *primary;
 @property (strong,nonatomic) AliasMap *aliases;
+@property (assign,nonatomic) TokenType containerType;
 @end
 
 @implementation Context
@@ -59,7 +60,7 @@ static NSString *KeyCompletions = @"completions";
     [self scanWithParser:self.view.textStorage.string];
     //NSLog(@"parsed tokens\n%@", self.tokens);
     [self resolveTokens:self.tokens];
-    NSLog(@"resolved tokens\n%@", self.tokens.tokens);
+    NSLog(@"resolved tokens\n%@", self.tokens);
     NSTextStorage *txt = self.view.textStorage;
     NSRange before =  [self.view selectedRange];
     [txt beginEditing];
@@ -78,7 +79,7 @@ static NSString *KeyCompletions = @"completions";
     // and move then into the nested select token itself.
     for (NSInteger idx = 0; idx < tokens.count; idx++) {
         Token *t = tokens.tokens[idx];
-        if (t.type == TTNestedSelect) {
+        if (t.type == TTChildSelect || t.type == TTSemiJoinSelect) {
             NSInteger start = idx+1;
             NSInteger end = start;
             NSUInteger selEnd = t.loc.location + t.loc.length;
@@ -90,25 +91,26 @@ static NSString *KeyCompletions = @"completions";
     [self resolveTokens:tokens ctx:nil];
 }
 
--(void)resolveTokens:(Tokens*)tokens ctx:(Context*)ctx {
-    Context *childCtx = [self resolveFrom:tokens parentCtx:ctx];
-    [self resolveSelectExprs:tokens ctx:childCtx];
-}
-
--(void)resolveSelectExprs:(Tokens*)tokens ctx:(Context*)ctx {
+-(void)resolveTokens:(Tokens*)tokens ctx:(Context*)parentCtx {
+    Context *ctx = [self resolveFrom:tokens parentCtx:parentCtx];
     NSMutableArray<Token*> *newTokens = [NSMutableArray arrayWithCapacity:4];
     NSMutableArray<Token*> *delTokens = [NSMutableArray arrayWithCapacity:4];
     [tokens.tokens enumerateObjectsUsingBlock:^(Token * _Nonnull sel, NSUInteger idx, BOOL * _Nonnull stop) {
-            if (sel.type == TTFieldPath) {
+        switch (sel.type) {
+            case TTFieldPath:
                 [delTokens addObject:sel];
                 [newTokens addObjectsFromArray:[self resolveFieldPath:sel ctx:ctx]];
-            } else if (sel.type == TTFunc) {
-            
-            } else if (sel.type == TTTypeOf) {
-
-            } else if (sel.type == TTNestedSelect) {
+                break;
+            case TTFunc: // TODO
+            case TTTypeOf: // TODO
+                break;
+            case TTChildSelect:
+            case TTSemiJoinSelect:
+                ctx.containerType = sel.type;
                 [self resolveTokens:(Tokens*)sel.value ctx:ctx];
-            }
+            default:
+                break;
+        }
     }];
     for (Token *t in delTokens) {
         [tokens removeToken:t];
@@ -235,7 +237,7 @@ static NSString *KeyCompletions = @"completions";
 -(Context*)resolveFrom:(Tokens*)tokens parentCtx:(Context*)parentCtx {
     __block NSUInteger skipUntil = 0;
     NSInteger idx = [tokens.tokens indexOfObjectPassingTest:^BOOL(Token * _Nonnull t, NSUInteger idx, BOOL * _Nonnull stop) {
-        if (t.type == TTNestedSelect) {
+        if (t.type == TTChildSelect) {
             skipUntil = t.loc.location + t.loc.length;
         }
         return (t.loc.location >= skipUntil) && (t.type == TTSObject);
@@ -246,7 +248,7 @@ static NSString *KeyCompletions = @"completions";
         return ctx;
     }
     Token *tSObject = tokens.tokens[idx];
-    if (parentCtx == nil) {
+    if (parentCtx == nil || parentCtx.containerType == TTSemiJoinSelect) {
         ctx.primary = [self describe:tSObject.tokenTxt];
         [tSObject.completions addObjectsFromArray:[Completion completions:self.allQueryableSObjects type:TTSObject]];
         if (![self knownSObject:tSObject.tokenTxt]) {
@@ -363,7 +365,8 @@ static NSString *KeyCompletions = @"completions";
             case TTLiteralList:
                 [txt addAttributes:style.literal range:t.loc];
                 break;
-            case TTNestedSelect:
+            case TTChildSelect:
+            case TTSemiJoinSelect:
                 [self applyTokens:(Tokens*)t.value];
                 break;
             case TTError:

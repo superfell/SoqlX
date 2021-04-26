@@ -249,7 +249,7 @@ const NSString *KeySoqlText = @"soql";
     ZKBaseParser *nestedSelectStmt = [[f seq:@[[f eq:@"("], selectStmt, [f eq:@")"]]] onMatch:^ZKParserResult*(ZKArrayParserResult*r) {
         // Similar to Func, I think we'd need start/stop tokens for this.
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
-        t.type = TTNestedSelect;
+        t.type = TTChildSelect;
         [r.userContext[KeyTokens] addToken:t];
         r.val = t;
         return r;
@@ -339,10 +339,17 @@ const NSString *KeySoqlText = @"soql";
         // TODO
         return r;
     }];
+    ZKBaseParser *semiJoinValues = [[f oneOf:@[literalStringList, nestedSelectStmt]] onMatch:^ZKParserResult *(ZKParserResult *r) {
+        Token *t = r.val;
+        if (t.type == TTChildSelect) {
+            t.type = TTSemiJoinSelect;
+        }
+        return r;
+    }];
     ZKBaseParser *operatorRHS = [f oneOf:@[
         [f seq:@[operator, cut, maybeWs, literalValue]],
         [f seq:@[opIncExcl, cut, maybeWs, literalStringList]],
-        [f seq:@[opInNotIn, cut, maybeWs, [f oneOf:@[literalStringList, nestedSelectStmt]]]]]];
+        [f seq:@[opInNotIn, cut, maybeWs, semiJoinValues]]]];
 
     ZKBaseParser *baseExpr = [f seq:@[fieldOrFunc, maybeWs, operatorRHS]];
 
