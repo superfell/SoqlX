@@ -22,9 +22,10 @@
 #import <Cocoa/Cocoa.h>
 
 @protocol ZKTextViewCompletion
--(void)bindToView:(NSView*)v;
--(NSString*)insertionText;
 -(NSString*)displayText;
+-(NSString*)nonFinalInsertionText;
+-(NSString*)finalInsertionText;
+-(NSInteger)finalMove;
 -(NSImage*)icon;
 @end
 

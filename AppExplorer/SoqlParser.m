@@ -272,7 +272,7 @@ const NSString *KeySoqlText = @"soql";
                                 tokenSeq(@"TYPEOF"), cut, ws,
                                 typeofRel, ws,
                                 [f oneOrMore:typeOfWhen separator:ws], maybeWs,
-                                [f zeroOrOne:typeOfElse], ws,
+                                [f zeroOrOne:typeOfElse], maybeWs,
                                 tokenSeq(@"END")]] onMatch:^ZKParserResult *(ZKArrayParserResult *r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
         t.type = TTTypeOf;

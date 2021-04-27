@@ -94,7 +94,6 @@ double ticksToMilliseconds;
         NSString *theArrow = [event charactersIgnoringModifiers];
         if ( [theArrow length] == 1 ) {
             unichar keyChar = [theArrow characterAtIndex:0];
-            NSLog(@"keyChar %d", keyChar);
             BOOL isFinal = NO;
             NSTextMovement movement;
             switch (keyChar) {
@@ -128,9 +127,16 @@ double ticksToMilliseconds;
             }
             NSInteger row = [self.table selectedRow];
             if (row >= 0) {
-                NSString *c = self.completions[row].insertionText;
-                [self insertCompletion:c forPartialWordRange:self.rangeForUserCompletion movement:movement isFinal:isFinal];
+                id<ZKTextViewCompletion> c = self.completions[row];
+                NSString *txt = isFinal ? c.finalInsertionText : c.nonFinalInsertionText;
+                [self insertCompletion:txt forPartialWordRange:self.rangeForUserCompletion movement:movement isFinal:isFinal];
                 if (isFinal) {
+                    if (c.finalMove != 0) {
+                        NSRange s = self.selectedRange;
+                        s.location += c.finalMove;
+                        self.selectedRange = s;
+                        hasTyped = TRUE;
+                    }
                     [self.po performClose:self];
                 }
             }
@@ -216,7 +222,7 @@ double ticksToMilliseconds;
 
 -(IBAction)completionDoubleClicked:(id)sender {
     id<ZKTextViewCompletion> c = self.completions[[sender selectedRow]];
-    [self insertCompletion:c.insertionText forPartialWordRange:self.rangeForUserCompletion movement:NSTextMovementOther isFinal:YES];
+    [self insertCompletion:c.finalInsertionText forPartialWordRange:self.rangeForUserCompletion movement:NSTextMovementOther isFinal:YES];
     [self.po performClose:self];
 }
 

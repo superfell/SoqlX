@@ -68,16 +68,18 @@ static Icons *iconInstance;
 }
 
 +(instancetype)txt:(NSString*)txt type:(TokenType)t {
-    return [self display:txt insert:txt type:t];
+    return [self display:txt insert:txt finalInsertion:txt type:t];
 }
 
-+(instancetype)display:(NSString*)d insert:(NSString*)i type:(TokenType)t {
++(instancetype)display:(NSString*)d insert:(NSString*)i finalInsertion:(NSString*)fi type:(TokenType)t {
     Completion *c = [self new];
     c.displayText = d;
-    c.insertionText = i;
+    c.nonFinalInsertionText = i;
+    c.finalInsertionText = fi;
     c.type = t;
     return c;
 }
+
 -(NSString*)description {
     return self.displayText;
 }
@@ -85,11 +87,10 @@ static Icons *iconInstance;
     return [self.displayText caseInsensitiveCompare:rhs.displayText];
 }
 
-static NSMutableArray *icons;
-
 -(NSImage*)icon {
     return [Icons iconFor:self.type];
 }
+
 @end
 
 

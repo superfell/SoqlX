@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "ZKTextView.h"
 
 typedef NS_ENUM(uint16_t, TokenType) {
     TTKeyword,
@@ -34,12 +34,14 @@ typedef NS_ENUM(uint16_t, TokenType) {
 +(NSImage*)iconFor:(TokenType)t;
 @end
 
-@interface Completion : NSObject
+@interface Completion : NSObject<ZKTextViewCompletion>
 +(NSArray<Completion*>*)completions:(NSArray<NSString*>*)txt type:(TokenType)t;
 +(instancetype)txt:(NSString*)txt type:(TokenType)t;
-+(instancetype)display:(NSString*)d insert:(NSString*)i type:(TokenType)t;
++(instancetype)display:(NSString*)d insert:(NSString*)i finalInsertion:(NSString*)fi type:(TokenType)t;
 @property (strong, nonatomic) NSString *displayText;
-@property (strong, nonatomic) NSString *insertionText;
+@property (strong, nonatomic) NSString *nonFinalInsertionText;  // the insertion text to use before confirmation.
+@property (strong, nonatomic) NSString *finalInsertionText;     // the insertion text to use when confirmed as the completion to use.
+@property (assign, nonatomic) NSInteger finalMove;              // distance to move from the end of finalInsertionText
 @property (assign, nonatomic) TokenType type;
 -(NSImage*)icon;
 @end

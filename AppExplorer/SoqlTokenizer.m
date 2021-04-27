@@ -79,6 +79,7 @@ static NSString *KeyCompletions = @"completions";
     [txt removeAttribute:NSToolTipAttributeName range:all];
     [txt addAttribute:NSForegroundColorAttributeName value:[NSColor whiteColor] range:all];
     [txt removeAttribute:NSUnderlineStyleAttributeName range:all];
+    [txt removeAttribute:KeyCompletions range:all];
     [self applyTokens:self.tokens];
     [txt endEditing];
     [self.view setSelectedRange:before];
@@ -318,7 +319,10 @@ static NSString *KeyCompletions = @"completions";
     [t.completions addObjectsFromArray:[Completion
                                             completions:[obj.parentRelationshipsByName.allValues valueForKey:@"relationshipName"]
                                             type:TTRelationship]];
-    [t.completions addObject:[Completion txt:@"TYPEOF" type:TTTypeOf]];
+    Completion *c = [Completion txt:@"TYPEOF" type:TTTypeOf];
+    c.finalInsertionText = @"TYPEOF Relation WHEN ObjectType THEN id END";
+    c.finalMove = -28;
+    [t.completions addObject:c];
 }
 
 -(Context*)resolveFrom:(Tokens*)tokens parentCtx:(Context*)parentCtx {
