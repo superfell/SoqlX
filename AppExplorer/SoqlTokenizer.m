@@ -319,6 +319,15 @@ static NSString *KeyCompletions = @"completions";
     return newTokens;
 }
 
+-(CompletionCallback)moveSelection:(NSInteger)amount {
+    return ^BOOL(ZKTextView *v, id<ZKTextViewCompletion> c) {
+        NSRange s = v.selectedRange;
+        s.location += amount;
+        v.selectedRange = s;
+        return TRUE;
+    };
+}
+
 -(void)addSObjectAliasCompletions:(Context*)ctx to:(Token*)t {
     [t.completions addObject:[Completion txt:ctx.primary.name type:TTAlias]];
     [t.completions addObjectsFromArray:[Completion completions:[ctx.aliases.allKeys valueForKey:@"value"] type:TTAlias]];
@@ -331,11 +340,11 @@ static NSString *KeyCompletions = @"completions";
                                             type:TTRelationship]];
     Completion *c = [Completion txt:@"TYPEOF" type:TTTypeOf];
     c.finalInsertionText = @"TYPEOF Relation WHEN ObjectType THEN id END";
-    c.finalMove = -28;
+    c.onFinalInsert = [self moveSelection:-28];
     [t.completions addObject:c];
     Completion *f = [Completion txt:@"FORMAT" type:TTFunc];
     f.finalInsertionText = @"FORMAT(lastModifiedDate)";
-    f.finalMove = -1;
+    f.onFinalInsert = [self moveSelection:-1];
     [t.completions addObject:f];
 }
 

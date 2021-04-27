@@ -131,11 +131,8 @@ double ticksToMilliseconds;
                 NSString *txt = isFinal ? c.finalInsertionText : c.nonFinalInsertionText;
                 [self insertCompletion:txt forPartialWordRange:self.rangeForUserCompletion movement:movement isFinal:isFinal];
                 if (isFinal) {
-                    if (c.finalMove != 0) {
-                        NSRange s = self.selectedRange;
-                        s.location += c.finalMove;
-                        self.selectedRange = s;
-                        hasTyped = TRUE;
+                    if (c.onFinalInsert != nil) {
+                        hasTyped = c.onFinalInsert(self, c);
                     }
                     [self.po performClose:self];
                 }
@@ -169,7 +166,7 @@ double ticksToMilliseconds;
     NSString *txt = self.textStorage.string;
     unichar prev = [txt characterAtIndex:r.location-1];
     unichar next = [txt characterAtIndex:r.location];
-    return (isblank(next) || next==',' || next=='(' || next==')') && !isblank(prev);
+    return (isblank(next) || next==',' || next=='(' || next==')' || next='\r' || next='\n') && !isblank(prev);
 }
 
 -(void)checkIdle {

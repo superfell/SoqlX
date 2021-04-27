@@ -39,9 +39,9 @@ typedef NS_ENUM(uint16_t, TokenType) {
 +(instancetype)txt:(NSString*)txt type:(TokenType)t;
 +(instancetype)display:(NSString*)d insert:(NSString*)i finalInsertion:(NSString*)fi type:(TokenType)t;
 @property (strong, nonatomic) NSString *displayText;
-@property (strong, nonatomic) NSString *nonFinalInsertionText;  // the insertion text to use before confirmation.
-@property (strong, nonatomic) NSString *finalInsertionText;     // the insertion text to use when confirmed as the completion to use.
-@property (assign, nonatomic) NSInteger finalMove;              // distance to move from the end of finalInsertionText
+@property (strong, nonatomic) NSString *nonFinalInsertionText;   // the insertion text to use before confirmation.
+@property (strong, nonatomic) NSString *finalInsertionText;      // the insertion text to use when confirmed as the completion to use.
+@property (copy,   nonatomic) CompletionCallback onFinalInsert;  // callback to customize outcome of final insertion.
 @property (assign, nonatomic) TokenType type;
 -(NSImage*)icon;
 @end

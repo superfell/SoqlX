@@ -21,11 +21,16 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class ZKTextView;
+@protocol ZKTextViewCompletion;
+
+typedef BOOL (^CompletionCallback)(ZKTextView*,id<ZKTextViewCompletion>);
+
 @protocol ZKTextViewCompletion
 -(NSString*)displayText;
 -(NSString*)nonFinalInsertionText;
 -(NSString*)finalInsertionText;
--(NSInteger)finalMove;
+-(CompletionCallback)onFinalInsert;
 -(NSImage*)icon;
 @end
 
