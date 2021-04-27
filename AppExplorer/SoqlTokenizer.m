@@ -14,6 +14,7 @@
 #import "ColorizerStyle.h"
 #import "SoqlToken.h"
 #import "SoqlParser.h"
+#import "SoqlFunction.h"
 
 typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasMap;
 
@@ -40,6 +41,7 @@ typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasM
 @interface SoqlTokenizer()
 @property (strong,nonatomic) Tokens *tokens;
 @property (strong,nonatomic) SoqlParser *soqlParser;
+@property (strong,nonatomic) NSDictionary<CaseInsensitiveStringKey*,SoqlFunction*> *functions;
 @end
 
 @implementation SoqlTokenizer
@@ -49,6 +51,7 @@ static NSString *KeyCompletions = @"completions";
 -(instancetype)init {
     self = [super init];
     self.soqlParser = [SoqlParser new];
+    self.functions = [SoqlFunction all];
     return self;
 }
 
@@ -67,11 +70,14 @@ static NSString *KeyCompletions = @"completions";
     }
 }
 
--(void)color {
-    [self scanWithParser:self.view.textStorage.string];
-    //NSLog(@"parsed tokens\n%@", self.tokens);
+-(Tokens*)parseAndResolve:(NSString*)soql {
+    [self scanWithParser:soql];
     [self resolveTokens:self.tokens];
-    NSLog(@"resolved tokens\n%@", self.tokens);
+    return self.tokens;
+}
+
+-(void)color {
+    [self parseAndResolve:self.view.textStorage.string];
     NSTextStorage *txt = self.view.textStorage;
     NSRange before =  [self.view selectedRange];
     [txt beginEditing];
@@ -183,7 +189,7 @@ static NSString *KeyCompletions = @"completions";
                 t.value = [NSString stringWithFormat:@"%@ is not a reference to %@", relField.name, t.tokenTxt];
                 return newTokens;
             }
-            ZKDescribeSObject *curr = [self describe:t.tokenTxt];
+            ZKDescribeSObject *curr = [self.describer describe:t.tokenTxt];
             t = e.nextObject;
             if (t.type == TTKeyword) t = e.nextObject; // THEN
             ctx.primary = curr;
@@ -195,7 +201,7 @@ static NSString *KeyCompletions = @"completions";
         }
     }
     if (t.type == TTKeyword && [t matches:@"ELSE"]) {
-        ZKDescribeSObject *curr = [self describe:@"Name"];
+        ZKDescribeSObject *curr = [self.describer describe:@"Name"];
         t = e.nextObject;
         ctx.primary = curr;
         while (t.type == TTFieldPath) {
@@ -296,9 +302,9 @@ static NSString *KeyCompletions = @"completions";
             tStep.value = df;
             if (df.namePointing) {
                 // polymorphic rel, valid fields are from Name, not any of the actual related types.
-                curr = [self describe:@"Name"];
+                curr = [self.describer describe:@"Name"];
             } else {
-                curr = [self describe:df.referenceTo[0]];
+                curr = [self.describer describe:df.referenceTo[0]];
             }
         } else {
             // its a field, it better be the last item on the path.
@@ -363,9 +369,9 @@ static NSString *KeyCompletions = @"completions";
     }
     Token *tSObject = tokens.tokens[idx];
     if (parentCtx == nil || parentCtx.containerType == TTSemiJoinSelect) {
-        ctx.primary = [self describe:tSObject.tokenTxt];
-        [tSObject.completions addObjectsFromArray:[Completion completions:self.allQueryableSObjects type:TTSObject]];
-        if (![self knownSObject:tSObject.tokenTxt]) {
+        ctx.primary = [self.describer describe:tSObject.tokenTxt];
+        [tSObject.completions addObjectsFromArray:[Completion completions:self.describer.allQueryableSObjects type:TTSObject]];
+        if (![self.describer knownSObject:tSObject.tokenTxt]) {
             tSObject.type = TTError;
             tSObject.value = [NSString stringWithFormat:@"The SObject '%@' does not exist or is inaccessible", tSObject.tokenTxt];
             return ctx;
@@ -383,7 +389,7 @@ static NSString *KeyCompletions = @"completions";
             return ctx;
         }
         tSObject.type = TTRelationship;
-        ctx.primary = [self describe:cr.childSObject];
+        ctx.primary = [self.describer describe:cr.childSObject];
     }
     // does the primary sobject have an alias?
     if (tokens.count > idx+1) {
@@ -428,9 +434,9 @@ static NSString *KeyCompletions = @"completions";
                 }
                 if (df.namePointing) {
                     // polymorphic rel, valid fields are from Name, not any of the actual related types.
-                    curr = [self describe:@"Name"];
+                    curr = [self.describer describe:@"Name"];
                 } else {
-                    curr = [self describe:df.referenceTo[0]];
+                    curr = [self.describer describe:df.referenceTo[0]];
                 }
                 pos += step.length + 1;
             }
@@ -523,6 +529,19 @@ static NSString *KeyCompletions = @"completions";
     }
     NSLog(@"no completions found at %lu-%lu", charRange.location, charRange.length);
     return nil;
+}
+
+@end
+
+@interface DLDDescriber()
+@property (strong,nonatomic) DescribeListDataSource *describes;
+@end
+
+@implementation DLDDescriber
++(instancetype)describer:(DescribeListDataSource *)describes {
+    DLDDescriber *d = [self new];
+    d.describes = describes;
+    return d;
 }
 
 -(ZKDescribeSObject*)describe:(NSString*)obj; {

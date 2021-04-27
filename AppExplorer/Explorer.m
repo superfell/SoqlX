@@ -258,7 +258,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     [describeList reloadData];
 
     self.colorizer = [SoqlTokenizer new];
-    self.colorizer.describes = descDataSource;
+    self.colorizer.describer = [DLDDescriber describer:descDataSource];
     self.colorizer.view = soql;
     soql.textStorage.delegate = self.colorizer;
     soql.delegate = self.colorizer;

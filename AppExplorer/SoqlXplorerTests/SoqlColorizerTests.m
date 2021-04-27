@@ -22,7 +22,8 @@
 
 #import <XCTest/XCTest.h>
 #import <ZKSforce/ZKSforce.h>
-#import "SoqlColorizer.h"
+#import "SoqlTokenizer.h"
+#import "SoqlToken.h"
 
 @interface SoqlColorizerTests : XCTestCase
 
@@ -43,10 +44,10 @@
 }
 -(BOOL)knownSObject:(NSString*)obj {
     // simulate Case being valid, but not yet described.
-    return [obj caseInsensitiveCompare:@"Case"] || [self describe:obj] != nil;
+    return ([obj caseInsensitiveCompare:@"Case"] == NSOrderedSame) || [self describe:obj] != nil;
 }
 
--(NSArray<NSString*>*)allSObjects {
+- (NSArray<NSString *> *)allQueryableSObjects {
     return [self.objects valueForKey:@"name"];
 }
 @end
@@ -85,22 +86,14 @@ NSObject<Describer> *descs;
     // Put teardown code here. This method is called after the invocation of each test method in the class.
 }
 
-typedef struct {
-    SoqlTokenType token;
-    NSRange loc;
-} TokenPos;
-
--(NSString *)tokenName:(SoqlTokenType)t {
-    switch (t) {
-        case TKeyword: return @"Keyword";
-        case TField: return @"Field";
-        case TFunc: return @"Func";
-        case TLiteral: return @"Literal";
-        case TError: return @"Error";
-    }
+-(void)testGeoFuncs {
+    NSArray<NSString*>* q = @[
+        @"SELECT name, DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') FROM account WHERE DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') > 20"
+    ];
+    [self writeSoqlTokensForQuerys:q toFile:@"geo_funcs.txt"];
 }
 
-- (void)testColorTokens {
+- (void)testSoqlTokens {
     NSArray<NSString*>* queries = @[
         @"select name from account where name='bob'",
         @"select namer from account where name='bob'",
@@ -141,28 +134,26 @@ typedef struct {
         @"select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 FOR view",
         @"select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 update viewstat",
     ];
+    [self writeSoqlTokensForQuerys:queries toFile:@"color_test.txt"];
+}
 
-    
-    SoqlColorizer *c = [SoqlColorizer new];
-    __block NSMutableString *results = [NSMutableString stringWithCapacity:1024];
-    
+-(void)writeSoqlTokensForQuerys:(NSArray<NSString*>*)queries toFile:(NSString*)fn {
+    SoqlTokenizer *c = [SoqlTokenizer new];
+    c.describer = descs;
+    NSMutableString *results = [NSMutableString stringWithCapacity:1024];
     for (NSString *q in queries) {
         [results appendString:q];
         [results appendString:@"\n"];
-        [c enumerateTokens:q describes:descs block:^void(SoqlTokenType t, NSRange loc, NSString *error,completions comps ) {
-            [results appendFormat:@"%15@ %3lu:%-3lu\t%@\t%@\n",
-                [[self tokenName:t] stringByPaddingToLength:10 withString:@" " startingAtIndex:0],
-                loc.location, loc.length, [q substringWithRange:loc], error == nil ? @"" : error];
-        }];
+        Tokens *t = [c parseAndResolve:q];
+        [results appendString:t.description];
         [results appendString:@"\n"];
     }
     NSError *err = nil;
     NSString *thisFile = [NSString stringWithUTF8String:__FILE__];
-    NSString *outFile = [[thisFile stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"color_test.txt"];
+    NSString *outFile = [[thisFile stringByDeletingLastPathComponent] stringByAppendingPathComponent:fn];
     [results writeToFile:outFile atomically:YES encoding:NSUTF8StringEncoding error:&err];
     XCTAssertNil(err);
     // git diff file and commit if valid.
 }
-
 
 @end

@@ -1,0 +1,21 @@
+SELECT name, DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') FROM account WHERE DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') > 20
+   0-6   : Keyword   SELECT                    completions 0 
+   7-4   : Field     name                      completions 3 
+  13-8   : Func      DISTANCE                  completions 0 
+      22-10  : Error     mailing__c                completions 3 There is no field or relationship mailing__c on SObject Account
+      34-11  : Func      GEOLOCATION               completions 0 
+          46-1   : Lit       1                         completions 0 
+          48-1   : Lit       1                         completions 0 
+      52-4   : Lit       'mi'                      completions 0 
+  58-4   : Keyword   FROM                      completions 0 
+  63-7   : SObject   account                   completions 2 
+  71-5   : Keyword   WHERE                     completions 0 
+  77-8   : Func      DISTANCE                  completions 0 
+      86-10  : Error     mailing__c                completions 3 There is no field or relationship mailing__c on SObject Account
+      98-11  : Func      GEOLOCATION               completions 0 
+         110-1   : Lit       1                         completions 0 
+         112-1   : Lit       1                         completions 0 
+     116-4   : Lit       'mi'                      completions 0 
+ 122-1   : Op        >                         completions 11 
+ 124-2   : Lit       20                        completions 0 
+

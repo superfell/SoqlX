@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class Tokens;
 @class ZKDescribeSObject;
 @class DescribeListDataSource;
 
@@ -16,8 +17,14 @@
 -(NSArray<NSString*>*)allQueryableSObjects;
 @end
 
-@interface SoqlTokenizer : NSObject<Describer, NSTextViewDelegate, NSTextStorageDelegate>
-@property (strong,nonatomic) DescribeListDataSource* describes;
+@interface DLDDescriber<Describer> : NSObject
++(id<Describer>)describer:(DescribeListDataSource *)describes;
+@end
+
+@interface SoqlTokenizer : NSObject<NSTextViewDelegate, NSTextStorageDelegate>
+@property (strong,nonatomic) id<Describer> describer;
 @property (strong,nonatomic) NSTextView *view;
 -(void)color;
+// for testing
+-(Tokens*)parseAndResolve:(NSString*)soql;
 @end

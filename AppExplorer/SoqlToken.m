@@ -129,17 +129,19 @@ static Icons *iconInstance;
     return [self.tokenTxt caseInsensitiveCompare:match] == NSOrderedSame;
 }
 
--(NSString *)description {
-    NSString *t = [NSString stringWithFormat:@"%4lu-%-4lu: %@ %@ completions %lu", self.loc.location, self.loc.length,
+-(NSString *)dump:(NSInteger)depth {
+    NSString *indent = [@"" stringByPaddingToLength:depth *4 withString:@" " startingAtIndex:0];
+    NSString *t = [NSString stringWithFormat:@"%@%4lu-%-4lu: %@ %@ completions %lu %@", indent, self.loc.location, self.loc.length,
             [self.typeName stringByPaddingToLength:9 withString:@" " startingAtIndex:0],
-            [self.tokenTxt stringByPaddingToLength:25 withString:@" " startingAtIndex:0], (unsigned long)self.completions.count];
+            [self.tokenTxt stringByPaddingToLength:25 withString:@" " startingAtIndex:0], (unsigned long)self.completions.count,
+             self.type == TTError ? self.value : @""];
     if (self.type == TTChildSelect || self.type == TTSemiJoinSelect || self.type == TTTypeOf || self.type == TTFunc) {
         NSMutableString *c = [NSMutableString string];
         [c appendString:t];
-        [c appendString:@"\n"];
         Tokens *children = (Tokens*)self.value;
         for (Token *t in children.tokens) {
-            [c appendFormat:@"    %@\n", t];
+            [c appendString:@"\n"];
+            [c appendString:[t dump:depth+1]];
         }
         return c;
     }
@@ -254,7 +256,7 @@ NSComparator compareTokenPos = ^NSComparisonResult(id _Nonnull obj1, id _Nonnull
 -(NSString *)description {
     NSMutableString *s = [NSMutableString string];
     for (Token *t in self.items) {
-        [s appendString:t.description];
+        [s appendString:[t dump:0]];
         [s appendString:@"\n"];
     }
     return s;
