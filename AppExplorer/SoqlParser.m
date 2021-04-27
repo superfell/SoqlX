@@ -200,9 +200,20 @@ const NSString *KeySoqlText = @"soql";
         return [keywords containsObject:[s uppercaseString]];
     };
     ZKBaseParser* commaSep = [f seq:@[maybeWs, [f eq:@","], maybeWs]];
-    ZKBaseParser* ident = [f characters:[NSCharacterSet characterSetWithCharactersInString:@"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"]
+    ZKBaseParser* identHead = [f characters:[NSCharacterSet characterSetWithCharactersInString:@"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"]
                                name:@"identifier"
                                 min:1];
+    ZKBaseParser* identTail = [f characters:[NSCharacterSet characterSetWithCharactersInString:@"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"]
+                               name:@"identifier"
+                                min:0];
+    ZKArrayParser *ident = [[f seq:@[identHead, identTail]] onMatch:^ZKParserResult *(ZKArrayParserResult *r) {
+        if (![r childIsNull:1]) {
+            r.val = [NSString stringWithFormat:@"%@%@", r.child[0].val, r.child[1].val];
+        } else {
+            r.val = r.child[0].val;
+        }
+        return r;
+    }];
     
     // SELECT LIST
     ZKParserRef *selectStmt = [f parserRef];
@@ -226,13 +237,14 @@ const NSString *KeySoqlText = @"soql";
     fieldOnly.debugName = @"fieldOnly";
     ZKBaseParser* fieldAndAlias = [f seq:@[fieldOnly, alias]];
     fieldAndAlias.debugName = @"field";
-    
+    ZKBaseParser *literalValue = [self literalValue:f];
+
     ZKParserRef *fieldOrFunc = [f parserRef];
     ZKBaseParser* func = [[f seq:@[ident,
                               maybeWs,
                               [f eq:@"("],
                               maybeWs,
-                              [f oneOrMore:fieldOrFunc separator:commaSep],
+                              [f oneOrMore:[f firstOf:@[fieldOrFunc,literalValue]] separator:commaSep],
                               maybeWs,
                               [f eq:@")"],
                               alias
@@ -247,6 +259,7 @@ const NSString *KeySoqlText = @"soql";
     }];
     
     fieldOrFunc.parser = [f firstOf:@[func, fieldAndAlias]];
+    
     ZKBaseParser *nestedSelectStmt = [[f seq:@[[f eq:@"("], selectStmt, [f eq:@")"]]] onMatch:^ZKParserResult*(ZKArrayParserResult*r) {
         // Similar to Func, I think we'd need start/stop tokens for this.
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
@@ -263,7 +276,7 @@ const NSString *KeySoqlText = @"soql";
         return r;
     }];
     ZKBaseParser *typeOfElse = [f seq:@[tokenSeq(@"ELSE"), ws, [f oneOrMore:fieldOnly separator:commaSep]]];
-    ZKBaseParser *typeofRel = [[ident copy] onMatch:^ZKParserResult *(ZKParserResult *r) {
+    ZKBaseParser *typeofRel = [ident onMatch:^ZKParserResult *(ZKParserResult *r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
         t.type = TTRelationship;
         [r.userContext[KeyTokens] addToken:t];
@@ -336,20 +349,25 @@ const NSString *KeySoqlText = @"soql";
         return r;
     }];
     ZKBaseParser *opInNotIn = [f oneOf:@[tokenSeqType(@"IN", TTOperator), tokenSeqType(@"NOT IN", TTOperator)]];
-    ZKBaseParser *literalValue = [self literalValue:f];
-    ZKBaseParser *literalStringList = [[f seq:@[    [f eq:@"("], maybeWs,
+    ZKBaseParser *literalStringList = [[f seq:@[[f eq:@"("], maybeWs,
                                                 [f oneOrMore:[self literalStringValue:f] separator:commaSep],
                                                 maybeWs, [f eq:@")"]]]
                                    onMatch:^ZKParserResult*(ZKArrayParserResult*r) {
-//        NSArray* vals = [r.child[2].val valueForKey:@"val"];
-//        r.val = [LiteralValueArray withValues:vals loc:r.loc];
-        // TODO
+        r.val = [r.child[2].val valueForKey:@"val"];
         return r;
     }];
     ZKBaseParser *semiJoinValues = [[f oneOf:@[literalStringList, nestedSelectStmt]] onMatch:^ZKParserResult *(ZKParserResult *r) {
-        Token *t = r.val;
-        if (t.type == TTChildSelect) {
-            t.type = TTSemiJoinSelect;
+        if ([r.val isKindOfClass:[Token class]]) {
+            Token *t = r.val;
+            if (t.type == TTChildSelect) {
+                t.type = TTSemiJoinSelect;
+            }
+        }
+        if ([r.val isKindOfClass:[NSArray class]]) {
+            Tokens *tk = r.userContext[KeyTokens];
+            for (Token *t in r.val) {
+                [tk addToken:t];
+            }
         }
         return r;
     }];
@@ -385,7 +403,7 @@ const NSString *KeySoqlText = @"soql";
     }]];
 
     /// DATA CATEGORY
-    ZKBaseParser *aCategory = [[ident copy] onMatch:^ZKParserResult*(ZKParserResult*r) {
+    ZKBaseParser *aCategory = [ident onMatch:^ZKParserResult*(ZKParserResult*r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
         t.type = TTDataCategoryValue;
         [r.userContext[KeyTokens] addToken:t];
