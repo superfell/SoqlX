@@ -28,6 +28,7 @@ static Icons *iconInstance;
         @(TTOperator) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"Op" color:style.keywordColor]],
         @(TTKeyword) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"K" color:style.keywordColor]],
         @(TTTypeOf) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"T" color:style.keywordColor]],
+        @(TTFunc) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"\xF0\x9D\x91\x93"  color:style.keywordColor]],
     };
 }
 
@@ -45,7 +46,7 @@ static Icons *iconInstance;
         CGContextSetLineWidth(context, 6);
         CGContextDrawPath(context, kCGPathFillStroke);
         NSSize sz = [txt sizeWithAttributes:txtStyle];
-        NSRect txtRect = NSMakeRect((dstRect.size.width-sz.width)/2, ((dstRect.size.height-sz.height)/2)+1, sz.width, sz.height);
+        NSRect txtRect = NSMakeRect((dstRect.size.width-ceil(sz.width))/2, ((dstRect.size.height-ceil(sz.height))/2)+1, ceil(sz.width), ceil(sz.height));
         [txt drawInRect:txtRect withAttributes:txtStyle];
         return YES;
     };
@@ -96,6 +97,12 @@ static Icons *iconInstance;
 
 
 @implementation Token
++(instancetype)locOnly:(NSRange)r {
+    Token *tkx = [self new];
+    tkx.loc = r;
+    return tkx;
+}
+
 +(instancetype)txt:(NSString *)txt loc:(NSRange)r {
     NSAssert(r.location+r.length <= txt.length, @"Token location out of range of string");
     Token *tkx = [self new];
@@ -126,7 +133,7 @@ static Icons *iconInstance;
     NSString *t = [NSString stringWithFormat:@"%4lu-%-4lu: %@ %@ completions %lu", self.loc.location, self.loc.length,
             [self.typeName stringByPaddingToLength:9 withString:@" " startingAtIndex:0],
             [self.tokenTxt stringByPaddingToLength:25 withString:@" " startingAtIndex:0], (unsigned long)self.completions.count];
-    if (self.type == TTChildSelect || self.type == TTSemiJoinSelect || self.type == TTTypeOf) {
+    if (self.type == TTChildSelect || self.type == TTSemiJoinSelect || self.type == TTTypeOf || self.type == TTFunc) {
         NSMutableString *c = [NSMutableString string];
         [c appendString:t];
         [c appendString:@"\n"];
@@ -181,11 +188,26 @@ static Icons *iconInstance;
     return self;
 }
 
+// This is a range of tokens in the tokens array, not a positional range.
 -(Tokens*)cutRange:(NSRange)r {
     Tokens *s = [Tokens new];
     [s.items addObjectsFromArray:[self.items subarrayWithRange:r]];
     [self.items removeObjectsInRange:r];
     return s;
+}
+
+-(Tokens*)cutPositionRange:(NSRange)r {
+    if (self.tokens.count == 0) {
+        return [Tokens new];
+    }
+    NSUInteger startIdx = [self.items indexOfObject:[Token locOnly:r]
+                                    inSortedRange:NSMakeRange(0, self.items.count)
+                                          options:NSBinarySearchingInsertionIndex | NSBinarySearchingFirstEqual
+                                  usingComparator:compareTokenPos];
+    NSUInteger end = startIdx;
+    for(; end < self.tokens.count && NSLocationInRange(self.tokens[end].loc.location, r); end++) {
+    }
+    return [self cutRange:NSMakeRange(startIdx, end-startIdx)];
 }
 
 -(NSInteger)count {
@@ -196,29 +218,32 @@ static Icons *iconInstance;
     return self.items;
 }
 
+// compare tokens based on their position in the source text.
+NSComparator compareTokenPos = ^NSComparisonResult(id _Nonnull obj1, id _Nonnull obj2) {
+    Token *a = obj1;
+    Token *b = obj2;
+    // Tokens are sorted by ascending starting location. For cases where there are multiple
+    // tokens at the same starting location, there are sorted longest to shortest.
+    if (a.loc.location == b.loc.location) {
+        if (a.loc.length < b.loc.length) {
+            return NSOrderedDescending;
+        } else if (a.loc.length > b.loc.length) {
+            return NSOrderedAscending;
+        }
+        return NSOrderedSame;
+    }
+    if (a.loc.location > b.loc.location) {
+        return NSOrderedDescending;
+    }
+    return NSOrderedAscending;
+};
+
 -(void)addToken:(Token*)t {
     NSRange searchRange = NSMakeRange(0, self.items.count);
     NSUInteger findIndex = [self.items indexOfObject:t
                                         inSortedRange:searchRange
                                               options:NSBinarySearchingInsertionIndex | NSBinarySearchingFirstEqual
-                                      usingComparator:^(id obj1, id obj2) {
-        Token *a = obj1;
-        Token *b = obj2;
-        // The array is sorted by ascending starting location. for cases where there are multiple
-        // tokens at the same starting location, there are sorted longest to shortest.
-        if (a.loc.location == b.loc.location) {
-            if (a.loc.length < b.loc.length) {
-                return NSOrderedDescending;
-            } else if (a.loc.length > b.loc.length) {
-                return NSOrderedAscending;
-            }
-            return NSOrderedSame;
-        }
-        if (a.loc.location > b.loc.location) {
-            return NSOrderedDescending;
-        }
-        return NSOrderedAscending;
-    }];
+                                      usingComparator:compareTokenPos];
     [self.items insertObject:t atIndex:findIndex];
 }
 
@@ -234,4 +259,6 @@ static Icons *iconInstance;
     }
     return s;
 }
+
+
 @end

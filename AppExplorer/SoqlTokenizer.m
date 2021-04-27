@@ -105,6 +105,10 @@ static NSString *KeyCompletions = @"completions";
 
 -(void)resolveTokens:(Tokens*)tokens ctx:(Context*)parentCtx {
     Context *ctx = [self resolveFrom:tokens parentCtx:parentCtx];
+    [self resolveSelectExprs:tokens ctx:ctx];
+}
+
+-(void)resolveSelectExprs:(Tokens*)tokens ctx:(Context*)ctx {
     NSMutableArray<Token*> *newTokens = [NSMutableArray arrayWithCapacity:4];
     NSMutableArray<Token*> *delTokens = [NSMutableArray arrayWithCapacity:4];
     [tokens.tokens enumerateObjectsUsingBlock:^(Token * _Nonnull sel, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -113,9 +117,10 @@ static NSString *KeyCompletions = @"completions";
                 [delTokens addObject:sel];
                 [newTokens addObjectsFromArray:[self resolveFieldPath:sel ctx:ctx]];
                 break;
-            case TTFunc: // TODO
+            case TTFunc:
+                [newTokens addObjectsFromArray:[self resolveFunc:sel ctx:ctx]];
                 break;
-            case TTTypeOf: // TODO
+            case TTTypeOf:
                 [newTokens addObjectsFromArray:[self resolveTypeOf:sel ctx:ctx]];
                 break;
             case TTChildSelect:
@@ -132,6 +137,11 @@ static NSString *KeyCompletions = @"completions";
     for (Token *t in newTokens) {
         [tokens addToken:t];
     }
+}
+
+-(NSArray<Token*>*)resolveFunc:(Token*)f ctx:(Context*)ctx {
+    [self resolveSelectExprs:(Tokens*)f.value ctx:ctx];
+    return [NSArray array];
 }
 
 -(NSArray<Token*>*)resolveTypeOf:(Token*)typeOf ctx:(Context*)ctx {
@@ -323,6 +333,10 @@ static NSString *KeyCompletions = @"completions";
     c.finalInsertionText = @"TYPEOF Relation WHEN ObjectType THEN id END";
     c.finalMove = -28;
     [t.completions addObject:c];
+    Completion *f = [Completion txt:@"FORMAT" type:TTFunc];
+    f.finalInsertionText = @"FORMAT(lastModifiedDate)";
+    f.finalMove = -1;
+    [t.completions addObject:f];
 }
 
 -(Context*)resolveFrom:(Tokens*)tokens parentCtx:(Context*)parentCtx {
@@ -450,6 +464,7 @@ static NSString *KeyCompletions = @"completions";
                 break;
             case TTFunc:
                 [txt addAttributes:style.field range:t.loc];
+                [self applyTokens:(Tokens*)t.value];
                 break;
             case TTLiteral:
             case TTLiteralList:

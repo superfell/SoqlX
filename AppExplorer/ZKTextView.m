@@ -169,7 +169,7 @@ double ticksToMilliseconds;
     NSString *txt = self.textStorage.string;
     unichar prev = [txt characterAtIndex:r.location-1];
     unichar next = [txt characterAtIndex:r.location];
-    return (isblank(next) || next==',') && !isblank(prev);
+    return (isblank(next) || next==',' || next=='(' || next==')') && !isblank(prev);
 }
 
 -(void)checkIdle {

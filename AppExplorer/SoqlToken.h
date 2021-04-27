@@ -68,6 +68,8 @@ typedef NS_ENUM(uint16_t, TokenType) {
 -(void)addToken:(Token*)t;
 -(void)removeToken:(Token*)t;
 -(NSInteger)count;
-// remove the range of tokens from this collection and return then in a new collection of their own.
+// remove the range of tokens from the tokens array and return then in a new collection of their own.
 -(Tokens*)cutRange:(NSRange)r;
+// remove the set of tokens that overlap with the supplied positon range and return then in a new collection of their own.
+-(Tokens*)cutPositionRange:(NSRange)r;
 @end

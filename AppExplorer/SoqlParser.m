@@ -240,8 +240,9 @@ const NSString *KeySoqlText = @"soql";
     
         Token *fn = [Token txt:r.userContext[KeySoqlText] loc:r.child[0].loc];
         fn.type = TTFunc;
-        [r.userContext[KeyTokens] addToken:fn];
-        // TODO, do we need a FuncEnd token and/or additional annotations for the args?
+        Tokens *tk = r.userContext[KeyTokens];
+        fn.value = [tk cutPositionRange:r.loc]; // should include alias?
+        [tk addToken:fn];
         return r;
     }];
     
