@@ -6,11 +6,21 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SoqlToken.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@class CaseInsensitiveStringKey;
 
-@interface SoqlFunction : NSObject
-
+@interface SoqlFuncArg : NSObject
++(instancetype)arg:(TokenType)type ex:(NSString*)ex;
+@property (assign,nonatomic) TokenType type;
+@property (strong,nonatomic) NSString *exampleValue;
 @end
 
-NS_ASSUME_NONNULL_END
+@interface SoqlFunction : NSObject
++(NSDictionary<CaseInsensitiveStringKey*,SoqlFunction*>*)all;
+
++(instancetype)fn:(NSString*)name args:(NSArray<SoqlFuncArg*>*)args;
+@property (strong,nonatomic) NSString *name;
+@property (strong,nonatomic) NSArray<SoqlFuncArg*>* args;
+@end
+
