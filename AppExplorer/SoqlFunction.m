@@ -53,13 +53,36 @@ ExampleProvider fixed(NSString*value) {
         [self fn:@"Fields" args:@[[SoqlFuncArg arg:TTKeyword ex:fixed(@"STANDARD")]]],
         [self fn:@"ToLabel" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"type!='id' AND type!='reference'"]]],
         [self fn:@"Count" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"aggregatable=true"]]],
+        [self fn:@"Count_Distinct" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"aggregatable=true"]]],
+        [self fn:@"Avg" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"aggregatable=true AND (type='double' OR type='integer' OR type='currency')"]]],
+        [self fn:@"Sum" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"aggregatable=true AND (type='double' OR type='integer' OR type='currency')"]]],
         [self fn:@"Min" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"aggregatable=true AND type!='id' AND type!='reference'"]]],
         [self fn:@"Max" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"aggregatable=true AND type!='id' AND type!='reference'"]]],
         [self fn:@"Format" args:@[[SoqlFuncArg arg:TTFieldPath ex:firstField(@"type='datetime'")]]],    // TODO arg can be func or fieldPath.
         [self fn:@"Distance" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"type='location'"],
                                     [SoqlFuncArg arg:TTFunc ex:fixed(@"Geolocation(1.0,1.0)")],
                                     [SoqlFuncArg arg:TTLiteral ex:fixed(@"\'mi\'")]]],
-        [self fn:@"Geolocation" args:@[[SoqlFuncArg arg:TTLiteral ex:fixed(@"1.0")], [SoqlFuncArg arg:TTLiteral ex:fixed(@"1.0")]]]
+        [self fn:@"Geolocation" args:@[[SoqlFuncArg arg:TTLiteral ex:fixed(@"1.0")], [SoqlFuncArg arg:TTLiteral ex:fixed(@"1.0")]]],
+        [self fn:@"Calendar_Month" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"type='datetime' OR type='date'"]]],   // TODO arg can be func or fieldPath
+        [self fn:@"Calendar_Quarter" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"type='datetime' OR type='date'"]]],
+        [self fn:@"Calendar_Year" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"type='datetime' OR type='date'"]]],
+        [self fn:@"Day_In_Month" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"type='datetime' OR type='date'"]]],
+        [self fn:@"Day_In_Week" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"type='datetime' OR type='date'"]]],
+        [self fn:@"Day_In_Year" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"type='datetime' OR type='date'"]]],
+        [self fn:@"Day_Only" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"type='datetime'"]]],
+        [self fn:@"Fiscal_Month" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"type='datetime' OR type='date'"]]],
+        [self fn:@"Fiscal_Quarter" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"type='datetime' OR type='date'"]]],
+        [self fn:@"Fiscal_Year" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"type='datetime' OR type='date'"]]],
+        [self fn:@"Hour_In_Day" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"type='datetime'"]]],
+        [self fn:@"Week_In_Month" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"type='datetime' OR type='date'"]]],
+        [self fn:@"Week_In_Year" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"type='datetime' OR type='date'"]]],
+
+        [self fn:@"ConvertTimezone" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"type='datetime' OR type='date'"]]],  // TODO can only be used in a date fn.
+                                                                                                                    // similar to the geolocation / distance setup
+        [self fn:@"ConvertCurrency" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"type='currency'"]]],
+
+        
+        
     ];
     NSMutableDictionary *d = [NSMutableDictionary dictionaryWithCapacity:fns.count];
     for (SoqlFunction *f in fns) {

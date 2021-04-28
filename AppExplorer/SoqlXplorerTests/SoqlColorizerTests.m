@@ -135,6 +135,7 @@ NSObject<Describer> *descs;
         @"select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5",
         @"select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 FOR view",
         @"select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 update viewstat",
+        @"SELECT Id, Name FROM Opportunity WHERE Amount > USD5000"
     ];
     [self writeSoqlTokensForQuerys:queries toFile:@"color_test.txt"];
 }

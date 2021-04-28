@@ -18,7 +18,7 @@ SELECT FORMAT(MIN(lastModifiedDate)) Amt FROM account
 
 SELECT name, DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') FROM account WHERE DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') > 20
    0-6   : Keyword   SELECT                    completions 0 
-   7-4   : Field     name                      completions 10 
+   7-4   : Field     name                      completions 28 
   13-8   : Func      DISTANCE                  completions 0 
       22-10  : Error     mailing__c                completions 0 There is no field or relationship mailing__c on SObject Account
       34-11  : Func      GEOLOCATION               completions 0 
