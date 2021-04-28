@@ -155,6 +155,7 @@ static NSString *KeyCompletions = @"completions";
 -(NSArray<Token*>*)resolveFunc:(Token*)f ctx:(Context*)ctx {
     NSMutableArray *newTokens = [NSMutableArray array];
     SoqlFunction *fn = [SoqlFunction all][[CaseInsensitiveStringKey of:f.tokenTxt]];
+    [self addFieldCompletionsFor:ctx.primary to:f ctx:ctx];
     if (fn == nil) {
         Token *err = [f tokenOf:f.loc];
         err.type = TTError;
