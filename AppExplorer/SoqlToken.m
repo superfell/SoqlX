@@ -38,7 +38,7 @@ static Icons *iconInstance;
         NSFontAttributeName: [NSFont boldSystemFontOfSize:48],
     };
     return ^BOOL(NSRect dstRect) {
-        CGContextRef const context = NSGraphicsContext.currentContext.graphicsPort;
+        CGContextRef const context = NSGraphicsContext.currentContext.CGContext;
         CGPathRef box = CGPathCreateWithRoundedRect(CGRectInset(dstRect, 4, 4), 8, 8, nil);
         [color setStroke];
         [[color blendedColorWithFraction:0.75 ofColor:[NSColor blackColor]] setFill];
