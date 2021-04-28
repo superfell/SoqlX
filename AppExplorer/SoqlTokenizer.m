@@ -33,6 +33,8 @@ typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasM
 @property (strong,nonatomic) ZKDescribeSObject *primary;
 @property (strong,nonatomic) AliasMap *aliases;
 @property (assign,nonatomic) TokenType containerType;
+@property (strong,nonatomic) NSPredicate *fieldCompletionsFilter;
+@property (assign,nonatomic) TokenType restrictCompletionsToType;
 @end
 
 @implementation Context
@@ -118,24 +120,7 @@ static NSString *KeyCompletions = @"completions";
     NSMutableArray<Token*> *newTokens = [NSMutableArray arrayWithCapacity:4];
     NSMutableArray<Token*> *delTokens = [NSMutableArray arrayWithCapacity:4];
     [tokens.tokens enumerateObjectsUsingBlock:^(Token * _Nonnull sel, NSUInteger idx, BOOL * _Nonnull stop) {
-        switch (sel.type) {
-            case TTFieldPath:
-                [delTokens addObject:sel];
-                [newTokens addObjectsFromArray:[self resolveFieldPath:sel ctx:ctx]];
-                break;
-            case TTFunc:
-                [newTokens addObjectsFromArray:[self resolveFunc:sel ctx:ctx]];
-                break;
-            case TTTypeOf:
-                [newTokens addObjectsFromArray:[self resolveTypeOf:sel ctx:ctx]];
-                break;
-            case TTChildSelect:
-            case TTSemiJoinSelect:
-                ctx.containerType = sel.type;
-                [self resolveTokens:(Tokens*)sel.value ctx:ctx];
-            default:
-                break;
-        }
+        [self resolveSelectExpr:sel new:newTokens del:delTokens ctx:ctx];
     }];
     for (Token *t in delTokens) {
         [tokens removeToken:t];
@@ -145,9 +130,71 @@ static NSString *KeyCompletions = @"completions";
     }
 }
 
+-(void)resolveSelectExpr:(Token*)expr new:(NSMutableArray<Token*>*)newTokens del:(NSMutableArray<Token*>*)delTokens ctx:(Context*)ctx {
+    switch (expr.type) {
+        case TTFieldPath:
+            [delTokens addObject:expr];
+            [newTokens addObjectsFromArray:[self resolveFieldPath:expr ctx:ctx]];
+            break;
+        case TTFunc:
+            [newTokens addObjectsFromArray:[self resolveFunc:expr ctx:ctx]];
+            break;
+        case TTTypeOf:
+            [newTokens addObjectsFromArray:[self resolveTypeOf:expr ctx:ctx]];
+            break;
+        case TTChildSelect:
+        case TTSemiJoinSelect:
+            ctx.containerType = expr.type;
+            [self resolveTokens:(Tokens*)expr.value ctx:ctx];
+        default:
+            break;
+    }
+}
+
 -(NSArray<Token*>*)resolveFunc:(Token*)f ctx:(Context*)ctx {
-    [self resolveSelectExprs:(Tokens*)f.value ctx:ctx];
-    return [NSArray array];
+    NSMutableArray *newTokens = [NSMutableArray array];
+    SoqlFunction *fn = [SoqlFunction all][[CaseInsensitiveStringKey of:f.tokenTxt]];
+    if (fn == nil) {
+        Token *err = [f tokenOf:f.loc];
+        err.type = TTError;
+        err.value = [NSString stringWithFormat:@"There is no function named '%@'", f.tokenTxt];
+        [newTokens addObject:err];
+        [self resolveSelectExprs:(Tokens*)f.value ctx:ctx];
+        return newTokens;
+    }
+    Tokens *argTokens = (Tokens*)f.value;
+    if (argTokens.count != fn.args.count) {
+        Token *err = [f tokenOf:f.loc];
+        err.type = TTError;
+        err.value = [NSString stringWithFormat:@"The function %@ should have %ld arguments, but has %ld", f.tokenTxt, fn.args.count, argTokens.count];
+        [newTokens addObject:err];
+    }
+    NSMutableArray *argsNewTokens = [NSMutableArray array];
+    NSMutableArray *argsDelTokens = [NSMutableArray array];
+    NSEnumerator<SoqlFuncArg*> *fnArgs = fn.args.objectEnumerator;
+    NSPredicate *fieldFilter = ctx.fieldCompletionsFilter;
+    TokenType completionRestriction = ctx.restrictCompletionsToType;
+    for (Token *argToken in argTokens.tokens) {
+        SoqlFuncArg *argSpec = fnArgs.nextObject;
+        ctx.fieldCompletionsFilter = argSpec.fieldFilter;
+        ctx.restrictCompletionsToType = argSpec.type;
+        if (argSpec != nil && argSpec.type != argToken.type) {
+            Token *err = [argToken tokenOf:argToken.loc];
+            err.type = TTError;
+            err.value = [NSString stringWithFormat:@"Function argument of unexpected type, should be %@",tokenName(argSpec.type)];
+            [argsNewTokens addObject:err];
+        }
+        [self resolveSelectExpr:argToken new:argsNewTokens del:argsDelTokens ctx:ctx];
+    }
+    ctx.fieldCompletionsFilter = fieldFilter;
+    ctx.restrictCompletionsToType = completionRestriction;
+    for (Token *t in argsDelTokens) {
+        [argTokens removeToken:t];
+    }
+    for (Token *t in argsNewTokens) {
+        [argTokens addToken:t];
+    }
+    return newTokens;
 }
 
 -(NSArray<Token*>*)resolveTypeOf:(Token*)typeOf ctx:(Context*)ctx {
@@ -280,7 +327,7 @@ static NSString *KeyCompletions = @"completions";
 
     for (NSString *step in path) {
         Token *tStep = [fieldPath tokenOf:NSMakeRange(position, step.length)];
-        [self addFieldCompletionsFor:curr to:tStep];
+        [self addFieldCompletionsFor:curr to:tStep ctx:ctx];
         if ([curr fieldWithName:step] == nil) {
             // see if its a relationship instead
             ZKDescribeField *df = [curr parentRelationshipsByName][[CaseInsensitiveStringKey of:step]];
@@ -339,19 +386,31 @@ static NSString *KeyCompletions = @"completions";
     [t.completions addObjectsFromArray:[Completion completions:[ctx.aliases.allKeys valueForKey:@"value"] type:TTAlias]];
 }
 
--(void)addFieldCompletionsFor:(ZKDescribeSObject*)obj to:(Token*)t {
-    [t.completions addObjectsFromArray:[Completion completions:[obj valueForKeyPath:@"fields.name"] type:TTField]];
-    [t.completions addObjectsFromArray:[Completion
+-(void)addFieldCompletionsFor:(ZKDescribeSObject*)obj to:(Token*)t ctx:(Context*)ctx {
+    NSLog(@"addFieldCompletionsFor %@ with typeRestriction: %@", obj.name, tokenName(ctx.restrictCompletionsToType));
+    if (ctx.restrictCompletionsToType == 0 || ctx.restrictCompletionsToType == TTField || ctx.restrictCompletionsToType == TTFieldPath) {
+        NSArray *fields = obj.fields;
+        if (ctx.fieldCompletionsFilter != nil) {
+            fields = [fields filteredArrayUsingPredicate:ctx.fieldCompletionsFilter];
+        }
+        [t.completions addObjectsFromArray:[Completion completions:[fields valueForKey:@"name"] type:TTField]];
+    }
+    if (ctx.restrictCompletionsToType == 0 || ctx.restrictCompletionsToType == TTRelationship || ctx.restrictCompletionsToType == TTFieldPath) {
+        [t.completions addObjectsFromArray:[Completion
                                             completions:[obj.parentRelationshipsByName.allValues valueForKey:@"relationshipName"]
                                             type:TTRelationship]];
-    Completion *c = [Completion txt:@"TYPEOF" type:TTTypeOf];
-    c.finalInsertionText = @"TYPEOF Relation WHEN ObjectType THEN id END";
-    c.onFinalInsert = [self moveSelection:-28];
-    [t.completions addObject:c];
-    Completion *f = [Completion txt:@"FORMAT" type:TTFunc];
-    f.finalInsertionText = @"FORMAT(lastModifiedDate)";
-    f.onFinalInsert = [self moveSelection:-1];
-    [t.completions addObject:f];
+    }
+    if (ctx.restrictCompletionsToType == 0 || ctx.restrictCompletionsToType == TTTypeOf) {
+        Completion *c = [Completion txt:@"TYPEOF" type:TTTypeOf];
+        c.finalInsertionText = @"TYPEOF Relation WHEN ObjectType THEN id END";
+        c.onFinalInsert = [self moveSelection:-28];
+        [t.completions addObject:c];
+    }
+    if (ctx.restrictCompletionsToType == 0 || ctx.restrictCompletionsToType == TTFunc) {
+        for (SoqlFunction *f in SoqlFunction.all.allValues) {
+            [t.completions addObject:[f completionOn:obj]];
+        }
+    }
 }
 
 -(Context*)resolveFrom:(Tokens*)tokens parentCtx:(Context*)parentCtx {

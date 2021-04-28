@@ -1,53 +1,53 @@
 select name from account where name='bob'
    0-6   : Keyword   select                    completions 0 
-   7-4   : Field     name                      completions 3 
+   7-4   : Field     name                      completions 7 
   12-4   : Keyword   from                      completions 0 
   17-7   : SObject   account                   completions 2 
   25-5   : Keyword   where                     completions 0 
-  31-4   : Field     name                      completions 3 
+  31-4   : Field     name                      completions 7 
   35-1   : Op        =                         completions 11 
   36-5   : Lit       'bob'                     completions 0 
 
 select namer from account where name='bob'
    0-6   : Keyword   select                    completions 0 
-   7-5   : Error     namer                     completions 3 There is no field or relationship namer on SObject Account
+   7-5   : Error     namer                     completions 7 There is no field or relationship namer on SObject Account
   13-4   : Keyword   from                      completions 0 
   18-7   : SObject   account                   completions 2 
   26-5   : Keyword   where                     completions 0 
-  32-4   : Field     name                      completions 3 
+  32-4   : Field     name                      completions 7 
   36-1   : Op        =                         completions 11 
   37-5   : Lit       'bob'                     completions 0 
 
 select name from case where LastModifiedDate >= YESTERDAY
    0-6   : Keyword   select                    completions 0 
-   7-4   : Rel       name                      completions 2 
+   7-4   : Rel       name                      completions 6 
   12-4   : Keyword   from                      completions 0 
   17-4   : SObject   case                      completions 2 
   22-5   : Keyword   where                     completions 0 
-  28-16  : Rel       LastModifiedDate          completions 2 
+  28-16  : Rel       LastModifiedDate          completions 6 
   45-2   : Op        >=                        completions 11 
   48-9   : Lit       YESTERDAY                 completions 0 
 
 select name from case c
    0-6   : Keyword   select                    completions 0 
-   7-4   : Rel       name                      completions 2 
+   7-4   : Rel       name                      completions 6 
   12-4   : Keyword   from                      completions 0 
   17-4   : SObject   case                      completions 2 
   22-1   : AliasDecl c                         completions 0 
 
 select id,(select name from contacts),name from account where name in ('bob','eve','alice')
    0-6   : Keyword   select                    completions 0 
-   7-2   : Error     id                        completions 3 There is no field or relationship id on SObject Account
+   7-2   : Error     id                        completions 7 There is no field or relationship id on SObject Account
   10-27  : CSelect   (select name from contact completions 0 
       11-6   : Keyword   select                    completions 0 
-      18-4   : Field     name                      completions 5 
+      18-4   : Field     name                      completions 9 
       23-4   : Keyword   from                      completions 0 
       28-8   : Rel       contacts                  completions 1 
-  38-4   : Field     name                      completions 3 
+  38-4   : Field     name                      completions 7 
   43-4   : Keyword   from                      completions 0 
   48-7   : SObject   account                   completions 2 
   56-5   : Keyword   where                     completions 0 
-  62-4   : Field     name                      completions 3 
+  62-4   : Field     name                      completions 7 
   67-2   : Op        in                        completions 0 
   71-5   : Lit       'bob'                     completions 0 
   77-5   : Lit       'eve'                     completions 0 
@@ -55,54 +55,54 @@ select id,(select name from contacts),name from account where name in ('bob','ev
 
 select name from account where id in (select accountId from contact)
    0-6   : Keyword   select                    completions 0 
-   7-4   : Field     name                      completions 3 
+   7-4   : Field     name                      completions 7 
   12-4   : Keyword   from                      completions 0 
   17-7   : SObject   account                   completions 2 
   25-5   : Keyword   where                     completions 0 
-  31-2   : Error     id                        completions 3 There is no field or relationship id on SObject Account
+  31-2   : Error     id                        completions 7 There is no field or relationship id on SObject Account
   34-2   : Op        in                        completions 0 
   37-31  : SJSelect  (select accountId from co completions 0 
       38-6   : Keyword   select                    completions 0 
-      45-9   : Field     accountId                 completions 5 
+      45-9   : Field     accountId                 completions 9 
       55-4   : Keyword   from                      completions 0 
       60-7   : SObject   contact                   completions 2 
 
 select account.city from contact where name LIKE 'b%'
    0-6   : Keyword   select                    completions 0 
-   7-7   : Rel       account                   completions 5 
-  15-4   : Error     city                      completions 3 There is no field or relationship city on SObject Account
+   7-7   : Rel       account                   completions 9 
+  15-4   : Error     city                      completions 7 There is no field or relationship city on SObject Account
   20-4   : Keyword   from                      completions 0 
   25-7   : SObject   contact                   completions 2 
   33-5   : Keyword   where                     completions 0 
-  39-4   : Field     name                      completions 5 
+  39-4   : Field     name                      completions 9 
   44-4   : Op        LIKE                      completions 11 
   49-4   : Lit       'b%'                      completions 0 
 
 select account.city from contact where name LIKE 'b%' OR name='eve'
    0-6   : Keyword   select                    completions 0 
-   7-7   : Rel       account                   completions 5 
-  15-4   : Error     city                      completions 3 There is no field or relationship city on SObject Account
+   7-7   : Rel       account                   completions 9 
+  15-4   : Error     city                      completions 7 There is no field or relationship city on SObject Account
   20-4   : Keyword   from                      completions 0 
   25-7   : SObject   contact                   completions 2 
   33-5   : Keyword   where                     completions 0 
-  39-4   : Field     name                      completions 5 
+  39-4   : Field     name                      completions 9 
   44-4   : Op        LIKE                      completions 11 
   49-4   : Lit       'b%'                      completions 0 
   54-2   : Op        OR                        completions 0 
-  57-4   : Field     name                      completions 5 
+  57-4   : Field     name                      completions 9 
   61-1   : Op        =                         completions 11 
   62-5   : Lit       'eve'                     completions 0 
 
 select c.account.city from contact c where name LIKE 'b%'
    0-6   : Keyword   select                    completions 0 
    7-1   : Aias      c                         completions 2 
-   9-7   : Rel       account                   completions 5 
-  17-4   : Error     city                      completions 3 There is no field or relationship city on SObject Account
+   9-7   : Rel       account                   completions 9 
+  17-4   : Error     city                      completions 7 There is no field or relationship city on SObject Account
   22-4   : Keyword   from                      completions 0 
   27-7   : SObject   contact                   completions 2 
   35-1   : AliasDecl c                         completions 0 
   37-5   : Keyword   where                     completions 0 
-  43-4   : Field     name                      completions 5 
+  43-4   : Field     name                      completions 9 
   48-4   : Op        LIKE                      completions 11 
   53-4   : Lit       'b%'                      completions 0 
 
@@ -111,89 +111,90 @@ select (select c.name from contacts c),name from account a where a.name>='bob'
    7-31  : CSelect   (select c.name from conta completions 0 
        8-6   : Keyword   select                    completions 0 
       15-1   : Aias      c                         completions 2 
-      17-4   : Field     name                      completions 5 
+      17-4   : Field     name                      completions 9 
       22-4   : Keyword   from                      completions 0 
       27-8   : Rel       contacts                  completions 1 
       36-1   : AliasDecl c                         completions 0 
-  39-4   : Field     name                      completions 3 
+  39-4   : Field     name                      completions 7 
   44-4   : Keyword   from                      completions 0 
   49-7   : SObject   account                   completions 2 
   57-1   : AliasDecl a                         completions 0 
   59-5   : Keyword   where                     completions 0 
   65-1   : Aias      a                         completions 2 
-  67-4   : Field     name                      completions 3 
+  67-4   : Field     name                      completions 7 
   71-2   : Op        >=                        completions 11 
   73-5   : Lit       'bob'                     completions 0 
 
 select account.name from account where name > 'bob'
    0-6   : Keyword   select                    completions 0 
    7-7   : Aias      account                   completions 1 
-  15-4   : Field     name                      completions 3 
+  15-4   : Field     name                      completions 7 
   20-4   : Keyword   from                      completions 0 
   25-7   : SObject   account                   completions 2 
   33-5   : Keyword   where                     completions 0 
-  39-4   : Field     name                      completions 3 
+  39-4   : Field     name                      completions 7 
   44-1   : Op        >                         completions 11 
   46-5   : Lit       'bob'                     completions 0 
 
 select a.name from account a where name > 'bob'
    0-6   : Keyword   select                    completions 0 
    7-1   : Aias      a                         completions 2 
-   9-4   : Field     name                      completions 3 
+   9-4   : Field     name                      completions 7 
   14-4   : Keyword   from                      completions 0 
   19-7   : SObject   account                   completions 2 
   27-1   : AliasDecl a                         completions 0 
   29-5   : Keyword   where                     completions 0 
-  35-4   : Field     name                      completions 3 
+  35-4   : Field     name                      completions 7 
   40-1   : Op        >                         completions 11 
   42-5   : Lit       'bob'                     completions 0 
 
 select max(name) from account where CALENDARY_YEAR(createdDate) > 2018
    0-6   : Keyword   select                    completions 0 
    7-3   : Func      max                       completions 0 
-      11-4   : Field     name                      completions 3 
+      11-4   : Field     name                      completions 0 
   17-4   : Keyword   from                      completions 0 
   22-7   : SObject   account                   completions 2 
   30-5   : Keyword   where                     completions 0 
+  36-14  : Error     CALENDARY_YEAR            completions 0 There is no function named 'CALENDARY_YEAR'
   36-14  : Func      CALENDARY_YEAR            completions 0 
-      51-11  : Error     createdDate               completions 3 There is no field or relationship createdDate on SObject Account
+      51-11  : Error     createdDate               completions 7 There is no field or relationship createdDate on SObject Account
   64-1   : Op        >                         completions 11 
   66-4   : Lit       2018                      completions 0 
 
 SELECT count() FROM Contact c, c.Account a WHERE a.name = 'MyriadPubs'
    0-6   : Keyword   SELECT                    completions 0 
-   7-5   : Rel       count                     completions 2 
+   7-5   : Rel       count                     completions 6 
   12-0   : Error                               completions 0 (null)
 
 SELECT count() FROM Contact WHERE account.name = 'Salesforce.com'
    0-6   : Keyword   SELECT                    completions 0 
-   7-5   : Rel       count                     completions 2 
+   7-5   : Rel       count                     completions 6 
   12-0   : Error                               completions 0 (null)
 
 SELECT count() FROM Contact c, c.Account a, a.CreatedBy u WHERE u.alias = 'Sfell'
    0-6   : Keyword   SELECT                    completions 0 
-   7-5   : Rel       count                     completions 2 
+   7-5   : Rel       count                     completions 6 
   12-0   : Error                               completions 0 (null)
 
 SELECT count() FROM Contact c, a.CreatedBy u, c.Account a WHERE u.alias = 'Sfell'
    0-6   : Keyword   SELECT                    completions 0 
-   7-5   : Rel       count                     completions 2 
+   7-5   : Rel       count                     completions 6 
   12-0   : Error                               completions 0 (null)
 
 SELECT count() FROM Contact c, c.CreatedBy u, c.Account a WHERE u.alias = 'Sfell' and a.Name > 'a'
    0-6   : Keyword   SELECT                    completions 0 
-   7-5   : Rel       count                     completions 2 
+   7-5   : Rel       count                     completions 6 
   12-0   : Error                               completions 0 (null)
 
 SELECT count() FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and a.alias='Sfell'
    0-6   : Keyword   SELECT                    completions 0 
-   7-5   : Rel       count                     completions 2 
+   7-5   : Rel       count                     completions 6 
   12-0   : Error                               completions 0 (null)
 
 SELECT x.name FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and (a.alias='Sfell' or x.MailingCity IN('SF','LA'))order by x.name desc nulls first
    0-6   : Keyword   SELECT                    completions 0 
    7-1   : Aias      x                         completions 2 
-   9-4   : Field     name                      completions 5 
+   9-4   : Field     name                      completions 9 
   14-4   : Keyword   FROM                      completions 0 
   19-7   : SObject   Contact                   completions 2 
   27-1   : AliasDecl x                         completions 0 
@@ -204,83 +205,83 @@ SELECT x.name FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias
   55-9   : Error     CreatedBy                 completions 1 There is no relationship CreatedBy on SObject Contact
   65-1   : AliasDecl a                         completions 0 
   67-5   : Keyword   WHERE                     completions 0 
-  73-1   : Error     u                         completions 5 There is no field or relationship u on SObject Contact
+  73-1   : Error     u                         completions 9 There is no field or relationship u on SObject Contact
   81-1   : Op        =                         completions 11 
   83-7   : Lit       'Sfell'                   completions 0 
   91-3   : Op        and                       completions 0 
-  96-1   : Error     a                         completions 5 There is no field or relationship a on SObject Contact
+  96-1   : Error     a                         completions 9 There is no field or relationship a on SObject Contact
  103-1   : Op        =                         completions 11 
  104-7   : Lit       'Sfell'                   completions 0 
  112-2   : Op        or                        completions 0 
  115-1   : Aias      x                         completions 2 
- 117-11  : Error     MailingCity               completions 5 There is no field or relationship MailingCity on SObject Contact
+ 117-11  : Error     MailingCity               completions 9 There is no field or relationship MailingCity on SObject Contact
  129-2   : Op        IN                        completions 0 
  132-4   : Lit       'SF'                      completions 0 
  137-4   : Lit       'LA'                      completions 0 
  143-8   : Keyword   order by                  completions 0 
  152-1   : Aias      x                         completions 2 
- 154-4   : Field     name                      completions 5 
+ 154-4   : Field     name                      completions 9 
  159-4   : Keyword   desc                      completions 0 
  164-11  : Keyword   nulls first               completions 0 
 
 SELECT account.name.name FROM account
    0-6   : Keyword   SELECT                    completions 0 
    7-7   : Aias      account                   completions 1 
-  15-4   : Field     name                      completions 3 
-  20-4   : Field     name                      completions 3 
+  15-4   : Field     name                      completions 7 
+  20-4   : Field     name                      completions 7 
   25-4   : Keyword   FROM                      completions 0 
   30-7   : SObject   account                   completions 2 
 
 SELECT name FROM contact order by name asc
    0-6   : Keyword   SELECT                    completions 0 
-   7-4   : Field     name                      completions 5 
+   7-4   : Field     name                      completions 9 
   12-4   : Keyword   FROM                      completions 0 
   17-7   : SObject   contact                   completions 2 
   25-8   : Keyword   order by                  completions 0 
-  34-4   : Field     name                      completions 5 
+  34-4   : Field     name                      completions 9 
   39-3   : Keyword   asc                       completions 0 
 
 SELECT name FROM contact order by name asc nulls last
    0-6   : Keyword   SELECT                    completions 0 
-   7-4   : Field     name                      completions 5 
+   7-4   : Field     name                      completions 9 
   12-4   : Keyword   FROM                      completions 0 
   17-7   : SObject   contact                   completions 2 
   25-8   : Keyword   order by                  completions 0 
-  34-4   : Field     name                      completions 5 
+  34-4   : Field     name                      completions 9 
   39-3   : Keyword   asc                       completions 0 
   43-10  : Keyword   nulls last                completions 0 
 
 SELECT name FROM contact order by name asc nulls last, account.name desc
    0-6   : Keyword   SELECT                    completions 0 
-   7-4   : Field     name                      completions 5 
+   7-4   : Field     name                      completions 9 
   12-4   : Keyword   FROM                      completions 0 
   17-7   : SObject   contact                   completions 2 
   25-8   : Keyword   order by                  completions 0 
-  34-4   : Field     name                      completions 5 
+  34-4   : Field     name                      completions 9 
   39-3   : Keyword   asc                       completions 0 
   43-10  : Keyword   nulls last                completions 0 
-  55-7   : Rel       account                   completions 5 
-  63-4   : Field     name                      completions 3 
+  55-7   : Rel       account                   completions 9 
+  63-4   : Field     name                      completions 7 
   68-4   : Keyword   desc                      completions 0 
 
 SELECT name FROM contact x order by name asc nulls last, x.account.name desc
    0-6   : Keyword   SELECT                    completions 0 
-   7-4   : Field     name                      completions 5 
+   7-4   : Field     name                      completions 9 
   12-4   : Keyword   FROM                      completions 0 
   17-7   : SObject   contact                   completions 2 
   25-1   : AliasDecl x                         completions 0 
   27-8   : Keyword   order by                  completions 0 
-  36-4   : Field     name                      completions 5 
+  36-4   : Field     name                      completions 9 
   41-3   : Keyword   asc                       completions 0 
   45-10  : Keyword   nulls last                completions 0 
   57-1   : Aias      x                         completions 2 
-  59-7   : Rel       account                   completions 5 
-  67-4   : Field     name                      completions 3 
+  59-7   : Rel       account                   completions 9 
+  67-4   : Field     name                      completions 7 
   72-4   : Keyword   desc                      completions 0 
 
 SELECT subject, TYPEOF what WHEN account Then id,BillingCity,createdBy.alias WHEN opportunity then name,nextStep ELSE id,email END FROM Task
    0-6   : Keyword   SELECT                    completions 0 
-   7-7   : Rel       subject                   completions 2 
+   7-7   : Rel       subject                   completions 6 
   16-114 : TypeOf    TYPEOF what WHEN account  completions 0 
       16-6   : Keyword   TYPEOF                    completions 0 
       23-4   : Rel       what                      completions 0 
@@ -304,93 +305,108 @@ SELECT subject, TYPEOF what WHEN account Then id,BillingCity,createdBy.alias WHE
 
 SELECT calendar_year(createdDate), count(id) from case group by calendar_year(createdDate) order by calendar_year(createdDate) desc
    0-6   : Keyword   SELECT                    completions 0 
+   7-13  : Error     calendar_year             completions 0 There is no function named 'calendar_year'
    7-13  : Func      calendar_year             completions 0 
-      21-11  : Rel       createdDate               completions 2 
+      21-11  : Rel       createdDate               completions 6 
+  35-5   : Error     count                     completions 0 There is no function named 'count'
   35-5   : Func      count                     completions 0 
-      41-2   : Rel       id                        completions 2 
+      41-2   : Rel       id                        completions 6 
   45-4   : Keyword   from                      completions 0 
   50-4   : SObject   case                      completions 2 
   55-8   : Keyword   group by                  completions 0 
+  64-13  : Error     calendar_year             completions 0 There is no function named 'calendar_year'
   64-13  : Func      calendar_year             completions 0 
-      78-11  : Rel       createdDate               completions 2 
+      78-11  : Rel       createdDate               completions 6 
   91-8   : Keyword   order by                  completions 0 
+ 100-13  : Error     calendar_year             completions 0 There is no function named 'calendar_year'
  100-13  : Func      calendar_year             completions 0 
-     114-11  : Rel       createdDate               completions 2 
+     114-11  : Rel       createdDate               completions 6 
  127-4   : Keyword   desc                      completions 0 
 
 SELECT calendar_year(createdDate), count(id) from case group by rollup (calendar_year(createdDate)) order by calendar_year(createdDate) desc
    0-6   : Keyword   SELECT                    completions 0 
+   7-13  : Error     calendar_year             completions 0 There is no function named 'calendar_year'
    7-13  : Func      calendar_year             completions 0 
-      21-11  : Rel       createdDate               completions 2 
+      21-11  : Rel       createdDate               completions 6 
+  35-5   : Error     count                     completions 0 There is no function named 'count'
   35-5   : Func      count                     completions 0 
-      41-2   : Rel       id                        completions 2 
+      41-2   : Rel       id                        completions 6 
   45-4   : Keyword   from                      completions 0 
   50-4   : SObject   case                      completions 2 
   55-15  : Keyword   group by rollup           completions 0 
+  72-13  : Error     calendar_year             completions 0 There is no function named 'calendar_year'
   72-13  : Func      calendar_year             completions 0 
-      86-11  : Rel       createdDate               completions 2 
+      86-11  : Rel       createdDate               completions 6 
  100-8   : Keyword   order by                  completions 0 
+ 109-13  : Error     calendar_year             completions 0 There is no function named 'calendar_year'
  109-13  : Func      calendar_year             completions 0 
-     123-11  : Rel       createdDate               completions 2 
+     123-11  : Rel       createdDate               completions 6 
  136-4   : Keyword   desc                      completions 0 
 
 SELECT calendar_year(createdDate), count(id) from case group by cube( calendar_year(createdDate)) order by calendar_year(createdDate) desc
    0-6   : Keyword   SELECT                    completions 0 
+   7-13  : Error     calendar_year             completions 0 There is no function named 'calendar_year'
    7-13  : Func      calendar_year             completions 0 
-      21-11  : Rel       createdDate               completions 2 
+      21-11  : Rel       createdDate               completions 6 
+  35-5   : Error     count                     completions 0 There is no function named 'count'
   35-5   : Func      count                     completions 0 
-      41-2   : Rel       id                        completions 2 
+      41-2   : Rel       id                        completions 6 
   45-4   : Keyword   from                      completions 0 
   50-4   : SObject   case                      completions 2 
   55-13  : Keyword   group by cube             completions 0 
+  70-13  : Error     calendar_year             completions 0 There is no function named 'calendar_year'
   70-13  : Func      calendar_year             completions 0 
-      84-11  : Rel       createdDate               completions 2 
+      84-11  : Rel       createdDate               completions 6 
   98-8   : Keyword   order by                  completions 0 
+ 107-13  : Error     calendar_year             completions 0 There is no function named 'calendar_year'
  107-13  : Func      calendar_year             completions 0 
-     121-11  : Rel       createdDate               completions 2 
+     121-11  : Rel       createdDate               completions 6 
  134-4   : Keyword   desc                      completions 0 
 
 SELECT email, count(id) from contact group by email order by email nulls last
    0-6   : Keyword   SELECT                    completions 0 
-   7-5   : Error     email                     completions 5 There is no field or relationship email on SObject Contact
+   7-5   : Error     email                     completions 9 There is no field or relationship email on SObject Contact
+  14-5   : Error     count                     completions 0 There is no function named 'count'
   14-5   : Func      count                     completions 0 
-      20-2   : Error     id                        completions 5 There is no field or relationship id on SObject Contact
+      20-2   : Error     id                        completions 9 There is no field or relationship id on SObject Contact
   24-4   : Keyword   from                      completions 0 
   29-7   : SObject   contact                   completions 2 
   37-8   : Keyword   group by                  completions 0 
-  46-5   : Error     email                     completions 5 There is no field or relationship email on SObject Contact
+  46-5   : Error     email                     completions 9 There is no field or relationship email on SObject Contact
   52-8   : Keyword   order by                  completions 0 
-  61-5   : Error     email                     completions 5 There is no field or relationship email on SObject Contact
+  61-5   : Error     email                     completions 9 There is no field or relationship email on SObject Contact
   67-10  : Keyword   nulls last                completions 0 
 
 SELECT email, count(id) from contact group by email having count(id) > 1 order by email nulls last
    0-6   : Keyword   SELECT                    completions 0 
-   7-5   : Error     email                     completions 5 There is no field or relationship email on SObject Contact
+   7-5   : Error     email                     completions 9 There is no field or relationship email on SObject Contact
+  14-5   : Error     count                     completions 0 There is no function named 'count'
   14-5   : Func      count                     completions 0 
-      20-2   : Error     id                        completions 5 There is no field or relationship id on SObject Contact
+      20-2   : Error     id                        completions 9 There is no field or relationship id on SObject Contact
   24-4   : Keyword   from                      completions 0 
   29-7   : SObject   contact                   completions 2 
   37-8   : Keyword   group by                  completions 0 
-  46-5   : Error     email                     completions 5 There is no field or relationship email on SObject Contact
+  46-5   : Error     email                     completions 9 There is no field or relationship email on SObject Contact
   52-6   : Keyword   having                    completions 0 
+  59-5   : Error     count                     completions 0 There is no function named 'count'
   59-5   : Func      count                     completions 0 
-      65-2   : Error     id                        completions 5 There is no field or relationship id on SObject Contact
+      65-2   : Error     id                        completions 9 There is no field or relationship id on SObject Contact
   69-1   : Op        >                         completions 11 
   71-1   : Lit       1                         completions 0 
   73-8   : Keyword   order by                  completions 0 
   73-2   : Op        or                        completions 0 
-  82-5   : Error     email                     completions 5 There is no field or relationship email on SObject Contact
+  82-5   : Error     email                     completions 9 There is no field or relationship email on SObject Contact
   88-10  : Keyword   nulls last                completions 0 
 
 select a.name from account a where name > 'bob' LIMIt 5
    0-6   : Keyword   select                    completions 0 
    7-1   : Aias      a                         completions 2 
-   9-4   : Field     name                      completions 3 
+   9-4   : Field     name                      completions 7 
   14-4   : Keyword   from                      completions 0 
   19-7   : SObject   account                   completions 2 
   27-1   : AliasDecl a                         completions 0 
   29-5   : Keyword   where                     completions 0 
-  35-4   : Field     name                      completions 3 
+  35-4   : Field     name                      completions 7 
   40-1   : Op        >                         completions 11 
   42-5   : Lit       'bob'                     completions 0 
   48-5   : Keyword   LIMIt                     completions 0 
@@ -399,12 +415,12 @@ select a.name from account a where name > 'bob' LIMIt 5
 select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5
    0-6   : Keyword   select                    completions 0 
    7-1   : Aias      a                         completions 2 
-   9-4   : Field     name                      completions 3 
+   9-4   : Field     name                      completions 7 
   14-4   : Keyword   from                      completions 0 
   19-7   : SObject   account                   completions 2 
   27-1   : AliasDecl a                         completions 0 
   29-5   : Keyword   where                     completions 0 
-  35-4   : Field     name                      completions 3 
+  35-4   : Field     name                      completions 7 
   40-1   : Op        >                         completions 11 
   42-5   : Lit       'bob'                     completions 0 
   48-5   : Keyword   LIMIt                     completions 0 
@@ -415,12 +431,12 @@ select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5
 select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 FOR view
    0-6   : Keyword   select                    completions 0 
    7-1   : Aias      a                         completions 2 
-   9-4   : Field     name                      completions 3 
+   9-4   : Field     name                      completions 7 
   14-4   : Keyword   from                      completions 0 
   19-7   : SObject   account                   completions 2 
   27-1   : AliasDecl a                         completions 0 
   29-5   : Keyword   where                     completions 0 
-  35-4   : Field     name                      completions 3 
+  35-4   : Field     name                      completions 7 
   40-1   : Op        >                         completions 11 
   42-5   : Lit       'bob'                     completions 0 
   48-5   : Keyword   LIMIt                     completions 0 
@@ -433,12 +449,12 @@ select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 FOR view
 select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 update viewstat
    0-6   : Keyword   select                    completions 0 
    7-1   : Aias      a                         completions 2 
-   9-4   : Field     name                      completions 3 
+   9-4   : Field     name                      completions 7 
   14-4   : Keyword   from                      completions 0 
   19-7   : SObject   account                   completions 2 
   27-1   : AliasDecl a                         completions 0 
   29-5   : Keyword   where                     completions 0 
-  35-4   : Field     name                      completions 3 
+  35-4   : Field     name                      completions 7 
   40-1   : Op        >                         completions 11 
   42-5   : Lit       'bob'                     completions 0 
   48-5   : Keyword   LIMIt                     completions 0 

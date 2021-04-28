@@ -94,7 +94,29 @@ static Icons *iconInstance;
 
 @end
 
-
+NSString *tokenName(TokenType type) {
+    switch (type) {
+        case TTKeyword: return @"Keyword";
+        case TTFieldPath: return @"FldPath";
+        case TTAlias: return @"Aias";
+        case TTRelationship: return @"Rel";
+        case TTField: return @"Field";
+        case TTFunc: return @"Func";
+        case TTChildSelect: return @"CSelect";
+        case TTTypeOf: return @"TypeOf";
+        case TTSObject: return @"SObject";
+        case TTAliasDecl: return @"AliasDecl";
+        case TTSObjectRelation: return @"RelObj";
+        case TTOperator: return @"Op";
+        case TTLiteral: return @"Lit";
+        case TTLiteralList: return @"LitList";
+        case TTSemiJoinSelect: return @"SJSelect";
+        case TTUsingScope: return @"Scope";
+        case TTDataCategory: return @"Cat";
+        case TTDataCategoryValue: return @"CatVal";
+        case TTError: return @"Error";
+    }
+}
 
 @implementation Token
 +(instancetype)locOnly:(NSRange)r {
@@ -149,27 +171,7 @@ static Icons *iconInstance;
 }
 
 -(NSString*)typeName {
-    switch (self.type) {
-        case TTKeyword: return @"Keyword";
-        case TTFieldPath: return @"FldPath";
-        case TTAlias: return @"Aias";
-        case TTRelationship: return @"Rel";
-        case TTField: return @"Field";
-        case TTFunc: return @"Func";
-        case TTChildSelect: return @"CSelect";
-        case TTTypeOf: return @"TypeOf";
-        case TTSObject: return @"SObject";
-        case TTAliasDecl: return @"AliasDecl";
-        case TTSObjectRelation: return @"RelObj";
-        case TTOperator: return @"Op";
-        case TTLiteral: return @"Lit";
-        case TTLiteralList: return @"LitList";
-        case TTSemiJoinSelect: return @"SJSelect";
-        case TTUsingScope: return @"Scope";
-        case TTDataCategory: return @"Cat";
-        case TTDataCategoryValue: return @"CatVal";
-        case TTError: return @"Error";
-    }
+    return tokenName(self.type);
 }
 
 -(Token*)tokenOf:(NSRange)r {
@@ -262,5 +264,13 @@ NSComparator compareTokenPos = ^NSComparisonResult(id _Nonnull obj1, id _Nonnull
     return s;
 }
 
-
 @end
+
+CompletionCallback moveSelection(NSInteger amount) {
+    return ^BOOL(ZKTextView *v, id<ZKTextViewCompletion> c) {
+        NSRange s = v.selectedRange;
+        s.location += amount;
+        v.selectedRange = s;
+        return TRUE;
+    };
+}

@@ -30,6 +30,8 @@ typedef NS_ENUM(uint16_t, TokenType) {
     TTError
 };
 
+NSString *tokenName(TokenType type);
+
 @interface Icons : NSObject
 +(NSImage*)iconFor:(TokenType)t;
 @end
@@ -73,3 +75,5 @@ typedef NS_ENUM(uint16_t, TokenType) {
 // remove the set of tokens that overlap with the supplied positon range and return then in a new collection of their own.
 -(Tokens*)cutPositionRange:(NSRange)r;
 @end
+
+CompletionCallback moveSelection(NSInteger amount);
