@@ -33,8 +33,11 @@ typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasM
 @property (strong,nonatomic) ZKDescribeSObject *primary;
 @property (strong,nonatomic) AliasMap *aliases;
 @property (assign,nonatomic) TokenType containerType;
+
+// completion filtering
 @property (strong,nonatomic) NSPredicate *fieldCompletionsFilter;
 @property (assign,nonatomic) TokenType restrictCompletionsToType;
+@property (strong,nonatomic) NSPredicate *fnCompletionsFilter;
 @end
 
 @implementation Context
@@ -175,11 +178,13 @@ static NSString *KeyCompletions = @"completions";
     NSMutableArray *argsDelTokens = [NSMutableArray array];
     NSEnumerator<SoqlFuncArg*> *fnArgs = fn.args.objectEnumerator;
     NSPredicate *fieldFilter = ctx.fieldCompletionsFilter;
+    NSPredicate *fnFilter = ctx.fnCompletionsFilter;
     TokenType completionRestriction = ctx.restrictCompletionsToType;
     for (Token *argToken in argTokens.tokens) {
         SoqlFuncArg *argSpec = fnArgs.nextObject;
         ctx.fieldCompletionsFilter = argSpec.fieldFilter;
         ctx.restrictCompletionsToType = argSpec.type;
+        ctx.fnCompletionsFilter = argSpec.funcFilter;
         if (argSpec != nil && ((argSpec.type & argToken.type) == 0)) {
             Token *err = [argToken tokenOf:argToken.loc];
             err.type = TTError;
@@ -189,6 +194,7 @@ static NSString *KeyCompletions = @"completions";
         [self resolveSelectExpr:argToken new:argsNewTokens del:argsDelTokens ctx:ctx];
     }
     ctx.fieldCompletionsFilter = fieldFilter;
+    ctx.fnCompletionsFilter = fnFilter;
     ctx.restrictCompletionsToType = completionRestriction;
     for (Token *t in argsDelTokens) {
         [argTokens removeToken:t];
@@ -410,7 +416,9 @@ static NSString *KeyCompletions = @"completions";
     }
     if (allowedTypes == 0 || ((allowedTypes & TTFunc) > 0)) {
         for (SoqlFunction *f in SoqlFunction.all.allValues) {
-            [t.completions addObject:[f completionOn:obj]];
+            if (ctx.fnCompletionsFilter == nil || [ctx.fnCompletionsFilter evaluateWithObject:f]) {
+                [t.completions addObject:[f completionOn:obj]];
+            }
         }
     }
 }

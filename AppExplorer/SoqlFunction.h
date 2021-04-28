@@ -18,6 +18,7 @@ typedef NSString*(^ExampleProvider)(ZKDescribeSObject*);
 +(instancetype)arg:(TokenType)type ex:(ExampleProvider)ex;
 @property (assign,nonatomic) TokenType type;
 @property (strong,nonatomic) NSPredicate *fieldFilter;
+@property (strong,nonatomic) NSPredicate *funcFilter;
 @property (copy,  nonatomic) ExampleProvider example;
 @end
 

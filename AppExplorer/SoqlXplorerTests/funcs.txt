@@ -1,16 +1,15 @@
 SELECT FORMAT(Name) Amt FROM account
    0-6   : Keyword   SELECT                    completions 0 
-   7-6   : Func      FORMAT                    completions 0 
-      14-4   : Field     Name                      completions 1 
+   7-6   : Func      FORMAT                    completions 28 
+      14-4   : Field     Name                      completions 27 
   20-3   : AliasDecl Amt                       completions 0 
   24-4   : Keyword   FROM                      completions 0 
   29-7   : SObject   account                   completions 2 
 
 SELECT FORMAT(MIN(lastModifiedDate)) Amt FROM account
    0-6   : Keyword   SELECT                    completions 0 
-   7-6   : Func      FORMAT                    completions 0 
-      14-3   : Error     MIN                       completions 0 Function argument of unexpected type, should be FldPath
-      14-3   : Func      MIN                       completions 0 
+   7-6   : Func      FORMAT                    completions 28 
+      14-3   : Func      MIN                       completions 27 
           18-16  : Error     lastModifiedDate          completions 0 There is no field or relationship lastModifiedDate on SObject Account
   37-3   : AliasDecl Amt                       completions 0 
   41-4   : Keyword   FROM                      completions 0 
@@ -19,18 +18,18 @@ SELECT FORMAT(MIN(lastModifiedDate)) Amt FROM account
 SELECT name, DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') FROM account WHERE DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') > 20
    0-6   : Keyword   SELECT                    completions 0 
    7-4   : Field     name                      completions 28 
-  13-8   : Func      DISTANCE                  completions 0 
+  13-8   : Func      DISTANCE                  completions 28 
       22-10  : Error     mailing__c                completions 0 There is no field or relationship mailing__c on SObject Account
-      34-11  : Func      GEOLOCATION               completions 0 
+      34-11  : Func      GEOLOCATION               completions 1 
           46-1   : Lit       1                         completions 0 
           48-1   : Lit       1                         completions 0 
       52-4   : Lit       'mi'                      completions 0 
   58-4   : Keyword   FROM                      completions 0 
   63-7   : SObject   account                   completions 2 
   71-5   : Keyword   WHERE                     completions 0 
-  77-8   : Func      DISTANCE                  completions 0 
+  77-8   : Func      DISTANCE                  completions 28 
       86-10  : Error     mailing__c                completions 0 There is no field or relationship mailing__c on SObject Account
-      98-11  : Func      GEOLOCATION               completions 0 
+      98-11  : Func      GEOLOCATION               completions 1 
          110-1   : Lit       1                         completions 0 
          112-1   : Lit       1                         completions 0 
      116-4   : Lit       'mi'                      completions 0 
