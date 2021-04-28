@@ -75,6 +75,7 @@ static NSString *KeyCompletions = @"completions";
 -(Tokens*)parseAndResolve:(NSString*)soql {
     [self scanWithParser:soql];
     [self resolveTokens:self.tokens];
+    NSLog(@"resolved tokens\n%@\n", self.tokens);
     return self.tokens;
 }
 
@@ -387,7 +388,6 @@ static NSString *KeyCompletions = @"completions";
 }
 
 -(void)addFieldCompletionsFor:(ZKDescribeSObject*)obj to:(Token*)t ctx:(Context*)ctx {
-    NSLog(@"addFieldCompletionsFor %@ with typeRestriction: %@", obj.name, tokenName(ctx.restrictCompletionsToType));
     if (ctx.restrictCompletionsToType == 0 || ctx.restrictCompletionsToType == TTField || ctx.restrictCompletionsToType == TTFieldPath) {
         NSArray *fields = obj.fields;
         if (ctx.fieldCompletionsFilter != nil) {

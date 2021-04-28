@@ -253,7 +253,7 @@ const NSString *KeySoqlText = @"soql";
         Token *fn = [Token txt:r.userContext[KeySoqlText] loc:r.child[0].loc];
         fn.type = TTFunc;
         Tokens *tk = r.userContext[KeyTokens];
-        fn.value = [tk cutPositionRange:r.loc]; // should include alias?
+        fn.value = [tk cutPositionRange:NSUnionRange(r.child[0].loc, r.child[6].loc)]; // doesn't include alais
         [tk addToken:fn];
         return r;
     }];
