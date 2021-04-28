@@ -251,6 +251,12 @@ NSComparator compareTokenPos = ^NSComparisonResult(id _Nonnull obj1, id _Nonnull
     [self.items insertObject:t atIndex:findIndex];
 }
 
+-(void)addTokens:(NSArray<Token*>*)tokens {
+    for (Token *t in tokens) {
+        [self addToken:t];
+    }
+}
+
 -(void)removeToken:(Token*)t {
     [self.items removeObject:t];
 }

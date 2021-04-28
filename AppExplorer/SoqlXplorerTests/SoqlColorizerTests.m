@@ -103,6 +103,7 @@ NSObject<Describer> *descs;
         @"select name from case c",
         @"select id,(select name from contacts),name from account where name in ('bob','eve','alice')",
         @"select name from account where id in (select accountId from contact)",
+        @"SELECT name FROM account WHERE id NOT IN (SELECT accountId FROM contact)",
         @"select account.city from contact where name LIKE 'b%'",
         @"select account.city from contact where name LIKE 'b%' OR name='eve'",
         @"select c.account.city from contact c where name LIKE 'b%'",
@@ -135,7 +136,8 @@ NSObject<Describer> *descs;
         @"select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5",
         @"select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 FOR view",
         @"select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 update viewstat",
-        @"SELECT Id, Name FROM Opportunity WHERE Amount > USD5000"
+        @"SELECT Id, Name FROM Opportunity WHERE Amount > USD5000",
+        @"SELECT Id, Name FROM Opportunity WHERE msp__c Includes('abc;def','q')"
     ];
     [self writeSoqlTokensForQuerys:queries toFile:@"color_test.txt"];
 }

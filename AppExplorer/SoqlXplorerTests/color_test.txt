@@ -67,6 +67,20 @@ select name from account where id in (select accountId from contact)
       55-4   : Keyword   from                      completions 0 
       60-7   : SObject   contact                   completions 2 
 
+SELECT name FROM account WHERE id NOT IN (SELECT accountId FROM contact)
+   0-6   : Keyword   SELECT                    completions 0 
+   7-4   : Field     name                      completions 28 
+  12-4   : Keyword   FROM                      completions 0 
+  17-7   : SObject   account                   completions 2 
+  25-5   : Keyword   WHERE                     completions 0 
+  31-2   : Error     id                        completions 28 There is no field or relationship id on SObject Account
+  34-6   : Op        NOT IN                    completions 0 
+  41-31  : SJSelect  (SELECT accountId FROM co completions 0 
+      42-6   : Keyword   SELECT                    completions 0 
+      49-9   : Field     accountId                 completions 30 
+      59-4   : Keyword   FROM                      completions 0 
+      64-7   : SObject   contact                   completions 2 
+
 select account.city from contact where name LIKE 'b%'
    0-6   : Keyword   select                    completions 0 
    7-7   : Rel       account                   completions 30 
@@ -379,7 +393,6 @@ SELECT email, count(id) from contact group by email having count(id) > 1 order b
   69-1   : Op        >                         completions 11 
   71-1   : Lit       1                         completions 0 
   73-8   : Keyword   order by                  completions 0 
-  73-2   : Op        or                        completions 0 
   82-5   : Error     email                     completions 30 There is no field or relationship email on SObject Contact
   88-10  : Keyword   nulls last                completions 0 
 
@@ -459,4 +472,16 @@ SELECT Id, Name FROM Opportunity WHERE Amount > USD5000
   39-6   : Rel       Amount                    completions 27 
   46-1   : Op        >                         completions 11 
   48-7   : Lit       USD5000                   completions 0 
+
+SELECT Id, Name FROM Opportunity WHERE msp__c Includes('abc;def','q')
+   0-6   : Keyword   SELECT                    completions 0 
+   7-2   : Rel       Id                        completions 27 
+  11-4   : Rel       Name                      completions 27 
+  16-4   : Keyword   FROM                      completions 0 
+  21-11  : Error     Opportunity               completions 2 The SObject 'Opportunity' does not exist or is inaccessible
+  33-5   : Keyword   WHERE                     completions 0 
+  39-6   : Rel       msp__c                    completions 27 
+  46-8   : Op        Includes                  completions 11 
+  55-9   : Lit       'abc;def'                 completions 0 
+  65-3   : Lit       'q'                       completions 0 
 

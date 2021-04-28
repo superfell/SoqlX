@@ -333,7 +333,11 @@ const NSString *KeySoqlText = @"soql";
     }];
     
     /// WHERE
-    NSArray<Completion*>* opCompletions = [Completion completions:@[@"<",@"<=",@">",@">=", @"=", @"!=", @"LIKE",@"INCLUDES",@"EXCLUDES",@"IN",@"NOT IN"] type:TTOperator];
+    NSArray<Completion*>* opCompletions = [Completion completions:@[@"<",@"<=",@">",@">=", @"=", @"!=", @"LIKE",@"INCLUDES",@"EXCLUDES",@"IN"] type:TTOperator];
+    Completion *compNotIn = [Completion txt:@"NOT IN" type:TTOperator];
+    compNotIn.nonFinalInsertionText = @"NOT_IN";
+    compNotIn.finalInsertionText = @"NOT IN";
+    opCompletions = [opCompletions arrayByAddingObject:compNotIn];
     ZKBaseParser *operator = [[f oneOfTokens:@"< <= > >= = != LIKE"] onMatch:^ZKParserResult *(ZKParserResult *r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
         t.type = TTOperator;
@@ -353,7 +357,8 @@ const NSString *KeySoqlText = @"soql";
                                                 [f oneOrMore:[self literalStringValue:f] separator:commaSep],
                                                 maybeWs, [f eq:@")"]]]
                                    onMatch:^ZKParserResult*(ZKArrayParserResult*r) {
-        r.val = [r.child[2].val valueForKey:@"val"];
+        NSArray<Token*>* tokens = [r.child[2].val valueForKey:@"val"];
+        [r.userContext[KeyTokens] addTokens:tokens];
         return r;
     }];
     ZKBaseParser *semiJoinValues = [[f oneOf:@[literalStringList, nestedSelectStmt]] onMatch:^ZKParserResult *(ZKParserResult *r) {
@@ -361,12 +366,6 @@ const NSString *KeySoqlText = @"soql";
             Token *t = r.val;
             if (t.type == TTChildSelect) {
                 t.type = TTSemiJoinSelect;
-            }
-        }
-        if ([r.val isKindOfClass:[NSArray class]]) {
-            Tokens *tk = r.userContext[KeyTokens];
-            for (Token *t in r.val) {
-                [tk addToken:t];
             }
         }
         return r;
@@ -385,12 +384,16 @@ const NSString *KeySoqlText = @"soql";
     ZKBaseParser *andOrToken = [[f oneOfTokens:@"AND OR"] onMatch:^ZKParserResult *(ZKParserResult *r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
         t.type = TTOperator;
-        [r.userContext[KeyTokens] addToken:t];
+        r.val = t;
         return r;
     }];
-    ZKBaseParser *andOr = [f seq:@[ws, andOrToken, ws]];
+    ZKBaseParser *andOr = [[f seq:@[maybeWs, andOrToken, ws]] onMatch:pick(1)];
     ZKBaseParser *not = [f seq:@[tokenSeqType(@"NOT", TTOperator), maybeWs]];
-    exprList.parser = [f seq:@[[f zeroOrOne:not],[f firstOf:@[parens, baseExpr]], [f zeroOrOne:[f seq:@[andOr, exprList]]]]];
+    exprList.parser = [f seq:@[[f zeroOrOne:not],[f firstOf:@[parens, baseExpr]], [f zeroOrOne:[[f seq:@[andOr, exprList]] onMatch:^ZKParserResult *(ZKArrayParserResult *r) {
+        Token *andOrTkn = (Token*)r.child[0].val;
+        [r.userContext[KeyTokens] addToken:andOrTkn];
+        return r;
+    }]]]];
     
     ZKBaseParser *where = [f zeroOrOne:[f seq:@[ws ,tokenSeq(@"WHERE"), cut, ws, exprList]]];
     

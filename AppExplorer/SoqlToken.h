@@ -68,6 +68,7 @@ NSString *tokenName(TokenType type);
 @interface Tokens : NSObject
 @property (strong,readonly,nonatomic) NSArray<Token*>* tokens;
 -(void)addToken:(Token*)t;
+-(void)addTokens:(NSArray<Token*>*)t;
 -(void)removeToken:(Token*)t;
 -(NSInteger)count;
 // remove the range of tokens from the tokens array and return then in a new collection of their own.
