@@ -179,10 +179,10 @@ static NSString *KeyCompletions = @"completions";
         SoqlFuncArg *argSpec = fnArgs.nextObject;
         ctx.fieldCompletionsFilter = argSpec.fieldFilter;
         ctx.restrictCompletionsToType = argSpec.type;
-        if (argSpec != nil && argSpec.type != argToken.type) {
+        if (argSpec != nil && ((argSpec.type & argToken.type) == 0)) {
             Token *err = [argToken tokenOf:argToken.loc];
             err.type = TTError;
-            err.value = [NSString stringWithFormat:@"Function argument of unexpected type, should be %@",tokenName(argSpec.type)];
+            err.value = [NSString stringWithFormat:@"Function argument of unexpected type, should be %@",tokenNames(argSpec.type)];
             [argsNewTokens addObject:err];
         }
         [self resolveSelectExpr:argToken new:argsNewTokens del:argsDelTokens ctx:ctx];
@@ -388,25 +388,26 @@ static NSString *KeyCompletions = @"completions";
 }
 
 -(void)addFieldCompletionsFor:(ZKDescribeSObject*)obj to:(Token*)t ctx:(Context*)ctx {
-    if (ctx.restrictCompletionsToType == 0 || ctx.restrictCompletionsToType == TTField || ctx.restrictCompletionsToType == TTFieldPath) {
+    TokenType allowedTypes = ctx.restrictCompletionsToType;
+    if (allowedTypes == 0 || ((allowedTypes & (TTField|TTFieldPath)) > 0)) {
         NSArray *fields = obj.fields;
         if (ctx.fieldCompletionsFilter != nil) {
             fields = [fields filteredArrayUsingPredicate:ctx.fieldCompletionsFilter];
         }
         [t.completions addObjectsFromArray:[Completion completions:[fields valueForKey:@"name"] type:TTField]];
     }
-    if (ctx.restrictCompletionsToType == 0 || ctx.restrictCompletionsToType == TTRelationship || ctx.restrictCompletionsToType == TTFieldPath) {
+    if (allowedTypes == 0 || ((allowedTypes & (TTRelationship|TTFieldPath)) > 0)) {
         [t.completions addObjectsFromArray:[Completion
                                             completions:[obj.parentRelationshipsByName.allValues valueForKey:@"relationshipName"]
                                             type:TTRelationship]];
     }
-    if (ctx.restrictCompletionsToType == 0 || ctx.restrictCompletionsToType == TTTypeOf) {
+    if (allowedTypes == 0 || ((allowedTypes & TTTypeOf) > 0)) {
         Completion *c = [Completion txt:@"TYPEOF" type:TTTypeOf];
         c.finalInsertionText = @"TYPEOF Relation WHEN ObjectType THEN id END";
         c.onFinalInsert = [self moveSelection:-28];
         [t.completions addObject:c];
     }
-    if (ctx.restrictCompletionsToType == 0 || ctx.restrictCompletionsToType == TTFunc) {
+    if (allowedTypes == 0 || ((allowedTypes & TTFunc) > 0)) {
         for (SoqlFunction *f in SoqlFunction.all.allValues) {
             [t.completions addObject:[f completionOn:obj]];
         }

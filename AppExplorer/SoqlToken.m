@@ -118,6 +118,16 @@ NSString *tokenName(TokenType type) {
     }
 }
 
+NSString *tokenNames(TokenType types) {
+    NSMutableArray<NSString*> *names = [NSMutableArray arrayWithCapacity:2];
+    for (TokenType m = 1; m <= TTError; m = m << 1) {
+        if ((types & m) != 0) {
+            [names addObject:tokenName(m)];
+        }
+    }
+    return [names componentsJoinedByString:@","];
+}
+
 @implementation Token
 +(instancetype)locOnly:(NSRange)r {
     Token *tkx = [self new];
