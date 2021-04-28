@@ -1,6 +1,24 @@
+SELECT FORMAT(Name) Amt FROM account
+   0-6   : Keyword   SELECT                    completions 0 
+   7-6   : Func      FORMAT                    completions 0 
+      14-4   : Field     Name                      completions 1 
+  20-3   : AliasDecl Amt                       completions 0 
+  24-4   : Keyword   FROM                      completions 0 
+  29-7   : SObject   account                   completions 2 
+
+SELECT FORMAT(MIN(lastModifiedDate)) Amt FROM account
+   0-6   : Keyword   SELECT                    completions 0 
+   7-6   : Func      FORMAT                    completions 0 
+      14-3   : Error     MIN                       completions 0 Function argument of unexpected type, should be FldPath
+      14-3   : Func      MIN                       completions 0 
+          18-16  : Error     lastModifiedDate          completions 0 There is no field or relationship lastModifiedDate on SObject Account
+  37-3   : AliasDecl Amt                       completions 0 
+  41-4   : Keyword   FROM                      completions 0 
+  46-7   : SObject   account                   completions 2 
+
 SELECT name, DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') FROM account WHERE DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') > 20
    0-6   : Keyword   SELECT                    completions 0 
-   7-4   : Field     name                      completions 7 
+   7-4   : Field     name                      completions 10 
   13-8   : Func      DISTANCE                  completions 0 
       22-10  : Error     mailing__c                completions 0 There is no field or relationship mailing__c on SObject Account
       34-11  : Func      GEOLOCATION               completions 0 

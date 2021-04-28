@@ -50,13 +50,16 @@ ExampleProvider fixed(NSString*value) {
 
 +(NSDictionary<CaseInsensitiveStringKey*,SoqlFunction*>*)all {
     NSArray<SoqlFunction*>* fns = @[
-        [self fn:@"MIN" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"aggregatable=true AND type!='id' AND type!='reference'"]]],
-        [self fn:@"MAX" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"aggregatable=true AND type!='id' AND type!='reference'"]]],
-        [self fn:@"FORMAT" args:@[[SoqlFuncArg arg:TTFieldPath ex:firstField(@"type='datetime'")]]],
-        [self fn:@"DISTANCE" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"type='location'"],
-                                    [SoqlFuncArg arg:TTFunc ex:fixed(@"GEOLOCATION(1.0,1.0)")],
+        [self fn:@"Fields" args:@[[SoqlFuncArg arg:TTKeyword ex:fixed(@"STANDARD")]]],
+        [self fn:@"ToLabel" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"type!='id' AND type!='reference'"]]],
+        [self fn:@"Count" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"aggregatable=true"]]],
+        [self fn:@"Min" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"aggregatable=true AND type!='id' AND type!='reference'"]]],
+        [self fn:@"Max" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"aggregatable=true AND type!='id' AND type!='reference'"]]],
+        [self fn:@"Format" args:@[[SoqlFuncArg arg:TTFieldPath ex:firstField(@"type='datetime'")]]],    // TODO arg can be func or fieldPath.
+        [self fn:@"Distance" args:@[[SoqlFuncArg arg:TTFieldPath pred:@"type='location'"],
+                                    [SoqlFuncArg arg:TTFunc ex:fixed(@"Geolocation(1.0,1.0)")],
                                     [SoqlFuncArg arg:TTLiteral ex:fixed(@"\'mi\'")]]],
-        [self fn:@"GEOLOCATION" args:@[[SoqlFuncArg arg:TTLiteral ex:fixed(@"1.0")], [SoqlFuncArg arg:TTLiteral ex:fixed(@"1.0")]]]
+        [self fn:@"Geolocation" args:@[[SoqlFuncArg arg:TTLiteral ex:fixed(@"1.0")], [SoqlFuncArg arg:TTLiteral ex:fixed(@"1.0")]]]
     ];
     NSMutableDictionary *d = [NSMutableDictionary dictionaryWithCapacity:fns.count];
     for (SoqlFunction *f in fns) {

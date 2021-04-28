@@ -98,7 +98,7 @@
 		F4DF0B5F2638BDA100B3A1A9 /* SoqlFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DF0B4E26388CFF00B3A1A9 /* SoqlFunction.m */; };
 		F4DF0B612638BDA700B3A1A9 /* SoqlToken.m in Sources */ = {isa = PBXBuildFile; fileRef = F4F286F4263372FE00CCEA7D /* SoqlToken.m */; };
 		F4DF0B632638BDB300B3A1A9 /* SoqlParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F4F2870A26337DEF00CCEA7D /* SoqlParser.m */; };
-		F4DF0B662638C62500B3A1A9 /* geo_funcs.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4DF0B652638C62500B3A1A9 /* geo_funcs.txt */; };
+		F4DF0B6B263902E300B3A1A9 /* funcs.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4DF0B6A263902E300B3A1A9 /* funcs.txt */; };
 		F4E0F2B7256F123A00446C2B /* SObjectTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E0F2AC256F115E00446C2B /* SObjectTest.m */; };
 		F4E0F2B9256F127B00446C2B /* SObject.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D8DC782569CFF7002C9FC1 /* SObject.m */; };
 		F4E0F2BC256F15A500446C2B /* QRWrapperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E0F2BB256F15A500446C2B /* QRWrapperTest.m */; };
@@ -369,7 +369,7 @@
 		F4DE40682562088B00FBA200 /* ZKSforce.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ZKSforce.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4DF0B4D26388CFF00B3A1A9 /* SoqlFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SoqlFunction.h; sourceTree = "<group>"; };
 		F4DF0B4E26388CFF00B3A1A9 /* SoqlFunction.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SoqlFunction.m; sourceTree = "<group>"; };
-		F4DF0B652638C62500B3A1A9 /* geo_funcs.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = geo_funcs.txt; sourceTree = "<group>"; };
+		F4DF0B6A263902E300B3A1A9 /* funcs.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = funcs.txt; sourceTree = "<group>"; };
 		F4E0F2AC256F115E00446C2B /* SObjectTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SObjectTest.m; sourceTree = "<group>"; };
 		F4E0F2BB256F15A500446C2B /* QRWrapperTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QRWrapperTest.m; sourceTree = "<group>"; };
 		F4E319442198ECE3009B8C4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/querySavePanel.xib; sourceTree = "<group>"; };
@@ -687,7 +687,7 @@
 		F4DE4050256205D300FBA200 /* SoqlXplorerTests */ = {
 			isa = PBXGroup;
 			children = (
-				F4DF0B652638C62500B3A1A9 /* geo_funcs.txt */,
+				F4DF0B6A263902E300B3A1A9 /* funcs.txt */,
 				F4C889FC26250B95006D606A /* color_test.txt */,
 				F4DE40642562079100FBA200 /* QueryColumnsTest.m */,
 				F4DE4053256205D300FBA200 /* Info.plist */,
@@ -911,7 +911,7 @@
 			files = (
 				F4C889FD26250B95006D606A /* color_test.txt in Resources */,
 				F4C889F12624FC75006D606A /* Media.xcassets in Resources */,
-				F4DF0B662638C62500B3A1A9 /* geo_funcs.txt in Resources */,
+				F4DF0B6B263902E300B3A1A9 /* funcs.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

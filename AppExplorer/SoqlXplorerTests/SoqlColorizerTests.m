@@ -86,11 +86,13 @@ NSObject<Describer> *descs;
     // Put teardown code here. This method is called after the invocation of each test method in the class.
 }
 
--(void)testGeoFuncs {
+-(void)testFuncs {
     NSArray<NSString*>* q = @[
+        @"SELECT FORMAT(Name) Amt FROM account",
+        @"SELECT FORMAT(MIN(lastModifiedDate)) Amt FROM account",
         @"SELECT name, DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') FROM account WHERE DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') > 20"
     ];
-    [self writeSoqlTokensForQuerys:q toFile:@"geo_funcs.txt"];
+    [self writeSoqlTokensForQuerys:q toFile:@"funcs.txt"];
 }
 
 - (void)testSoqlTokens {
