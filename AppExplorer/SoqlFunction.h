@@ -20,6 +20,9 @@ typedef NSString*(^ExampleProvider)(ZKDescribeSObject*);
 @property (strong,nonatomic) NSPredicate *fieldFilter;
 @property (strong,nonatomic) NSPredicate *funcFilter;
 @property (copy,  nonatomic) ExampleProvider example;
+// validate the supplied token against this argument, returns a new (typically error)
+// token if needed.
+-(Token*)validateToken:(Token*)tkn;
 @end
 
 @interface SoqlFunction : NSObject

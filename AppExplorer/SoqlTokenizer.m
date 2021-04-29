@@ -185,11 +185,9 @@ static NSString *KeyCompletions = @"completions";
         ctx.fieldCompletionsFilter = argSpec.fieldFilter;
         ctx.restrictCompletionsToType = argSpec.type;
         ctx.fnCompletionsFilter = argSpec.funcFilter;
-        if (argSpec != nil && ((argSpec.type & argToken.type) != argToken.type)) {
-            Token *err = [argToken tokenOf:argToken.loc];
-            err.type = TTError;
-            err.value = [NSString stringWithFormat:@"Function argument of unexpected type, should be %@",tokenNames(argSpec.type)];
-            [argsNewTokens addObject:err];
+        Token *newToken = [argSpec validateToken:argToken];
+        if (newToken != nil) {
+            [argsNewTokens addObject:newToken];
         }
         [self resolveSelectExpr:argToken new:argsNewTokens del:argsDelTokens ctx:ctx];
     }

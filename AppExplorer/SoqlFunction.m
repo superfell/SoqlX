@@ -49,6 +49,41 @@ ExampleProvider fixed(NSString*value) {
     a.example = ex;
     return a;
 }
+-(Token*)validateToken:(Token*)argToken {
+    if ((self.type & argToken.type) != argToken.type) {
+        Token *err = [argToken tokenOf:argToken.loc];
+        err.type = TTError;
+        err.value = [NSString stringWithFormat:@"Function argument of unexpected type %@, should be %@", tokenName(argToken.type), tokenNames(self.type)];
+        return err;
+    }
+    return nil;
+}
+@end
+
+@interface DistanceMeasureArg : SoqlFuncArg
+@end
+
+@implementation DistanceMeasureArg
+-(instancetype)init {
+    self = [super init];
+    self.type = TTLiteralString;
+    self.example = fixed(@"'mi'");
+    return self;
+}
+
+-(Token*)validateToken:(Token*)argToken {
+    [argToken.completions addObjectsFromArray:[Completion completions:@[@"'mi'", @"'km'"] type:TTLiteralString]];
+    Token *err = [super validateToken:argToken];
+    if (err == nil) {
+        if ((![argToken matches:@"'mi'"]) && (![argToken matches:@"'km'"])) {
+            err = [argToken tokenOf:argToken.loc];
+            err.type = TTError;
+            err.value = @"Function argument should be 'mi' or 'km'";
+        }
+    }
+    return err;
+}
+
 @end
 
 @implementation SoqlFunction
@@ -73,7 +108,7 @@ ExampleProvider fixed(NSString*value) {
                                            fldPred:@"type='datetime' OR type='date' OR type='time' or type='currency' or type='double' or type='integer'"]]],    
         [self fn:@"Distance" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"type='location'"],
                                     distGeoArg,
-                                    [SoqlFuncArg arg:TTLiteralString ex:fixed(@"\'mi\'")]]],
+                                    [DistanceMeasureArg new]]],
         [self fn:@"Calendar_Month" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
         [self fn:@"Calendar_Quarter" args:@[[SoqlFuncArg arg:TTFieldPath| TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
         [self fn:@"Calendar_Year" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
