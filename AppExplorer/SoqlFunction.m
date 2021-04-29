@@ -69,7 +69,8 @@ ExampleProvider fixed(NSString*value) {
         [self fn:@"Sum" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"aggregatable=true AND (type='double' OR type='integer' OR type='currency')"]]],
         [self fn:@"Min" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"aggregatable=true AND type!='id' AND type!='reference'"]]],
         [self fn:@"Max" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"aggregatable=true AND type!='id' AND type!='reference'"]]],
-        [self fn:@"Format" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc ex:firstField(@"type='datetime'")]]],    // TODO arg can be func or fieldPath.
+        [self fn:@"Format" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc
+                                           fldPred:@"type='datetime' OR type='date' OR type='time' or type='currency' or type='double' or type='integer'"]]],    
         [self fn:@"Distance" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"type='location'"],
                                     distGeoArg,
                                     [SoqlFuncArg arg:TTLiteral ex:fixed(@"\'mi\'")]]],
