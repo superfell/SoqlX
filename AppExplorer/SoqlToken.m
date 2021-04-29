@@ -106,23 +106,23 @@ static Icons *iconInstance;
 NSString *tokenName(TokenType type) {
     switch (type) {
         case TTKeyword: return @"Keyword";
-        case TTFieldPath: return @"FldPath";
+        case TTFieldPath: return @"FieldPath";
         case TTAlias: return @"Aias";
-        case TTRelationship: return @"Rel";
+        case TTRelationship: return @"Relationship";
         case TTField: return @"Field";
-        case TTFunc: return @"Func";
-        case TTChildSelect: return @"CSelect";
+        case TTFunc: return @"Function";
+        case TTChildSelect: return @"ChildSelect";
         case TTTypeOf: return @"TypeOf";
         case TTSObject: return @"SObject";
         case TTAliasDecl: return @"AliasDecl";
-        case TTSObjectRelation: return @"RelObj";
+        case TTSObjectRelation: return @"RelatedSObj";
         case TTOperator: return @"Op";
-        case TTSemiJoinSelect: return @"SJSelect";
+        case TTSemiJoinSelect: return @"SemiJoinSelect";
         case TTUsingScope: return @"Scope";
-        case TTDataCategory: return @"Cat";
-        case TTDataCategoryValue: return @"CatVal";
-        case TTLiteral: return @"Lit";
-        case TTLiteralList: return @"LitList";
+        case TTDataCategory: return @"Category";
+        case TTDataCategoryValue: return @"CategoryVal";
+        case TTLiteral: return @"Literal";
+        case TTLiteralList: return @"LiteralList";
         case TTLiteralString:return @"String";
         case TTLiteralNumber:return @"Number";
         case TTLiteralDate: return @"Date";
@@ -181,8 +181,8 @@ NSString *tokenNames(TokenType types) {
 -(NSString *)dump:(NSInteger)depth {
     NSString *indent = [@"" stringByPaddingToLength:depth *4 withString:@" " startingAtIndex:0];
     NSString *t = [NSString stringWithFormat:@"%@%4lu-%-4lu: %@ %@ completions %lu %@", indent, self.loc.location, self.loc.length,
-            [self.typeName stringByPaddingToLength:9 withString:@" " startingAtIndex:0],
-            [self.tokenTxt stringByPaddingToLength:25 withString:@" " startingAtIndex:0], (unsigned long)self.completions.count,
+            [self.typeName stringByPaddingToLength:15 withString:@" " startingAtIndex:0],
+            [self.tokenTxt stringByPaddingToLength:30 withString:@" " startingAtIndex:0], (unsigned long)self.completions.count,
              self.type == TTError ? self.value : @""];
     if (self.type == TTChildSelect || self.type == TTSemiJoinSelect || self.type == TTTypeOf || self.type == TTFunc) {
         NSMutableString *c = [NSMutableString string];
