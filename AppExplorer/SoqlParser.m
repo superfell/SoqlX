@@ -83,7 +83,7 @@ const NSString *KeySoqlText = @"soql";
         // range includes the ' tokens, the value does not.
         NSRange overalRng = NSMakeRange(start,input.pos-start);
         Token *t = [Token txt:input.input loc:overalRng];
-        t.type = TTLiteral;
+        t.type = TTLiteralString;
         return [ZKParserResult result:t ctx:input.userContext loc:overalRng];
     }];
     p.debugName = @"Literal String";
@@ -94,28 +94,28 @@ const NSString *KeySoqlText = @"soql";
     ZKBaseParser *literalStringValue = [self literalStringValue:f];
     ZKBaseParser *literalNullValue = [[f eq:@"null"] onMatch:^ZKParserResult *(ZKParserResult *r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
-        t.type = TTLiteral;
+        t.type = TTLiteralNull;
         t.value = [NSNull null];
         r.val = t;
         return r;
     }];
     ZKBaseParser *literalTrueValue = [[f eq:@"true"] onMatch:^ZKParserResult *(ZKParserResult *r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
-        t.type = TTLiteral;
+        t.type = TTLiteralBoolean;
         t.value = @TRUE;
         r.val = t;
         return r;
     }];
     ZKBaseParser *literalFalseValue = [[f eq:@"false"] onMatch:^ZKParserResult *(ZKParserResult *r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
-        t.type = TTLiteral;
+        t.type = TTLiteralBoolean;
         t.value = @FALSE;
         r.val = t;
         return r;
     }];
     ZKBaseParser *literalNumberValue = [[f decimalNumber] onMatch:^ZKParserResult *(ZKParserResult *r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
-        t.type = TTLiteral;
+        t.type = TTLiteralNumber;
         t.value = r.val;
         r.val = t;
         return r;
@@ -130,12 +130,13 @@ const NSString *KeySoqlText = @"soql";
     dfDate.formatOptions = NSISO8601DateFormatWithFullDate | NSISO8601DateFormatWithDashSeparatorInDate;
     ZKBaseParser *literalDateTimeValue = [[f regex:dateTime name:@"date/time literal"] onMatch:^ZKParserResult *(ZKParserResult *r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
-        t.type = TTLiteral;
         NSString *dt = r.val;
         if (dt.length == 10) {
             t.value = [dfDate dateFromString:dt];
+            t.type = TTLiteralDate;
         } else {
             t.value = [dfDateTime dateFromString:dt];
+            t.type = TTLiteralDateTime;
         }
         r.val = t;
         return r;
@@ -146,7 +147,7 @@ const NSString *KeySoqlText = @"soql";
     NSAssert(err == nil, @"failed to compile regex %@", err);
     ZKBaseParser *literalToken = [[f regex:token name:@"named literal"] onMatch:^ZKParserResult *(ZKParserResult *r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
-        t.type = TTLiteral;
+        t.type = TTLiteralNamedDateTime;
         t.value = r.val;
         r.val = t;
         return r;
@@ -445,14 +446,14 @@ const NSString *KeySoqlText = @"soql";
                                    
     ZKBaseParser *limit = [f zeroOrOne:[[f seq:@[maybeWs, tokenSeq(@"LIMIT"), cut, maybeWs, [f integerNumber]]] onMatch:^ZKParserResult*(ZKArrayParserResult*r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.child[4].loc];
-        t.type = TTLiteral;
+        t.type = TTLiteralNumber;
         t.value = r.val;
         [r.userContext[KeyTokens] addToken:t];
         return r;
     }]];
     ZKBaseParser *offset= [f zeroOrOne:[[f seq:@[maybeWs, tokenSeq(@"OFFSET"), cut, maybeWs, [f integerNumber]]] onMatch:^ZKParserResult*(ZKArrayParserResult*r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.child[4].loc];
-        t.type = TTLiteral;
+        t.type = TTLiteralNumber;
         t.value = r.val;
         [r.userContext[KeyTokens] addToken:t];
         return r;

@@ -185,7 +185,7 @@ static NSString *KeyCompletions = @"completions";
         ctx.fieldCompletionsFilter = argSpec.fieldFilter;
         ctx.restrictCompletionsToType = argSpec.type;
         ctx.fnCompletionsFilter = argSpec.funcFilter;
-        if (argSpec != nil && ((argSpec.type & argToken.type) == 0)) {
+        if (argSpec != nil && ((argSpec.type & argToken.type) != argToken.type)) {
             Token *err = [argToken tokenOf:argToken.loc];
             err.type = TTError;
             err.value = [NSString stringWithFormat:@"Function argument of unexpected type, should be %@",tokenNames(argSpec.type)];
@@ -552,6 +552,13 @@ static NSString *KeyCompletions = @"completions";
                 break;
             case TTLiteral:
             case TTLiteralList:
+            case TTLiteralString:
+            case TTLiteralNumber:
+            case TTLiteralDate:
+            case TTLiteralDateTime:
+            case TTLiteralNamedDateTime:
+            case TTLiteralBoolean:
+            case TTLiteralNull:
                 [txt addAttributes:style.literal range:t.loc];
                 break;
             case TTTypeOf:
@@ -559,19 +566,17 @@ static NSString *KeyCompletions = @"completions";
             case TTSemiJoinSelect:
                 [self applyTokens:(Tokens*)t.value];
                 break;
+            case TTUsingScope:
+            case TTDataCategory:
+            case TTDataCategoryValue:
+                [txt addAttributes:style.field range:t.loc];
+                break;
             case TTError:
                 [txt addAttributes:style.underlined range:t.loc];
                 if (t.value != nil) {
                     [txt addAttribute:NSToolTipAttributeName value:t.value range:t.loc];
                     NSLog(@"%lu-%lu %@", t.loc.location, t.loc.length, t.value);
                 }
-                
-                break;
-            case TTUsingScope:
-            case TTDataCategory:
-            case TTDataCategoryValue:
-                [txt addAttributes:style.field range:t.loc];
-                break;
         }
     }
 }

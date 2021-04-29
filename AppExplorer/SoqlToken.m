@@ -20,15 +20,24 @@ static Icons *iconInstance;
     iconInstance = [Icons new];
     ColorizerStyle *style = [ColorizerStyle styles];
     NSSize sz = NSMakeSize(64,64);
+    NSImage *lit = [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"V" color:style.literalColor]];
     iconInstance.icons = @{
         @(TTField) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"F" color:style.fieldColor]],
         @(TTSObject) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"O" color:style.fieldColor]],
         @(TTRelationship) : [NSImage imageWithSize:NSMakeSize(64, 64) flipped:NO drawingHandler:[self iconDrawingHandler:@"R" color:style.literalColor]],
-        @(TTLiteral) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"V" color:style.literalColor]],
         @(TTOperator) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"Op" color:style.keywordColor]],
         @(TTKeyword) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"K" color:style.keywordColor]],
         @(TTTypeOf) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"T" color:style.keywordColor]],
         @(TTFunc) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"\xF0\x9D\x91\x93"  color:style.keywordColor]],
+        @(TTLiteral) : lit,
+        @(TTLiteralList) : lit,
+        @(TTLiteralString) : lit,
+        @(TTLiteralNumber) : lit,
+        @(TTLiteralDate) : lit,
+        @(TTLiteralDateTime) : lit,
+        @(TTLiteralNamedDateTime) : lit,
+        @(TTLiteralBoolean) : lit,
+        @(TTLiteralNull) : lit,
     };
 }
 
@@ -108,19 +117,27 @@ NSString *tokenName(TokenType type) {
         case TTAliasDecl: return @"AliasDecl";
         case TTSObjectRelation: return @"RelObj";
         case TTOperator: return @"Op";
-        case TTLiteral: return @"Lit";
-        case TTLiteralList: return @"LitList";
         case TTSemiJoinSelect: return @"SJSelect";
         case TTUsingScope: return @"Scope";
         case TTDataCategory: return @"Cat";
         case TTDataCategoryValue: return @"CatVal";
+        case TTLiteral: return @"Lit";
+        case TTLiteralList: return @"LitList";
+        case TTLiteralString:return @"String";
+        case TTLiteralNumber:return @"Number";
+        case TTLiteralDate: return @"Date";
+        case TTLiteralDateTime:return @"DateTime";
+        case TTLiteralNamedDateTime:return @"NamedDateTime";
+        case TTLiteralBoolean: return @"Boolean";
+        case TTLiteralNull: return @"Null";
         case TTError: return @"Error";
+        default: return @"<unknown>";
     }
 }
 
 NSString *tokenNames(TokenType types) {
     NSMutableArray<NSString*> *names = [NSMutableArray arrayWithCapacity:2];
-    for (TokenType m = 1; m <= TTError; m = m << 1) {
+    for (TokenType m = 1; m < TTError; m = m << 1) {
         if ((types & m) != 0) {
             [names addObject:tokenName(m)];
         }
