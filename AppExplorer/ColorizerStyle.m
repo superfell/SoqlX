@@ -30,15 +30,15 @@ static ColorizerStyle *style;
     self.underlineStyle = @(NSUnderlineStyleSingle | NSUnderlinePatternDot | NSUnderlineByWord);
     self.underlined = @{
                         NSUnderlineStyleAttributeName: self.underlineStyle,
-                        NSUnderlineColorAttributeName: [NSColor redColor],
+                        NSUnderlineColorAttributeName: [NSColor yellowColor],
                         };
     self.noUnderline = @{ NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone) };
     
     // TODO, why is colorNamed:@ returning nil in unit tests?
     if (self.keywordColor != nil) {
-        self.keyWord = @{ NSForegroundColorAttributeName:self.keywordColor, NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone)};
-        self.field =   @{ NSForegroundColorAttributeName:self.fieldColor,   NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone)};
-        self.literal = @{ NSForegroundColorAttributeName:self.literalColor, NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone)};
+        self.keyWord = @{ NSForegroundColorAttributeName:self.keywordColor};
+        self.field =   @{ NSForegroundColorAttributeName:self.fieldColor};
+        self.literal = @{ NSForegroundColorAttributeName:self.literalColor};
     }
     return self;
 }
