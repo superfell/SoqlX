@@ -15,6 +15,7 @@
 -(ZKDescribeSObject*)describe:(NSString*)obj;   // returns the describe if we have it?
 -(BOOL)knownSObject:(NSString*)obj;             // is the object in the describeGlobal list of objects?
 -(NSArray<NSString*>*)allQueryableSObjects;
+-(NSImage *)iconForSObject:(NSString *)type;
 @end
 
 @interface DLDDescriber<Describer> : NSObject

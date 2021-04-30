@@ -23,7 +23,7 @@ SELECT name, DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') FROM account WHERE DIS
       34-11  : Function        GEOLOCATION                    completions 1 
           46-1   : Number          1                              completions 0 
           48-1   : Number          1                              completions 0 
-      52-4   : String          'mi'                           completions 0 
+      52-4   : String          'mi'                           completions 2 
   58-4   : Keyword         FROM                           completions 0 
   63-7   : SObject         account                        completions 2 
   71-5   : Keyword         WHERE                          completions 0 
@@ -32,7 +32,7 @@ SELECT name, DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') FROM account WHERE DIS
       98-11  : Function        GEOLOCATION                    completions 1 
          110-1   : Number          1                              completions 0 
          112-1   : Number          1                              completions 0 
-     116-4   : String          'mi'                           completions 0 
+     116-4   : String          'mi'                           completions 2 
  122-1   : Op              >                              completions 11 
  124-2   : Number          20                             completions 0 
 

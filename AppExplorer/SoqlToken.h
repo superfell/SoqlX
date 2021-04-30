@@ -53,7 +53,7 @@ NSString *tokenNames(TokenType types);
 @property (strong, nonatomic) NSString *finalInsertionText;      // the insertion text to use when confirmed as the completion to use.
 @property (copy,   nonatomic) CompletionCallback onFinalInsert;  // callback to customize outcome of final insertion.
 @property (assign, nonatomic) TokenType type;
--(NSImage*)icon;
+@property (strong, nonatomic) NSImage *icon;                    // will default to Icons.iconFor:(Type) if not set.
 @end
 
 

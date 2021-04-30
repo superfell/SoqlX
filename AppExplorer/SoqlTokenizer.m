@@ -424,6 +424,7 @@ static NSString *KeyCompletions = @"completions";
 -(Context*)resolveFrom:(Tokens*)tokens parentCtx:(Context*)parentCtx {
     __block NSUInteger skipUntil = 0;
     NSInteger idx = [tokens.tokens indexOfObjectPassingTest:^BOOL(Token * _Nonnull t, NSUInteger idx, BOOL * _Nonnull stop) {
+        // TODO, this skip shouldn't be needed now that the tokens are moved into a child collection
         if (t.type == TTChildSelect) {
             skipUntil = t.loc.location + t.loc.length;
         }
@@ -437,7 +438,14 @@ static NSString *KeyCompletions = @"completions";
     Token *tSObject = tokens.tokens[idx];
     if (parentCtx == nil || parentCtx.containerType == TTSemiJoinSelect) {
         ctx.primary = [self.describer describe:tSObject.tokenTxt];
-        [tSObject.completions addObjectsFromArray:[Completion completions:self.describer.allQueryableSObjects type:TTSObject]];
+        NSArray<Completion*> *completions = [Completion completions:self.describer.allQueryableSObjects type:TTSObject];
+        for (Completion *c in completions) {
+            NSImage *objIcon = [self.describer iconForSObject:c.displayText];
+            if (objIcon != nil) {
+                c.icon = objIcon;
+            }
+        }
+        [tSObject.completions addObjectsFromArray:completions];
         if (![self.describer knownSObject:tSObject.tokenTxt]) {
             tSObject.type = TTError;
             tSObject.value = [NSString stringWithFormat:@"The SObject '%@' does not exist or is inaccessible", tSObject.tokenTxt];
@@ -632,6 +640,10 @@ static NSString *KeyCompletions = @"completions";
 
 -(NSArray<NSString*>*)allQueryableSObjects {
     return [[self.describes.SObjects filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"queryable=true"]] valueForKey:@"name"];
+}
+
+-(NSImage *)iconForSObject:(NSString *)type {
+    return [self.describes iconForType:type];
 }
 
 @end

@@ -50,6 +50,11 @@
 - (NSArray<NSString *> *)allQueryableSObjects {
     return [self.objects valueForKey:@"name"];
 }
+
+- (NSImage *)iconForSObject:(NSString *)type {
+    return nil;
+}
+
 @end
 
 @implementation SoqlColorizerTests

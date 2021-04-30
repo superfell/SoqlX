@@ -87,18 +87,16 @@ static Icons *iconInstance;
     c.nonFinalInsertionText = i;
     c.finalInsertionText = fi;
     c.type = t;
+    c.icon = [Icons iconFor:t];
     return c;
 }
 
 -(NSString*)description {
     return self.displayText;
 }
+
 -(NSComparisonResult)caseInsensitiveCompare:(Completion*)rhs {
     return [self.displayText caseInsensitiveCompare:rhs.displayText];
-}
-
--(NSImage*)icon {
-    return [Icons iconFor:self.type];
 }
 
 @end
