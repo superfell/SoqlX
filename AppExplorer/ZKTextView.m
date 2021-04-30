@@ -119,6 +119,9 @@ double ticksToMilliseconds;
                 case NSRightArrowFunctionKey:
                     [self.po performClose:self];
                     return;
+                case ' ':
+                    [self.po performClose:self];
+                    // fallthrough
                 default:
                     hasTyped = TRUE;
                     [super keyDown:event];
