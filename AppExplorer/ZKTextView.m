@@ -193,17 +193,27 @@ double ticksToMilliseconds;
                     idx++;
                 }
                 [self.table reloadData];
+                [self scrollRowToCenterVisible:selIdx];
                 if (selIdx >= 0) {
-                    [self.table scrollRowToVisible:selIdx];
                     [self.table selectRowIndexes:[NSIndexSet indexSetWithIndex:selIdx] byExtendingSelection:NO];
                 } else {
-                    [self.table scrollRowToVisible:0];
                     [self.table selectRowIndexes:[NSIndexSet indexSet] byExtendingSelection:NO];
                 }
                 [self showPopup];
             }
         }
     }
+}
+
+// based on https://stackoverflow.com/questions/11767557/scroll-an-nstableview-so-that-a-row-is-centered
+-(void)scrollRowToCenterVisible:(NSInteger)rowIdx {
+    NSScrollView *sv = (NSScrollView *)self.table.superview.superview;
+    NSAssert([sv isKindOfClass:[NSScrollView class]], @"failed to find scrollview that table is contained in");
+    NSRect row = [self.table rectOfRow:rowIdx];
+    row.origin.y -= sv.frame.size.height / 2;
+    row.origin.y += row.size.height;
+    row.origin.y = MAX(0,row.origin.y);
+    [self.table scrollPoint:row.origin];
 }
 
 // Usually returns the partial range from the most recent beginning of a word up to the insertion point.
