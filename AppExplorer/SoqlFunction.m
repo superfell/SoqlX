@@ -86,6 +86,35 @@ ExampleProvider fixed(NSString*value) {
 
 @end
 
+@interface FieldsArg : SoqlFuncArg
+@end
+@implementation FieldsArg
+-(instancetype)init {
+    self = [super init];
+    self.type = TTKeyword;
+    self.example = fixed(@"STANDARD");
+    return self;
+}
+-(Token*)validateToken:(Token*)argToken {
+    NSArray<NSString*> *valid = @[@"STANDARD", @"ALL", @"CUSTOM"];
+    [argToken.completions addObjectsFromArray:[Completion completions:valid type:TTKeyword]];
+    if (argToken.type == TTFieldPath) {
+        argToken.type = TTKeyword;
+    }
+    Token *err = [super validateToken:argToken];
+    if (err == nil) {
+        for (NSString *v in valid) {
+            if ([argToken matches:v]) {
+                return nil;
+            }
+        }
+        argToken.type = TTError;
+        argToken.value = [NSString stringWithFormat:@"Fields argument should be one of %@", [valid componentsJoinedByString:@","]];
+    }
+    return err;
+}
+
+@end
 @implementation SoqlFunction
 
 +(NSDictionary<CaseInsensitiveStringKey*,SoqlFunction*>*)all {
@@ -96,7 +125,7 @@ ExampleProvider fixed(NSString*value) {
     distGeoArg.funcFilter = [NSPredicate predicateWithFormat:@"name=%@", geoLoc.name];
     
     NSArray<SoqlFunction*>* fns = @[
-        [self fn:@"Fields" args:@[[SoqlFuncArg arg:TTKeyword ex:fixed(@"STANDARD")]]],
+        [self fn:@"Fields" args:@[[FieldsArg new]]],
         [self fn:@"ToLabel" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"type!='id' AND type!='reference'"]]],
         [self fn:@"Count" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"aggregatable=true"]]],
         [self fn:@"Count_Distinct" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"aggregatable=true"]]],
