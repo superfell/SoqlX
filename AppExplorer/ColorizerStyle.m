@@ -27,7 +27,7 @@ static ColorizerStyle *style;
     self.keywordColor = [NSColor colorNamed:@"soql.keyword"];
     self.literalColor = [NSColor colorNamed:@"soql.literal"];
     
-    self.underlineStyle = @(NSUnderlineStyleSingle | NSUnderlinePatternDot | NSUnderlineByWord);
+    self.underlineStyle = @(NSUnderlineStyleSingle);
     self.underlined = @{
                         NSUnderlineStyleAttributeName: self.underlineStyle,
                         NSUnderlineColorAttributeName: [NSColor yellowColor],

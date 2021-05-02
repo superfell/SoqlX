@@ -36,6 +36,7 @@
 #import "AppDelegate.h"
 #import "SoqlColorizer.h"
 #import "SoqlTokenizer.h"
+#import "ZKTextView.h"
 
 static NSString *soqlTabId = @"soql";
 static NSString *schemaTabId = @"schema";

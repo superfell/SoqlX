@@ -10,6 +10,7 @@
 @class Tokens;
 @class ZKDescribeSObject;
 @class DescribeListDataSource;
+@class ZKTextView;
 
 @protocol Describer
 -(ZKDescribeSObject*)describe:(NSString*)obj;   // returns the describe if we have it?
@@ -24,7 +25,7 @@
 
 @interface SoqlTokenizer : NSObject<NSTextViewDelegate, NSTextStorageDelegate>
 @property (strong,nonatomic) id<Describer> describer;
-@property (strong,nonatomic) NSTextView *view;
+@property (strong,nonatomic) ZKTextView *view;
 -(void)color;
 // for testing
 -(Tokens*)parseAndResolve:(NSString*)soql;

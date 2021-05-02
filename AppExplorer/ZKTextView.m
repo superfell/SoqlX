@@ -250,6 +250,25 @@ double ticksToMilliseconds;
     return sel;
 }
 
+-(NSRange)wordAtIndex:(NSInteger)idx {
+    NSRange sel = NSMakeRange(idx, 0);
+    NSString *txt = self.string;
+    for (; sel.location > 0 ; sel.location--, sel.length++) {
+        unichar c = [txt characterAtIndex:sel.location-1];
+        if (isblank(c) || c ==',' || c =='.' || c =='(' || c == ')') {
+            break;
+        }
+    }
+    NSInteger maxLen = txt.length - sel.location;
+    for (; sel.length < maxLen; sel.length++) {
+        unichar c = [txt characterAtIndex:sel.location+sel.length];
+        if (isblank(c) || c ==',' || c =='.' || c =='(' || c == ')') {
+            break;
+        }
+    }
+    return sel;
+}
+
 -(IBAction)completionDoubleClicked:(id)sender {
     id<ZKTextViewCompletion> c = self.completions[[sender selectedRow]];
     [self insertCompletion:c.finalInsertionText forPartialWordRange:self.rangeForUserCompletion movement:NSTextMovementOther isFinal:YES];

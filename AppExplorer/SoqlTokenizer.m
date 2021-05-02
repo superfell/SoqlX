@@ -69,8 +69,10 @@ static NSString *KeyCompletions = @"completions";
     self.tokens = [self.soqlParser parse:input error:&err];
     if (err != nil) {
         // TODO setting an error on the insertion point when its at the end of the string is problematic
-        Token *t = [Token txt:input loc:NSMakeRange([err.userInfo[@"Position"] integerValue]-1, 0)];
+        NSRange word = [self.view wordAtIndex: [err.userInfo[@"Position"] integerValue]-1];
+        Token *t = [Token txt:input loc:word];
         t.type = TTError;
+        t.value = err.localizedDescription;
         [self.tokens addToken:t];
     }
 }
