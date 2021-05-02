@@ -83,6 +83,26 @@ double ticksToMilliseconds;
     [self pasteAsPlainText:sender];
 }
 
+- (void)mouseDown:(NSEvent *)theEvent {
+    NSPoint point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    NSInteger charIndex = [self characterIndexForInsertionAtPoint:point];
+    if (charIndex >= 0 && charIndex < self.textStorage.string.length) {
+        NSRange attrRange;
+        NSString *tooltip = [self.textStorage attribute:NSToolTipAttributeName atIndex:charIndex effectiveRange:&attrRange];
+        if (tooltip != nil) {
+            NSRange theTextRange = [[self layoutManager] glyphRangeForCharacterRange:attrRange actualCharacterRange:NULL];
+            NSRect layoutRect = [[self layoutManager] boundingRectForGlyphRange:theTextRange inTextContainer:[self textContainer]];
+            NSPoint containerOrigin = [self textContainerOrigin];
+            layoutRect.origin.x += containerOrigin.x;
+            layoutRect.origin.y += containerOrigin.y;
+            layoutRect.size.width +=2;
+            self.errorText.stringValue = tooltip;
+            [self.errorPopover showRelativeToRect:layoutRect ofView:self preferredEdge:NSRectEdgeMaxY];
+        }
+    }
+    [super mouseDown:theEvent];
+}
+
 -(void)mouseMoved:(NSEvent *)event {
     lastEvent = mach_absolute_time();
     [super mouseMoved:event];
@@ -90,7 +110,7 @@ double ticksToMilliseconds;
 
 -(void)keyDown:(NSEvent *)event {
     lastEvent = mach_absolute_time();
-    if (self.po.shown) {
+    if (self.completionsPopover.shown) {
         NSString *theArrow = [event charactersIgnoringModifiers];
         if ( [theArrow length] == 1 ) {
             unichar keyChar = [theArrow characterAtIndex:0];
@@ -117,10 +137,10 @@ double ticksToMilliseconds;
                 case 27:    // escape key // left arrow // right arrow
                 case NSLeftArrowFunctionKey:
                 case NSRightArrowFunctionKey:
-                    [self.po performClose:self];
+                    [self.completionsPopover performClose:self];
                     return;
                 case ' ':
-                    [self.po performClose:self];
+                    [self.completionsPopover performClose:self];
                     // fallthrough
                 default:
                     hasTyped = TRUE;
@@ -137,7 +157,7 @@ double ticksToMilliseconds;
                     if (c.onFinalInsert != nil) {
                         hasTyped = c.onFinalInsert(self, c);
                     }
-                    [self.po performClose:self];
+                    [self.completionsPopover performClose:self];
                 }
             }
             return;
@@ -155,7 +175,7 @@ double ticksToMilliseconds;
     layoutRect.origin.x += containerOrigin.x;
     layoutRect.origin.y += containerOrigin.y;
     layoutRect.size.width +=2;
-    [self.po showRelativeToRect:layoutRect ofView:self preferredEdge:NSRectEdgeMinY];
+    [self.completionsPopover showRelativeToRect:layoutRect ofView:self preferredEdge:NSRectEdgeMaxY];
 }
 
 -(BOOL)isAtEndOfWord {
@@ -233,7 +253,7 @@ double ticksToMilliseconds;
 -(IBAction)completionDoubleClicked:(id)sender {
     id<ZKTextViewCompletion> c = self.completions[[sender selectedRow]];
     [self insertCompletion:c.finalInsertionText forPartialWordRange:self.rangeForUserCompletion movement:NSTextMovementOther isFinal:YES];
-    [self.po performClose:self];
+    [self.completionsPopover performClose:self];
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {

@@ -230,10 +230,13 @@
                                                                                     <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                                                     <connections>
                                                                                         <binding destination="-3" name="font" keyPath="delegate.editFont" id="vAG-Jz-Xa6"/>
+                                                                                        <outlet property="completionsPopover" destination="NbV-VM-bM2" id="ieC-UN-FFw"/>
+                                                                                        <outlet property="completionsViewController" destination="2hq-n8-i7X" id="tbn-pu-uVV"/>
                                                                                         <outlet property="delegate" destination="218" id="952"/>
+                                                                                        <outlet property="errorPopover" destination="HCg-Ob-fyM" id="n7L-wl-Kxv"/>
+                                                                                        <outlet property="errorText" destination="bhc-Gn-gb7" id="P0T-q5-psF"/>
+                                                                                        <outlet property="errorViewController" destination="fdO-B0-ga8" id="WTa-ql-RTe"/>
                                                                                         <outlet property="menu" destination="iz2-fO-orK" id="v6l-Db-aBE"/>
-                                                                                        <outlet property="po" destination="NbV-VM-bM2" id="ieC-UN-FFw"/>
-                                                                                        <outlet property="pv" destination="2hq-n8-i7X" id="tbn-pu-uVV"/>
                                                                                         <outlet property="table" destination="HZD-mi-Iyd" id="COx-3I-mdl"/>
                                                                                         <outlet property="tableScollView" destination="RPR-qu-LgX" id="OdJ-h8-YKU"/>
                                                                                     </connections>
@@ -688,9 +691,9 @@ DQ
                                                                 <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1641">
                                                                     <rect key="frame" x="0.0" y="71" width="836" height="228"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                                    <clipView key="contentView" ambiguous="YES" drawsBackground="NO" id="Kpl-p7-SPv">
+                                                                    <clipView key="contentView" drawsBackground="NO" id="Kpl-p7-SPv">
                                                                         <rect key="frame" x="1" y="1" width="834" height="226"/>
-                                                                        <autoresizingMask key="autoresizingMask"/>
+                                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                         <subviews>
                                                                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1644" customClass="MGSFragariaView">
                                                                                 <rect key="frame" x="0.0" y="0.0" width="834" height="225"/>
@@ -730,9 +733,9 @@ DQ
                                                                                 <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1573">
                                                                                     <rect key="frame" x="0.0" y="1" width="213" height="360"/>
                                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                                                    <clipView key="contentView" ambiguous="YES" id="8QW-WY-ZbW">
+                                                                                    <clipView key="contentView" id="8QW-WY-ZbW">
                                                                                         <rect key="frame" x="1" y="0.0" width="211" height="359"/>
-                                                                                        <autoresizingMask key="autoresizingMask"/>
+                                                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                         <subviews>
                                                                                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" headerView="1577" id="1576">
                                                                                                 <rect key="frame" x="0.0" y="0.0" width="211" height="342"/>
@@ -853,11 +856,11 @@ DQ
                                                                                 <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1649">
                                                                                     <rect key="frame" x="3" y="0.0" width="612" height="331"/>
                                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                                                    <clipView key="contentView" ambiguous="YES" drawsBackground="NO" id="wiT-5w-VwX">
+                                                                                    <clipView key="contentView" drawsBackground="NO" id="wiT-5w-VwX">
                                                                                         <rect key="frame" x="1" y="1" width="610" height="329"/>
-                                                                                        <autoresizingMask key="autoresizingMask"/>
+                                                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                         <subviews>
-                                                                                            <textView ambiguous="YES" editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" findStyle="panel" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" spellingCorrection="YES" smartInsertDelete="YES" id="1652">
+                                                                                            <textView editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" findStyle="panel" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" spellingCorrection="YES" smartInsertDelete="YES" id="1652">
                                                                                                 <rect key="frame" x="0.0" y="0.0" width="610" height="329"/>
                                                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -932,7 +935,7 @@ DQ
                         </connections>
                     </searchField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1671">
-                        <rect key="frame" x="696" y="7" width="299" height="14"/>
+                        <rect key="frame" x="695" y="7" width="300" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="API Calls" id="1672">
                             <font key="font" metaFont="smallSystem"/>
@@ -1180,13 +1183,13 @@ DQ
             </items>
             <point key="canvasLocation" x="125" y="63"/>
         </menu>
-        <viewController id="2hq-n8-i7X" userLabel="Popover View Controller">
+        <viewController id="2hq-n8-i7X" userLabel="CompletionsPopover View Controller">
             <connections>
                 <outlet property="sourceItemView" destination="930" id="5xf-ln-HMz"/>
                 <outlet property="view" destination="foy-ac-bmB" id="vnB-a4-2JU"/>
             </connections>
         </viewController>
-        <popover animates="NO" behavior="t" id="NbV-VM-bM2">
+        <popover animates="NO" behavior="t" id="NbV-VM-bM2" userLabel="CompletionsPopover">
             <connections>
                 <outlet property="contentViewController" destination="2hq-n8-i7X" id="KHE-87-ndB"/>
             </connections>
@@ -1228,7 +1231,7 @@ DQ
                                                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zvo-EC-hFn">
                                                         <rect key="frame" x="3" y="1" width="22" height="22"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
-                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSActionTemplate" catalog="system" id="5Fx-6m-63F"/>
+                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSActionTemplate" id="5Fx-6m-63F"/>
                                                     </imageView>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsExpansionToolTips="YES" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xl3-5d-Uy2">
                                                         <rect key="frame" x="33" y="5" width="406" height="17"/>
@@ -1267,9 +1270,36 @@ DQ
             </subviews>
             <point key="canvasLocation" x="-735.5" y="-661.5"/>
         </customView>
+        <viewController id="fdO-B0-ga8" userLabel="ErrorsPopover View Controller">
+            <connections>
+                <outlet property="sourceItemView" destination="930" id="BTF-Rh-29u"/>
+                <outlet property="view" destination="Vc9-mb-pjn" id="VC5-th-qBG"/>
+            </connections>
+        </viewController>
+        <popover behavior="t" id="HCg-Ob-fyM" userLabel="ErrorsPopover">
+            <connections>
+                <outlet property="contentViewController" destination="fdO-B0-ga8" id="SEf-cB-lV8"/>
+            </connections>
+        </popover>
+        <customView id="Vc9-mb-pjn">
+            <rect key="frame" x="0.0" y="0.0" width="738" height="48"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bhc-Gn-gb7">
+                    <rect key="frame" x="18" y="10" width="702" height="28"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" title="Label" id="zYp-B1-a9C">
+                        <font key="font" metaFont="system" size="17"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+            </subviews>
+            <point key="canvasLocation" x="-848" y="-424"/>
+        </customView>
     </objects>
     <resources>
-        <image name="NSActionTemplate" catalog="system" width="14" height="14"/>
+        <image name="NSActionTemplate" width="14" height="14"/>
         <image name="greenLight" width="16" height="12"/>
     </resources>
 </document>

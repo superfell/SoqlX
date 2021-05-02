@@ -88,8 +88,9 @@ static NSString *KeyCompletions = @"completions";
     NSRange before =  [self.view selectedRange];
     [txt beginEditing];
     NSRange all = NSMakeRange(0,txt.length);
-    [txt removeAttribute:NSToolTipAttributeName range:all];
     [txt addAttribute:NSForegroundColorAttributeName value:[NSColor whiteColor] range:all];
+    [txt removeAttribute:NSToolTipAttributeName range:all];
+    [txt removeAttribute:NSCursorAttributeName range:all];
     [txt removeAttribute:NSUnderlineStyleAttributeName range:all];
     [txt removeAttribute:KeyCompletions range:all];
     [self applyTokens:self.tokens];
@@ -581,6 +582,7 @@ static NSString *KeyCompletions = @"completions";
                 [txt addAttributes:style.underlined range:t.loc];
                 if (t.value != nil) {
                     [txt addAttribute:NSToolTipAttributeName value:t.value range:t.loc];
+                    [txt addAttribute:NSCursorAttributeName value:NSCursor.pointingHandCursor range:t.loc];
                     NSLog(@"%lu-%lu %@", t.loc.location, t.loc.length, t.value);
                 }
         }
