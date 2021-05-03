@@ -1,0 +1,487 @@
+select name from account where id in ('001002003004005006')
+   0-6   : Keyword         select                         completions 0 
+   7-4   : Field           name                           completions 28 
+  12-4   : Keyword         from                           completions 0 
+  17-7   : SObject         account                        completions 2 
+  25-5   : Keyword         where                          completions 0 
+  31-2   : Error           id                             completions 28 There is no field or relationship id on SObject Account
+  34-2   : Op              in                             completions 2 
+  38-20  : String          '001002003004005006'           completions 0 
+
+Parser debug
+
+Parser Debug Log 2021-05-03 18:44:06 +0000
+=> [ref:0x100e46b00] : select name from account where id in ('0
+=> [seq: [[0+ whitespace],[seq: [[eq: SELECT]]],[1+ whitespace],[1+ r:[firstOf: [[s... : select name from account where id in ('0
+   => [0+ whitespace] : select name from account where id in ('0
+   <= [0+ whitespace] :result:  {0,0}
+   => [seq: [[eq: SELECT]]] : select name from account where id in ('0
+      => [eq: SELECT] : select name from account where id in ('0
+      <= [eq: SELECT] :result: select {0,6}
+   <= [seq: [[eq: SELECT]]] :result: <Token: 0x102bea2a0> {0,6}
+   => [1+ whitespace] :  name from account where id in ('0010020
+   <= [1+ whitespace] :result:   {6,1}
+   => [1+ r:[firstOf: [[seq: [[ident],[0+ whitespace],[eq: (],[0+ whitespace],[1+ r:[f... : name from account where id in ('00100200
+      => [firstOf: [[seq: [[ident],[0+ whitespace],[eq: (],[0+ whitespace],[1+ r:[firstOf... : name from account where id in ('00100200
+      => [seq: [[ident],[0+ whitespace],[eq: (],[0+ whitespace],[1+ r:[firstOf: [[ref:0x1... : name from account where id in ('00100200
+         => [ident] : name from account where id in ('00100200
+            => [1+ identifier] : name from account where id in ('00100200
+            <= [1+ identifier] :result: name {7,4}
+            => [0+ identifier] :  from account where id in ('001002003004
+            <= [0+ identifier] :result:  {11,0}
+         <= [ident] :result: name {7,4}
+         => [0+ whitespace] :  from account where id in ('001002003004
+         <= [0+ whitespace] :result:   {11,1}
+         => [eq: (] : from account where id in ('0010020030040
+         <= [eq: (] :error : expecting '(' at position 13
+      <= [seq: [[ident],[0+ whitespace],[eq: (],[0+ whitespace],[1+ r:[firstOf: [[ref:0x1... :error : expecting '(' at position 13
+      => [seq: [[seq: [[eq: TYPEOF]]],[CUT],[1+ whitespace],[seq: [[1+ identifier],[0+ id... : name from account where id in ('00100200
+         => [seq: [[eq: TYPEOF]]] : name from account where id in ('00100200
+            => [eq: TYPEOF] : name from account where id in ('00100200
+            <= [eq: TYPEOF] :error : expecting 'TYPEOF' at position 8
+         <= [seq: [[eq: TYPEOF]]] :error : expecting 'TYPEOF' at position 8
+      <= [seq: [[seq: [[eq: TYPEOF]]],[CUT],[1+ whitespace],[seq: [[1+ identifier],[0+ id... :error : expecting 'TYPEOF' at position 8
+      => [field] : name from account where id in ('00100200
+         => [fieldOnly] : name from account where id in ('00100200
+            => [ident] : name from account where id in ('00100200
+               => [1+ identifier] : name from account where id in ('00100200
+               <= [1+ identifier] :result: name {7,4}
+               => [0+ identifier] :  from account where id in ('001002003004
+               <= [0+ identifier] :result:  {11,0}
+            <= [ident] :result: name {7,4}
+            => [eq: .] :  from account where id in ('001002003004
+            <= [eq: .] :error : expecting '.' at position 12
+         <= [fieldOnly] :result: <Token: 0x102bf2ed0> {7,4}
+         => [seq: [[1+ whitespace],[ident]]]? :  from account where id in ('001002003004
+         => [seq: [[1+ whitespace],[ident]]] :  from account where id in ('001002003004
+            => [1+ whitespace] :  from account where id in ('001002003004
+            <= [1+ whitespace] :result:   {11,1}
+            => [ident] : from account where id in ('0010020030040
+               => [1+ identifier] : from account where id in ('0010020030040
+               <= [1+ identifier] :result: from {12,4}
+               => [0+ identifier] :  account where id in ('00100200300400500
+               <= [0+ identifier] :result:  {16,0}
+            <= [ident] :result: from {12,4}
+         <= [seq: [[1+ whitespace],[ident]]] :result: from {12,4}
+         <= [seq: [[1+ whitespace],[ident]]]? :result: <null> {11,0}
+      <= [field] :result: (
+    "<Token: 0x102bf2ed0> {7,4}",
+    "<null> {11,0}"
+) {7,4}
+      <= [firstOf: [[seq: [[ident],[0+ whitespace],[eq: (],[0+ whitespace],[1+ r:[firstOf... :result: (
+    "<Token: 0x102bf2ed0> {7,4}",
+    "<null> {11,0}"
+) {7,4}
+      => [seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]] :  from account where id in ('001002003004
+         => [0+ whitespace] :  from account where id in ('001002003004
+         <= [0+ whitespace] :result:   {11,1}
+         => [eq: ,] : from account where id in ('0010020030040
+         <= [eq: ,] :error : expecting ',' at position 13
+      <= [seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]] :error : expecting ',' at position 13
+   <= [1+ r:[firstOf: [[seq: [[ident],[0+ whitespace],[eq: (],[0+ whitespace],[1+ r:[f... :result: (
+    "(\n    \"<Token: 0x102bf2ed0> {7,4}\",\n    \"<null> {11,0}\"\n) {7,4}"
+) {7,4}
+   => [1+ whitespace] :  from account where id in ('001002003004
+   <= [1+ whitespace] :result:   {11,1}
+   => [seq: [[eq: FROM]]] : from account where id in ('0010020030040
+      => [eq: FROM] : from account where id in ('0010020030040
+      <= [eq: FROM] :result: from {12,4}
+   <= [seq: [[eq: FROM]]] :result: <Token: 0x100e51160> {12,4}
+   => [1+ whitespace] :  account where id in ('00100200300400500
+   <= [1+ whitespace] :result:   {16,1}
+   => [seq: [[seq: [[ident],[seq: [[1+ whitespace],[ident]]]?]],[seq: [[seq: [[0+ whit... : account where id in ('001002003004005006
+      => [seq: [[ident],[seq: [[1+ whitespace],[ident]]]?]] : account where id in ('001002003004005006
+         => [ident] : account where id in ('001002003004005006
+            => [1+ identifier] : account where id in ('001002003004005006
+            <= [1+ identifier] :result: account {17,7}
+            => [0+ identifier] :  where id in ('001002003004005006')
+            <= [0+ identifier] :result:  {24,0}
+         <= [ident] :result: account {17,7}
+         => [seq: [[1+ whitespace],[ident]]]? :  where id in ('001002003004005006')
+         => [seq: [[1+ whitespace],[ident]]] :  where id in ('001002003004005006')
+            => [1+ whitespace] :  where id in ('001002003004005006')
+            <= [1+ whitespace] :result:   {24,1}
+            => [ident] : where id in ('001002003004005006')
+               => [1+ identifier] : where id in ('001002003004005006')
+               <= [1+ identifier] :result: where {25,5}
+               => [0+ identifier] :  id in ('001002003004005006')
+               <= [0+ identifier] :result:  {30,0}
+            <= [ident] :result: where {25,5}
+         <= [seq: [[1+ whitespace],[ident]]] :result: where {25,5}
+         <= [seq: [[1+ whitespace],[ident]]]? :result: <null> {24,0}
+      <= [seq: [[ident],[seq: [[1+ whitespace],[ident]]]?]] :result: (
+    "account {17,7}",
+    "<null> {24,0}"
+) {17,7}
+      => [seq: [[seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]],[1+ r:[field] s:[seq: [[... :  where id in ('001002003004005006')
+      => [seq: [[seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]],[1+ r:[field] s:[seq: [[... :  where id in ('001002003004005006')
+         => [seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]] :  where id in ('001002003004005006')
+            => [0+ whitespace] :  where id in ('001002003004005006')
+            <= [0+ whitespace] :result:   {24,1}
+            => [eq: ,] : where id in ('001002003004005006')
+            <= [eq: ,] :error : expecting ',' at position 26
+         <= [seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]] :error : expecting ',' at position 26
+      <= [seq: [[seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]],[1+ r:[field] s:[seq: [[... :error : expecting ',' at position 26
+      <= [seq: [[seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]],[1+ r:[field] s:[seq: [[... :result: <null> {24,0}
+   <= [seq: [[seq: [[ident],[seq: [[1+ whitespace],[ident]]]?]],[seq: [[seq: [[0+ whit... :result: (
+    "(\n    \"account {17,7}\",\n    \"<null> {24,0}\"\n) {17,7}",
+    "<null> {24,0}"
+) {17,7}
+   => [seq: [[1+ whitespace],[seq: [[eq: USING],[1+ whitespace],[eq: SCOPE]]],[1+ whit... :  where id in ('001002003004005006')
+   => [seq: [[1+ whitespace],[seq: [[eq: USING],[1+ whitespace],[eq: SCOPE]]],[1+ whit... :  where id in ('001002003004005006')
+      => [1+ whitespace] :  where id in ('001002003004005006')
+      <= [1+ whitespace] :result:   {24,1}
+      => [seq: [[eq: USING],[1+ whitespace],[eq: SCOPE]]] : where id in ('001002003004005006')
+         => [eq: USING] : where id in ('001002003004005006')
+         <= [eq: USING] :error : expecting 'USING' at position 26
+      <= [seq: [[eq: USING],[1+ whitespace],[eq: SCOPE]]] :error : expecting 'USING' at position 26
+   <= [seq: [[1+ whitespace],[seq: [[eq: USING],[1+ whitespace],[eq: SCOPE]]],[1+ whit... :error : expecting 'USING' at position 26
+   <= [seq: [[1+ whitespace],[seq: [[eq: USING],[1+ whitespace],[eq: SCOPE]]],[1+ whit... :result: <null> {24,0}
+   => [seq: [[1+ whitespace],[seq: [[eq: WHERE]]],[CUT],[1+ whitespace],[ref:0x100f48c... :  where id in ('001002003004005006')
+   => [seq: [[1+ whitespace],[seq: [[eq: WHERE]]],[CUT],[1+ whitespace],[ref:0x100f48c... :  where id in ('001002003004005006')
+      => [1+ whitespace] :  where id in ('001002003004005006')
+      <= [1+ whitespace] :result:   {24,1}
+      => [seq: [[eq: WHERE]]] : where id in ('001002003004005006')
+         => [eq: WHERE] : where id in ('001002003004005006')
+         <= [eq: WHERE] :result: where {25,5}
+      <= [seq: [[eq: WHERE]]] :result: <Token: 0x102bf8a90> {25,5}
+      => [CUT] :  id in ('001002003004005006')
+      <= [CUT] :result: <null> {30,0}
+      => [1+ whitespace] :  id in ('001002003004005006')
+      <= [1+ whitespace] :result:   {30,1}
+      => [ref:0x100f48cc0] : id in ('001002003004005006')
+      => [seq: [[seq: [[seq: [[eq: NOT]]],[0+ whitespace]]]?,[firstOf: [[seq: [[eq: (],[0... : id in ('001002003004005006')
+         => [seq: [[seq: [[eq: NOT]]],[0+ whitespace]]]? : id in ('001002003004005006')
+         => [seq: [[seq: [[eq: NOT]]],[0+ whitespace]]] : id in ('001002003004005006')
+            => [seq: [[eq: NOT]]] : id in ('001002003004005006')
+               => [eq: NOT] : id in ('001002003004005006')
+               <= [eq: NOT] :error : expecting 'NOT' at position 32
+            <= [seq: [[eq: NOT]]] :error : expecting 'NOT' at position 32
+         <= [seq: [[seq: [[eq: NOT]]],[0+ whitespace]]] :error : expecting 'NOT' at position 32
+         <= [seq: [[seq: [[eq: NOT]]],[0+ whitespace]]]? :result: <null> {31,0}
+         => [firstOf: [[seq: [[eq: (],[0+ whitespace],[ref:0x100f48cc0],[0+ whitespace],[eq:... : id in ('001002003004005006')
+         => [seq: [[eq: (],[0+ whitespace],[ref:0x100f48cc0],[0+ whitespace],[eq: )]]] : id in ('001002003004005006')
+            => [eq: (] : id in ('001002003004005006')
+            <= [eq: (] :error : expecting '(' at position 32
+         <= [seq: [[eq: (],[0+ whitespace],[ref:0x100f48cc0],[0+ whitespace],[eq: )]]] :error : expecting '(' at position 32
+         => [seq: [[ref:0x102bda4f0],[0+ whitespace],[oneOf: [[seq: [[block:0x102be5a10],[CU... : id in ('001002003004005006')
+            => [ref:0x102bda4f0] : id in ('001002003004005006')
+            => [firstOf: [[seq: [[ident],[0+ whitespace],[eq: (],[0+ whitespace],[1+ r:[firstOf... : id in ('001002003004005006')
+            => [seq: [[ident],[0+ whitespace],[eq: (],[0+ whitespace],[1+ r:[firstOf: [[ref:0x1... : id in ('001002003004005006')
+               => [ident] : id in ('001002003004005006')
+                  => [1+ identifier] : id in ('001002003004005006')
+                  <= [1+ identifier] :result: id {31,2}
+                  => [0+ identifier] :  in ('001002003004005006')
+                  <= [0+ identifier] :result:  {33,0}
+               <= [ident] :result: id {31,2}
+               => [0+ whitespace] :  in ('001002003004005006')
+               <= [0+ whitespace] :result:   {33,1}
+               => [eq: (] : in ('001002003004005006')
+               <= [eq: (] :error : expecting '(' at position 35
+            <= [seq: [[ident],[0+ whitespace],[eq: (],[0+ whitespace],[1+ r:[firstOf: [[ref:0x1... :error : expecting '(' at position 35
+            => [field] : id in ('001002003004005006')
+               => [fieldOnly] : id in ('001002003004005006')
+                  => [ident] : id in ('001002003004005006')
+                     => [1+ identifier] : id in ('001002003004005006')
+                     <= [1+ identifier] :result: id {31,2}
+                     => [0+ identifier] :  in ('001002003004005006')
+                     <= [0+ identifier] :result:  {33,0}
+                  <= [ident] :result: id {31,2}
+                  => [eq: .] :  in ('001002003004005006')
+                  <= [eq: .] :error : expecting '.' at position 34
+               <= [fieldOnly] :result: <Token: 0x109610880> {31,2}
+               => [seq: [[1+ whitespace],[ident]]]? :  in ('001002003004005006')
+               => [seq: [[1+ whitespace],[ident]]] :  in ('001002003004005006')
+                  => [1+ whitespace] :  in ('001002003004005006')
+                  <= [1+ whitespace] :result:   {33,1}
+                  => [ident] : in ('001002003004005006')
+                     => [1+ identifier] : in ('001002003004005006')
+                     <= [1+ identifier] :result: in {34,2}
+                     => [0+ identifier] :  ('001002003004005006')
+                     <= [0+ identifier] :result:  {36,0}
+                  <= [ident] :result: in {34,2}
+               <= [seq: [[1+ whitespace],[ident]]] :result: in {34,2}
+               <= [seq: [[1+ whitespace],[ident]]]? :result: <null> {33,0}
+            <= [field] :result: (
+    "<Token: 0x109610880> {31,2}",
+    "<null> {33,0}"
+) {31,2}
+            <= [firstOf: [[seq: [[ident],[0+ whitespace],[eq: (],[0+ whitespace],[1+ r:[firstOf... :result: (
+    "<Token: 0x109610880> {31,2}",
+    "<null> {33,0}"
+) {31,2}
+            <= [ref:0x102bda4f0] :result: (
+    "<Token: 0x109610880> {31,2}",
+    "<null> {33,0}"
+) {31,2}
+            => [0+ whitespace] :  in ('001002003004005006')
+            <= [0+ whitespace] :result:   {33,1}
+            => [oneOf: [[seq: [[block:0x102be5a10],[CUT],[0+ whitespace],[oneOf: [[Literal Stri... : in ('001002003004005006')
+            => [seq: [[block:0x102be5a10],[CUT],[0+ whitespace],[oneOf: [[Literal String],[eq: ... : in ('001002003004005006')
+               => [block:0x102be5a10] : in ('001002003004005006')
+               => [firstOf: [[eq: LIKE],[eq: <=],[eq: >=],[eq: !=],[eq: <],[eq: >],[eq: =]]] : in ('001002003004005006')
+               => [firstOf: [[eq: LIKE],[eq: <=],[eq: >=],[eq: !=],[eq: <],[eq: >],[eq: =]]] : in ('001002003004005006')
+               => [eq: LIKE] : in ('001002003004005006')
+               <= [eq: LIKE] :error : expecting 'LIKE' at position 35
+               => [eq: <=] : in ('001002003004005006')
+               <= [eq: <=] :error : expecting '<=' at position 35
+               => [eq: >=] : in ('001002003004005006')
+               <= [eq: >=] :error : expecting '>=' at position 35
+               => [eq: !=] : in ('001002003004005006')
+               <= [eq: !=] :error : expecting '!=' at position 35
+               => [eq: <] : in ('001002003004005006')
+               <= [eq: <] :error : expecting '<' at position 35
+               => [eq: >] : in ('001002003004005006')
+               <= [eq: >] :error : expecting '>' at position 35
+               => [eq: =] : in ('001002003004005006')
+               <= [eq: =] :error : expecting '=' at position 35
+               <= [firstOf: [[eq: LIKE],[eq: <=],[eq: >=],[eq: !=],[eq: <],[eq: >],[eq: =]]] :error : expecting '=' at position 35
+               <= [firstOf: [[eq: LIKE],[eq: <=],[eq: >=],[eq: !=],[eq: <],[eq: >],[eq: =]]] :error : expecting '=' at position 35
+               <= [block:0x102be5a10] :error : expecting one of <,<=,>,>=,=,!=,LIKE at position 35
+            <= [seq: [[block:0x102be5a10],[CUT],[0+ whitespace],[oneOf: [[Literal String],[eq: ... :error : expecting one of <,<=,>,>=,=,!=,LIKE at position 35
+            => [seq: [[block:0x102be6490],[CUT],[0+ whitespace],[seq: [[eq: (],[0+ whitespace],... : in ('001002003004005006')
+               => [block:0x102be6490] : in ('001002003004005006')
+               => [firstOf: [[eq: INCLUDES],[eq: EXCLUDES]]] : in ('001002003004005006')
+               => [firstOf: [[eq: INCLUDES],[eq: EXCLUDES]]] : in ('001002003004005006')
+               => [eq: INCLUDES] : in ('001002003004005006')
+               <= [eq: INCLUDES] :error : expecting 'INCLUDES' at position 35
+               => [eq: EXCLUDES] : in ('001002003004005006')
+               <= [eq: EXCLUDES] :error : expecting 'EXCLUDES' at position 35
+               <= [firstOf: [[eq: INCLUDES],[eq: EXCLUDES]]] :error : expecting 'EXCLUDES' at position 35
+               <= [firstOf: [[eq: INCLUDES],[eq: EXCLUDES]]] :error : expecting 'EXCLUDES' at position 35
+               <= [block:0x102be6490] :error : expecting one of INCLUDES,EXCLUDES at position 35
+            <= [seq: [[block:0x102be6490],[CUT],[0+ whitespace],[seq: [[eq: (],[0+ whitespace],... :error : expecting one of INCLUDES,EXCLUDES at position 35
+            => [seq: [[In/NotIn],[CUT],[0+ whitespace],[oneOf: [[seq: [[eq: (],[0+ whitespace],... : in ('001002003004005006')
+               => [In/NotIn] : in ('001002003004005006')
+               => [oneOf: [[seq: [[eq: IN]]],[seq: [[eq: NOT],[1+ whitespace],[eq: IN]]]]] : in ('001002003004005006')
+               => [seq: [[eq: IN]]] : in ('001002003004005006')
+                  => [eq: IN] : in ('001002003004005006')
+                  <= [eq: IN] :result: in {34,2}
+               <= [seq: [[eq: IN]]] :result: <Token: 0x100d86230> {34,2}
+               => [seq: [[eq: NOT],[1+ whitespace],[eq: IN]]] : in ('001002003004005006')
+                  => [eq: NOT] : in ('001002003004005006')
+                  <= [eq: NOT] :error : expecting 'NOT' at position 35
+               <= [seq: [[eq: NOT],[1+ whitespace],[eq: IN]]] :error : expecting 'NOT' at position 35
+               <= [oneOf: [[seq: [[eq: IN]]],[seq: [[eq: NOT],[1+ whitespace],[eq: IN]]]]] :result: <Token: 0x100d86230> {34,2}
+               <= [In/NotIn] :result: <Token: 0x100d86230> {34,2}
+               => [CUT] :  ('001002003004005006')
+               <= [CUT] :result: <null> {36,0}
+               => [0+ whitespace] :  ('001002003004005006')
+               <= [0+ whitespace] :result:   {36,1}
+               => [oneOf: [[seq: [[eq: (],[0+ whitespace],[1+ r:[Literal String] s:[seq: [[0+ whit... : ('001002003004005006')
+               => [seq: [[eq: (],[0+ whitespace],[1+ r:[Literal String] s:[seq: [[0+ whitespace],[... : ('001002003004005006')
+                  => [eq: (] : ('001002003004005006')
+                  <= [eq: (] :result: ( {37,1}
+                  => [0+ whitespace] : '001002003004005006')
+                  <= [0+ whitespace] :result:  {38,0}
+                  => [1+ r:[Literal String] s:[seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]]] : '001002003004005006')
+                     => [Literal String] : '001002003004005006')
+                     <= [Literal String] :result: <Token: 0x100d8abe0> {38,20}
+                     => [seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]] : )
+                        => [0+ whitespace] : )
+                        <= [0+ whitespace] :result:  {58,0}
+                        => [eq: ,] : )
+                        <= [eq: ,] :error : expecting ',' at position 59
+                     <= [seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]] :error : expecting ',' at position 59
+                  <= [1+ r:[Literal String] s:[seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]]] :result: (
+    "<Token: 0x100d8abe0> {38,20}"
+) {38,20}
+                  => [0+ whitespace] : )
+                  <= [0+ whitespace] :result:  {58,0}
+                  => [eq: )] : )
+                  <= [eq: )] :result: ) {58,1}
+               <= [seq: [[eq: (],[0+ whitespace],[1+ r:[Literal String] s:[seq: [[0+ whitespace],[... :result: (
+    "( {37,1}",
+    " {38,0}",
+    "(\n    \"<Token: 0x100d8abe0> {38,20}\"\n) {38,20}",
+    " {58,0}",
+    ") {58,1}"
+) {37,22}
+               <= [oneOf: [[seq: [[eq: (],[0+ whitespace],[1+ r:[Literal String] s:[seq: [[0+ whit... :result: (
+    "( {37,1}",
+    " {38,0}",
+    "(\n    \"<Token: 0x100d8abe0> {38,20}\"\n) {38,20}",
+    " {58,0}",
+    ") {58,1}"
+) {37,22}
+            <= [seq: [[In/NotIn],[CUT],[0+ whitespace],[oneOf: [[seq: [[eq: (],[0+ whitespace],... :result: (
+    "<Token: 0x100d86230> {34,2}",
+    "<null> {36,0}",
+    "  {36,1}",
+    "(\n    \"( {37,1}\",\n    \" {38,0}\",\n    \"(\\n    \\\"<Token: 0x100d8abe0> {38,20}\\\"\\n) {38,20}\",\n    \" {58,0}\",\n    \") {58,1}\"\n) {37,22}"
+) {34,25}
+            <= [oneOf: [[seq: [[block:0x102be5a10],[CUT],[0+ whitespace],[oneOf: [[Literal Stri... :result: (
+    "<Token: 0x100d86230> {34,2}",
+    "<null> {36,0}",
+    "  {36,1}",
+    "(\n    \"( {37,1}\",\n    \" {38,0}\",\n    \"(\\n    \\\"<Token: 0x100d8abe0> {38,20}\\\"\\n) {38,20}\",\n    \" {58,0}\",\n    \") {58,1}\"\n) {37,22}"
+) {34,25}
+         <= [seq: [[ref:0x102bda4f0],[0+ whitespace],[oneOf: [[seq: [[block:0x102be5a10],[CU... :result: (
+    "(\n    \"<Token: 0x109610880> {31,2}\",\n    \"<null> {33,0}\"\n) {31,2}",
+    "  {33,1}",
+    "(\n    \"<Token: 0x100d86230> {34,2}\",\n    \"<null> {36,0}\",\n    \"  {36,1}\",\n    \"(\\n    \\\"( {37,1}\\\",\\n    \\\" {38,0}\\\",\\n    \\\"(\\\\n    \\\\\\\"<Token: 0x100d8abe0> {38,20}\\\\\\\"\\\\n) {38,20}\\\",\\n    \\\" {58,0}\\\",\\n    \\\") {58,1}\\\"\\n) {37,22}\"\n) {34,25}"
+) {31,28}
+         <= [firstOf: [[seq: [[eq: (],[0+ whitespace],[ref:0x100f48cc0],[0+ whitespace],[eq:... :result: (
+    "(\n    \"<Token: 0x109610880> {31,2}\",\n    \"<null> {33,0}\"\n) {31,2}",
+    "  {33,1}",
+    "(\n    \"<Token: 0x100d86230> {34,2}\",\n    \"<null> {36,0}\",\n    \"  {36,1}\",\n    \"(\\n    \\\"( {37,1}\\\",\\n    \\\" {38,0}\\\",\\n    \\\"(\\\\n    \\\\\\\"<Token: 0x100d8abe0> {38,20}\\\\\\\"\\\\n) {38,20}\\\",\\n    \\\" {58,0}\\\",\\n    \\\") {58,1}\\\"\\n) {37,22}\"\n) {34,25}"
+) {31,28}
+         => [seq: [[seq: [[0+ whitespace],[block:0x100f47be0],[1+ whitespace]]],[ref:0x100f4... : 
+         => [seq: [[seq: [[0+ whitespace],[block:0x100f47be0],[1+ whitespace]]],[ref:0x100f4... : 
+            => [seq: [[0+ whitespace],[block:0x100f47be0],[1+ whitespace]]] : 
+               => [0+ whitespace] : 
+               <= [0+ whitespace] :result:  {59,0}
+               => [block:0x100f47be0] : 
+               => [firstOf: [[eq: AND],[eq: OR]]] : 
+               => [firstOf: [[eq: AND],[eq: OR]]] : 
+               => [eq: AND] : 
+               <= [eq: AND] :error : expecting 'AND' at position 60
+               => [eq: OR] : 
+               <= [eq: OR] :error : expecting 'OR' at position 60
+               <= [firstOf: [[eq: AND],[eq: OR]]] :error : expecting 'OR' at position 60
+               <= [firstOf: [[eq: AND],[eq: OR]]] :error : expecting 'OR' at position 60
+               <= [block:0x100f47be0] :error : expecting one of AND,OR at position 60
+            <= [seq: [[0+ whitespace],[block:0x100f47be0],[1+ whitespace]]] :error : expecting one of AND,OR at position 60
+         <= [seq: [[seq: [[0+ whitespace],[block:0x100f47be0],[1+ whitespace]]],[ref:0x100f4... :error : expecting one of AND,OR at position 60
+         <= [seq: [[seq: [[0+ whitespace],[block:0x100f47be0],[1+ whitespace]]],[ref:0x100f4... :result: <null> {59,0}
+      <= [seq: [[seq: [[seq: [[eq: NOT]]],[0+ whitespace]]]?,[firstOf: [[seq: [[eq: (],[0... :result: (
+    "<null> {31,0}",
+    "(\n    \"(\\n    \\\"<Token: 0x109610880> {31,2}\\\",\\n    \\\"<null> {33,0}\\\"\\n) {31,2}\",\n    \"  {33,1}\",\n    \"(\\n    \\\"<Token: 0x100d86230> {34,2}\\\",\\n    \\\"<null> {36,0}\\\",\\n    \\\"  {36,1}\\\",\\n    \\\"(\\\\n    \\\\\\\"( {37,1}\\\\\\\",\\\\n    \\\\\\\" {38,0}\\\\\\\",\\\\n    \\\\\\\"(\\\\\\\\n    \\\\\\\\\\\\\\\"<Token: 0x100d8abe0> {38,20}\\\\\\\\\\\\\\\"\\\\\\\\n) {38,20}\\\\\\\",\\\\n    \\\\\\\" {58,0}\\\\\\\",\\\\n    \\\\\\\") {58,1}\\\\\\\"\\\\n) {37,22}\\\"\\n) {34,25}\"\n) {31,28}",
+    "<null> {59,0}"
+) {31,28}
+      <= [ref:0x100f48cc0] :result: (
+    "<null> {31,0}",
+    "(\n    \"(\\n    \\\"<Token: 0x109610880> {31,2}\\\",\\n    \\\"<null> {33,0}\\\"\\n) {31,2}\",\n    \"  {33,1}\",\n    \"(\\n    \\\"<Token: 0x100d86230> {34,2}\\\",\\n    \\\"<null> {36,0}\\\",\\n    \\\"  {36,1}\\\",\\n    \\\"(\\\\n    \\\\\\\"( {37,1}\\\\\\\",\\\\n    \\\\\\\" {38,0}\\\\\\\",\\\\n    \\\\\\\"(\\\\\\\\n    \\\\\\\\\\\\\\\"<Token: 0x100d8abe0> {38,20}\\\\\\\\\\\\\\\"\\\\\\\\n) {38,20}\\\\\\\",\\\\n    \\\\\\\" {58,0}\\\\\\\",\\\\n    \\\\\\\") {58,1}\\\\\\\"\\\\n) {37,22}\\\"\\n) {34,25}\"\n) {31,28}",
+    "<null> {59,0}"
+) {31,28}
+   <= [seq: [[1+ whitespace],[seq: [[eq: WHERE]]],[CUT],[1+ whitespace],[ref:0x100f48c... :result: (
+    "  {24,1}",
+    "<Token: 0x102bf8a90> {25,5}",
+    "<null> {30,0}",
+    "  {30,1}",
+    "(\n    \"<null> {31,0}\",\n    \"(\\n    \\\"(\\\\n    \\\\\\\"<Token: 0x109610880> {31,2}\\\\\\\",\\\\n    \\\\\\\"<null> {33,0}\\\\\\\"\\\\n) {31,2}\\\",\\n    \\\"  {33,1}\\\",\\n    \\\"(\\\\n    \\\\\\\"<Token: 0x100d86230> {34,2}\\\\\\\",\\\\n    \\\\\\\"<null> {36,0}\\\\\\\",\\\\n    \\\\\\\"  {36,1}\\\\\\\",\\\\n    \\\\\\\"(\\\\\\\\n    \\\\\\\\\\\\\\\"( {37,1}\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\" {38,0}\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\"(\\\\\\\\\\\\\\\\n    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"<Token: 0x100d8abe0> {38,20}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\n) {38,20}\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\" {58,0}\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\") {58,1}\\\\\\\\\\\\\\\"\\\\\\\\n) {37,22}\\\\\\\"\\\\n) {34,25}\\\"\\n) {31,28}\",\n    \"<null> {59,0}\"\n) {31,28}"
+) {24,35}
+   <= [seq: [[1+ whitespace],[seq: [[eq: WHERE]]],[CUT],[1+ whitespace],[ref:0x100f48c... :result: (
+    "  {24,1}",
+    "<Token: 0x102bf8a90> {25,5}",
+    "<null> {30,0}",
+    "  {30,1}",
+    "(\n    \"<null> {31,0}\",\n    \"(\\n    \\\"(\\\\n    \\\\\\\"<Token: 0x109610880> {31,2}\\\\\\\",\\\\n    \\\\\\\"<null> {33,0}\\\\\\\"\\\\n) {31,2}\\\",\\n    \\\"  {33,1}\\\",\\n    \\\"(\\\\n    \\\\\\\"<Token: 0x100d86230> {34,2}\\\\\\\",\\\\n    \\\\\\\"<null> {36,0}\\\\\\\",\\\\n    \\\\\\\"  {36,1}\\\\\\\",\\\\n    \\\\\\\"(\\\\\\\\n    \\\\\\\\\\\\\\\"( {37,1}\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\" {38,0}\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\"(\\\\\\\\\\\\\\\\n    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"<Token: 0x100d8abe0> {38,20}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\n) {38,20}\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\" {58,0}\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\") {58,1}\\\\\\\\\\\\\\\"\\\\\\\\n) {37,22}\\\\\\\"\\\\n) {34,25}\\\"\\n) {31,28}\",\n    \"<null> {59,0}\"\n) {31,28}"
+) {24,35}
+   => [seq: [[1+ whitespace],[seq: [[eq: WITH],[1+ whitespace],[eq: DATA],[1+ whitespa... : 
+   => [seq: [[1+ whitespace],[seq: [[eq: WITH],[1+ whitespace],[eq: DATA],[1+ whitespa... : 
+      => [1+ whitespace] : 
+      <= [1+ whitespace] :error : expecting whitespace at position 60
+   <= [seq: [[1+ whitespace],[seq: [[eq: WITH],[1+ whitespace],[eq: DATA],[1+ whitespa... :error : expecting whitespace at position 60
+   <= [seq: [[1+ whitespace],[seq: [[eq: WITH],[1+ whitespace],[eq: DATA],[1+ whitespa... :result: <null> {59,0}
+   => [seq: [[firstOf: [[seq: [[1+ whitespace],[seq: [[eq: GROUP],[1+ whitespace],[eq:... : 
+   => [seq: [[firstOf: [[seq: [[1+ whitespace],[seq: [[eq: GROUP],[1+ whitespace],[eq:... : 
+      => [firstOf: [[seq: [[1+ whitespace],[seq: [[eq: GROUP],[1+ whitespace],[eq: BY],[1... : 
+      => [seq: [[1+ whitespace],[seq: [[eq: GROUP],[1+ whitespace],[eq: BY],[1+ whitespac... : 
+         => [1+ whitespace] : 
+         <= [1+ whitespace] :error : expecting whitespace at position 60
+      <= [seq: [[1+ whitespace],[seq: [[eq: GROUP],[1+ whitespace],[eq: BY],[1+ whitespac... :error : expecting whitespace at position 60
+      => [seq: [[1+ whitespace],[seq: [[eq: GROUP],[1+ whitespace],[eq: BY],[1+ whitespac... : 
+         => [1+ whitespace] : 
+         <= [1+ whitespace] :error : expecting whitespace at position 60
+      <= [seq: [[1+ whitespace],[seq: [[eq: GROUP],[1+ whitespace],[eq: BY],[1+ whitespac... :error : expecting whitespace at position 60
+      => [seq: [[1+ whitespace],[seq: [[eq: GROUP],[1+ whitespace],[eq: BY]]],[CUT],[1+ w... : 
+         => [1+ whitespace] : 
+         <= [1+ whitespace] :error : expecting whitespace at position 60
+      <= [seq: [[1+ whitespace],[seq: [[eq: GROUP],[1+ whitespace],[eq: BY]]],[CUT],[1+ w... :error : expecting whitespace at position 60
+      <= [firstOf: [[seq: [[1+ whitespace],[seq: [[eq: GROUP],[1+ whitespace],[eq: BY],[1... :error : expecting whitespace at position 60
+   <= [seq: [[firstOf: [[seq: [[1+ whitespace],[seq: [[eq: GROUP],[1+ whitespace],[eq:... :error : expecting whitespace at position 60
+   <= [seq: [[firstOf: [[seq: [[1+ whitespace],[seq: [[eq: GROUP],[1+ whitespace],[eq:... :result: <null> {59,0}
+   => [seq: [[0+ whitespace],[seq: [[eq: ORDER],[1+ whitespace],[eq: BY]]],[CUT],[1+ w... : 
+   => [seq: [[0+ whitespace],[seq: [[eq: ORDER],[1+ whitespace],[eq: BY]]],[CUT],[1+ w... : 
+      => [0+ whitespace] : 
+      <= [0+ whitespace] :result:  {59,0}
+      => [seq: [[eq: ORDER],[1+ whitespace],[eq: BY]]] : 
+         => [eq: ORDER] : 
+         <= [eq: ORDER] :error : expecting 'ORDER' at position 60
+      <= [seq: [[eq: ORDER],[1+ whitespace],[eq: BY]]] :error : expecting 'ORDER' at position 60
+   <= [seq: [[0+ whitespace],[seq: [[eq: ORDER],[1+ whitespace],[eq: BY]]],[CUT],[1+ w... :error : expecting 'ORDER' at position 60
+   <= [seq: [[0+ whitespace],[seq: [[eq: ORDER],[1+ whitespace],[eq: BY]]],[CUT],[1+ w... :result: <null> {59,0}
+   => [seq: [[0+ whitespace],[seq: [[eq: LIMIT]]],[CUT],[0+ whitespace],[integer]]]? : 
+   => [seq: [[0+ whitespace],[seq: [[eq: LIMIT]]],[CUT],[0+ whitespace],[integer]]] : 
+      => [0+ whitespace] : 
+      <= [0+ whitespace] :result:  {59,0}
+      => [seq: [[eq: LIMIT]]] : 
+         => [eq: LIMIT] : 
+         <= [eq: LIMIT] :error : expecting 'LIMIT' at position 60
+      <= [seq: [[eq: LIMIT]]] :error : expecting 'LIMIT' at position 60
+   <= [seq: [[0+ whitespace],[seq: [[eq: LIMIT]]],[CUT],[0+ whitespace],[integer]]] :error : expecting 'LIMIT' at position 60
+   <= [seq: [[0+ whitespace],[seq: [[eq: LIMIT]]],[CUT],[0+ whitespace],[integer]]]? :result: <null> {59,0}
+   => [seq: [[0+ whitespace],[seq: [[eq: OFFSET]]],[CUT],[0+ whitespace],[integer]]]? : 
+   => [seq: [[0+ whitespace],[seq: [[eq: OFFSET]]],[CUT],[0+ whitespace],[integer]]] : 
+      => [0+ whitespace] : 
+      <= [0+ whitespace] :result:  {59,0}
+      => [seq: [[eq: OFFSET]]] : 
+         => [eq: OFFSET] : 
+         <= [eq: OFFSET] :error : expecting 'OFFSET' at position 60
+      <= [seq: [[eq: OFFSET]]] :error : expecting 'OFFSET' at position 60
+   <= [seq: [[0+ whitespace],[seq: [[eq: OFFSET]]],[CUT],[0+ whitespace],[integer]]] :error : expecting 'OFFSET' at position 60
+   <= [seq: [[0+ whitespace],[seq: [[eq: OFFSET]]],[CUT],[0+ whitespace],[integer]]]? :result: <null> {59,0}
+   => [seq: [[0+ whitespace],[seq: [[eq: FOR]]],[CUT],[1+ whitespace],[firstOf: [[seq:... : 
+   => [seq: [[0+ whitespace],[seq: [[eq: FOR]]],[CUT],[1+ whitespace],[firstOf: [[seq:... : 
+      => [0+ whitespace] : 
+      <= [0+ whitespace] :result:  {59,0}
+      => [seq: [[eq: FOR]]] : 
+         => [eq: FOR] : 
+         <= [eq: FOR] :error : expecting 'FOR' at position 60
+      <= [seq: [[eq: FOR]]] :error : expecting 'FOR' at position 60
+   <= [seq: [[0+ whitespace],[seq: [[eq: FOR]]],[CUT],[1+ whitespace],[firstOf: [[seq:... :error : expecting 'FOR' at position 60
+   <= [seq: [[0+ whitespace],[seq: [[eq: FOR]]],[CUT],[1+ whitespace],[firstOf: [[seq:... :result: <null> {59,0}
+   => [seq: [[0+ whitespace],[seq: [[eq: UPDATE]]],[CUT],[1+ whitespace],[firstOf: [[s... : 
+   => [seq: [[0+ whitespace],[seq: [[eq: UPDATE]]],[CUT],[1+ whitespace],[firstOf: [[s... : 
+      => [0+ whitespace] : 
+      <= [0+ whitespace] :result:  {59,0}
+      => [seq: [[eq: UPDATE]]] : 
+         => [eq: UPDATE] : 
+         <= [eq: UPDATE] :error : expecting 'UPDATE' at position 60
+      <= [seq: [[eq: UPDATE]]] :error : expecting 'UPDATE' at position 60
+   <= [seq: [[0+ whitespace],[seq: [[eq: UPDATE]]],[CUT],[1+ whitespace],[firstOf: [[s... :error : expecting 'UPDATE' at position 60
+   <= [seq: [[0+ whitespace],[seq: [[eq: UPDATE]]],[CUT],[1+ whitespace],[firstOf: [[s... :result: <null> {59,0}
+   => [0+ whitespace] : 
+   <= [0+ whitespace] :result:  {59,0}
+<= [seq: [[0+ whitespace],[seq: [[eq: SELECT]]],[1+ whitespace],[1+ r:[firstOf: [[s... :result: (
+    " {0,0}",
+    "<Token: 0x102bea2a0> {0,6}",
+    "  {6,1}",
+    "(\n    \"(\\n    \\\"<Token: 0x102bf2ed0> {7,4}\\\",\\n    \\\"<null> {11,0}\\\"\\n) {7,4}\"\n) {7,4}",
+    "  {11,1}",
+    "<Token: 0x100e51160> {12,4}",
+    "  {16,1}",
+    "(\n    \"(\\n    \\\"account {17,7}\\\",\\n    \\\"<null> {24,0}\\\"\\n) {17,7}\",\n    \"<null> {24,0}\"\n) {17,7}",
+    "<null> {24,0}",
+    "(\n    \"  {24,1}\",\n    \"<Token: 0x102bf8a90> {25,5}\",\n    \"<null> {30,0}\",\n    \"  {30,1}\",\n    \"(\\n    \\\"<null> {31,0}\\\",\\n    \\\"(\\\\n    \\\\\\\"(\\\\\\\\n    \\\\\\\\\\\\\\\"<Token: 0x109610880> {31,2}\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\"<null> {33,0}\\\\\\\\\\\\\\\"\\\\\\\\n) {31,2}\\\\\\\",\\\\n    \\\\\\\"  {33,1}\\\\\\\",\\\\n    \\\\\\\"(\\\\\\\\n    \\\\\\\\\\\\\\\"<Token: 0x100d86230> {34,2}\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\"<null> {36,0}\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\"  {36,1}\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\"(\\\\\\\\\\\\\\\\n    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"( {37,1}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\n    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" {38,0}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\n    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"<Token: 0x100d8abe0> {38,20}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n) {38,20}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\n    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" {58,0}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\n    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\") {58,1}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\n) {37,22}\\\\\\\\\\\\\\\"\\\\\\\\n) {34,25}\\\\\\\"\\\\n) {31,28}\\\",\\n    \\\"<null> {59,0}\\\"\\n) {31,28}\"\n) {24,35}",
+    "<null> {59,0}",
+    "<null> {59,0}",
+    "<null> {59,0}",
+    "<null> {59,0}",
+    "<null> {59,0}",
+    "<null> {59,0}",
+    "<null> {59,0}",
+    " {59,0}"
+) {0,59}
+<= [ref:0x100e46b00] :result: (
+    " {0,0}",
+    "<Token: 0x102bea2a0> {0,6}",
+    "  {6,1}",
+    "(\n    \"(\\n    \\\"<Token: 0x102bf2ed0> {7,4}\\\",\\n    \\\"<null> {11,0}\\\"\\n) {7,4}\"\n) {7,4}",
+    "  {11,1}",
+    "<Token: 0x100e51160> {12,4}",
+    "  {16,1}",
+    "(\n    \"(\\n    \\\"account {17,7}\\\",\\n    \\\"<null> {24,0}\\\"\\n) {17,7}\",\n    \"<null> {24,0}\"\n) {17,7}",
+    "<null> {24,0}",
+    "(\n    \"  {24,1}\",\n    \"<Token: 0x102bf8a90> {25,5}\",\n    \"<null> {30,0}\",\n    \"  {30,1}\",\n    \"(\\n    \\\"<null> {31,0}\\\",\\n    \\\"(\\\\n    \\\\\\\"(\\\\\\\\n    \\\\\\\\\\\\\\\"<Token: 0x109610880> {31,2}\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\"<null> {33,0}\\\\\\\\\\\\\\\"\\\\\\\\n) {31,2}\\\\\\\",\\\\n    \\\\\\\"  {33,1}\\\\\\\",\\\\n    \\\\\\\"(\\\\\\\\n    \\\\\\\\\\\\\\\"<Token: 0x100d86230> {34,2}\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\"<null> {36,0}\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\"  {36,1}\\\\\\\\\\\\\\\",\\\\\\\\n    \\\\\\\\\\\\\\\"(\\\\\\\\\\\\\\\\n    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"( {37,1}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\n    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" {38,0}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\n    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"<Token: 0x100d8abe0> {38,20}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n) {38,20}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\n    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" {58,0}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\n    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\") {58,1}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\n) {37,22}\\\\\\\\\\\\\\\"\\\\\\\\n) {34,25}\\\\\\\"\\\\n) {31,28}\\\",\\n    \\\"<null> {59,0}\\\"\\n) {31,28}\"\n) {24,35}",
+    "<null> {59,0}",
+    "<null> {59,0}",
+    "<null> {59,0}",
+    "<null> {59,0}",
+    "<null> {59,0}",
+    "<null> {59,0}",
+    "<null> {59,0}",
+    " {59,0}"
+) {0,59}
+

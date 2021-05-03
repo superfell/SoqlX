@@ -112,6 +112,7 @@
 		F4F2E7282640633F005C49B9 /* order_by.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4F2E7252640633F005C49B9 /* order_by.txt */; };
 		F4F2E7292640633F005C49B9 /* where.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4F2E7262640633F005C49B9 /* where.txt */; };
 		F4F2E72A2640633F005C49B9 /* select_exprs.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4F2E7272640633F005C49B9 /* select_exprs.txt */; };
+		F4F2E72E26407BBA005C49B9 /* debug.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4F2E72D26407BBA005C49B9 /* debug.txt */; };
 		F4F75D940D4EFCEE00608927 /* QueryTextListView.m in Sources */ = {isa = PBXBuildFile; fileRef = F4F75D930D4EFCEE00608927 /* QueryTextListView.m */; };
 		F4F897B4134CD84C00699880 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F4F897B3134CD84C00699880 /* libxml2.2.dylib */; };
 		F4FAFB660F68CAFD00ECC9BB /* HighlightTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F4FAFB650F68CAFD00ECC9BB /* HighlightTextFieldCell.m */; };
@@ -385,6 +386,7 @@
 		F4F2E7252640633F005C49B9 /* order_by.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = order_by.txt; sourceTree = "<group>"; };
 		F4F2E7262640633F005C49B9 /* where.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = where.txt; sourceTree = "<group>"; };
 		F4F2E7272640633F005C49B9 /* select_exprs.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = select_exprs.txt; sourceTree = "<group>"; };
+		F4F2E72D26407BBA005C49B9 /* debug.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = debug.txt; sourceTree = "<group>"; };
 		F4F75D920D4EFCEE00608927 /* QueryTextListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueryTextListView.h; sourceTree = "<group>"; };
 		F4F75D930D4EFCEE00608927 /* QueryTextListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QueryTextListView.m; sourceTree = "<group>"; };
 		F4F897B3134CD84C00699880 /* libxml2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.2.dylib; path = ../../../../../usr/lib/libxml2.2.dylib; sourceTree = "<group>"; };
@@ -691,6 +693,7 @@
 		F4DE4050256205D300FBA200 /* SoqlXplorerTests */ = {
 			isa = PBXGroup;
 			children = (
+				F4F2E72D26407BBA005C49B9 /* debug.txt */,
 				F4F2E7252640633F005C49B9 /* order_by.txt */,
 				F4F2E7272640633F005C49B9 /* select_exprs.txt */,
 				F4F2E7262640633F005C49B9 /* where.txt */,
@@ -919,6 +922,7 @@
 				F4C889F12624FC75006D606A /* Media.xcassets in Resources */,
 				F4F2E7282640633F005C49B9 /* order_by.txt in Resources */,
 				F4F2E7292640633F005C49B9 /* where.txt in Resources */,
+				F4F2E72E26407BBA005C49B9 /* debug.txt in Resources */,
 				F4DF0B6B263902E300B3A1A9 /* funcs.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -144,12 +144,17 @@ NSObject<Describer> *descs;
     [self writeSoqlTokensForQuerys:queries toFile:@"order_by.txt"];
 }
 
+-(void)testForDebugging {
+    [self writeSoqlTokensForQuerys:@[@"select name from account where id in ('001002003004005006')"] toFile:@"debug.txt" withDebug:YES];
+}
+
 - (void)testWhere {
     NSArray<NSString*>* queries = @[
         @"select name from account where name='bob'",
         @"select namer from account where name='bob'",
         @"select name from case where LastModifiedDate >= YESTERDAY",
         @"select name from case c",
+        @"select name from account where id in ('001002003004005006')",
         @"select name from account where id in (select accountId from contact)",
         @"SELECT name FROM account WHERE id NOT IN (SELECT accountId FROM contact)",
         @"select account.city from contact where name LIKE 'b%'",
@@ -172,7 +177,16 @@ NSObject<Describer> *descs;
 }
 
 -(void)writeSoqlTokensForQuerys:(NSArray<NSString*>*)queries toFile:(NSString*)fn {
+    [self writeSoqlTokensForQuerys:queries toFile:fn withDebug:NO];
+}
+
+-(void)writeSoqlTokensForQuerys:(NSArray<NSString*>*)queries toFile:(NSString*)fn withDebug:(BOOL)appendDebug {
     SoqlTokenizer *c = [SoqlTokenizer new];
+    NSString *debugFile = [NSString stringWithFormat:@"%@/soql.debug", NSTemporaryDirectory()];
+    if (appendDebug) {
+        [[NSFileManager defaultManager] removeItemAtPath:debugFile error:nil];
+        [c setDebugOutputTo:debugFile];
+    }
     c.describer = descs;
     NSMutableString *results = [NSMutableString stringWithCapacity:1024];
     for (NSString *q in queries) {
@@ -180,6 +194,12 @@ NSObject<Describer> *descs;
         [results appendString:@"\n"];
         Tokens *t = [c parseAndResolve:q];
         [results appendString:t.description];
+        [results appendString:@"\n"];
+    }
+    if (appendDebug) {
+        NSString *dbg = [NSString stringWithContentsOfFile:debugFile encoding:NSUTF8StringEncoding error:nil];
+        [results appendString:@"Parser debug\n"];
+        [results appendString:dbg];
         [results appendString:@"\n"];
     }
     NSError *err = nil;

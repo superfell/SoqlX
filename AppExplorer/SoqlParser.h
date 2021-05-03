@@ -12,4 +12,5 @@
 
 @interface SoqlParser : NSObject
 -(Tokens*)parse:(NSString *)input error:(NSError**)err;
+-(void)setDebugOutputTo:(NSString*)filename;
 @end

@@ -60,10 +60,13 @@ static NSString *KeyCompletions = @"completions";
     return self;
 }
 
+-(void)setDebugOutputTo:(NSString*)filename {
+    [self.soqlParser setDebugOutputTo:filename];
+}
+
 -(void)textDidChange:(NSNotification *)notification {
     [self color];
 }
-
 
 -(NSRange)wordAtIndex:(NSInteger)idx inString:(NSString*)txt {
     NSRange sel = NSMakeRange(idx, 0);

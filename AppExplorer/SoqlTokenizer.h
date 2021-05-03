@@ -29,4 +29,5 @@
 -(void)color;
 // for testing
 -(Tokens*)parseAndResolve:(NSString*)soql;
+-(void)setDebugOutputTo:(NSString*)filename;
 @end

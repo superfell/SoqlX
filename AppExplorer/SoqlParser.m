@@ -23,8 +23,12 @@ const NSString *KeySoqlText = @"soql";
 
 -(instancetype)init {
     self = [super init];
-    self.parser = [self buildParser];
+    self.parser = [self buildParser:nil];
     return self;
+}
+
+-(void)setDebugOutputTo:(NSString*)filename {
+    self.parser = [self buildParser:filename];
 }
 
 -(NSArray<Token*>*)parse:(NSString *)input error:(NSError**)err {
@@ -159,9 +163,11 @@ const NSString *KeySoqlText = @"soql";
     return literalValue;
 }
 
--(ZKBaseParser*)buildParser {
+-(ZKBaseParser*)buildParser:(NSString*)debugFilename {
     ZKParserFactory *f = [ZKParserFactory new];
-    // f.debugFile = @"/Users/simon/Github/ZKParser/soql.debug";
+    if (debugFilename.length > 0) {
+        f.debugFile = debugFilename;
+    }
     f.defaultCaseSensitivity = CaseInsensitive;
 
     ZKBaseParser* ws = [f characters:[NSCharacterSet whitespaceAndNewlineCharacterSet] name:@"whitespace" min:1];
@@ -186,6 +192,7 @@ const NSString *KeySoqlText = @"soql";
             Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
             t.type = type;
             t.value = t;
+            r.val = t;
             [r.userContext[KeyTokens] addToken:t];
             return r;
         }];
@@ -235,6 +242,7 @@ const NSString *KeySoqlText = @"soql";
         }
         return r;
     }];
+    ident.debugName = @"ident";
     
     // SELECT LIST
     ZKParserRef *selectStmt = [f parserRef];
@@ -376,7 +384,9 @@ const NSString *KeySoqlText = @"soql";
     ZKBaseParser *inOrNotIn = [f oneOf:@[tokenSeqType(@"IN", TTOperator), tokenSeqType(@"NOT IN", TTOperator)]];
     ZKBaseParser *opInNotIn = [f fromBlock:^ZKParserResult *(ZKParsingState *input, NSError *__autoreleasing *err) {
         ZKParserResult *r = [inOrNotIn parse:input error:err];
-        if (*err != nil) {
+        if (*err == nil) {
+            [[r.val completions] addObjectsFromArray:[Completion completions:@[@"IN",@"NOT IN"] type:TTOperator]];
+        } else {
             *err = [NSError errorWithDomain:@"Parser" code:33 userInfo:@{
                 NSLocalizedDescriptionKey:[NSString stringWithFormat:@"expecting one of %@ at position %lu",
                                            [opCompletions valueForKey:@"displayText"], input.pos+1],
@@ -386,6 +396,7 @@ const NSString *KeySoqlText = @"soql";
         }
         return r;
     }];
+    opInNotIn.debugName=@"In/NotIn";
     ZKBaseParser *literalStringList = [[f seq:@[[f eq:@"("], maybeWs,
                                                 [f oneOrMore:[self literalStringValue:f] separator:commaSep],
                                                 maybeWs, [f eq:@")"]]]
