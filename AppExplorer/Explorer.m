@@ -34,7 +34,6 @@
 #import "ZKDescribeThemeItem+ZKFindResource.h"
 #import "Prefs.h"
 #import "AppDelegate.h"
-#import "SoqlColorizer.h"
 #import "SoqlTokenizer.h"
 #import "ZKTextView.h"
 

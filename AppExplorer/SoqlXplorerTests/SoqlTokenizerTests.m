@@ -25,7 +25,7 @@
 #import "SoqlTokenizer.h"
 #import "SoqlToken.h"
 
-@interface SoqlColorizerTests : XCTestCase
+@interface SoqlTokenizerTests : XCTestCase
 
 @end
 
@@ -57,7 +57,7 @@
 
 @end
 
-@implementation SoqlColorizerTests
+@implementation SoqlTokenizerTests
 
 NSObject<Describer> *descs;
 
