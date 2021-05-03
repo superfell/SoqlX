@@ -53,5 +53,4 @@ typedef BOOL (^CompletionCallback)(ZKTextView*,id<ZKTextViewCompletion>);
 @property (strong,nonatomic) IBOutlet NSPopover *errorPopover;
 @property (strong,nonatomic) IBOutlet NSTextField *errorText;
 
--(NSRange)wordAtIndex:(NSInteger)idx;
 @end

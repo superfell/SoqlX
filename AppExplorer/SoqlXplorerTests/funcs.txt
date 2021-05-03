@@ -36,3 +36,109 @@ SELECT name, DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') FROM account WHERE DIS
  122-1   : Op              >                              completions 11 
  124-2   : Number          20                             completions 0 
 
+select max(name) from account where CALENDARY_YEAR(createdDate) > 2018
+   0-6   : Keyword         select                         completions 0 
+   7-3   : Function        max                            completions 28 
+      11-4   : Field           name                           completions 0 
+  17-4   : Keyword         from                           completions 0 
+  22-7   : SObject         account                        completions 2 
+  30-5   : Keyword         where                          completions 0 
+  36-14  : Error           CALENDARY_YEAR                 completions 0 There is no function named 'CALENDARY_YEAR'
+  36-14  : Function        CALENDARY_YEAR                 completions 28 
+      51-11  : Error           createdDate                    completions 28 There is no field or relationship createdDate on SObject Account
+  64-1   : Op              >                              completions 11 
+  66-4   : Number          2018                           completions 0 
+
+SELECT count() FROM Contact c, c.Account a WHERE a.name = 'MyriadPubs'
+   0-6   : Keyword         SELECT                         completions 0 
+   7-5   : Relationship    count                          completions 27 
+   7-5   : Error           count                          completions 0 expecting whitespace at position 13
+
+SELECT count() FROM Contact WHERE account.name = 'Salesforce.com'
+   0-6   : Keyword         SELECT                         completions 0 
+   7-5   : Relationship    count                          completions 27 
+   7-5   : Error           count                          completions 0 expecting whitespace at position 13
+
+SELECT count() FROM Contact c, c.Account a, a.CreatedBy u WHERE u.alias = 'Sfell'
+   0-6   : Keyword         SELECT                         completions 0 
+   7-5   : Relationship    count                          completions 27 
+   7-5   : Error           count                          completions 0 expecting whitespace at position 13
+
+SELECT count() FROM Contact c, a.CreatedBy u, c.Account a WHERE u.alias = 'Sfell'
+   0-6   : Keyword         SELECT                         completions 0 
+   7-5   : Relationship    count                          completions 27 
+   7-5   : Error           count                          completions 0 expecting whitespace at position 13
+
+SELECT count() FROM Contact c, c.CreatedBy u, c.Account a WHERE u.alias = 'Sfell' and a.Name > 'a'
+   0-6   : Keyword         SELECT                         completions 0 
+   7-5   : Relationship    count                          completions 27 
+   7-5   : Error           count                          completions 0 expecting whitespace at position 13
+
+SELECT count() FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and a.alias='Sfell'SELECT calendar_year(createdDate), count(id) from case group by calendar_year(createdDate) order by calendar_year(createdDate) desc
+   0-6   : Keyword         SELECT                         completions 0 
+   7-5   : Relationship    count                          completions 27 
+   7-5   : Error           count                          completions 0 expecting whitespace at position 13
+
+SELECT calendar_year(createdDate), count(id) from case group by rollup (calendar_year(createdDate)) order by calendar_year(createdDate) desc
+   0-6   : Keyword         SELECT                         completions 0 
+   7-13  : Function        calendar_year                  completions 27 
+      21-11  : Relationship    createdDate                    completions 1 
+  35-5   : Function        count                          completions 27 
+      41-2   : Relationship    id                             completions 0 
+  45-4   : Keyword         from                           completions 0 
+  50-4   : SObject         case                           completions 2 
+  55-15  : Keyword         group by rollup                completions 0 
+  72-13  : Function        calendar_year                  completions 27 
+      86-11  : Relationship    createdDate                    completions 1 
+ 100-8   : Keyword         order by                       completions 0 
+ 109-13  : Function        calendar_year                  completions 27 
+     123-11  : Relationship    createdDate                    completions 1 
+ 136-4   : Keyword         desc                           completions 0 
+
+SELECT calendar_year(createdDate), count(id) from case group by cube( calendar_year(createdDate)) order by calendar_year(createdDate) desc
+   0-6   : Keyword         SELECT                         completions 0 
+   7-13  : Function        calendar_year                  completions 27 
+      21-11  : Relationship    createdDate                    completions 1 
+  35-5   : Function        count                          completions 27 
+      41-2   : Relationship    id                             completions 0 
+  45-4   : Keyword         from                           completions 0 
+  50-4   : SObject         case                           completions 2 
+  55-13  : Keyword         group by cube                  completions 0 
+  70-13  : Function        calendar_year                  completions 27 
+      84-11  : Relationship    createdDate                    completions 1 
+  98-8   : Keyword         order by                       completions 0 
+ 107-13  : Function        calendar_year                  completions 27 
+     121-11  : Relationship    createdDate                    completions 1 
+ 134-4   : Keyword         desc                           completions 0 
+
+SELECT email, count(id) from contact group by email order by email nulls last
+   0-6   : Keyword         SELECT                         completions 0 
+   7-5   : Error           email                          completions 30 There is no field or relationship email on SObject Contact
+  14-5   : Function        count                          completions 30 
+      20-2   : Error           id                             completions 1 There is no field or relationship id on SObject Contact
+  24-4   : Keyword         from                           completions 0 
+  29-7   : SObject         contact                        completions 2 
+  37-8   : Keyword         group by                       completions 0 
+  46-5   : Error           email                          completions 30 There is no field or relationship email on SObject Contact
+  52-8   : Keyword         order by                       completions 0 
+  61-5   : Error           email                          completions 30 There is no field or relationship email on SObject Contact
+  67-10  : Keyword         nulls last                     completions 0 
+
+SELECT email, count(id) from contact group by email having count(id) > 1 order by email nulls last
+   0-6   : Keyword         SELECT                         completions 0 
+   7-5   : Error           email                          completions 30 There is no field or relationship email on SObject Contact
+  14-5   : Function        count                          completions 30 
+      20-2   : Error           id                             completions 1 There is no field or relationship id on SObject Contact
+  24-4   : Keyword         from                           completions 0 
+  29-7   : SObject         contact                        completions 2 
+  37-8   : Keyword         group by                       completions 0 
+  46-5   : Error           email                          completions 30 There is no field or relationship email on SObject Contact
+  52-6   : Keyword         having                         completions 0 
+  59-5   : Function        count                          completions 30 
+      65-2   : Error           id                             completions 1 There is no field or relationship id on SObject Contact
+  69-1   : Op              >                              completions 11 
+  71-1   : Number          1                              completions 0 
+  73-8   : Keyword         order by                       completions 0 
+  82-5   : Error           email                          completions 30 There is no field or relationship email on SObject Contact
+  88-10  : Keyword         nulls last                     completions 0 
+

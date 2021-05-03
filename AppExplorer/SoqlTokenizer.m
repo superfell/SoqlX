@@ -64,12 +64,32 @@ static NSString *KeyCompletions = @"completions";
     [self color];
 }
 
+
+-(NSRange)wordAtIndex:(NSInteger)idx inString:(NSString*)txt {
+    NSRange sel = NSMakeRange(idx, 0);
+    for (; sel.location > 0 ; sel.location--, sel.length++) {
+        unichar c = [txt characterAtIndex:sel.location-1];
+        if (isblank(c) || c ==',' || c =='.' || c =='(' || c == ')') {
+            break;
+        }
+    }
+    NSInteger maxLen = txt.length - sel.location;
+    for (; sel.length < maxLen; sel.length++) {
+        unichar c = [txt characterAtIndex:sel.location+sel.length];
+        if (isblank(c) || c ==',' || c =='.' || c =='(' || c == ')') {
+            break;
+        }
+    }
+    return sel;
+}
+
+
 -(void)scanWithParser:(NSString*)input {
     NSError *err = nil;
     self.tokens = [self.soqlParser parse:input error:&err];
     if (err != nil) {
-        // TODO setting an error on the insertion point when its at the end of the string is problematic
-        NSRange word = [self.view wordAtIndex: [err.userInfo[@"Position"] integerValue]-1];
+        NSInteger pos = [err.userInfo[@"Position"] integerValue];
+        NSRange word = [self wordAtIndex:pos-1 inString:input];
         Token *t = [Token txt:input loc:word];
         t.type = TTError;
         t.value = err.localizedDescription;
@@ -80,7 +100,7 @@ static NSString *KeyCompletions = @"completions";
 -(Tokens*)parseAndResolve:(NSString*)soql {
     [self scanWithParser:soql];
     [self resolveTokens:self.tokens];
-    NSLog(@"resolved tokens\n%@\n", self.tokens);
+//    NSLog(@"resolved tokens\n%@\n", self.tokens);
     return self.tokens;
 }
 
