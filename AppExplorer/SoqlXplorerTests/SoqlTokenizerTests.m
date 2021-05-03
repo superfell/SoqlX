@@ -81,7 +81,10 @@ NSObject<Describer> *descs;
     account.name = @"Account";
     ZKDescribeField *fCity = [ZKDescribeField new];
     fCity.name = @"city";
-    account.fields = @[fid, fName, fCity];
+    ZKDescribeField *fAmount = [ZKDescribeField new];
+    fAmount.name = @"amount";
+    fAmount.type = @"currency";
+    account.fields = @[fid, fAmount, fName, fCity];
     ZKChildRelationship *contacts = [ZKChildRelationship new];
     contacts.childSObject = @"Contact";
     contacts.relationshipName = @"Contacts";
@@ -100,6 +103,10 @@ NSObject<Describer> *descs;
     NSArray<NSString*>* q = @[
         @"SELECT FORMAT(Name) Amt FROM account",
         @"SELECT FORMAT(MIN(lastModifiedDate)) Amt FROM account",
+        @"SELECT format(convertCurrency(Amount)) FROM account WHERE amount > USD20",
+        @"SELECT format(max(Amount)) FROM account WHERE amount > USD20",
+        @"SELECT max(convertCurrency(Amount)) FROM account WHERE amount > USD20",
+        @"SELECT format(convertCurrency(city)) FROM account WHERE amount > USD20",
         @"SELECT name, DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') FROM account WHERE DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') > 20",
         @"select max(name) from account where CALENDARY_YEAR(createdDate) > 2018",
         // example from https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_soql_alias.htm

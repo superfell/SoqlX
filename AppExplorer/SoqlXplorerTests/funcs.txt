@@ -1,24 +1,73 @@
 SELECT FORMAT(Name) Amt FROM account
    0-6   : Keyword         SELECT                         completions 0 
-   7-6   : Function        FORMAT                         completions 30 
-      14-4   : Field           Name                           completions 26 
+   7-6   : Function        FORMAT                         completions 31 
+      14-4   : Field           Name                           completions 27 
   20-3   : AliasDecl       Amt                            completions 0 
   24-4   : Keyword         FROM                           completions 0 
   29-7   : SObject         account                        completions 2 
 
 SELECT FORMAT(MIN(lastModifiedDate)) Amt FROM account
    0-6   : Keyword         SELECT                         completions 0 
-   7-6   : Function        FORMAT                         completions 30 
-      14-3   : Function        MIN                            completions 26 
+   7-6   : Function        FORMAT                         completions 31 
+      14-3   : Function        MIN                            completions 27 
           18-16  : Error           lastModifiedDate               completions 0 There is no field or relationship lastModifiedDate on SObject Account
   37-3   : AliasDecl       Amt                            completions 0 
   41-4   : Keyword         FROM                           completions 0 
   46-7   : SObject         account                        completions 2 
 
+SELECT format(convertCurrency(Amount)) FROM account WHERE amount > USD20
+   0-6   : Keyword         SELECT                         completions 0 
+   7-6   : Function        format                         completions 31 
+      14-15  : Function        convertCurrency                completions 27 
+          30-6   : Field           Amount                         completions 1 
+  39-4   : Keyword         FROM                           completions 0 
+  44-7   : SObject         account                        completions 2 
+  52-5   : Keyword         WHERE                          completions 0 
+  58-6   : Field           amount                         completions 31 
+  65-1   : Op              >                              completions 11 
+  67-5   : NamedDateTime   USD20                          completions 0 
+
+SELECT format(max(Amount)) FROM account WHERE amount > USD20
+   0-6   : Keyword         SELECT                         completions 0 
+   7-6   : Function        format                         completions 31 
+      14-3   : Function        max                            completions 27 
+          18-6   : Field           Amount                         completions 0 
+  27-4   : Keyword         FROM                           completions 0 
+  32-7   : SObject         account                        completions 2 
+  40-5   : Keyword         WHERE                          completions 0 
+  46-6   : Field           amount                         completions 31 
+  53-1   : Op              >                              completions 11 
+  55-5   : NamedDateTime   USD20                          completions 0 
+
+SELECT max(convertCurrency(Amount)) FROM account WHERE amount > USD20
+   0-6   : Keyword         SELECT                         completions 0 
+   7-3   : Function        max                            completions 31 
+      11-15  : Error           convertCurrency                completions 0 Function argument of unexpected type Function, should be FieldPath
+      11-15  : Function        convertCurrency                completions 0 
+          27-6   : Field           Amount                         completions 1 
+  36-4   : Keyword         FROM                           completions 0 
+  41-7   : SObject         account                        completions 2 
+  49-5   : Keyword         WHERE                          completions 0 
+  55-6   : Field           amount                         completions 31 
+  62-1   : Op              >                              completions 11 
+  64-5   : NamedDateTime   USD20                          completions 0 
+
+SELECT format(convertCurrency(city)) FROM account WHERE amount > USD20
+   0-6   : Keyword         SELECT                         completions 0 
+   7-6   : Function        format                         completions 31 
+      14-15  : Function        convertCurrency                completions 27 
+          30-4   : Field           city                           completions 1 
+  37-4   : Keyword         FROM                           completions 0 
+  42-7   : SObject         account                        completions 2 
+  50-5   : Keyword         WHERE                          completions 0 
+  56-6   : Field           amount                         completions 31 
+  63-1   : Op              >                              completions 11 
+  65-5   : NamedDateTime   USD20                          completions 0 
+
 SELECT name, DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') FROM account WHERE DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') > 20
    0-6   : Keyword         SELECT                         completions 0 
-   7-4   : Field           name                           completions 30 
-  13-8   : Function        DISTANCE                       completions 30 
+   7-4   : Field           name                           completions 31 
+  13-8   : Function        DISTANCE                       completions 31 
       22-10  : Error           mailing__c                     completions 0 There is no field or relationship mailing__c on SObject Account
       34-11  : Function        GEOLOCATION                    completions 1 
           46-1   : Number          1                              completions 0 
@@ -27,7 +76,7 @@ SELECT name, DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') FROM account WHERE DIS
   58-4   : Keyword         FROM                           completions 0 
   63-7   : SObject         account                        completions 2 
   71-5   : Keyword         WHERE                          completions 0 
-  77-8   : Function        DISTANCE                       completions 30 
+  77-8   : Function        DISTANCE                       completions 31 
       86-10  : Error           mailing__c                     completions 0 There is no field or relationship mailing__c on SObject Account
       98-11  : Function        GEOLOCATION                    completions 1 
          110-1   : Number          1                              completions 0 
@@ -38,14 +87,14 @@ SELECT name, DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') FROM account WHERE DIS
 
 select max(name) from account where CALENDARY_YEAR(createdDate) > 2018
    0-6   : Keyword         select                         completions 0 
-   7-3   : Function        max                            completions 30 
+   7-3   : Function        max                            completions 31 
       11-4   : Field           name                           completions 0 
   17-4   : Keyword         from                           completions 0 
   22-7   : SObject         account                        completions 2 
   30-5   : Keyword         where                          completions 0 
   36-14  : Error           CALENDARY_YEAR                 completions 0 There is no function named 'CALENDARY_YEAR'
-  36-14  : Function        CALENDARY_YEAR                 completions 30 
-      51-11  : Error           createdDate                    completions 30 There is no field or relationship createdDate on SObject Account
+  36-14  : Function        CALENDARY_YEAR                 completions 31 
+      51-11  : Error           createdDate                    completions 31 There is no field or relationship createdDate on SObject Account
   64-1   : Op              >                              completions 11 
   66-4   : Number          2018                           completions 0 
 
