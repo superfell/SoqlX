@@ -120,19 +120,23 @@ ExampleProvider fixed(NSString*value) {
 +(NSDictionary<CaseInsensitiveStringKey*,SoqlFunction*>*)all {
     SoqlFunction *cvtTz = [self fn:@"ConvertTimezone" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"type='datetime' OR type='date'"]]];
     NSPredicate *cvzTzOnly = [NSPredicate predicateWithFormat:@"name=%@", cvtTz.name];
+    
     SoqlFunction *geoLoc = [self fn:@"Geolocation" args:@[[SoqlFuncArg arg:TTLiteralNumber ex:fixed(@"1.0")], [SoqlFuncArg arg:TTLiteralNumber ex:fixed(@"1.0")]]];
     SoqlFuncArg *distGeoArg = [SoqlFuncArg arg:TTFunc ex:fixed(@"GeoLocation(1.0,1.0)")];
     distGeoArg.funcFilter = [NSPredicate predicateWithFormat:@"name=%@", geoLoc.name];
     
+    SoqlFunction *convCurrency = [self fn:@"ConvertCurrency" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"type='currency'"]]];
+    NSPredicate *convCurrencyOnly = [NSPredicate predicateWithFormat:@"name=%@", convCurrency.name];
+
     NSArray<SoqlFunction*>* fns = @[
         [self fn:@"Fields" args:@[[FieldsArg new]]],
         [self fn:@"ToLabel" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"type!='id' AND type!='reference'"]]],
         [self fn:@"Count" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"aggregatable=true"]]],
         [self fn:@"Count_Distinct" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"aggregatable=true"]]],
-        [self fn:@"Avg" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"aggregatable=true AND (type='double' OR type='integer' OR type='currency')"]]],
-        [self fn:@"Sum" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"aggregatable=true AND (type='double' OR type='integer' OR type='currency')"]]],
-        [self fn:@"Min" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"aggregatable=true AND type!='id' AND type!='reference'"]]],
-        [self fn:@"Max" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"aggregatable=true AND type!='id' AND type!='reference'"]]],
+        [self fn:@"Avg" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"aggregatable=true AND (type='double' OR type='integer' OR type='currency')" fnPred:convCurrencyOnly]]],
+        [self fn:@"Sum" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"aggregatable=true AND (type='double' OR type='integer' OR type='currency')" fnPred:convCurrencyOnly]]],
+        [self fn:@"Min" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"aggregatable=true AND type!='id' AND type!='reference'" fnPred:convCurrencyOnly]]],
+        [self fn:@"Max" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"aggregatable=true AND type!='id' AND type!='reference'" fnPred:convCurrencyOnly]]],
         [self fn:@"Format" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc
                                            fldPred:@"type='datetime' OR type='date' OR type='time' or type='currency' or type='double' or type='integer'"]]],    
         [self fn:@"Distance" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"type='location'"],
@@ -152,8 +156,7 @@ ExampleProvider fixed(NSString*value) {
         [self fn:@"Week_In_Month" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
         [self fn:@"Week_In_Year" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
         
-        [self fn:@"ConvertCurrency" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"type='currency'"]]],
-        cvtTz, geoLoc
+        convCurrency, cvtTz, geoLoc
     ];
     NSMutableDictionary *d = [NSMutableDictionary dictionaryWithCapacity:fns.count];
     for (SoqlFunction *f in fns) {
