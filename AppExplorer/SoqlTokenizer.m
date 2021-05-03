@@ -93,6 +93,10 @@ static NSString *KeyCompletions = @"completions";
         Token *t = [Token txt:input loc:word];
         t.type = TTError;
         t.value = err.localizedDescription;
+        NSArray* completions = err.userInfo[@"Completions"];
+        if (completions != nil) {
+            [t.completions addObjectsFromArray:completions];
+        }
         [self.tokens addToken:t];
     }
 }

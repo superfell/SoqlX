@@ -74,10 +74,26 @@ SELECT count() FROM Contact c, c.CreatedBy u, c.Account a WHERE u.alias = 'Sfell
    7-5   : Relationship    count                          completions 27 
    7-5   : Error           count                          completions 0 expecting whitespace at position 13
 
-SELECT count() FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and a.alias='Sfell'SELECT calendar_year(createdDate), count(id) from case group by calendar_year(createdDate) order by calendar_year(createdDate) desc
+SELECT count() FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and a.alias='Sfell'
    0-6   : Keyword         SELECT                         completions 0 
    7-5   : Relationship    count                          completions 27 
    7-5   : Error           count                          completions 0 expecting whitespace at position 13
+
+SELECT calendar_year(createdDate), count(id) from case group by calendar_year(createdDate) order by calendar_year(createdDate) desc
+   0-6   : Keyword         SELECT                         completions 0 
+   7-13  : Function        calendar_year                  completions 27 
+      21-11  : Relationship    createdDate                    completions 1 
+  35-5   : Function        count                          completions 27 
+      41-2   : Relationship    id                             completions 0 
+  45-4   : Keyword         from                           completions 0 
+  50-4   : SObject         case                           completions 2 
+  55-8   : Keyword         group by                       completions 0 
+  64-13  : Function        calendar_year                  completions 27 
+      78-11  : Relationship    createdDate                    completions 1 
+  91-8   : Keyword         order by                       completions 0 
+ 100-13  : Function        calendar_year                  completions 27 
+     114-11  : Relationship    createdDate                    completions 1 
+ 127-4   : Keyword         desc                           completions 0 
 
 SELECT calendar_year(createdDate), count(id) from case group by rollup (calendar_year(createdDate)) order by calendar_year(createdDate) desc
    0-6   : Keyword         SELECT                         completions 0 
@@ -141,4 +157,15 @@ SELECT email, count(id) from contact group by email having count(id) > 1 order b
   73-8   : Keyword         order by                       completions 0 
   82-5   : Error           email                          completions 30 There is no field or relationship email on SObject Contact
   88-10  : Keyword         nulls last                     completions 0 
+
+SELECT email, bogus(id) from contact group by email
+   0-6   : Keyword         SELECT                         completions 0 
+   7-5   : Error           email                          completions 30 There is no field or relationship email on SObject Contact
+  14-5   : Error           bogus                          completions 0 There is no function named 'bogus'
+  14-5   : Function        bogus                          completions 30 
+      20-2   : Error           id                             completions 30 There is no field or relationship id on SObject Contact
+  24-4   : Keyword         from                           completions 0 
+  29-7   : SObject         contact                        completions 2 
+  37-8   : Keyword         group by                       completions 0 
+  46-5   : Error           email                          completions 30 There is no field or relationship email on SObject Contact
 

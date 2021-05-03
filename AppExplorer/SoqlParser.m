@@ -193,6 +193,26 @@ const NSString *KeySoqlText = @"soql";
     ZKBaseParser*(^tokenSeq)(NSString*) = ^ZKBaseParser*(NSString *t) {
         return tokenSeqType(t, TTKeyword);
     };
+    ZKSingularParser*(^oneOfTokensWithCompletions)(TokenType,NSArray<NSString*>*,NSArray<Completion*>*) =
+        ^ZKSingularParser*(TokenType type, NSArray<NSString*>* tokens, NSArray<Completion*>*completions) {
+            
+        ZKBaseParser *p = [f oneOfTokensList:tokens];
+        return [f fromBlock:^ZKParserResult *(ZKParsingState *input, NSError *__autoreleasing *err) {
+            ZKParserResult *r = [p parse:input error:err];
+            if (*err != nil) {
+                *err = [NSError errorWithDomain:@"Parser" code:33 userInfo:@{
+                    NSLocalizedDescriptionKey:[NSString stringWithFormat:@"expecting one of %@ at position %lu",
+                                               [tokens componentsJoinedByString:@","], input.pos+1],
+                    @"Position": @(input.pos+1),
+                    @"Completions" : completions
+                }];
+            }
+            return r;
+        }];
+    };
+    ZKSingularParser*(^oneOfTokens)(TokenType,NSArray<NSString*>*) = ^ZKSingularParser*(TokenType type, NSArray<NSString*>* tokens) {
+        return oneOfTokensWithCompletions(type,tokens,[Completion completions:tokens type:type]);
+    };
     // USING is not in the doc, but appears to not be allowed
     // ORDER & OFFSET are issues for our parser, but not the sfdc one.
     NSSet<NSString*>* keywords = [NSSet setWithArray:[@"ORDER OFFSET USING   AND ASC DESC EXCLUDES FIRST FROM GROUP HAVING IN INCLUDES LAST LIKE LIMIT NOT NULL NULLS OR SELECT WHERE WITH" componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
@@ -339,21 +359,33 @@ const NSString *KeySoqlText = @"soql";
     compNotIn.nonFinalInsertionText = @"NOT_IN";
     compNotIn.finalInsertionText = @"NOT IN";
     opCompletions = [opCompletions arrayByAddingObject:compNotIn];
-    ZKBaseParser *operator = [[f oneOfTokens:@"< <= > >= = != LIKE"] onMatch:^ZKParserResult *(ZKParserResult *r) {
+    ZKBaseParser *operator = [oneOfTokensWithCompletions(TTOperator,@[@"<",@"<=",@">",@">=",@"=",@"!=",@"LIKE"],opCompletions) onMatch:^ZKParserResult *(ZKParserResult *r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
         t.type = TTOperator;
         [t.completions addObjectsFromArray:opCompletions];
         [r.userContext[KeyTokens] addToken:t];
         return r;
     }];
-    ZKBaseParser *opIncExcl = [[f oneOfTokens:@"INCLUDES EXCLUDES"]  onMatch:^ZKParserResult *(ZKParserResult *r) {
+    ZKBaseParser *opIncExcl = [oneOfTokensWithCompletions(TTOperator,@[@"INCLUDES",@"EXCLUDES"], opCompletions) onMatch:^ZKParserResult *(ZKParserResult *r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
         t.type = TTOperator;
         [t.completions addObjectsFromArray:opCompletions];
         [r.userContext[KeyTokens] addToken:t];
         return r;
     }];
-    ZKBaseParser *opInNotIn = [f oneOf:@[tokenSeqType(@"IN", TTOperator), tokenSeqType(@"NOT IN", TTOperator)]];
+    ZKBaseParser *inOrNotIn = [f oneOf:@[tokenSeqType(@"IN", TTOperator), tokenSeqType(@"NOT IN", TTOperator)]];
+    ZKBaseParser *opInNotIn = [f fromBlock:^ZKParserResult *(ZKParsingState *input, NSError *__autoreleasing *err) {
+        ZKParserResult *r = [inOrNotIn parse:input error:err];
+        if (*err != nil) {
+            *err = [NSError errorWithDomain:@"Parser" code:33 userInfo:@{
+                NSLocalizedDescriptionKey:[NSString stringWithFormat:@"expecting one of %@ at position %lu",
+                                           [opCompletions valueForKey:@"displayText"], input.pos+1],
+                @"Position": @(input.pos+1),
+                @"Completions" : opCompletions
+            }];
+        }
+        return r;
+    }];
     ZKBaseParser *literalStringList = [[f seq:@[[f eq:@"("], maybeWs,
                                                 [f oneOrMore:[self literalStringValue:f] separator:commaSep],
                                                 maybeWs, [f eq:@")"]]]
@@ -382,9 +414,10 @@ const NSString *KeySoqlText = @"soql";
     // be careful not to use oneOf with it as that will recurse infinitly because it checks all branches.
     ZKParserRef *exprList = [f parserRef];
     ZKBaseParser *parens = [[f seq:@[[f eq:@"("], maybeWs, exprList, maybeWs, [f eq:@")"]]] onMatch:pick(2)];
-    ZKBaseParser *andOrToken = [[f oneOfTokens:@"AND OR"] onMatch:^ZKParserResult *(ZKParserResult *r) {
+    ZKBaseParser *andOrToken = [oneOfTokens(TTOperator,@[@"AND",@"OR"]) onMatch:^ZKParserResult *(ZKParserResult *r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
         t.type = TTOperator;
+        [t.completions addObjectsFromArray:[Completion completions:@[@"AND",@"OR"] type:TTOperator]];
         r.val = t;
         return r;
     }];
@@ -416,9 +449,11 @@ const NSString *KeySoqlText = @"soql";
     ZKBaseParser *catList = [f seq:@[[f eq:@"("], maybeWs, [f oneOrMore:aCategory separator:commaSep], maybeWs, [f eq:@")"]]];
     ZKBaseParser *catFilterVal = [f firstOf:@[catList, aCategory]];
     
-    ZKBaseParser *catFilter = [[f seq:@[ident, ws, [f oneOfTokens:@"AT ABOVE BELOW ABOVE_OR_BELOW"], cut, maybeWs, catFilterVal]] onMatch:^ZKParserResult*(ZKArrayParserResult*r) {
+    NSArray<NSString*>* catOperators = @[@"AT",@"ABOVE",@"BELOW", @"ABOVE_OR_BELOW"];
+    ZKBaseParser *catFilter = [[f seq:@[ident, ws, oneOfTokens(TTKeyword,catOperators), cut, maybeWs, catFilterVal]] onMatch:^ZKParserResult*(ZKArrayParserResult*r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.child[2].loc];
         t.type = TTKeyword;
+        [t.completions addObjectsFromArray:[Completion completions:catOperators type:TTKeyword]];
         [r.userContext[KeyTokens] addToken:t];
         t = [t tokenOf:r.child[0].loc];
         t.type = TTDataCategory;

@@ -84,7 +84,7 @@ select account.city from contact where name LIKE 'b%' OR name='eve'
   39-4   : Field           name                           completions 30 
   44-4   : Op              LIKE                           completions 11 
   49-4   : String          'b%'                           completions 0 
-  54-2   : Op              OR                             completions 0 
+  54-2   : Op              OR                             completions 2 
   57-4   : Field           name                           completions 30 
   61-1   : Op              =                              completions 11 
   62-5   : String          'eve'                          completions 0 
@@ -142,11 +142,11 @@ SELECT x.name FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias
   73-1   : Error           u                              completions 30 There is no field or relationship u on SObject Contact
   81-1   : Op              =                              completions 11 
   83-7   : String          'Sfell'                        completions 0 
-  91-3   : Op              and                            completions 0 
+  91-3   : Op              and                            completions 2 
   96-1   : Error           a                              completions 30 There is no field or relationship a on SObject Contact
  103-1   : Op              =                              completions 11 
  104-7   : String          'Sfell'                        completions 0 
- 112-2   : Op              or                             completions 0 
+ 112-2   : Op              or                             completions 2 
  115-1   : Aias            x                              completions 2 
  117-11  : Error           MailingCity                    completions 30 There is no field or relationship MailingCity on SObject Contact
  129-2   : Op              IN                             completions 0 
@@ -254,4 +254,23 @@ SELECT Id, Name FROM Opportunity WHERE msp__c Includes('abc;def','q')
   46-8   : Op              Includes                       completions 11 
   55-9   : String          'abc;def'                      completions 0 
   65-3   : String          'q'                            completions 0 
+
+select name from account where name bob 'bob'
+   0-6   : Keyword         select                         completions 0 
+   7-4   : Field           name                           completions 28 
+  12-4   : Keyword         from                           completions 0 
+  17-7   : SObject         account                        completions 2 
+  25-5   : Keyword         where                          completions 0 
+  31-4   : Field           name                           completions 28 
+  36-3   : AliasDecl       bob                            completions 0 
+  40-5   : Error           'bob'                          completions 11 expecting one of <,<=,>,>=,=,!=,LIKE at position 41
+
+select name from account where name ^ 'bob'
+   0-6   : Keyword         select                         completions 0 
+   7-4   : Field           name                           completions 28 
+  12-4   : Keyword         from                           completions 0 
+  17-7   : SObject         account                        completions 2 
+  25-5   : Keyword         where                          completions 0 
+  31-4   : Field           name                           completions 28 
+  36-1   : Error           ^                              completions 11 expecting one of <,<=,>,>=,=,!=,LIKE at position 37
 

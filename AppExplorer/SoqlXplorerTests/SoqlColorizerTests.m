@@ -105,12 +105,13 @@ NSObject<Describer> *descs;
         @"SELECT count() FROM Contact c, c.Account a, a.CreatedBy u WHERE u.alias = 'Sfell'",
         @"SELECT count() FROM Contact c, a.CreatedBy u, c.Account a WHERE u.alias = 'Sfell'",
         @"SELECT count() FROM Contact c, c.CreatedBy u, c.Account a WHERE u.alias = 'Sfell' and a.Name > 'a'",
-        @"SELECT count() FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and a.alias='Sfell'"
+        @"SELECT count() FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and a.alias='Sfell'",
         @"SELECT calendar_year(createdDate), count(id) from case group by calendar_year(createdDate) order by calendar_year(createdDate) desc",
         @"SELECT calendar_year(createdDate), count(id) from case group by rollup (calendar_year(createdDate)) order by calendar_year(createdDate) desc",
         @"SELECT calendar_year(createdDate), count(id) from case group by cube( calendar_year(createdDate)) order by calendar_year(createdDate) desc",
         @"SELECT email, count(id) from contact group by email order by email nulls last",
         @"SELECT email, count(id) from contact group by email having count(id) > 1 order by email nulls last",
+        @"SELECT email, bogus(id) from contact group by email",
     ];
     [self writeSoqlTokensForQuerys:q toFile:@"funcs.txt"];
 }
@@ -121,6 +122,7 @@ NSObject<Describer> *descs;
         @"select (select c.name from contacts c),name from account a where a.name>='bob'",
         @"SELECT subject, TYPEOF what WHEN account Then id,BillingCity,createdBy.alias WHEN opportunity then name,nextStep ELSE id,email END FROM Task",
         @"SELECT fields(STANDARD) FROM KnowledgeArticleVersion WITH DATA CATEGORY Geography__c BELOW usa__c AND Product__c AT mobile_phones__c",
+        @"SELECT fields(STANDARD) FROM KnowledgeArticleVersion WITH DATA CATEGORY Geography__c NEAR usa__c AND Product__c AT mobile_phones__c",
         @"SELECT fields(what) FROM KnowledgeArticleVersion"
     ];
     [self writeSoqlTokensForQuerys:queries toFile:@"select_exprs.txt"];
@@ -163,6 +165,8 @@ NSObject<Describer> *descs;
         @"select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 update viewstat",
         @"SELECT Id, Name FROM Opportunity WHERE Amount > USD5000",
         @"SELECT Id, Name FROM Opportunity WHERE msp__c Includes('abc;def','q')",
+        @"select name from account where name bob 'bob'",
+        @"select name from account where name ^ 'bob'",
     ];
     [self writeSoqlTokensForQuerys:queries toFile:@"where.txt"];
 }
