@@ -1,72 +1,72 @@
 SELECT name FROM contact order by name
    0-6   : Keyword         SELECT                         completions 0 
-   7-4   : Field           name                           completions 30 
+   7-4   : Field           name                           completions 31 
   12-4   : Keyword         FROM                           completions 0 
   17-7   : SObject         contact                        completions 2 
   25-8   : Keyword         order by                       completions 0 
-  34-4   : Field           name                           completions 30 
+  34-4   : Field           name                           completions 31 
 
 SELECT name FROM contact order by name asc
    0-6   : Keyword         SELECT                         completions 0 
-   7-4   : Field           name                           completions 30 
+   7-4   : Field           name                           completions 31 
   12-4   : Keyword         FROM                           completions 0 
   17-7   : SObject         contact                        completions 2 
   25-8   : Keyword         order by                       completions 0 
-  34-4   : Field           name                           completions 30 
+  34-4   : Field           name                           completions 31 
   39-3   : Keyword         asc                            completions 0 
 
 SELECT name FROM contact order by name asc nulls last
    0-6   : Keyword         SELECT                         completions 0 
-   7-4   : Field           name                           completions 30 
+   7-4   : Field           name                           completions 31 
   12-4   : Keyword         FROM                           completions 0 
   17-7   : SObject         contact                        completions 2 
   25-8   : Keyword         order by                       completions 0 
-  34-4   : Field           name                           completions 30 
+  34-4   : Field           name                           completions 31 
   39-3   : Keyword         asc                            completions 0 
   43-10  : Keyword         nulls last                     completions 0 
 
 SELECT name FROM contact order by name asc nulls last, account.name desc
    0-6   : Keyword         SELECT                         completions 0 
-   7-4   : Field           name                           completions 30 
+   7-4   : Field           name                           completions 31 
   12-4   : Keyword         FROM                           completions 0 
   17-7   : SObject         contact                        completions 2 
   25-8   : Keyword         order by                       completions 0 
-  34-4   : Field           name                           completions 30 
+  34-4   : Field           name                           completions 31 
   39-3   : Keyword         asc                            completions 0 
   43-10  : Keyword         nulls last                     completions 0 
-  55-7   : Relationship    account                        completions 30 
-  63-4   : Field           name                           completions 28 
+  55-7   : Relationship    account                        completions 31 
+  63-4   : Field           name                           completions 30 
   68-4   : Keyword         desc                           completions 0 
 
 SELECT name FROM contact x order by name asc nulls last, x.account.name desc
    0-6   : Keyword         SELECT                         completions 0 
-   7-4   : Field           name                           completions 30 
+   7-4   : Field           name                           completions 31 
   12-4   : Keyword         FROM                           completions 0 
   17-7   : SObject         contact                        completions 2 
   25-1   : AliasDecl       x                              completions 0 
   27-8   : Keyword         order by                       completions 0 
-  36-4   : Field           name                           completions 30 
+  36-4   : Field           name                           completions 31 
   41-3   : Keyword         asc                            completions 0 
   45-10  : Keyword         nulls last                     completions 0 
   57-1   : Aias            x                              completions 2 
-  59-7   : Relationship    account                        completions 30 
-  67-4   : Field           name                           completions 28 
+  59-7   : Relationship    account                        completions 31 
+  67-4   : Field           name                           completions 30 
   72-4   : Keyword         desc                           completions 0 
 
 SELECT name FROM contact order by name asc limit 1
    0-6   : Keyword         SELECT                         completions 0 
-   7-4   : Field           name                           completions 30 
+   7-4   : Field           name                           completions 31 
   12-4   : Keyword         FROM                           completions 0 
   17-7   : SObject         contact                        completions 2 
   25-8   : Keyword         order by                       completions 0 
-  34-4   : Field           name                           completions 30 
+  34-4   : Field           name                           completions 31 
   39-3   : Keyword         asc                            completions 0 
   43-5   : Keyword         limit                          completions 0 
   49-1   : Number          1                              completions 0 
 
 SELECT name FROM contact orderby name
    0-6   : Keyword         SELECT                         completions 0 
-   7-4   : Field           name                           completions 30 
+   7-4   : Field           name                           completions 31 
   12-4   : Keyword         FROM                           completions 0 
   17-7   : SObject         contact                        completions 2 
   25-7   : AliasDecl       orderby                        completions 0 
@@ -74,14 +74,14 @@ SELECT name FROM contact orderby name
 
 SELECT name FROM contact order name
    0-6   : Keyword         SELECT                         completions 0 
-   7-4   : Field           name                           completions 30 
+   7-4   : Field           name                           completions 31 
   12-4   : Keyword         FROM                           completions 0 
   17-7   : SObject         contact                        completions 2 
   25-5   : Error           order                          completions 0 Unexpected input 'order name' at position 26
 
 SELECT name FROM contact by name
    0-6   : Keyword         SELECT                         completions 0 
-   7-4   : Field           name                           completions 30 
+   7-4   : Field           name                           completions 31 
   12-4   : Keyword         FROM                           completions 0 
   17-7   : SObject         contact                        completions 2 
   25-2   : AliasDecl       by                             completions 0 
@@ -89,7 +89,7 @@ SELECT name FROM contact by name
 
 SELECT name FROM contact order by
    0-6   : Keyword         SELECT                         completions 0 
-   7-4   : Field           name                           completions 30 
+   7-4   : Field           name                           completions 31 
   12-4   : Keyword         FROM                           completions 0 
   17-7   : SObject         contact                        completions 2 
   25-8   : Keyword         order by                       completions 0 

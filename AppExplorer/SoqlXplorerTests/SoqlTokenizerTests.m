@@ -63,6 +63,9 @@ NSObject<Describer> *descs;
 
 - (void)setUp {
     // Put setup code here. This method is called before the invocation of each test method in the class.
+    ZKDescribeField *fid = [ZKDescribeField new];
+    fid.name = @"Id";
+    fid.type = @"id";
     ZKDescribeField *fAccount = [ZKDescribeField new];
     fAccount.referenceTo = @[@"Account"];
     fAccount.name = @"AccountId";
@@ -72,11 +75,13 @@ NSObject<Describer> *descs;
     fName.name = @"Name";
     ZKDescribeSObject *contact = [ZKDescribeSObject new];
     contact.name = @"Contact";
-    contact.fields = @[fAccount,fName];
+    contact.fields = @[fid, fAccount,fName];
     
     ZKDescribeSObject *account = [ZKDescribeSObject new];
     account.name = @"Account";
-    account.fields = @[fName];
+    ZKDescribeField *fCity = [ZKDescribeField new];
+    fCity.name = @"city";
+    account.fields = @[fid, fName, fCity];
     ZKChildRelationship *contacts = [ZKChildRelationship new];
     contacts.childSObject = @"Contact";
     contacts.relationshipName = @"Contacts";
@@ -101,7 +106,7 @@ NSObject<Describer> *descs;
         @"SELECT count() FROM Contact c, c.Account a WHERE a.name = 'MyriadPubs'",
         // a less convoluted example of the same query
         @"SELECT count() FROM Contact WHERE account.name = 'Salesforce.com'",
-        // more related convoluted examples, described in SoqlColorizer
+        // more related convoluted examples, described in SoqlTokenizer
         @"SELECT count() FROM Contact c, c.Account a, a.CreatedBy u WHERE u.alias = 'Sfell'",
         @"SELECT count() FROM Contact c, a.CreatedBy u, c.Account a WHERE u.alias = 'Sfell'",
         @"SELECT count() FROM Contact c, c.CreatedBy u, c.Account a WHERE u.alias = 'Sfell' and a.Name > 'a'",
@@ -151,7 +156,10 @@ NSObject<Describer> *descs;
 - (void)testWhere {
     NSArray<NSString*>* queries = @[
         @"select name from account where name='bob'",
+        @"select name from account where name='bob' or name='eve' or (name='alice' and city='SF')",
+        @"select name from account where name='bob' or name='eve' or not name='alice'",
         @"select namer from account where name='bob'",
+        @"select name from account where namer='bob'",
         @"select name from case where LastModifiedDate >= YESTERDAY",
         @"select name from case c",
         @"select name from account where id in ('001002003004005006')",
