@@ -84,7 +84,10 @@ NSObject<Describer> *descs;
     ZKDescribeField *fAmount = [ZKDescribeField new];
     fAmount.name = @"amount";
     fAmount.type = @"currency";
-    account.fields = @[fid, fAmount, fName, fCity];
+    ZKDescribeField *fLastMod = [ZKDescribeField new];
+    fLastMod.name = @"LastModifiedDate";
+    fLastMod.type = @"datetime";
+    account.fields = @[fid, fLastMod, fAmount, fName, fCity];
     ZKChildRelationship *contacts = [ZKChildRelationship new];
     contacts.childSObject = @"Contact";
     contacts.relationshipName = @"Contacts";
@@ -102,6 +105,8 @@ NSObject<Describer> *descs;
 -(void)testFuncs {
     NSArray<NSString*>* q = @[
         @"SELECT FORMAT(Name) Amt FROM account",
+        @"SELECT FORMAT(Namer) Amt FROM account",
+        @"SELECT FORMAT(Namer) Amt FROM case",
         @"SELECT FORMAT(MIN(lastModifiedDate)) Amt FROM account",
         @"SELECT format(convertCurrency(Amount)) FROM account WHERE amount > USD20",
         @"SELECT format(max(Amount)) FROM account WHERE amount > USD20",
@@ -118,9 +123,12 @@ NSObject<Describer> *descs;
         @"SELECT count() FROM Contact c, a.CreatedBy u, c.Account a WHERE u.alias = 'Sfell'",
         @"SELECT count() FROM Contact c, c.CreatedBy u, c.Account a WHERE u.alias = 'Sfell' and a.Name > 'a'",
         @"SELECT count() FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and a.alias='Sfell'",
-        @"SELECT calendar_year(createdDate), count(id) from case group by calendar_year(createdDate) order by calendar_year(createdDate) desc",
-        @"SELECT calendar_year(createdDate), count(id) from case group by rollup (calendar_year(createdDate)) order by calendar_year(createdDate) desc",
-        @"SELECT calendar_year(createdDate), count(id) from case group by cube( calendar_year(createdDate)) order by calendar_year(createdDate) desc",
+        @"SELECT calendar_year(lastModifiedDate) from account",
+        @"SELECT calendar_year(createdDate) from account",
+        @"SELECT calendar_year(name) from account",
+        @"SELECT calendar_year(lastModifiedDate), count(id) from account group by calendar_year(lastModifiedDate) order by calendar_year(name) desc",
+        @"SELECT calendar_year(lastModifiedDate), count(id) from account group by rollup (calendar_year(createdDate)) order by calendar_year(createdDate) desc",
+        @"SELECT calendar_year(lastModifiedDate), count(id) from account group by cube( calendar_year(createdDate)) order by calendar_year(createdDate) desc",
         @"SELECT email, count(id) from contact group by email order by email nulls last",
         @"SELECT email, count(id) from contact group by email having count(id) > 1 order by email nulls last",
         @"SELECT email, bogus(id) from contact group by email",
@@ -157,7 +165,7 @@ NSObject<Describer> *descs;
 }
 
 -(void)testForDebugging {
-    [self writeSoqlTokensForQuerys:@[@"select name from account where id in ('001002003004005006')"] toFile:@"debug.txt" withDebug:YES];
+    [self writeSoqlTokensForQuerys:@[@"SELECT calendar_year(name) from account"] toFile:@"debug.txt" withDebug:YES];
 }
 
 - (void)testWhere {

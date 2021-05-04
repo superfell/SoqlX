@@ -56,6 +56,15 @@ ExampleProvider fixed(NSString*value) {
         err.value = [NSString stringWithFormat:@"Function argument of unexpected type %@, should be %@", tokenName(argToken.type), tokenNames(self.type)];
         return err;
     }
+    if (self.type == TTField && argToken.type==TTField && self.fieldFilter != nil) {
+        ZKDescribeField *f = (ZKDescribeField *)argToken.value;
+        if (![self.fieldFilter evaluateWithObject:f]) {
+            Token *err = [argToken tokenOf:argToken.loc];
+            err.type = TTError;
+            err.value = [NSString stringWithFormat:@"Field %@ is not valid for this function", argToken.tokenTxt];
+            return err;
+        }
+    }
     return nil;
 }
 @end

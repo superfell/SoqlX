@@ -215,11 +215,11 @@ static NSString *KeyCompletions = @"completions";
         ctx.fieldCompletionsFilter = argSpec.fieldFilter;
         ctx.restrictCompletionsToType = argSpec.type;
         ctx.fnCompletionsFilter = argSpec.funcFilter;
+        [self resolveSelectExpr:argToken new:argsNewTokens del:argsDelTokens ctx:ctx];
         Token *newToken = [argSpec validateToken:argToken];
         if (newToken != nil) {
             [argsNewTokens addObject:newToken];
         }
-        [self resolveSelectExpr:argToken new:argsNewTokens del:argsDelTokens ctx:ctx];
     }
     ctx.fieldCompletionsFilter = fieldFilter;
     ctx.fnCompletionsFilter = fnFilter;

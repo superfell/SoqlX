@@ -35,7 +35,7 @@ SELECT name FROM contact order by name asc nulls last, account.name desc
   39-3   : Keyword         asc                            completions 0 
   43-10  : Keyword         nulls last                     completions 0 
   55-7   : Relationship    account                        completions 31 
-  63-4   : Field           name                           completions 31 
+  63-4   : Field           name                           completions 32 
   68-4   : Keyword         desc                           completions 0 
 
 SELECT name FROM contact x order by name asc nulls last, x.account.name desc
@@ -50,7 +50,7 @@ SELECT name FROM contact x order by name asc nulls last, x.account.name desc
   45-10  : Keyword         nulls last                     completions 0 
   57-1   : Aias            x                              completions 2 
   59-7   : Relationship    account                        completions 31 
-  67-4   : Field           name                           completions 31 
+  67-4   : Field           name                           completions 32 
   72-4   : Keyword         desc                           completions 0 
 
 SELECT name FROM contact order by name asc limit 1
