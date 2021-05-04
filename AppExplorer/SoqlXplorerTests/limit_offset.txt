@@ -1,0 +1,103 @@
+select name from account
+   0-6   : Keyword         select                         completions 0 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 32 
+  12-4   : Keyword         from                           completions 0 
+  17-7   : SObject         account                        completions 2 
+
+select name from account limit 1
+   0-6   : Keyword         select                         completions 0 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 32 
+  12-4   : Keyword         from                           completions 0 
+  17-7   : SObject         account                        completions 2 
+  25-5   : Keyword         limit                          completions 0 
+  31-1   : Number          1                              completions 0 
+
+select name from account limit 1 offset 123456
+   0-6   : Keyword         select                         completions 0 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 32 
+  12-4   : Keyword         from                           completions 0 
+  17-7   : SObject         account                        completions 2 
+  25-5   : Keyword         limit                          completions 0 
+  31-1   : Number          1                              completions 0 
+  33-6   : Keyword         offset                         completions 0 
+  40-6   : Number          123456                         completions 0 
+
+select name from account limit 1 offset 123456 for view
+   0-6   : Keyword         select                         completions 0 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 32 
+  12-4   : Keyword         from                           completions 0 
+  17-7   : SObject         account                        completions 2 
+  25-5   : Keyword         limit                          completions 0 
+  31-1   : Number          1                              completions 0 
+  33-6   : Keyword         offset                         completions 0 
+  40-6   : Number          123456                         completions 0 
+  47-3   : Keyword         for                            completions 0 
+  51-4   : Keyword         view                           completions 0 
+
+select name from account limit 1 offset 123456 for reference
+   0-6   : Keyword         select                         completions 0 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 32 
+  12-4   : Keyword         from                           completions 0 
+  17-7   : SObject         account                        completions 2 
+  25-5   : Keyword         limit                          completions 0 
+  31-1   : Number          1                              completions 0 
+  33-6   : Keyword         offset                         completions 0 
+  40-6   : Number          123456                         completions 0 
+  47-3   : Keyword         for                            completions 0 
+  51-9   : Keyword         reference                      completions 0 
+
+select name from account limit 1 offset 123456 for view update tracking
+   0-6   : Keyword         select                         completions 0 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 32 
+  12-4   : Keyword         from                           completions 0 
+  17-7   : SObject         account                        completions 2 
+  25-5   : Keyword         limit                          completions 0 
+  31-1   : Number          1                              completions 0 
+  33-6   : Keyword         offset                         completions 0 
+  40-6   : Number          123456                         completions 0 
+  47-3   : Keyword         for                            completions 0 
+  51-4   : Keyword         view                           completions 0 
+  56-6   : Keyword         update                         completions 0 
+  63-8   : Keyword         tracking                       completions 0 
+
+select name from account limit 1 offset 123456 
+   0-6   : Keyword         select                         completions 0 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 32 
+  12-4   : Keyword         from                           completions 0 
+  17-7   : SObject         account                        completions 2 
+  25-5   : Keyword         limit                          completions 0 
+  31-1   : Number          1                              completions 0 
+  33-6   : Keyword         offset                         completions 0 
+  40-6   : Number          123456                         completions 0 
+
+select name from account limit 1 offset 123456 update viewstat
+   0-6   : Keyword         select                         completions 0 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 32 
+  12-4   : Keyword         from                           completions 0 
+  17-7   : SObject         account                        completions 2 
+  25-5   : Keyword         limit                          completions 0 
+  31-1   : Number          1                              completions 0 
+  33-6   : Keyword         offset                         completions 0 
+  40-6   : Number          123456                         completions 0 
+  47-6   : Keyword         update                         completions 0 
+  54-8   : Keyword         viewstat                       completions 0 
+
+select name from account limit 1 for view
+   0-6   : Keyword         select                         completions 0 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 32 
+  12-4   : Keyword         from                           completions 0 
+  17-7   : SObject         account                        completions 2 
+  25-5   : Keyword         limit                          completions 0 
+  31-1   : Number          1                              completions 0 
+  33-3   : Keyword         for                            completions 0 
+  37-4   : Keyword         view                           completions 0 
+

@@ -62,6 +62,10 @@
 		F4B8DFF70B61F4B900DDD00A /* key_r.png in Resources */ = {isa = PBXBuildFile; fileRef = F4B8DFF50B61F4B900DDD00A /* key_r.png */; };
 		F4BAD5750AF717D200E335DF /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4BAD5740AF717D200E335DF /* Security.framework */; };
 		F4BBAA152186C3E100647C27 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F4BBAA142186C3E100647C27 /* Media.xcassets */; };
+		F4BD5DC62641B10600ACBBAB /* with.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4BD5DBC2641B10600ACBBAB /* with.txt */; };
+		F4BD5DCA2641B3EA00ACBBAB /* limit_offset.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4BD5DC92641B3EA00ACBBAB /* limit_offset.txt */; };
+		F4BD5DCE2641B59A00ACBBAB /* group_by.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4BD5DCD2641B59A00ACBBAB /* group_by.txt */; };
+		F4BD5DD22641B91900ACBBAB /* using_scope.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4BD5DD12641B91900ACBBAB /* using_scope.txt */; };
 		F4BF72A70F79E58C0089F459 /* NSWindow_additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F4BF72A60F79E58C0089F459 /* NSWindow_additions.m */; };
 		F4C440CA15DB50BC00590A1E /* SearchQueryResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C440C915DB50BC00590A1E /* SearchQueryResult.m */; };
 		F4C877FA0F395DB4000075D4 /* ProgressController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C877F90F395DB4000075D4 /* ProgressController.m */; };
@@ -313,6 +317,10 @@
 		F4B8DFF50B61F4B900DDD00A /* key_r.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = key_r.png; path = templates/key_r.png; sourceTree = "<group>"; };
 		F4BAD5740AF717D200E335DF /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		F4BBAA142186C3E100647C27 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
+		F4BD5DBC2641B10600ACBBAB /* with.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = with.txt; sourceTree = "<group>"; };
+		F4BD5DC92641B3EA00ACBBAB /* limit_offset.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = limit_offset.txt; sourceTree = "<group>"; };
+		F4BD5DCD2641B59A00ACBBAB /* group_by.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = group_by.txt; sourceTree = "<group>"; };
+		F4BD5DD12641B91900ACBBAB /* using_scope.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = using_scope.txt; sourceTree = "<group>"; };
 		F4BF72A50F79E58C0089F459 /* NSWindow_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSWindow_additions.h; path = ../common/NSWindow_additions.h; sourceTree = SOURCE_ROOT; };
 		F4BF72A60F79E58C0089F459 /* NSWindow_additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSWindow_additions.m; path = ../common/NSWindow_additions.m; sourceTree = SOURCE_ROOT; };
 		F4C440C815DB50BC00590A1E /* SearchQueryResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchQueryResult.h; sourceTree = "<group>"; };
@@ -687,6 +695,10 @@
 		F4DE4050256205D300FBA200 /* SoqlXplorerTests */ = {
 			isa = PBXGroup;
 			children = (
+				F4BD5DD12641B91900ACBBAB /* using_scope.txt */,
+				F4BD5DCD2641B59A00ACBBAB /* group_by.txt */,
+				F4BD5DC92641B3EA00ACBBAB /* limit_offset.txt */,
+				F4BD5DBC2641B10600ACBBAB /* with.txt */,
 				F4F2E7252640633F005C49B9 /* order_by.txt */,
 				F4F2E7272640633F005C49B9 /* select_exprs.txt */,
 				F4F2E7262640633F005C49B9 /* where.txt */,
@@ -909,10 +921,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F4BD5DCA2641B3EA00ACBBAB /* limit_offset.txt in Resources */,
+				F4BD5DCE2641B59A00ACBBAB /* group_by.txt in Resources */,
+				F4BD5DD22641B91900ACBBAB /* using_scope.txt in Resources */,
 				F4F2E72A2640633F005C49B9 /* select_exprs.txt in Resources */,
 				F4C889F12624FC75006D606A /* Media.xcassets in Resources */,
 				F4F2E7282640633F005C49B9 /* order_by.txt in Resources */,
 				F4F2E7292640633F005C49B9 /* where.txt in Resources */,
+				F4BD5DC62641B10600ACBBAB /* with.txt in Resources */,
 				F4DF0B6B263902E300B3A1A9 /* funcs.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

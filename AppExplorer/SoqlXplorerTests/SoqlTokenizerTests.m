@@ -66,6 +66,7 @@ NSObject<Describer> *descs;
     ZKDescribeField *fid = [ZKDescribeField new];
     fid.name = @"Id";
     fid.type = @"id";
+    fid.aggregatable = TRUE;
     ZKDescribeField *fAccount = [ZKDescribeField new];
     fAccount.referenceTo = @[@"Account"];
     fAccount.name = @"AccountId";
@@ -151,6 +152,16 @@ NSObject<Describer> *descs;
     [self writeSoqlTokensForQuerys:queries toFile:@"select_exprs.txt"];
 }
 
+-(void)testScope {
+    NSArray<NSString*>* queries = @[
+        @"select id,(select name from contacts),name from account using scope team",
+        @"select id,(select name from contacts),name from account using team",
+        @"select id,(select name from contacts),name from account scope team",
+        @"select id,(select name from contacts),name from account using scope team team2",
+    ];
+    [self writeSoqlTokensForQuerys:queries toFile:@"using_scope.txt"];
+}
+
 -(void)testOrderBy {
     NSArray<NSString*>* queries = @[
         @"SELECT name FROM contact order by name",
@@ -176,6 +187,9 @@ NSObject<Describer> *descs;
         @"select name from account where name='bob'",
         @"select name from account where name='bob' or name='eve' or (name='alice' and city='SF')",
         @"select name from account where name='bob' or name='eve' or not name='alice'",
+        @"select name from account where name in('bob','eve','alice')",
+        @"select name from account where name not in('bob','eve','alice')",
+        @"select name from account where not name > 't' and name not in('bob','eve','alice')",
         @"select namer from account where name='bob'",
         @"select name from account where namer='bob'",
         @"select name from case where LastModifiedDate >= YESTERDAY",
@@ -194,12 +208,59 @@ NSObject<Describer> *descs;
         @"select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5",
         @"select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 FOR view",
         @"select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 update viewstat",
-        @"SELECT Id, Name FROM Opportunity WHERE Amount > USD5000",
-        @"SELECT Id, Name FROM Opportunity WHERE msp__c Includes('abc;def','q')",
+        @"SELECT Id, Name FROM Account WHERE Amount > USD5000",
+        @"SELECT Id, Name FROM Account WHERE msp__c Includes('abc;def','q')",
+        @"SELECT Id, Name FROM Account WHERE msp__c excludes ( 'abc;def' , 'q' ) ",
+        @"SELECT Id, Name FROM case WHERE Amount > USD5000",
+        @"SELECT Id, Name FROM case WHERE msp__c Includes('abc;def','q')",
+        @"SELECT Id, Name FROM case WHERE msp__c excludes ( 'abc;def' , 'q' ) ",
         @"select name from account where name bob 'bob'",
         @"select name from account where name ^ 'bob'",
     ];
     [self writeSoqlTokensForQuerys:queries toFile:@"where.txt"];
+}
+
+- (void)testGroupBy {
+    NSArray<NSString*>* queries = @[
+        @"select city, count(id) from account group by city",
+        @"select city, count(id) from account group by city order by count(id) asc",
+        // city is not aggregatable, so there should be an error for the count_distinct(city) expr
+        @"select count_distinct(city) from account group by calendar_year(lastModifiedDate)",
+        @"select account.city, count(id) from contact group by account.city",
+        @"select city, count(id) from account group by rollup (city)",
+        @"select city, count(id) from account group by rollup (city,state)",
+        @"select city, count(id) from account group by cube(city)",
+        // based on example from group by cube docs
+        @"SELECT city, GROUPING(city) grpCity FROM Account GROUP BY CUBE(city) ORDER BY GROUPING(City)",
+        @"select city, count(id) from account group by city having count(id) < 10",
+        @"select city, count(id) from account group by city having count(id) < 10 or count(id) > 100",
+    ];
+    [self writeSoqlTokensForQuerys:queries toFile:@"group_by.txt"];
+}
+
+- (void)testWith {
+    NSArray<NSString*>* queries = @[
+        @"select name from account WITH DATA CATEGORY Geography__c AT asia__c",
+        @"select name from account WITH DATA CATEGORY Geography__c AT asia__c AND product__c BELOW electronics__c",
+        @"select name from account WITH DATA CATEGORY Geography__c AT asia__c OR product__c BELOW electronics__c",
+        @"select name from account WITH DATA CATEGORY Geography__c NEAR asia__c",
+    ];
+    [self writeSoqlTokensForQuerys:queries toFile:@"with.txt"];
+}
+
+-(void)testLimitOffset {
+    NSArray<NSString*>* queries = @[
+        @"select name from account",
+        @"select name from account limit 1",
+        @"select name from account limit 1 offset 123456",
+        @"select name from account limit 1 offset 123456 for view",
+        @"select name from account limit 1 offset 123456 for reference",
+        @"select name from account limit 1 offset 123456 for view update tracking",
+        @"select name from account limit 1 offset 123456 ",
+        @"select name from account limit 1 offset 123456 update viewstat",
+        @"select name from account limit 1 for view",
+    ];
+    [self writeSoqlTokensForQuerys:queries toFile:@"limit_offset.txt"];
 }
 
 -(void)writeSoqlTokensForQuerys:(NSArray<NSString*>*)queries toFile:(NSString*)fn {

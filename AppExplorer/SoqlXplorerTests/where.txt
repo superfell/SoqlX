@@ -60,6 +60,54 @@ select name from account where name='bob' or name='eve' or not name='alice'
   67-1   : Op              =                              completions 11 
   68-7   : String          'alice'                        completions 0 
 
+select name from account where name in('bob','eve','alice')
+   0-6   : Keyword         select                         completions 0 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 32 
+  12-4   : Keyword         from                           completions 0 
+  17-7   : SObject         account                        completions 2 
+  25-5   : Keyword         where                          completions 0 
+  31-4   : FieldPath       name                           completions 0 
+      31-4   : Field           name                           completions 32 
+  36-2   : Op              in                             completions 2 
+  39-5   : String          'bob'                          completions 0 
+  45-5   : String          'eve'                          completions 0 
+  51-7   : String          'alice'                        completions 0 
+
+select name from account where name not in('bob','eve','alice')
+   0-6   : Keyword         select                         completions 0 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 32 
+  12-4   : Keyword         from                           completions 0 
+  17-7   : SObject         account                        completions 2 
+  25-5   : Keyword         where                          completions 0 
+  31-4   : FieldPath       name                           completions 0 
+      31-4   : Field           name                           completions 32 
+  36-6   : Op              not in                         completions 2 
+  43-5   : String          'bob'                          completions 0 
+  49-5   : String          'eve'                          completions 0 
+  55-7   : String          'alice'                        completions 0 
+
+select name from account where not name > 't' and name not in('bob','eve','alice')
+   0-6   : Keyword         select                         completions 0 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 32 
+  12-4   : Keyword         from                           completions 0 
+  17-7   : SObject         account                        completions 2 
+  25-5   : Keyword         where                          completions 0 
+  31-3   : Op              not                            completions 0 
+  35-4   : FieldPath       name                           completions 0 
+      35-4   : Field           name                           completions 32 
+  40-1   : Op              >                              completions 11 
+  42-3   : String          't'                            completions 0 
+  46-3   : Op              and                            completions 2 
+  50-4   : FieldPath       name                           completions 0 
+      50-4   : Field           name                           completions 32 
+  55-6   : Op              not in                         completions 2 
+  62-5   : String          'bob'                          completions 0 
+  68-5   : String          'eve'                          completions 0 
+  74-7   : String          'alice'                        completions 0 
+
 select namer from account where name='bob'
    0-6   : Keyword         select                         completions 0 
    7-5   : FieldPath       namer                          completions 0 
@@ -344,34 +392,93 @@ select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 update viewstat
   65-6   : Keyword         update                         completions 0 
   72-8   : Keyword         viewstat                       completions 0 
 
-SELECT Id, Name FROM Opportunity WHERE Amount > USD5000
+SELECT Id, Name FROM Account WHERE Amount > USD5000
    0-6   : Keyword         SELECT                         completions 0 
    7-2   : FieldPath       Id                             completions 0 
-       7-2   : Relationship    Id                             completions 27 
+       7-2   : Field           Id                             completions 32 
   11-4   : FieldPath       Name                           completions 0 
-      11-4   : Relationship    Name                           completions 27 
+      11-4   : Field           Name                           completions 32 
   16-4   : Keyword         FROM                           completions 0 
-  21-11  : Error           Opportunity                    completions 2 The SObject 'Opportunity' does not exist or is inaccessible
-  33-5   : Keyword         WHERE                          completions 0 
-  39-6   : FieldPath       Amount                         completions 0 
-      39-6   : Relationship    Amount                         completions 27 
-  46-1   : Op              >                              completions 11 
-  48-7   : NamedDateTime   USD5000                        completions 0 
+  21-7   : SObject         Account                        completions 2 
+  29-5   : Keyword         WHERE                          completions 0 
+  35-6   : FieldPath       Amount                         completions 0 
+      35-6   : Field           Amount                         completions 32 
+  42-1   : Op              >                              completions 11 
+  44-7   : NamedDateTime   USD5000                        completions 0 
 
-SELECT Id, Name FROM Opportunity WHERE msp__c Includes('abc;def','q')
+SELECT Id, Name FROM Account WHERE msp__c Includes('abc;def','q')
+   0-6   : Keyword         SELECT                         completions 0 
+   7-2   : FieldPath       Id                             completions 0 
+       7-2   : Field           Id                             completions 32 
+  11-4   : FieldPath       Name                           completions 0 
+      11-4   : Field           Name                           completions 32 
+  16-4   : Keyword         FROM                           completions 0 
+  21-7   : SObject         Account                        completions 2 
+  29-5   : Keyword         WHERE                          completions 0 
+  35-6   : FieldPath       msp__c                         completions 0 
+      35-6   : Error           msp__c                         completions 32 There is no field or relationship msp__c on SObject Account
+  42-8   : Op              Includes                       completions 11 
+  51-9   : String          'abc;def'                      completions 0 
+  61-3   : String          'q'                            completions 0 
+
+SELECT Id, Name FROM Account WHERE msp__c excludes ( 'abc;def' , 'q' ) 
+   0-6   : Keyword         SELECT                         completions 0 
+   7-2   : FieldPath       Id                             completions 0 
+       7-2   : Field           Id                             completions 32 
+  11-4   : FieldPath       Name                           completions 0 
+      11-4   : Field           Name                           completions 32 
+  16-4   : Keyword         FROM                           completions 0 
+  21-7   : SObject         Account                        completions 2 
+  29-5   : Keyword         WHERE                          completions 0 
+  35-6   : FieldPath       msp__c                         completions 0 
+      35-6   : Error           msp__c                         completions 32 There is no field or relationship msp__c on SObject Account
+  42-8   : Op              excludes                       completions 11 
+  53-9   : String          'abc;def'                      completions 0 
+  65-3   : String          'q'                            completions 0 
+
+SELECT Id, Name FROM case WHERE Amount > USD5000
    0-6   : Keyword         SELECT                         completions 0 
    7-2   : FieldPath       Id                             completions 0 
        7-2   : Relationship    Id                             completions 27 
   11-4   : FieldPath       Name                           completions 0 
       11-4   : Relationship    Name                           completions 27 
   16-4   : Keyword         FROM                           completions 0 
-  21-11  : Error           Opportunity                    completions 2 The SObject 'Opportunity' does not exist or is inaccessible
-  33-5   : Keyword         WHERE                          completions 0 
-  39-6   : FieldPath       msp__c                         completions 0 
-      39-6   : Relationship    msp__c                         completions 27 
-  46-8   : Op              Includes                       completions 11 
-  55-9   : String          'abc;def'                      completions 0 
-  65-3   : String          'q'                            completions 0 
+  21-4   : SObject         case                           completions 2 
+  26-5   : Keyword         WHERE                          completions 0 
+  32-6   : FieldPath       Amount                         completions 0 
+      32-6   : Relationship    Amount                         completions 27 
+  39-1   : Op              >                              completions 11 
+  41-7   : NamedDateTime   USD5000                        completions 0 
+
+SELECT Id, Name FROM case WHERE msp__c Includes('abc;def','q')
+   0-6   : Keyword         SELECT                         completions 0 
+   7-2   : FieldPath       Id                             completions 0 
+       7-2   : Relationship    Id                             completions 27 
+  11-4   : FieldPath       Name                           completions 0 
+      11-4   : Relationship    Name                           completions 27 
+  16-4   : Keyword         FROM                           completions 0 
+  21-4   : SObject         case                           completions 2 
+  26-5   : Keyword         WHERE                          completions 0 
+  32-6   : FieldPath       msp__c                         completions 0 
+      32-6   : Relationship    msp__c                         completions 27 
+  39-8   : Op              Includes                       completions 11 
+  48-9   : String          'abc;def'                      completions 0 
+  58-3   : String          'q'                            completions 0 
+
+SELECT Id, Name FROM case WHERE msp__c excludes ( 'abc;def' , 'q' ) 
+   0-6   : Keyword         SELECT                         completions 0 
+   7-2   : FieldPath       Id                             completions 0 
+       7-2   : Relationship    Id                             completions 27 
+  11-4   : FieldPath       Name                           completions 0 
+      11-4   : Relationship    Name                           completions 27 
+  16-4   : Keyword         FROM                           completions 0 
+  21-4   : SObject         case                           completions 2 
+  26-5   : Keyword         WHERE                          completions 0 
+  32-6   : FieldPath       msp__c                         completions 0 
+      32-6   : Relationship    msp__c                         completions 27 
+  39-8   : Op              excludes                       completions 11 
+  50-9   : String          'abc;def'                      completions 0 
+  62-3   : String          'q'                            completions 0 
 
 select name from account where name bob 'bob'
    0-6   : Keyword         select                         completions 0 

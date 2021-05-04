@@ -199,9 +199,8 @@ SELECT calendar_year(lastModifiedDate), count(id) from account group by calendar
       21-16  : FieldPath       lastModifiedDate               completions 0 
           21-16  : Field           lastModifiedDate               completions 2 
   40-5   : Function        count                          completions 32 
-      46-2   : Error           id                             completions 0 Field id is not valid for this function
       46-2   : FieldPath       id                             completions 0 
-          46-2   : Field           id                             completions 3 
+          46-2   : Field           id                             completions 4 
   50-4   : Keyword         from                           completions 0 
   55-7   : SObject         account                        completions 2 
   63-8   : Keyword         group by                       completions 0 
@@ -221,9 +220,8 @@ SELECT calendar_year(lastModifiedDate), count(id) from account group by rollup (
       21-16  : FieldPath       lastModifiedDate               completions 0 
           21-16  : Field           lastModifiedDate               completions 2 
   40-5   : Function        count                          completions 32 
-      46-2   : Error           id                             completions 0 Field id is not valid for this function
       46-2   : FieldPath       id                             completions 0 
-          46-2   : Field           id                             completions 3 
+          46-2   : Field           id                             completions 4 
   50-4   : Keyword         from                           completions 0 
   55-7   : SObject         account                        completions 2 
   63-15  : Keyword         group by rollup                completions 0 
@@ -242,9 +240,8 @@ SELECT calendar_year(lastModifiedDate), count(id) from account group by cube( ca
       21-16  : FieldPath       lastModifiedDate               completions 0 
           21-16  : Field           lastModifiedDate               completions 2 
   40-5   : Function        count                          completions 32 
-      46-2   : Error           id                             completions 0 Field id is not valid for this function
       46-2   : FieldPath       id                             completions 0 
-          46-2   : Field           id                             completions 3 
+          46-2   : Field           id                             completions 4 
   50-4   : Keyword         from                           completions 0 
   55-7   : SObject         account                        completions 2 
   63-13  : Keyword         group by cube                  completions 0 
@@ -262,9 +259,8 @@ SELECT email, count(id) from contact group by email order by email nulls last
    7-5   : FieldPath       email                          completions 0 
        7-5   : Error           email                          completions 31 There is no field or relationship email on SObject Contact
   14-5   : Function        count                          completions 31 
-      20-2   : Error           id                             completions 0 Field id is not valid for this function
       20-2   : FieldPath       id                             completions 0 
-          20-2   : Field           id                             completions 2 
+          20-2   : Field           id                             completions 3 
   24-4   : Keyword         from                           completions 0 
   29-7   : SObject         contact                        completions 2 
   37-8   : Keyword         group by                       completions 0 
@@ -280,9 +276,8 @@ SELECT email, count(id) from contact group by email having count(id) > 1 order b
    7-5   : FieldPath       email                          completions 0 
        7-5   : Error           email                          completions 31 There is no field or relationship email on SObject Contact
   14-5   : Function        count                          completions 31 
-      20-2   : Error           id                             completions 0 Field id is not valid for this function
       20-2   : FieldPath       id                             completions 0 
-          20-2   : Field           id                             completions 2 
+          20-2   : Field           id                             completions 3 
   24-4   : Keyword         from                           completions 0 
   29-7   : SObject         contact                        completions 2 
   37-8   : Keyword         group by                       completions 0 
@@ -290,9 +285,8 @@ SELECT email, count(id) from contact group by email having count(id) > 1 order b
       46-5   : Error           email                          completions 31 There is no field or relationship email on SObject Contact
   52-6   : Keyword         having                         completions 0 
   59-5   : Function        count                          completions 31 
-      65-2   : Error           id                             completions 0 Field id is not valid for this function
       65-2   : FieldPath       id                             completions 0 
-          65-2   : Field           id                             completions 2 
+          65-2   : Field           id                             completions 3 
   69-1   : Op              >                              completions 11 
   71-1   : Number          1                              completions 0 
   73-8   : Keyword         order by                       completions 0 
