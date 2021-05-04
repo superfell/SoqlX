@@ -56,6 +56,15 @@ ExampleProvider fixed(NSString*value) {
         err.value = [NSString stringWithFormat:@"Function argument of unexpected type %@, should be %@", tokenName(argToken.type), tokenNames(self.type)];
         return err;
     }
+    if (((self.type & TTFunc) != 0) && argToken.type == TTFunc && self.funcFilter != nil) {
+        SoqlFunction *fn = [SoqlFunction all][[CaseInsensitiveStringKey of:argToken.tokenTxt]];
+        if (![self.funcFilter evaluateWithObject:fn]) {
+            Token *err = [argToken tokenOf:argToken.loc];
+            err.type = TTError;
+            err.value = [NSString stringWithFormat:@"Function %@ can't be used as this argument", argToken.tokenTxt];
+            return err;
+        }
+    }
     if (((self.type & TTFieldPath) != 0) && argToken.type==TTFieldPath && self.fieldFilter != nil) {
         if ([argToken.value isKindOfClass:[Tokens class]]) {
             Tokens *pathTokens = (Tokens*)argToken.value;

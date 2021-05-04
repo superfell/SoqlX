@@ -308,3 +308,33 @@ SELECT email, bogus(id) from contact group by email
   46-5   : FieldPath       email                          completions 0 
       46-5   : Error           email                          completions 29 There is no field or relationship email on SObject Contact
 
+SELECT calendar_year(convertTimeZone(LastModifiedDate)) from account
+   0-6   : Keyword         SELECT                         completions 0 
+   7-13  : Function        calendar_year                  completions 33 
+      21-15  : Function        convertTimeZone                completions 2 
+          37-16  : FieldPath       LastModifiedDate               completions 0 
+              37-16  : Field           LastModifiedDate               completions 1 
+  56-4   : Keyword         from                           completions 0 
+  61-7   : SObject         account                        completions 2 
+
+SELECT calendar_year(convertCurrency(LastModifiedDate)) from account
+   0-6   : Keyword         SELECT                         completions 0 
+   7-13  : Function        calendar_year                  completions 33 
+      21-15  : Error           convertCurrency                completions 0 Function convertCurrency can't be used as this argument
+      21-15  : Function        convertCurrency                completions 2 
+          37-16  : FieldPath       LastModifiedDate               completions 0 
+              37-16  : Field           LastModifiedDate               completions 1 
+              37-16  : Error           LastModifiedDate               completions 0 Field LastModifiedDate exists, but is not valid for use here
+  56-4   : Keyword         from                           completions 0 
+  61-7   : SObject         account                        completions 2 
+
+SELECT calendar_year(convertCurrency(amount)) from account
+   0-6   : Keyword         SELECT                         completions 0 
+   7-13  : Function        calendar_year                  completions 33 
+      21-15  : Error           convertCurrency                completions 0 Function convertCurrency can't be used as this argument
+      21-15  : Function        convertCurrency                completions 2 
+          37-6   : FieldPath       amount                         completions 0 
+              37-6   : Field           amount                         completions 1 
+  46-4   : Keyword         from                           completions 0 
+  51-7   : SObject         account                        completions 2 
+

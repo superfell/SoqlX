@@ -137,6 +137,9 @@ NSObject<Describer> *descs;
         @"SELECT email, count(id) from contact group by email order by email nulls last",
         @"SELECT email, count(id) from contact group by email having count(id) > 1 order by email nulls last",
         @"SELECT email, bogus(id) from contact group by email",
+        @"SELECT calendar_year(convertTimeZone(LastModifiedDate)) from account",
+        @"SELECT calendar_year(convertCurrency(LastModifiedDate)) from account",
+        @"SELECT calendar_year(convertCurrency(amount)) from account",
     ];
     [self writeSoqlTokensForQuerys:q toFile:@"funcs.txt"];
 }
