@@ -154,10 +154,10 @@ double ticksToMilliseconds;
                 NSString *txt = isFinal ? c.finalInsertionText : c.nonFinalInsertionText;
                 [self insertCompletion:txt forPartialWordRange:self.rangeForUserCompletion movement:movement isFinal:isFinal];
                 if (isFinal) {
+                    [self.completionsPopover performClose:self];
                     if (c.onFinalInsert != nil) {
                         hasTyped = c.onFinalInsert(self, c);
                     }
-                    [self.completionsPopover performClose:self];
                 }
             }
             return;
@@ -168,14 +168,35 @@ double ticksToMilliseconds;
 }
 
 -(void)showPopup {
-    NSRange sel = [self selectedRange];
-    NSRange theTextRange = [[self layoutManager] glyphRangeForCharacterRange:sel actualCharacterRange:NULL];
-    NSRect layoutRect = [[self layoutManager] boundingRectForGlyphRange:theTextRange inTextContainer:[self textContainer]];
-    NSPoint containerOrigin = [self textContainerOrigin];
-    layoutRect.origin.x += containerOrigin.x;
-    layoutRect.origin.y += containerOrigin.y;
-    layoutRect.size.width +=2;
-    [self.completionsPopover showRelativeToRect:layoutRect ofView:self preferredEdge:NSRectEdgeMaxY];
+    NSRange partialWordRange = self.rangeForUserCompletion;
+    self.completions = [(id<ZKTextViewDelegate>)self.delegate textView:self completionsForPartialWordRange:partialWordRange];
+    if (self.completions.count > 0) {
+        NSString *selected = [self.string substringWithRange:partialWordRange];
+        NSInteger idx = 0;
+        NSInteger selIdx = -1;
+        for (id<ZKTextViewCompletion> c in self.completions) {
+            if ([c.displayText caseInsensitiveCompare:selected] != NSOrderedAscending) {
+                selIdx = idx;
+                break;
+            }
+            idx++;
+        }
+        [self.table reloadData];
+        [self scrollRowToCenterVisible:selIdx];
+        if (selIdx >= 0) {
+            [self.table selectRowIndexes:[NSIndexSet indexSetWithIndex:selIdx] byExtendingSelection:NO];
+        } else {
+            [self.table selectRowIndexes:[NSIndexSet indexSet] byExtendingSelection:NO];
+        }
+        NSRange sel = [self selectedRange];
+        NSRange theTextRange = [[self layoutManager] glyphRangeForCharacterRange:sel actualCharacterRange:NULL];
+        NSRect layoutRect = [[self layoutManager] boundingRectForGlyphRange:theTextRange inTextContainer:[self textContainer]];
+        NSPoint containerOrigin = [self textContainerOrigin];
+        layoutRect.origin.x += containerOrigin.x;
+        layoutRect.origin.y += containerOrigin.y;
+        layoutRect.size.width +=2;
+        [self.completionsPopover showRelativeToRect:layoutRect ofView:self preferredEdge:NSRectEdgeMaxY];
+    }
 }
 
 -(BOOL)isAtEndOfWord {
@@ -199,28 +220,7 @@ double ticksToMilliseconds;
         lastEvent = now;
         hasTyped = FALSE;
         if ([self isAtEndOfWord]) {
-            NSRange partialWordRange = self.rangeForUserCompletion;
-            self.completions = [(id<ZKTextViewDelegate>)self.delegate textView:self completionsForPartialWordRange:partialWordRange];
-            if (self.completions.count > 0) {
-                NSString *selected = [self.string substringWithRange:partialWordRange];
-                NSInteger idx = 0;
-                NSInteger selIdx = -1;
-                for (id<ZKTextViewCompletion> c in self.completions) {
-                    if ([c.displayText caseInsensitiveCompare:selected] != NSOrderedAscending) {
-                        selIdx = idx;
-                        break;
-                    }
-                    idx++;
-                }
-                [self.table reloadData];
-                [self scrollRowToCenterVisible:selIdx];
-                if (selIdx >= 0) {
-                    [self.table selectRowIndexes:[NSIndexSet indexSetWithIndex:selIdx] byExtendingSelection:NO];
-                } else {
-                    [self.table selectRowIndexes:[NSIndexSet indexSet] byExtendingSelection:NO];
-                }
-                [self showPopup];
-            }
+            [self showPopup];
         }
     }
 }

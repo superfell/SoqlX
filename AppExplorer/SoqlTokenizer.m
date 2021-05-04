@@ -449,9 +449,15 @@ static NSString *KeyCompletions = @"completions";
         [t.completions addObjectsFromArray:[Completion completions:[fields valueForKey:@"name"] type:TTField]];
     }
     if (allowedTypes == 0 || ((allowedTypes & (TTRelationship|TTFieldPath)) > 0)) {
-        [t.completions addObjectsFromArray:[Completion
-                                            completions:[obj.parentRelationshipsByName.allValues valueForKey:@"relationshipName"]
-                                            type:TTRelationship]];
+        NSArray<Completion*>* comps = [Completion completions:[obj.parentRelationshipsByName.allValues valueForKey:@"relationshipName"] type:TTRelationship];
+        for (Completion *c in comps) {
+            c.finalInsertionText = [NSString stringWithFormat:@"%@.Id", c.finalInsertionText];
+            c.onFinalInsert = ^BOOL(ZKTextView *tv, id<ZKTextViewCompletion> c) {
+                [tv showPopup];
+                return TRUE;
+            };
+        }
+        [t.completions addObjectsFromArray:comps];
     }
     if (allowedTypes == 0 || ((allowedTypes & TTTypeOf) > 0)) {
         Completion *c = [Completion txt:@"TYPEOF" type:TTTypeOf];
