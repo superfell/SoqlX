@@ -167,14 +167,13 @@ static NSString *KeyCompletions = @"completions";
 -(void)resolveSelectExpr:(Token*)expr new:(NSMutableArray<Token*>*)newTokens del:(NSMutableArray<Token*>*)delTokens ctx:(Context*)ctx {
     switch (expr.type) {
         case TTFieldPath:
-            [delTokens addObject:expr];
-            [newTokens addObjectsFromArray:[self resolveFieldPath:expr ctx:ctx]];
+            [self resolveFieldPath:expr ctx:ctx];
             break;
         case TTFunc:
             [newTokens addObjectsFromArray:[self resolveFunc:expr ctx:ctx]];
             break;
         case TTTypeOf:
-            [newTokens addObjectsFromArray:[self resolveTypeOf:expr ctx:ctx]];
+            [self resolveTypeOf:expr ctx:ctx];
             break;
         case TTChildSelect:
         case TTSemiJoinSelect:
@@ -233,9 +232,9 @@ static NSString *KeyCompletions = @"completions";
     return newTokens;
 }
 
--(NSArray<Token*>*)resolveTypeOf:(Token*)typeOf ctx:(Context*)ctx {
+-(void)resolveTypeOf:(Token*)typeOf ctx:(Context*)ctx {
     if (ctx.primary == nil) {
-        return [NSArray array];
+        return;
     }
     NSAssert([typeOf.value isKindOfClass:[Tokens class]], @"TypeOf token should have an child tokens value");
     Tokens *tokens = (Tokens*) typeOf.value;
@@ -257,11 +256,10 @@ static NSString *KeyCompletions = @"completions";
         if (!found) {
             t.type = TTError;
             t.value = [NSString stringWithFormat:@"There is no polymorphic relationship '%@' on SObject %@", t.tokenTxt, ctx.primary.name];
-            return [NSArray array];
+            return;
         }
     }
     ZKDescribeSObject *originalPrimary = ctx.primary;
-    NSMutableArray<Token*>* newTokens = [NSMutableArray array];
     t = e.nextObject;
     while (t.type == TTKeyword && [t matches:@"WHEN" caseSensitive:NO]) {
         t = e.nextObject;
@@ -270,14 +268,14 @@ static NSString *KeyCompletions = @"completions";
             if (![relField.referenceTo containsStringIgnoringCase:t.tokenTxt]) {
                 t.type = TTError;
                 t.value = [NSString stringWithFormat:@"%@ is not a reference to %@", relField.name, t.tokenTxt];
-                return newTokens;
+                return;
             }
             ZKDescribeSObject *curr = [self.describer describe:t.tokenTxt];
             t = e.nextObject;
             if (t.type == TTKeyword) t = e.nextObject; // THEN
             ctx.primary = curr;
             while (t.type == TTFieldPath) {
-                [newTokens addObjectsFromArray:[self resolveFieldPath:t ctx:ctx]];
+                [self resolveFieldPath:t ctx:ctx];
                 t = e.nextObject;
             }
             ctx.primary = originalPrimary;
@@ -288,7 +286,7 @@ static NSString *KeyCompletions = @"completions";
         t = e.nextObject;
         ctx.primary = curr;
         while (t.type == TTFieldPath) {
-            [newTokens addObjectsFromArray:[self resolveFieldPath:t ctx:ctx]];
+            [self resolveFieldPath:t ctx:ctx];
             t = e.nextObject;
         }
         ctx.primary = originalPrimary;
@@ -303,7 +301,6 @@ static NSString *KeyCompletions = @"completions";
         t.value = [NSString stringWithFormat:@"Unexpected token %@", t.tokenTxt];
         t = e.nextObject;
     }
-    return newTokens;
 }
 
 // The first step in the path is optionally the object name, e.g.
@@ -320,13 +317,16 @@ static NSString *KeyCompletions = @"completions";
 // e.g. SELECT count() FROM Contact c, c.CreatedBy u, c.Account a WHERE u.alias = 'Sfell' and a.Name > 'a'
 // or follow multiple relationships in one go
 // SELECT count() FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and a.alias='Sfell'
--(NSArray<Token*>*)resolveFieldPath:(Token*)fieldPath ctx:(Context*)ctx {
+//
+// Upon return the fieldPath token has had its value replaces with a Tokens* containing the resolved field path.
+-(void)resolveFieldPath:(Token*)fieldPath ctx:(Context*)ctx {
     NSAssert([fieldPath.value isKindOfClass:[NSArray class]], @"TTFieldPath should have an array value");
     NSArray *path = (NSArray*)fieldPath.value;
     NSString *firstStep = path[0];
     ZKDescribeSObject *curr = ctx.primary;
     NSInteger position = fieldPath.loc.location;
-    NSMutableArray *newTokens = [NSMutableArray array];
+    Tokens *resolvedTokens = [Tokens new];
+    fieldPath.value = resolvedTokens;
 
     // this deals with the direct object name
     if ([firstStep caseInsensitiveCompare:ctx.primary.name] == NSOrderedSame) {
@@ -334,7 +334,7 @@ static NSString *KeyCompletions = @"completions";
         Token *tStep = [fieldPath tokenOf:NSMakeRange(position, firstStep.length)];
         tStep.type = TTAlias;
         [self addSObjectAliasCompletions:ctx to:tStep];
-        [newTokens addObject:tStep];
+        [resolvedTokens addToken:tStep];
         position += firstStep.length + 1;
 
     } else {
@@ -347,7 +347,7 @@ static NSString *KeyCompletions = @"completions";
             Token *tStep = [fieldPath tokenOf:NSMakeRange(position, firstStep.length)];
             tStep.type = TTAlias;
             [self addSObjectAliasCompletions:ctx to:tStep];
-            [newTokens addObject:tStep];
+            [resolvedTokens addToken:tStep];
             position += firstStep.length + 1;
         }
     }
@@ -357,8 +357,8 @@ static NSString *KeyCompletions = @"completions";
         err.type = TTError;
         err.value = [NSString stringWithFormat:@"Need to add a field to the SObject %@", ctx.primary.name];
         [self addSObjectAliasCompletions:ctx to:err];
-        [newTokens addObject:err];
-        return newTokens;
+        [resolvedTokens addToken:err];
+        return;
     }
 
     for (NSString *step in path) {
@@ -371,14 +371,14 @@ static NSString *KeyCompletions = @"completions";
                 if (df == nil) {
                     tStep.type = TTError;
                     tStep.value = [NSString stringWithFormat:@"There is no field or relationship %@ on SObject %@", step, curr.name];
-                    [newTokens addObject:tStep];
-                    return newTokens;
+                    [resolvedTokens addToken:tStep];
+                    return;
                     
                 } else if (step == path.lastObject) {
                     tStep.type = TTError;
                     tStep.value = [NSString stringWithFormat:@"%@ is a relationship, it should be followed by a field", df.relationshipName];
-                    [newTokens addObject:tStep];
-                    return newTokens;
+                    [resolvedTokens addToken:tStep];
+                    return;
                }
             }
             tStep.type = TTRelationship;
@@ -395,17 +395,16 @@ static NSString *KeyCompletions = @"completions";
                 NSRange stepEnd = NSMakeRange(tStep.loc.location+tStep.loc.length,1);
                 Token *err = [fieldPath tokenOf:stepEnd];
                 err.type = TTError;
-                err.value = [NSString stringWithFormat:@"%@ is a field not a relationship, so should be the last item in the field path", step];
-                [newTokens addObject:tStep];
-                return newTokens;
+                err.value = [NSString stringWithFormat:@"%@ is a field not a relationship, it should be the last item in the field path", step];
+                [resolvedTokens addToken:tStep];
+                return;
             }
             tStep.type = TTField;
             tStep.value = [curr fieldWithName:step];
         }
-        [newTokens addObject:tStep];
+        [resolvedTokens addToken:tStep];
         position += step.length + 1;
     }
-    return newTokens;
 }
 
 -(CompletionCallback)moveSelection:(NSInteger)amount {
@@ -564,7 +563,9 @@ static NSString *KeyCompletions = @"completions";
         }
         switch (t.type) {
             case TTFieldPath:
-                [txt addAttributes:style.field range:t.loc];
+                if ([t.value isKindOfClass:[Tokens class]]) {
+                    [self applyTokens:(Tokens*)t.value];
+                }
                 break;
             case TTKeyword:
                 [txt replaceCharactersInRange:t.loc withString:[t.tokenTxt uppercaseString]];

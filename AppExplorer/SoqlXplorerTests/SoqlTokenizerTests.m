@@ -73,6 +73,7 @@ NSObject<Describer> *descs;
     fAccount.namePointing = NO;
     ZKDescribeField *fName = [ZKDescribeField new];
     fName.name = @"Name";
+    fName.aggregatable = TRUE;
     ZKDescribeSObject *contact = [ZKDescribeSObject new];
     contact.name = @"Contact";
     contact.fields = @[fid, fAccount,fName];
@@ -84,9 +85,11 @@ NSObject<Describer> *descs;
     ZKDescribeField *fAmount = [ZKDescribeField new];
     fAmount.name = @"amount";
     fAmount.type = @"currency";
+    fAmount.aggregatable = TRUE;
     ZKDescribeField *fLastMod = [ZKDescribeField new];
     fLastMod.name = @"LastModifiedDate";
     fLastMod.type = @"datetime";
+    fLastMod.aggregatable = TRUE;
     account.fields = @[fid, fLastMod, fAmount, fName, fCity];
     ZKChildRelationship *contacts = [ZKChildRelationship new];
     contacts.childSObject = @"Contact";
@@ -165,7 +168,7 @@ NSObject<Describer> *descs;
 }
 
 -(void)testForDebugging {
-    [self writeSoqlTokensForQuerys:@[@"SELECT calendar_year(name) from account"] toFile:@"debug.txt" withDebug:YES];
+    [self writeSoqlTokensForQuerys:@[@"SELECT subject, TYPEOF what WHEN account Then id,BillingCity,createdBy.alias WHEN opportunity then name,nextStep ELSE id,email END FROM Task"] toFile:@"debug.txt" withDebug:YES];
 }
 
 - (void)testWhere {

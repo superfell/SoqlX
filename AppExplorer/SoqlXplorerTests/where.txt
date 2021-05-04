@@ -1,195 +1,233 @@
 select name from account where name='bob'
    0-6   : Keyword         select                         completions 0 
-   7-4   : Field           name                           completions 32 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 32 
   12-4   : Keyword         from                           completions 0 
   17-7   : SObject         account                        completions 2 
   25-5   : Keyword         where                          completions 0 
-  31-4   : Field           name                           completions 32 
+  31-4   : FieldPath       name                           completions 0 
+      31-4   : Field           name                           completions 32 
   35-1   : Op              =                              completions 11 
   36-5   : String          'bob'                          completions 0 
 
 select name from account where name='bob' or name='eve' or (name='alice' and city='SF')
    0-6   : Keyword         select                         completions 0 
-   7-4   : Field           name                           completions 32 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 32 
   12-4   : Keyword         from                           completions 0 
   17-7   : SObject         account                        completions 2 
   25-5   : Keyword         where                          completions 0 
-  31-4   : Field           name                           completions 32 
+  31-4   : FieldPath       name                           completions 0 
+      31-4   : Field           name                           completions 32 
   35-1   : Op              =                              completions 11 
   36-5   : String          'bob'                          completions 0 
   42-2   : Op              or                             completions 2 
-  45-4   : Field           name                           completions 32 
+  45-4   : FieldPath       name                           completions 0 
+      45-4   : Field           name                           completions 32 
   49-1   : Op              =                              completions 11 
   50-5   : String          'eve'                          completions 0 
   56-2   : Op              or                             completions 2 
-  60-4   : Field           name                           completions 32 
+  60-4   : FieldPath       name                           completions 0 
+      60-4   : Field           name                           completions 32 
   64-1   : Op              =                              completions 11 
   65-7   : String          'alice'                        completions 0 
   73-3   : Op              and                            completions 2 
-  77-4   : Field           city                           completions 32 
+  77-4   : FieldPath       city                           completions 0 
+      77-4   : Field           city                           completions 32 
   81-1   : Op              =                              completions 11 
   82-4   : String          'SF'                           completions 0 
 
 select name from account where name='bob' or name='eve' or not name='alice'
    0-6   : Keyword         select                         completions 0 
-   7-4   : Field           name                           completions 32 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 32 
   12-4   : Keyword         from                           completions 0 
   17-7   : SObject         account                        completions 2 
   25-5   : Keyword         where                          completions 0 
-  31-4   : Field           name                           completions 32 
+  31-4   : FieldPath       name                           completions 0 
+      31-4   : Field           name                           completions 32 
   35-1   : Op              =                              completions 11 
   36-5   : String          'bob'                          completions 0 
   42-2   : Op              or                             completions 2 
-  45-4   : Field           name                           completions 32 
+  45-4   : FieldPath       name                           completions 0 
+      45-4   : Field           name                           completions 32 
   49-1   : Op              =                              completions 11 
   50-5   : String          'eve'                          completions 0 
   56-2   : Op              or                             completions 2 
   59-3   : Op              not                            completions 0 
-  63-4   : Field           name                           completions 32 
+  63-4   : FieldPath       name                           completions 0 
+      63-4   : Field           name                           completions 32 
   67-1   : Op              =                              completions 11 
   68-7   : String          'alice'                        completions 0 
 
 select namer from account where name='bob'
    0-6   : Keyword         select                         completions 0 
-   7-5   : Error           namer                          completions 32 There is no field or relationship namer on SObject Account
+   7-5   : FieldPath       namer                          completions 0 
+       7-5   : Error           namer                          completions 32 There is no field or relationship namer on SObject Account
   13-4   : Keyword         from                           completions 0 
   18-7   : SObject         account                        completions 2 
   26-5   : Keyword         where                          completions 0 
-  32-4   : Field           name                           completions 32 
+  32-4   : FieldPath       name                           completions 0 
+      32-4   : Field           name                           completions 32 
   36-1   : Op              =                              completions 11 
   37-5   : String          'bob'                          completions 0 
 
 select name from account where namer='bob'
    0-6   : Keyword         select                         completions 0 
-   7-4   : Field           name                           completions 32 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 32 
   12-4   : Keyword         from                           completions 0 
   17-7   : SObject         account                        completions 2 
   25-5   : Keyword         where                          completions 0 
-  31-5   : Error           namer                          completions 32 There is no field or relationship namer on SObject Account
+  31-5   : FieldPath       namer                          completions 0 
+      31-5   : Error           namer                          completions 32 There is no field or relationship namer on SObject Account
   36-1   : Op              =                              completions 11 
   37-5   : String          'bob'                          completions 0 
 
 select name from case where LastModifiedDate >= YESTERDAY
    0-6   : Keyword         select                         completions 0 
-   7-4   : Relationship    name                           completions 27 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Relationship    name                           completions 27 
   12-4   : Keyword         from                           completions 0 
   17-4   : SObject         case                           completions 2 
   22-5   : Keyword         where                          completions 0 
-  28-16  : Relationship    LastModifiedDate               completions 27 
+  28-16  : FieldPath       LastModifiedDate               completions 0 
+      28-16  : Relationship    LastModifiedDate               completions 27 
   45-2   : Op              >=                             completions 11 
   48-9   : NamedDateTime   YESTERDAY                      completions 0 
 
 select name from case c
    0-6   : Keyword         select                         completions 0 
-   7-4   : Relationship    name                           completions 27 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Relationship    name                           completions 27 
   12-4   : Keyword         from                           completions 0 
   17-4   : SObject         case                           completions 2 
   22-1   : AliasDecl       c                              completions 0 
 
 select name from account where id in ('001002003004005006')
    0-6   : Keyword         select                         completions 0 
-   7-4   : Field           name                           completions 32 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 32 
   12-4   : Keyword         from                           completions 0 
   17-7   : SObject         account                        completions 2 
   25-5   : Keyword         where                          completions 0 
-  31-2   : Field           id                             completions 32 
+  31-2   : FieldPath       id                             completions 0 
+      31-2   : Field           id                             completions 32 
   34-2   : Op              in                             completions 2 
   38-20  : String          '001002003004005006'           completions 0 
 
 select name from account where id in (select accountId from contact)
    0-6   : Keyword         select                         completions 0 
-   7-4   : Field           name                           completions 32 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 32 
   12-4   : Keyword         from                           completions 0 
   17-7   : SObject         account                        completions 2 
   25-5   : Keyword         where                          completions 0 
-  31-2   : Field           id                             completions 32 
+  31-2   : FieldPath       id                             completions 0 
+      31-2   : Field           id                             completions 32 
   34-2   : Op              in                             completions 2 
   37-31  : SemiJoinSelect  (select accountId from contact completions 0 
       38-6   : Keyword         select                         completions 0 
-      45-9   : Field           accountId                      completions 31 
+      45-9   : FieldPath       accountId                      completions 0 
+          45-9   : Field           accountId                      completions 31 
       55-4   : Keyword         from                           completions 0 
       60-7   : SObject         contact                        completions 2 
 
 SELECT name FROM account WHERE id NOT IN (SELECT accountId FROM contact)
    0-6   : Keyword         SELECT                         completions 0 
-   7-4   : Field           name                           completions 32 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 32 
   12-4   : Keyword         FROM                           completions 0 
   17-7   : SObject         account                        completions 2 
   25-5   : Keyword         WHERE                          completions 0 
-  31-2   : Field           id                             completions 32 
+  31-2   : FieldPath       id                             completions 0 
+      31-2   : Field           id                             completions 32 
   34-6   : Op              NOT IN                         completions 2 
   41-31  : SemiJoinSelect  (SELECT accountId FROM contact completions 0 
       42-6   : Keyword         SELECT                         completions 0 
-      49-9   : Field           accountId                      completions 31 
+      49-9   : FieldPath       accountId                      completions 0 
+          49-9   : Field           accountId                      completions 31 
       59-4   : Keyword         FROM                           completions 0 
       64-7   : SObject         contact                        completions 2 
 
 select account.city from contact where name LIKE 'b%'
    0-6   : Keyword         select                         completions 0 
-   7-7   : Relationship    account                        completions 31 
-  15-4   : Field           city                           completions 32 
+   7-12  : FieldPath       account.city                   completions 0 
+       7-7   : Relationship    account                        completions 31 
+      15-4   : Field           city                           completions 32 
   20-4   : Keyword         from                           completions 0 
   25-7   : SObject         contact                        completions 2 
   33-5   : Keyword         where                          completions 0 
-  39-4   : Field           name                           completions 31 
+  39-4   : FieldPath       name                           completions 0 
+      39-4   : Field           name                           completions 31 
   44-4   : Op              LIKE                           completions 11 
   49-4   : String          'b%'                           completions 0 
 
 select account.city from contact where name LIKE 'b%' OR name='eve'
    0-6   : Keyword         select                         completions 0 
-   7-7   : Relationship    account                        completions 31 
-  15-4   : Field           city                           completions 32 
+   7-12  : FieldPath       account.city                   completions 0 
+       7-7   : Relationship    account                        completions 31 
+      15-4   : Field           city                           completions 32 
   20-4   : Keyword         from                           completions 0 
   25-7   : SObject         contact                        completions 2 
   33-5   : Keyword         where                          completions 0 
-  39-4   : Field           name                           completions 31 
+  39-4   : FieldPath       name                           completions 0 
+      39-4   : Field           name                           completions 31 
   44-4   : Op              LIKE                           completions 11 
   49-4   : String          'b%'                           completions 0 
   54-2   : Op              OR                             completions 2 
-  57-4   : Field           name                           completions 31 
+  57-4   : FieldPath       name                           completions 0 
+      57-4   : Field           name                           completions 31 
   61-1   : Op              =                              completions 11 
   62-5   : String          'eve'                          completions 0 
 
 select c.account.city from contact c where name LIKE 'b%'
    0-6   : Keyword         select                         completions 0 
-   7-1   : Aias            c                              completions 2 
-   9-7   : Relationship    account                        completions 31 
-  17-4   : Field           city                           completions 32 
+   7-14  : FieldPath       c.account.city                 completions 0 
+       7-1   : Aias            c                              completions 2 
+       9-7   : Relationship    account                        completions 31 
+      17-4   : Field           city                           completions 32 
   22-4   : Keyword         from                           completions 0 
   27-7   : SObject         contact                        completions 2 
   35-1   : AliasDecl       c                              completions 0 
   37-5   : Keyword         where                          completions 0 
-  43-4   : Field           name                           completions 31 
+  43-4   : FieldPath       name                           completions 0 
+      43-4   : Field           name                           completions 31 
   48-4   : Op              LIKE                           completions 11 
   53-4   : String          'b%'                           completions 0 
 
 select account.name from account where name > 'bob'
    0-6   : Keyword         select                         completions 0 
-   7-7   : Aias            account                        completions 1 
-  15-4   : Field           name                           completions 32 
+   7-12  : FieldPath       account.name                   completions 0 
+       7-7   : Aias            account                        completions 1 
+      15-4   : Field           name                           completions 32 
   20-4   : Keyword         from                           completions 0 
   25-7   : SObject         account                        completions 2 
   33-5   : Keyword         where                          completions 0 
-  39-4   : Field           name                           completions 32 
+  39-4   : FieldPath       name                           completions 0 
+      39-4   : Field           name                           completions 32 
   44-1   : Op              >                              completions 11 
   46-5   : String          'bob'                          completions 0 
 
 select a.name from account a where name > 'bob'
    0-6   : Keyword         select                         completions 0 
-   7-1   : Aias            a                              completions 2 
-   9-4   : Field           name                           completions 32 
+   7-6   : FieldPath       a.name                         completions 0 
+       7-1   : Aias            a                              completions 2 
+       9-4   : Field           name                           completions 32 
   14-4   : Keyword         from                           completions 0 
   19-7   : SObject         account                        completions 2 
   27-1   : AliasDecl       a                              completions 0 
   29-5   : Keyword         where                          completions 0 
-  35-4   : Field           name                           completions 32 
+  35-4   : FieldPath       name                           completions 0 
+      35-4   : Field           name                           completions 32 
   40-1   : Op              >                              completions 11 
   42-5   : String          'bob'                          completions 0 
 
 SELECT x.name FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and (a.alias='Sfell' or x.MailingCity IN('SF','LA'))order by x.name desc nulls first
    0-6   : Keyword         SELECT                         completions 0 
-   7-1   : Aias            x                              completions 2 
-   9-4   : Field           name                           completions 31 
+   7-6   : FieldPath       x.name                         completions 0 
+       7-1   : Aias            x                              completions 2 
+       9-4   : Field           name                           completions 31 
   14-4   : Keyword         FROM                           completions 0 
   19-7   : SObject         Contact                        completions 2 
   27-1   : AliasDecl       x                              completions 0 
@@ -200,42 +238,49 @@ SELECT x.name FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias
   55-9   : Error           CreatedBy                      completions 1 There is no relationship CreatedBy on SObject Contact
   65-1   : AliasDecl       a                              completions 0 
   67-5   : Keyword         WHERE                          completions 0 
-  73-1   : Error           u                              completions 31 There is no field or relationship u on SObject Contact
+  73-7   : FieldPath       u.alias                        completions 0 
+      73-1   : Error           u                              completions 31 There is no field or relationship u on SObject Contact
   81-1   : Op              =                              completions 11 
   83-7   : String          'Sfell'                        completions 0 
   91-3   : Op              and                            completions 2 
-  96-1   : Error           a                              completions 31 There is no field or relationship a on SObject Contact
+  96-7   : FieldPath       a.alias                        completions 0 
+      96-1   : Error           a                              completions 31 There is no field or relationship a on SObject Contact
  103-1   : Op              =                              completions 11 
  104-7   : String          'Sfell'                        completions 0 
  112-2   : Op              or                             completions 2 
- 115-1   : Aias            x                              completions 2 
- 117-11  : Error           MailingCity                    completions 31 There is no field or relationship MailingCity on SObject Contact
+ 115-13  : FieldPath       x.MailingCity                  completions 0 
+     115-1   : Aias            x                              completions 2 
+     117-11  : Error           MailingCity                    completions 31 There is no field or relationship MailingCity on SObject Contact
  129-2   : Op              IN                             completions 2 
  132-4   : String          'SF'                           completions 0 
  137-4   : String          'LA'                           completions 0 
  143-8   : Keyword         order by                       completions 0 
- 152-1   : Aias            x                              completions 2 
- 154-4   : Field           name                           completions 31 
+ 152-6   : FieldPath       x.name                         completions 0 
+     152-1   : Aias            x                              completions 2 
+     154-4   : Field           name                           completions 31 
  159-4   : Keyword         desc                           completions 0 
  164-11  : Keyword         nulls first                    completions 0 
 
 SELECT account.name.name FROM account
    0-6   : Keyword         SELECT                         completions 0 
-   7-7   : Aias            account                        completions 1 
-  15-4   : Field           name                           completions 32 
-  20-4   : Field           name                           completions 32 
+   7-17  : FieldPath       account.name.name              completions 0 
+       7-7   : Aias            account                        completions 1 
+      15-4   : Field           name                           completions 32 
+      20-4   : Field           name                           completions 32 
   25-4   : Keyword         FROM                           completions 0 
   30-7   : SObject         account                        completions 2 
 
 select a.name from account a where name > 'bob' LIMIt 5
    0-6   : Keyword         select                         completions 0 
-   7-1   : Aias            a                              completions 2 
-   9-4   : Field           name                           completions 32 
+   7-6   : FieldPath       a.name                         completions 0 
+       7-1   : Aias            a                              completions 2 
+       9-4   : Field           name                           completions 32 
   14-4   : Keyword         from                           completions 0 
   19-7   : SObject         account                        completions 2 
   27-1   : AliasDecl       a                              completions 0 
   29-5   : Keyword         where                          completions 0 
-  35-4   : Field           name                           completions 32 
+  35-4   : FieldPath       name                           completions 0 
+      35-4   : Field           name                           completions 32 
   40-1   : Op              >                              completions 11 
   42-5   : String          'bob'                          completions 0 
   48-5   : Keyword         LIMIt                          completions 0 
@@ -243,13 +288,15 @@ select a.name from account a where name > 'bob' LIMIt 5
 
 select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5
    0-6   : Keyword         select                         completions 0 
-   7-1   : Aias            a                              completions 2 
-   9-4   : Field           name                           completions 32 
+   7-6   : FieldPath       a.name                         completions 0 
+       7-1   : Aias            a                              completions 2 
+       9-4   : Field           name                           completions 32 
   14-4   : Keyword         from                           completions 0 
   19-7   : SObject         account                        completions 2 
   27-1   : AliasDecl       a                              completions 0 
   29-5   : Keyword         where                          completions 0 
-  35-4   : Field           name                           completions 32 
+  35-4   : FieldPath       name                           completions 0 
+      35-4   : Field           name                           completions 32 
   40-1   : Op              >                              completions 11 
   42-5   : String          'bob'                          completions 0 
   48-5   : Keyword         LIMIt                          completions 0 
@@ -259,13 +306,15 @@ select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5
 
 select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 FOR view
    0-6   : Keyword         select                         completions 0 
-   7-1   : Aias            a                              completions 2 
-   9-4   : Field           name                           completions 32 
+   7-6   : FieldPath       a.name                         completions 0 
+       7-1   : Aias            a                              completions 2 
+       9-4   : Field           name                           completions 32 
   14-4   : Keyword         from                           completions 0 
   19-7   : SObject         account                        completions 2 
   27-1   : AliasDecl       a                              completions 0 
   29-5   : Keyword         where                          completions 0 
-  35-4   : Field           name                           completions 32 
+  35-4   : FieldPath       name                           completions 0 
+      35-4   : Field           name                           completions 32 
   40-1   : Op              >                              completions 11 
   42-5   : String          'bob'                          completions 0 
   48-5   : Keyword         LIMIt                          completions 0 
@@ -277,13 +326,15 @@ select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 FOR view
 
 select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 update viewstat
    0-6   : Keyword         select                         completions 0 
-   7-1   : Aias            a                              completions 2 
-   9-4   : Field           name                           completions 32 
+   7-6   : FieldPath       a.name                         completions 0 
+       7-1   : Aias            a                              completions 2 
+       9-4   : Field           name                           completions 32 
   14-4   : Keyword         from                           completions 0 
   19-7   : SObject         account                        completions 2 
   27-1   : AliasDecl       a                              completions 0 
   29-5   : Keyword         where                          completions 0 
-  35-4   : Field           name                           completions 32 
+  35-4   : FieldPath       name                           completions 0 
+      35-4   : Field           name                           completions 32 
   40-1   : Op              >                              completions 11 
   42-5   : String          'bob'                          completions 0 
   48-5   : Keyword         LIMIt                          completions 0 
@@ -295,43 +346,53 @@ select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 update viewstat
 
 SELECT Id, Name FROM Opportunity WHERE Amount > USD5000
    0-6   : Keyword         SELECT                         completions 0 
-   7-2   : Relationship    Id                             completions 27 
-  11-4   : Relationship    Name                           completions 27 
+   7-2   : FieldPath       Id                             completions 0 
+       7-2   : Relationship    Id                             completions 27 
+  11-4   : FieldPath       Name                           completions 0 
+      11-4   : Relationship    Name                           completions 27 
   16-4   : Keyword         FROM                           completions 0 
   21-11  : Error           Opportunity                    completions 2 The SObject 'Opportunity' does not exist or is inaccessible
   33-5   : Keyword         WHERE                          completions 0 
-  39-6   : Relationship    Amount                         completions 27 
+  39-6   : FieldPath       Amount                         completions 0 
+      39-6   : Relationship    Amount                         completions 27 
   46-1   : Op              >                              completions 11 
   48-7   : NamedDateTime   USD5000                        completions 0 
 
 SELECT Id, Name FROM Opportunity WHERE msp__c Includes('abc;def','q')
    0-6   : Keyword         SELECT                         completions 0 
-   7-2   : Relationship    Id                             completions 27 
-  11-4   : Relationship    Name                           completions 27 
+   7-2   : FieldPath       Id                             completions 0 
+       7-2   : Relationship    Id                             completions 27 
+  11-4   : FieldPath       Name                           completions 0 
+      11-4   : Relationship    Name                           completions 27 
   16-4   : Keyword         FROM                           completions 0 
   21-11  : Error           Opportunity                    completions 2 The SObject 'Opportunity' does not exist or is inaccessible
   33-5   : Keyword         WHERE                          completions 0 
-  39-6   : Relationship    msp__c                         completions 27 
+  39-6   : FieldPath       msp__c                         completions 0 
+      39-6   : Relationship    msp__c                         completions 27 
   46-8   : Op              Includes                       completions 11 
   55-9   : String          'abc;def'                      completions 0 
   65-3   : String          'q'                            completions 0 
 
 select name from account where name bob 'bob'
    0-6   : Keyword         select                         completions 0 
-   7-4   : Field           name                           completions 32 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 32 
   12-4   : Keyword         from                           completions 0 
   17-7   : SObject         account                        completions 2 
   25-5   : Keyword         where                          completions 0 
-  31-4   : Field           name                           completions 32 
+  31-4   : FieldPath       name                           completions 0 
+      31-4   : Field           name                           completions 32 
   36-3   : AliasDecl       bob                            completions 0 
   40-5   : Error           'bob'                          completions 11 expecting one of <,<=,>,>=,=,!=,LIKE at position 41
 
 select name from account where name ^ 'bob'
    0-6   : Keyword         select                         completions 0 
-   7-4   : Field           name                           completions 32 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 32 
   12-4   : Keyword         from                           completions 0 
   17-7   : SObject         account                        completions 2 
   25-5   : Keyword         where                          completions 0 
-  31-4   : Field           name                           completions 32 
+  31-4   : FieldPath       name                           completions 0 
+      31-4   : Field           name                           completions 32 
   36-1   : Error           ^                              completions 11 expecting one of <,<=,>,>=,=,!=,LIKE at position 37
 

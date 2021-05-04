@@ -182,13 +182,19 @@ NSString *tokenNames(TokenType types) {
             [self.typeName stringByPaddingToLength:15 withString:@" " startingAtIndex:0],
             [self.tokenTxt stringByPaddingToLength:30 withString:@" " startingAtIndex:0], (unsigned long)self.completions.count,
              self.type == TTError ? self.value : @""];
-    if (self.type == TTChildSelect || self.type == TTSemiJoinSelect || self.type == TTTypeOf || self.type == TTFunc) {
+    if (self.type == TTChildSelect || self.type == TTSemiJoinSelect || self.type == TTTypeOf || self.type == TTFunc || self.type == TTFieldPath) {
         NSMutableString *c = [NSMutableString string];
         [c appendString:t];
-        Tokens *children = (Tokens*)self.value;
-        for (Token *t in children.tokens) {
-            [c appendString:@"\n"];
-            [c appendString:[t dump:depth+1]];
+        if ([self.value isKindOfClass:[Tokens class]]) {
+            Tokens *children = (Tokens*)self.value;
+            for (Token *t in children.tokens) {
+                [c appendString:@"\n"];
+                [c appendString:[t dump:depth+1]];
+            }
+        } else if ([self.value isKindOfClass:[NSArray class]]) {
+            // an unresolve fieldPath can have an array of strings as its value
+            NSArray *strings = (NSArray*)self.value;
+            [c appendFormat:@"\n%@              strings:%@", indent, [strings componentsJoinedByString:@","]];
         }
         return c;
     }
