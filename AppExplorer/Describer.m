@@ -161,3 +161,33 @@
 }
 
 @end
+
+@interface DescriberDelegates()
+@property (strong,nonatomic) NSPointerArray *delegates;
+@end
+
+@implementation DescriberDelegates
+
+-(instancetype)init {
+    self = [super init];
+    self.delegates = [NSPointerArray weakObjectsPointerArray];
+    return self;
+}
+
+-(void)addDelegate:(NSObject<DescriberDelegate>*)d {
+    [self.delegates addPointer:(__bridge void * _Nullable)(d)];
+}
+
+- (void)describe:(nonnull NSString *)sobject failed:(nonnull NSError *)err {
+    for (id<DescriberDelegate> d in self.delegates) {
+        [d describe:sobject failed:err];
+    }
+}
+
+- (void)described:(nonnull NSArray<ZKDescribeSObject *> *)sobjects {
+    for (id<DescriberDelegate> d in self.delegates) {
+        [d described:sobjects];
+    }
+}
+
+@end

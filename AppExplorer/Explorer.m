@@ -242,7 +242,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
     DescribeListDataSource *dds = [[DescribeListDataSource alloc] init];
     descDataSource = dds;
-    descDataSource.delegate = self;
+    [descDataSource addDelegate:self];
     self.rootResults.describer = ^ZKDescribeSObject *(NSString *type) {
         ZKDescribeSObject *o = [dds cachedDescribe:type];
         if (o == nil) {
@@ -258,7 +258,12 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     [describeList reloadData];
 
     self.colorizer = [SoqlTokenizer new];
-    self.colorizer.describer = [DLDDescriber describer:descDataSource];
+    DLDDescriber *dld = [DLDDescriber describer:descDataSource];
+    dld.onNewDescribe = ^() {
+        [self.colorizer color];
+    };
+    [dds addDelegate:dld];
+    self.colorizer.describer = dld;
     self.colorizer.view = soql;
     soql.textStorage.delegate = self.colorizer;
     soql.delegate = self.colorizer;
@@ -291,6 +296,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     } completeBlock:^(ZKDescribeGlobalTheme *result) {
         [self willChangeValueForKey:@"SObjects"];
         [self.describeDataSource refreshDescribes:result view:self->describeList];
+        [self.colorizer color];
         [self didChangeValueForKey:@"SObjects"];
     }];
 }
@@ -340,8 +346,9 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 }
 
 - (void)described:(nonnull NSArray<ZKDescribeSObject *> *)sobjects {
-    [self colorize];
-    NSString *msg = [NSString stringWithFormat:@"Described %lu/%lu SObjects", (unsigned long)descDataSource.describedCount, (unsigned long)descDataSource.totalCount];
+    NSString *msg = [NSString stringWithFormat:@"Described %lu/%lu SObjects",
+                     (unsigned long)descDataSource.describedCount,
+                     (unsigned long)descDataSource.totalCount];
     [self setStatusText:msg];
 }
 

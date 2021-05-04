@@ -40,4 +40,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface DescriberDelegates : NSObject<DescriberDelegate>
+-(void)addDelegate:(NSObject<DescriberDelegate>*)d;
+@end
+
 NS_ASSUME_NONNULL_END

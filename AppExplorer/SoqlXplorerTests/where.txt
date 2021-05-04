@@ -135,19 +135,16 @@ select name from account where namer='bob'
 select name from case where LastModifiedDate >= YESTERDAY
    0-6   : Keyword         select                         completions 0 
    7-4   : FieldPath       name                           completions 0 
-       7-4   : Relationship    name                           completions 28 
   12-4   : Keyword         from                           completions 0 
   17-4   : SObject         case                           completions 2 
   22-5   : Keyword         where                          completions 0 
   28-16  : FieldPath       LastModifiedDate               completions 0 
-      28-16  : Relationship    LastModifiedDate               completions 28 
   45-2   : Op              >=                             completions 11 
   48-9   : NamedDateTime   YESTERDAY                      completions 0 
 
 select name from case c
    0-6   : Keyword         select                         completions 0 
    7-4   : FieldPath       name                           completions 0 
-       7-4   : Relationship    name                           completions 28 
   12-4   : Keyword         from                           completions 0 
   17-4   : SObject         case                           completions 2 
   22-1   : AliasDecl       c                              completions 0 
@@ -439,28 +436,22 @@ SELECT Id, Name FROM Account WHERE msp__c excludes ( 'abc;def' , 'q' )
 SELECT Id, Name FROM case WHERE Amount > USD5000
    0-6   : Keyword         SELECT                         completions 0 
    7-2   : FieldPath       Id                             completions 0 
-       7-2   : Relationship    Id                             completions 28 
   11-4   : FieldPath       Name                           completions 0 
-      11-4   : Relationship    Name                           completions 28 
   16-4   : Keyword         FROM                           completions 0 
   21-4   : SObject         case                           completions 2 
   26-5   : Keyword         WHERE                          completions 0 
   32-6   : FieldPath       Amount                         completions 0 
-      32-6   : Relationship    Amount                         completions 28 
   39-1   : Op              >                              completions 11 
   41-7   : NamedDateTime   USD5000                        completions 0 
 
 SELECT Id, Name FROM case WHERE msp__c Includes('abc;def','q')
    0-6   : Keyword         SELECT                         completions 0 
    7-2   : FieldPath       Id                             completions 0 
-       7-2   : Relationship    Id                             completions 28 
   11-4   : FieldPath       Name                           completions 0 
-      11-4   : Relationship    Name                           completions 28 
   16-4   : Keyword         FROM                           completions 0 
   21-4   : SObject         case                           completions 2 
   26-5   : Keyword         WHERE                          completions 0 
   32-6   : FieldPath       msp__c                         completions 0 
-      32-6   : Relationship    msp__c                         completions 28 
   39-8   : Op              Includes                       completions 11 
   48-9   : String          'abc;def'                      completions 0 
   58-3   : String          'q'                            completions 0 
@@ -468,14 +459,11 @@ SELECT Id, Name FROM case WHERE msp__c Includes('abc;def','q')
 SELECT Id, Name FROM case WHERE msp__c excludes ( 'abc;def' , 'q' ) 
    0-6   : Keyword         SELECT                         completions 0 
    7-2   : FieldPath       Id                             completions 0 
-       7-2   : Relationship    Id                             completions 28 
   11-4   : FieldPath       Name                           completions 0 
-      11-4   : Relationship    Name                           completions 28 
   16-4   : Keyword         FROM                           completions 0 
   21-4   : SObject         case                           completions 2 
   26-5   : Keyword         WHERE                          completions 0 
   32-6   : FieldPath       msp__c                         completions 0 
-      32-6   : Relationship    msp__c                         completions 28 
   39-8   : Op              excludes                       completions 11 
   50-9   : String          'abc;def'                      completions 0 
   62-3   : String          'q'                            completions 0 

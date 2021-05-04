@@ -386,6 +386,9 @@ static NSString *KeyCompletions = @"completions";
                     return;
                }
             }
+            if (df == nil) {
+                return;
+            }
             tStep.type = TTRelationship;
             tStep.value = df;
             if (df.namePointing) {
@@ -662,22 +665,34 @@ static NSString *KeyCompletions = @"completions";
 
 @interface DLDDescriber()
 @property (strong,nonatomic) DescribeListDataSource *describes;
+@property (strong,nonatomic) NSMutableSet<NSString*>* pendingDescribes;
 @end
 
 @implementation DLDDescriber
 +(instancetype)describer:(DescribeListDataSource *)describes {
     DLDDescriber *d = [self new];
     d.describes = describes;
+    d.pendingDescribes = [NSMutableSet setWithCapacity:2];
     return d;
 }
 
 -(ZKDescribeSObject*)describe:(NSString*)obj; {
+    if (obj == nil) {
+        NSLog(@"DLDDescriber::describe obj is nil");
+        return nil;
+    }
     if ([self.describes hasDescribe:obj]) {
         return [self.describes cachedDescribe:obj];
     }
     if ([self.describes isTypeDescribable:obj]) {
         [self.describes prioritizeDescribe:obj];
     }
+    // note that we don't put this inside the isTypeDescribable block above because
+    // there's a period after login where we're trying to color the soql, but the
+    // initial describeGlobal hasn't returned yet, and so isTypeDescribable always
+    // returns false. Which would lead us to never capturing that we're waiting on
+    // this sobject.
+    [self.pendingDescribes addObject:obj];
     return nil;
 }
 
@@ -691,6 +706,27 @@ static NSString *KeyCompletions = @"completions";
 
 -(NSImage *)iconForSObject:(NSString *)type {
     return [self.describes iconForType:type];
+}
+
+- (void)describe:(nonnull NSString *)sobject failed:(nonnull NSError *)err {
+}
+
+- (void)described:(nonnull NSArray<ZKDescribeSObject *> *)sobjects {
+    if (self.pendingDescribes.count == 0) return;
+    NSMutableArray *arrived = [NSMutableArray array];
+    for (NSString *p in self.pendingDescribes) {
+        if ([self.describes hasDescribe:p]) {
+            [arrived addObject:p];
+        }
+    }
+    if (arrived.count == 0) return;
+    NSLog(@"Pending describes for %@ have arrived", [arrived componentsJoinedByString:@","]);
+    for (NSString *p in arrived) {
+        [self.pendingDescribes removeObject:p];
+    }
+    if (self.onNewDescribe != nil) {
+        self.onNewDescribe();
+    }
 }
 
 @end

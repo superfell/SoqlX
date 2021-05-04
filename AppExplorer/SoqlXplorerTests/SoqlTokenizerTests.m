@@ -29,7 +29,7 @@
 
 @end
 
-@interface TestDescriber : NSObject<Describer>
+@interface TestDescriber : NSObject<TokenizerDescriber>
 @property (strong,nonatomic) NSArray<ZKDescribeSObject*>* objects;
 @end
 
@@ -59,7 +59,7 @@
 
 @implementation SoqlTokenizerTests
 
-NSObject<Describer> *descs;
+NSObject<TokenizerDescriber> *descs;
 
 - (void)setUp {
     // Put setup code here. This method is called before the invocation of each test method in the class.

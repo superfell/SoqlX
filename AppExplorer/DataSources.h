@@ -46,7 +46,7 @@
     NSOutlineView           *outlineView;
 }
 
-@property (weak) NSObject<DescriberDelegate> *delegate;
+- (void)addDelegate:(NSObject<DescriberDelegate>*)d;
 
 - (void)setSforce:(ZKSforceClient *)sf;
 - (void)setTypes:(ZKDescribeGlobalTheme *)t view:(NSOutlineView *)ov;
