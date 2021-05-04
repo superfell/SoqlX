@@ -1,9 +1,9 @@
 SELECT FORMAT(Name) Amt FROM account
    0-6   : Keyword         SELECT                         completions 0 
    7-6   : Function        FORMAT                         completions 33 
-      14-4   : Error           Name                           completions 0 Field Name is not valid for this function
       14-4   : FieldPath       Name                           completions 0 
           14-4   : Field           Name                           completions 29 
+          14-4   : Error           Name                           completions 0 Field Name exists, but is not valid for use here
   20-3   : AliasDecl       Amt                            completions 0 
   24-4   : Keyword         FROM                           completions 0 
   29-7   : SObject         account                        completions 2 
@@ -82,9 +82,9 @@ SELECT format(convertCurrency(city)) FROM account WHERE amount > USD20
    0-6   : Keyword         SELECT                         completions 0 
    7-6   : Function        format                         completions 33 
       14-15  : Function        convertCurrency                completions 29 
-          30-4   : Error           city                           completions 0 Field city is not valid for this function
           30-4   : FieldPath       city                           completions 0 
               30-4   : Field           city                           completions 1 
+              30-4   : Error           city                           completions 0 Field city exists, but is not valid for use here
   37-4   : Keyword         FROM                           completions 0 
   42-7   : SObject         account                        completions 2 
   50-5   : Keyword         WHERE                          completions 0 
@@ -187,9 +187,9 @@ SELECT calendar_year(createdDate) from account
 SELECT calendar_year(name) from account
    0-6   : Keyword         SELECT                         completions 0 
    7-13  : Function        calendar_year                  completions 33 
-      21-4   : Error           name                           completions 0 Field name is not valid for this function
       21-4   : FieldPath       name                           completions 0 
           21-4   : Field           name                           completions 2 
+          21-4   : Error           name                           completions 0 Field Name exists, but is not valid for use here
   27-4   : Keyword         from                           completions 0 
   32-7   : SObject         account                        completions 2 
 
@@ -209,9 +209,9 @@ SELECT calendar_year(lastModifiedDate), count(id) from account group by calendar
           86-16  : Field           lastModifiedDate               completions 2 
  104-8   : Keyword         order by                       completions 0 
  113-13  : Function        calendar_year                  completions 33 
-     127-4   : Error           name                           completions 0 Field name is not valid for this function
      127-4   : FieldPath       name                           completions 0 
          127-4   : Field           name                           completions 2 
+         127-4   : Error           name                           completions 0 Field Name exists, but is not valid for use here
  133-4   : Keyword         desc                           completions 0 
 
 SELECT calendar_year(lastModifiedDate), count(id) from account group by rollup (calendar_year(createdDate)) order by calendar_year(createdDate) desc

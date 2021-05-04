@@ -401,11 +401,21 @@ static NSString *KeyCompletions = @"completions";
                 Token *err = [fieldPath tokenOf:stepEnd];
                 err.type = TTError;
                 err.value = [NSString stringWithFormat:@"%@ is a field not a relationship, it should be the last item in the field path", step];
-                [resolvedTokens addToken:tStep];
+                [resolvedTokens addToken:err];
                 return;
             }
             tStep.type = TTField;
-            tStep.value = [curr fieldWithName:step];
+            ZKDescribeField *df = [curr fieldWithName:step];
+            tStep.value = df;
+            // if there's a fields completions filter, check tha the field passes that
+            if (ctx.fieldCompletionsFilter != nil) {
+                if (![ctx.fieldCompletionsFilter evaluateWithObject:df]) {
+                    Token *err = [fieldPath tokenOf:tStep.loc];
+                    err.type = TTError;
+                    err.value = [NSString stringWithFormat:@"Field %@ exists, but is not valid for use here", df.name];
+                    [resolvedTokens addToken:err];
+                }
+            }
         }
         [resolvedTokens addToken:tStep];
         position += step.length + 1;

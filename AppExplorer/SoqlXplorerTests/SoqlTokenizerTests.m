@@ -148,7 +148,8 @@ NSObject<Describer> *descs;
         @"SELECT subject, TYPEOF what WHEN account Then id,BillingCity,createdBy.alias WHEN opportunity then name,nextStep ELSE id,email END FROM Task",
         @"SELECT fields(STANDARD) FROM KnowledgeArticleVersion WITH DATA CATEGORY Geography__c BELOW usa__c AND Product__c AT mobile_phones__c",
         @"SELECT fields(STANDARD) FROM KnowledgeArticleVersion WITH DATA CATEGORY Geography__c NEAR usa__c AND Product__c AT mobile_phones__c",
-        @"SELECT fields(what) FROM KnowledgeArticleVersion"
+        @"SELECT fields(what) FROM KnowledgeArticleVersion",
+        @"SELECT account from contact"
     ];
     [self writeSoqlTokensForQuerys:queries toFile:@"select_exprs.txt"];
 }

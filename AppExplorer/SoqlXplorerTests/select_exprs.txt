@@ -105,3 +105,10 @@ SELECT fields(what) FROM KnowledgeArticleVersion
   20-4   : Keyword         FROM                           completions 0 
   25-23  : Error           KnowledgeArticleVersion        completions 2 The SObject 'KnowledgeArticleVersion' does not exist or is inaccessible
 
+SELECT account from contact
+   0-6   : Keyword         SELECT                         completions 0 
+   7-7   : FieldPath       account                        completions 0 
+       7-7   : Error           account                        completions 32 Account is a relationship, it should be followed by a field
+  15-4   : Keyword         from                           completions 0 
+  20-7   : SObject         contact                        completions 2 
+

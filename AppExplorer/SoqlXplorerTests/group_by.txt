@@ -10,6 +10,7 @@ select amount, count(id) from account group by amount
   38-8   : Keyword         group by                       completions 0 
   47-6   : FieldPath       amount                         completions 0 
       47-6   : Field           amount                         completions 29 
+      47-6   : Error           amount                         completions 0 Field amount exists, but is not valid for use here
 
 select city, count(id) from account group by city
    0-6   : Keyword         select                         completions 0 
@@ -45,9 +46,9 @@ select city, count(id) from account group by city order by count(id) asc
 select count_distinct(city) from account group by calendar_year(lastModifiedDate)
    0-6   : Keyword         select                         completions 0 
    7-14  : Function        count_distinct                 completions 33 
-      22-4   : Error           city                           completions 0 Field city is not valid for this function
       22-4   : FieldPath       city                           completions 0 
           22-4   : Field           city                           completions 4 
+          22-4   : Error           city                           completions 0 Field city exists, but is not valid for use here
   28-4   : Keyword         from                           completions 0 
   33-7   : SObject         account                        completions 2 
   41-8   : Keyword         group by                       completions 0 
