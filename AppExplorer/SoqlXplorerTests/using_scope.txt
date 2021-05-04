@@ -1,15 +1,15 @@
 select id,(select name from contacts),name from account using scope team
    0-6   : Keyword         select                         completions 0 
    7-2   : FieldPath       id                             completions 0 
-       7-2   : Field           id                             completions 32 
+       7-2   : Field           id                             completions 33 
   10-27  : ChildSelect     (select name from contacts)    completions 0 
       11-6   : Keyword         select                         completions 0 
       18-4   : FieldPath       name                           completions 0 
-          18-4   : Field           name                           completions 31 
+          18-4   : Field           name                           completions 32 
       23-4   : Keyword         from                           completions 0 
       28-8   : Relationship    contacts                       completions 1 
   38-4   : FieldPath       name                           completions 0 
-      38-4   : Field           name                           completions 32 
+      38-4   : Field           name                           completions 33 
   43-4   : Keyword         from                           completions 0 
   48-7   : SObject         account                        completions 2 
   56-11  : Keyword         using scope                    completions 0 
@@ -18,15 +18,15 @@ select id,(select name from contacts),name from account using scope team
 select id,(select name from contacts),name from account using team
    0-6   : Keyword         select                         completions 0 
    7-2   : FieldPath       id                             completions 0 
-       7-2   : Field           id                             completions 32 
+       7-2   : Field           id                             completions 33 
   10-27  : ChildSelect     (select name from contacts)    completions 0 
       11-6   : Keyword         select                         completions 0 
       18-4   : FieldPath       name                           completions 0 
-          18-4   : Field           name                           completions 31 
+          18-4   : Field           name                           completions 32 
       23-4   : Keyword         from                           completions 0 
       28-8   : Relationship    contacts                       completions 1 
   38-4   : FieldPath       name                           completions 0 
-      38-4   : Field           name                           completions 32 
+      38-4   : Field           name                           completions 33 
   43-4   : Keyword         from                           completions 0 
   48-7   : SObject         account                        completions 2 
   56-5   : Error           using                          completions 0 Unexpected input 'using team' at position 57
@@ -34,15 +34,15 @@ select id,(select name from contacts),name from account using team
 select id,(select name from contacts),name from account scope team
    0-6   : Keyword         select                         completions 0 
    7-2   : FieldPath       id                             completions 0 
-       7-2   : Field           id                             completions 32 
+       7-2   : Field           id                             completions 33 
   10-27  : ChildSelect     (select name from contacts)    completions 0 
       11-6   : Keyword         select                         completions 0 
       18-4   : FieldPath       name                           completions 0 
-          18-4   : Field           name                           completions 31 
+          18-4   : Field           name                           completions 32 
       23-4   : Keyword         from                           completions 0 
       28-8   : Relationship    contacts                       completions 1 
   38-4   : FieldPath       name                           completions 0 
-      38-4   : Field           name                           completions 32 
+      38-4   : Field           name                           completions 33 
   43-4   : Keyword         from                           completions 0 
   48-7   : SObject         account                        completions 2 
   56-5   : AliasDecl       scope                          completions 0 
@@ -51,15 +51,15 @@ select id,(select name from contacts),name from account scope team
 select id,(select name from contacts),name from account using scope team team2
    0-6   : Keyword         select                         completions 0 
    7-2   : FieldPath       id                             completions 0 
-       7-2   : Field           id                             completions 32 
+       7-2   : Field           id                             completions 33 
   10-27  : ChildSelect     (select name from contacts)    completions 0 
       11-6   : Keyword         select                         completions 0 
       18-4   : FieldPath       name                           completions 0 
-          18-4   : Field           name                           completions 31 
+          18-4   : Field           name                           completions 32 
       23-4   : Keyword         from                           completions 0 
       28-8   : Relationship    contacts                       completions 1 
   38-4   : FieldPath       name                           completions 0 
-      38-4   : Field           name                           completions 32 
+      38-4   : Field           name                           completions 33 
   43-4   : Keyword         from                           completions 0 
   48-7   : SObject         account                        completions 2 
   56-11  : Keyword         using scope                    completions 0 

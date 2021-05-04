@@ -83,6 +83,7 @@ NSObject<Describer> *descs;
     account.name = @"Account";
     ZKDescribeField *fCity = [ZKDescribeField new];
     fCity.name = @"city";
+    fCity.groupable = TRUE;
     ZKDescribeField *fAmount = [ZKDescribeField new];
     fAmount.name = @"amount";
     fAmount.type = @"currency";

@@ -170,7 +170,8 @@ ExampleProvider fixed(NSString*value) {
         [self fn:@"Hour_In_Day" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime'" fnPred:cvzTzOnly]]],
         [self fn:@"Week_In_Month" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
         [self fn:@"Week_In_Year" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
-        
+        [self fn:@"Grouping" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"groupable=TRUE"]]],
+
         convCurrency, cvtTz, geoLoc
     ];
     NSMutableDictionary *d = [NSMutableDictionary dictionaryWithCapacity:fns.count];

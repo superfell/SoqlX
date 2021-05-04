@@ -1,35 +1,35 @@
 SELECT FORMAT(Name) Amt FROM account
    0-6   : Keyword         SELECT                         completions 0 
-   7-6   : Function        FORMAT                         completions 32 
+   7-6   : Function        FORMAT                         completions 33 
       14-4   : Error           Name                           completions 0 Field Name is not valid for this function
       14-4   : FieldPath       Name                           completions 0 
-          14-4   : Field           Name                           completions 28 
+          14-4   : Field           Name                           completions 29 
   20-3   : AliasDecl       Amt                            completions 0 
   24-4   : Keyword         FROM                           completions 0 
   29-7   : SObject         account                        completions 2 
 
 SELECT FORMAT(Namer) Amt FROM account
    0-6   : Keyword         SELECT                         completions 0 
-   7-6   : Function        FORMAT                         completions 32 
+   7-6   : Function        FORMAT                         completions 33 
       14-5   : FieldPath       Namer                          completions 0 
-          14-5   : Error           Namer                          completions 28 There is no field or relationship Namer on SObject Account
+          14-5   : Error           Namer                          completions 29 There is no field or relationship Namer on SObject Account
   21-3   : AliasDecl       Amt                            completions 0 
   25-4   : Keyword         FROM                           completions 0 
   30-7   : SObject         account                        completions 2 
 
 SELECT FORMAT(Namer) Amt FROM case
    0-6   : Keyword         SELECT                         completions 0 
-   7-6   : Function        FORMAT                         completions 27 
+   7-6   : Function        FORMAT                         completions 28 
       14-5   : FieldPath       Namer                          completions 0 
-          14-5   : Relationship    Namer                          completions 26 
+          14-5   : Relationship    Namer                          completions 27 
   21-3   : AliasDecl       Amt                            completions 0 
   25-4   : Keyword         FROM                           completions 0 
   30-4   : SObject         case                           completions 2 
 
 SELECT FORMAT(MIN(lastModifiedDate)) Amt FROM account
    0-6   : Keyword         SELECT                         completions 0 
-   7-6   : Function        FORMAT                         completions 32 
-      14-3   : Function        MIN                            completions 28 
+   7-6   : Function        FORMAT                         completions 33 
+      14-3   : Function        MIN                            completions 29 
           18-16  : FieldPath       lastModifiedDate               completions 0 
               18-16  : Field           lastModifiedDate               completions 4 
   37-3   : AliasDecl       Amt                            completions 0 
@@ -38,35 +38,35 @@ SELECT FORMAT(MIN(lastModifiedDate)) Amt FROM account
 
 SELECT format(convertCurrency(Amount)) FROM account WHERE amount > USD20
    0-6   : Keyword         SELECT                         completions 0 
-   7-6   : Function        format                         completions 32 
-      14-15  : Function        convertCurrency                completions 28 
+   7-6   : Function        format                         completions 33 
+      14-15  : Function        convertCurrency                completions 29 
           30-6   : FieldPath       Amount                         completions 0 
               30-6   : Field           Amount                         completions 1 
   39-4   : Keyword         FROM                           completions 0 
   44-7   : SObject         account                        completions 2 
   52-5   : Keyword         WHERE                          completions 0 
   58-6   : FieldPath       amount                         completions 0 
-      58-6   : Field           amount                         completions 32 
+      58-6   : Field           amount                         completions 33 
   65-1   : Op              >                              completions 11 
   67-5   : NamedDateTime   USD20                          completions 0 
 
 SELECT format(max(Amount)) FROM account WHERE amount > USD20
    0-6   : Keyword         SELECT                         completions 0 
-   7-6   : Function        format                         completions 32 
-      14-3   : Function        max                            completions 28 
+   7-6   : Function        format                         completions 33 
+      14-3   : Function        max                            completions 29 
           18-6   : FieldPath       Amount                         completions 0 
               18-6   : Field           Amount                         completions 4 
   27-4   : Keyword         FROM                           completions 0 
   32-7   : SObject         account                        completions 2 
   40-5   : Keyword         WHERE                          completions 0 
   46-6   : FieldPath       amount                         completions 0 
-      46-6   : Field           amount                         completions 32 
+      46-6   : Field           amount                         completions 33 
   53-1   : Op              >                              completions 11 
   55-5   : NamedDateTime   USD20                          completions 0 
 
 SELECT max(convertCurrency(Amount)) FROM account WHERE amount > USD20
    0-6   : Keyword         SELECT                         completions 0 
-   7-3   : Function        max                            completions 32 
+   7-3   : Function        max                            completions 33 
       11-15  : Function        convertCurrency                completions 4 
           27-6   : FieldPath       Amount                         completions 0 
               27-6   : Field           Amount                         completions 1 
@@ -74,14 +74,14 @@ SELECT max(convertCurrency(Amount)) FROM account WHERE amount > USD20
   41-7   : SObject         account                        completions 2 
   49-5   : Keyword         WHERE                          completions 0 
   55-6   : FieldPath       amount                         completions 0 
-      55-6   : Field           amount                         completions 32 
+      55-6   : Field           amount                         completions 33 
   62-1   : Op              >                              completions 11 
   64-5   : NamedDateTime   USD20                          completions 0 
 
 SELECT format(convertCurrency(city)) FROM account WHERE amount > USD20
    0-6   : Keyword         SELECT                         completions 0 
-   7-6   : Function        format                         completions 32 
-      14-15  : Function        convertCurrency                completions 28 
+   7-6   : Function        format                         completions 33 
+      14-15  : Function        convertCurrency                completions 29 
           30-4   : Error           city                           completions 0 Field city is not valid for this function
           30-4   : FieldPath       city                           completions 0 
               30-4   : Field           city                           completions 1 
@@ -89,15 +89,15 @@ SELECT format(convertCurrency(city)) FROM account WHERE amount > USD20
   42-7   : SObject         account                        completions 2 
   50-5   : Keyword         WHERE                          completions 0 
   56-6   : FieldPath       amount                         completions 0 
-      56-6   : Field           amount                         completions 32 
+      56-6   : Field           amount                         completions 33 
   63-1   : Op              >                              completions 11 
   65-5   : NamedDateTime   USD20                          completions 0 
 
 SELECT name, DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') FROM account WHERE DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') > 20
    0-6   : Keyword         SELECT                         completions 0 
    7-4   : FieldPath       name                           completions 0 
-       7-4   : Field           name                           completions 32 
-  13-8   : Function        DISTANCE                       completions 32 
+       7-4   : Field           name                           completions 33 
+  13-8   : Function        DISTANCE                       completions 33 
       22-10  : FieldPath       mailing__c                     completions 0 
           22-10  : Error           mailing__c                     completions 0 There is no field or relationship mailing__c on SObject Account
       34-11  : Function        GEOLOCATION                    completions 1 
@@ -107,7 +107,7 @@ SELECT name, DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') FROM account WHERE DIS
   58-4   : Keyword         FROM                           completions 0 
   63-7   : SObject         account                        completions 2 
   71-5   : Keyword         WHERE                          completions 0 
-  77-8   : Function        DISTANCE                       completions 32 
+  77-8   : Function        DISTANCE                       completions 33 
       86-10  : FieldPath       mailing__c                     completions 0 
           86-10  : Error           mailing__c                     completions 0 There is no field or relationship mailing__c on SObject Account
       98-11  : Function        GEOLOCATION                    completions 1 
@@ -119,16 +119,16 @@ SELECT name, DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') FROM account WHERE DIS
 
 select max(name) from account where CALENDARY_YEAR(createdDate) > 2018
    0-6   : Keyword         select                         completions 0 
-   7-3   : Function        max                            completions 32 
+   7-3   : Function        max                            completions 33 
       11-4   : FieldPath       name                           completions 0 
           11-4   : Field           name                           completions 4 
   17-4   : Keyword         from                           completions 0 
   22-7   : SObject         account                        completions 2 
   30-5   : Keyword         where                          completions 0 
   36-14  : Error           CALENDARY_YEAR                 completions 0 There is no function named 'CALENDARY_YEAR'
-  36-14  : Function        CALENDARY_YEAR                 completions 32 
+  36-14  : Function        CALENDARY_YEAR                 completions 33 
       51-11  : FieldPath       createdDate                    completions 0 
-          51-11  : Error           createdDate                    completions 32 There is no field or relationship createdDate on SObject Account
+          51-11  : Error           createdDate                    completions 33 There is no field or relationship createdDate on SObject Account
   64-1   : Op              >                              completions 11 
   66-4   : Number          2018                           completions 0 
 
@@ -136,41 +136,41 @@ SELECT count() FROM Contact c, c.Account a WHERE a.name = 'MyriadPubs'
    0-6   : Keyword         SELECT                         completions 0 
    7-5   : Error           count                          completions 0 expecting whitespace at position 13
    7-5   : FieldPath       count                          completions 0 
-       7-5   : Relationship    count                          completions 27 
+       7-5   : Relationship    count                          completions 28 
 
 SELECT count() FROM Contact WHERE account.name = 'Salesforce.com'
    0-6   : Keyword         SELECT                         completions 0 
    7-5   : Error           count                          completions 0 expecting whitespace at position 13
    7-5   : FieldPath       count                          completions 0 
-       7-5   : Relationship    count                          completions 27 
+       7-5   : Relationship    count                          completions 28 
 
 SELECT count() FROM Contact c, c.Account a, a.CreatedBy u WHERE u.alias = 'Sfell'
    0-6   : Keyword         SELECT                         completions 0 
    7-5   : Error           count                          completions 0 expecting whitespace at position 13
    7-5   : FieldPath       count                          completions 0 
-       7-5   : Relationship    count                          completions 27 
+       7-5   : Relationship    count                          completions 28 
 
 SELECT count() FROM Contact c, a.CreatedBy u, c.Account a WHERE u.alias = 'Sfell'
    0-6   : Keyword         SELECT                         completions 0 
    7-5   : Error           count                          completions 0 expecting whitespace at position 13
    7-5   : FieldPath       count                          completions 0 
-       7-5   : Relationship    count                          completions 27 
+       7-5   : Relationship    count                          completions 28 
 
 SELECT count() FROM Contact c, c.CreatedBy u, c.Account a WHERE u.alias = 'Sfell' and a.Name > 'a'
    0-6   : Keyword         SELECT                         completions 0 
    7-5   : Error           count                          completions 0 expecting whitespace at position 13
    7-5   : FieldPath       count                          completions 0 
-       7-5   : Relationship    count                          completions 27 
+       7-5   : Relationship    count                          completions 28 
 
 SELECT count() FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and a.alias='Sfell'
    0-6   : Keyword         SELECT                         completions 0 
    7-5   : Error           count                          completions 0 expecting whitespace at position 13
    7-5   : FieldPath       count                          completions 0 
-       7-5   : Relationship    count                          completions 27 
+       7-5   : Relationship    count                          completions 28 
 
 SELECT calendar_year(lastModifiedDate) from account
    0-6   : Keyword         SELECT                         completions 0 
-   7-13  : Function        calendar_year                  completions 32 
+   7-13  : Function        calendar_year                  completions 33 
       21-16  : FieldPath       lastModifiedDate               completions 0 
           21-16  : Field           lastModifiedDate               completions 2 
   39-4   : Keyword         from                           completions 0 
@@ -178,7 +178,7 @@ SELECT calendar_year(lastModifiedDate) from account
 
 SELECT calendar_year(createdDate) from account
    0-6   : Keyword         SELECT                         completions 0 
-   7-13  : Function        calendar_year                  completions 32 
+   7-13  : Function        calendar_year                  completions 33 
       21-11  : FieldPath       createdDate                    completions 0 
           21-11  : Error           createdDate                    completions 2 There is no field or relationship createdDate on SObject Account
   34-4   : Keyword         from                           completions 0 
@@ -186,7 +186,7 @@ SELECT calendar_year(createdDate) from account
 
 SELECT calendar_year(name) from account
    0-6   : Keyword         SELECT                         completions 0 
-   7-13  : Function        calendar_year                  completions 32 
+   7-13  : Function        calendar_year                  completions 33 
       21-4   : Error           name                           completions 0 Field name is not valid for this function
       21-4   : FieldPath       name                           completions 0 
           21-4   : Field           name                           completions 2 
@@ -195,20 +195,20 @@ SELECT calendar_year(name) from account
 
 SELECT calendar_year(lastModifiedDate), count(id) from account group by calendar_year(lastModifiedDate) order by calendar_year(name) desc
    0-6   : Keyword         SELECT                         completions 0 
-   7-13  : Function        calendar_year                  completions 32 
+   7-13  : Function        calendar_year                  completions 33 
       21-16  : FieldPath       lastModifiedDate               completions 0 
           21-16  : Field           lastModifiedDate               completions 2 
-  40-5   : Function        count                          completions 32 
+  40-5   : Function        count                          completions 33 
       46-2   : FieldPath       id                             completions 0 
           46-2   : Field           id                             completions 4 
   50-4   : Keyword         from                           completions 0 
   55-7   : SObject         account                        completions 2 
   63-8   : Keyword         group by                       completions 0 
-  72-13  : Function        calendar_year                  completions 32 
+  72-13  : Function        calendar_year                  completions 33 
       86-16  : FieldPath       lastModifiedDate               completions 0 
           86-16  : Field           lastModifiedDate               completions 2 
  104-8   : Keyword         order by                       completions 0 
- 113-13  : Function        calendar_year                  completions 32 
+ 113-13  : Function        calendar_year                  completions 33 
      127-4   : Error           name                           completions 0 Field name is not valid for this function
      127-4   : FieldPath       name                           completions 0 
          127-4   : Field           name                           completions 2 
@@ -216,40 +216,40 @@ SELECT calendar_year(lastModifiedDate), count(id) from account group by calendar
 
 SELECT calendar_year(lastModifiedDate), count(id) from account group by rollup (calendar_year(createdDate)) order by calendar_year(createdDate) desc
    0-6   : Keyword         SELECT                         completions 0 
-   7-13  : Function        calendar_year                  completions 32 
+   7-13  : Function        calendar_year                  completions 33 
       21-16  : FieldPath       lastModifiedDate               completions 0 
           21-16  : Field           lastModifiedDate               completions 2 
-  40-5   : Function        count                          completions 32 
+  40-5   : Function        count                          completions 33 
       46-2   : FieldPath       id                             completions 0 
           46-2   : Field           id                             completions 4 
   50-4   : Keyword         from                           completions 0 
   55-7   : SObject         account                        completions 2 
   63-15  : Keyword         group by rollup                completions 0 
-  80-13  : Function        calendar_year                  completions 32 
+  80-13  : Function        calendar_year                  completions 33 
       94-11  : FieldPath       createdDate                    completions 0 
           94-11  : Error           createdDate                    completions 2 There is no field or relationship createdDate on SObject Account
  108-8   : Keyword         order by                       completions 0 
- 117-13  : Function        calendar_year                  completions 32 
+ 117-13  : Function        calendar_year                  completions 33 
      131-11  : FieldPath       createdDate                    completions 0 
          131-11  : Error           createdDate                    completions 2 There is no field or relationship createdDate on SObject Account
  144-4   : Keyword         desc                           completions 0 
 
 SELECT calendar_year(lastModifiedDate), count(id) from account group by cube( calendar_year(createdDate)) order by calendar_year(createdDate) desc
    0-6   : Keyword         SELECT                         completions 0 
-   7-13  : Function        calendar_year                  completions 32 
+   7-13  : Function        calendar_year                  completions 33 
       21-16  : FieldPath       lastModifiedDate               completions 0 
           21-16  : Field           lastModifiedDate               completions 2 
-  40-5   : Function        count                          completions 32 
+  40-5   : Function        count                          completions 33 
       46-2   : FieldPath       id                             completions 0 
           46-2   : Field           id                             completions 4 
   50-4   : Keyword         from                           completions 0 
   55-7   : SObject         account                        completions 2 
   63-13  : Keyword         group by cube                  completions 0 
-  78-13  : Function        calendar_year                  completions 32 
+  78-13  : Function        calendar_year                  completions 33 
       92-11  : FieldPath       createdDate                    completions 0 
           92-11  : Error           createdDate                    completions 2 There is no field or relationship createdDate on SObject Account
  106-8   : Keyword         order by                       completions 0 
- 115-13  : Function        calendar_year                  completions 32 
+ 115-13  : Function        calendar_year                  completions 33 
      129-11  : FieldPath       createdDate                    completions 0 
          129-11  : Error           createdDate                    completions 2 There is no field or relationship createdDate on SObject Account
  142-4   : Keyword         desc                           completions 0 
@@ -257,54 +257,54 @@ SELECT calendar_year(lastModifiedDate), count(id) from account group by cube( ca
 SELECT email, count(id) from contact group by email order by email nulls last
    0-6   : Keyword         SELECT                         completions 0 
    7-5   : FieldPath       email                          completions 0 
-       7-5   : Error           email                          completions 31 There is no field or relationship email on SObject Contact
-  14-5   : Function        count                          completions 31 
+       7-5   : Error           email                          completions 32 There is no field or relationship email on SObject Contact
+  14-5   : Function        count                          completions 32 
       20-2   : FieldPath       id                             completions 0 
           20-2   : Field           id                             completions 3 
   24-4   : Keyword         from                           completions 0 
   29-7   : SObject         contact                        completions 2 
   37-8   : Keyword         group by                       completions 0 
   46-5   : FieldPath       email                          completions 0 
-      46-5   : Error           email                          completions 31 There is no field or relationship email on SObject Contact
+      46-5   : Error           email                          completions 32 There is no field or relationship email on SObject Contact
   52-8   : Keyword         order by                       completions 0 
   61-5   : FieldPath       email                          completions 0 
-      61-5   : Error           email                          completions 31 There is no field or relationship email on SObject Contact
+      61-5   : Error           email                          completions 32 There is no field or relationship email on SObject Contact
   67-10  : Keyword         nulls last                     completions 0 
 
 SELECT email, count(id) from contact group by email having count(id) > 1 order by email nulls last
    0-6   : Keyword         SELECT                         completions 0 
    7-5   : FieldPath       email                          completions 0 
-       7-5   : Error           email                          completions 31 There is no field or relationship email on SObject Contact
-  14-5   : Function        count                          completions 31 
+       7-5   : Error           email                          completions 32 There is no field or relationship email on SObject Contact
+  14-5   : Function        count                          completions 32 
       20-2   : FieldPath       id                             completions 0 
           20-2   : Field           id                             completions 3 
   24-4   : Keyword         from                           completions 0 
   29-7   : SObject         contact                        completions 2 
   37-8   : Keyword         group by                       completions 0 
   46-5   : FieldPath       email                          completions 0 
-      46-5   : Error           email                          completions 31 There is no field or relationship email on SObject Contact
+      46-5   : Error           email                          completions 32 There is no field or relationship email on SObject Contact
   52-6   : Keyword         having                         completions 0 
-  59-5   : Function        count                          completions 31 
+  59-5   : Function        count                          completions 32 
       65-2   : FieldPath       id                             completions 0 
           65-2   : Field           id                             completions 3 
   69-1   : Op              >                              completions 11 
   71-1   : Number          1                              completions 0 
   73-8   : Keyword         order by                       completions 0 
   82-5   : FieldPath       email                          completions 0 
-      82-5   : Error           email                          completions 31 There is no field or relationship email on SObject Contact
+      82-5   : Error           email                          completions 32 There is no field or relationship email on SObject Contact
   88-10  : Keyword         nulls last                     completions 0 
 
 SELECT email, bogus(id) from contact group by email
    0-6   : Keyword         SELECT                         completions 0 
    7-5   : FieldPath       email                          completions 0 
-       7-5   : Error           email                          completions 31 There is no field or relationship email on SObject Contact
+       7-5   : Error           email                          completions 32 There is no field or relationship email on SObject Contact
   14-5   : Error           bogus                          completions 0 There is no function named 'bogus'
-  14-5   : Function        bogus                          completions 31 
+  14-5   : Function        bogus                          completions 32 
       20-2   : FieldPath       id                             completions 0 
-          20-2   : Field           id                             completions 31 
+          20-2   : Field           id                             completions 32 
   24-4   : Keyword         from                           completions 0 
   29-7   : SObject         contact                        completions 2 
   37-8   : Keyword         group by                       completions 0 
   46-5   : FieldPath       email                          completions 0 
-      46-5   : Error           email                          completions 31 There is no field or relationship email on SObject Contact
+      46-5   : Error           email                          completions 32 There is no field or relationship email on SObject Contact
 

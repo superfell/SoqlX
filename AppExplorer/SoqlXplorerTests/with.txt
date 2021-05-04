@@ -1,7 +1,7 @@
 select name from account WITH DATA CATEGORY Geography__c AT asia__c
    0-6   : Keyword         select                         completions 0 
    7-4   : FieldPath       name                           completions 0 
-       7-4   : Field           name                           completions 32 
+       7-4   : Field           name                           completions 33 
   12-4   : Keyword         from                           completions 0 
   17-7   : SObject         account                        completions 2 
   25-18  : Keyword         WITH DATA CATEGORY             completions 0 
@@ -12,7 +12,7 @@ select name from account WITH DATA CATEGORY Geography__c AT asia__c
 select name from account WITH DATA CATEGORY Geography__c AT asia__c AND product__c BELOW electronics__c
    0-6   : Keyword         select                         completions 0 
    7-4   : FieldPath       name                           completions 0 
-       7-4   : Field           name                           completions 32 
+       7-4   : Field           name                           completions 33 
   12-4   : Keyword         from                           completions 0 
   17-7   : SObject         account                        completions 2 
   25-18  : Keyword         WITH DATA CATEGORY             completions 0 
@@ -27,7 +27,7 @@ select name from account WITH DATA CATEGORY Geography__c AT asia__c AND product_
 select name from account WITH DATA CATEGORY Geography__c AT asia__c OR product__c BELOW electronics__c
    0-6   : Keyword         select                         completions 0 
    7-4   : FieldPath       name                           completions 0 
-       7-4   : Field           name                           completions 32 
+       7-4   : Field           name                           completions 33 
   12-4   : Keyword         from                           completions 0 
   17-7   : SObject         account                        completions 2 
   25-18  : Keyword         WITH DATA CATEGORY             completions 0 
@@ -39,7 +39,7 @@ select name from account WITH DATA CATEGORY Geography__c AT asia__c OR product__
 select name from account WITH DATA CATEGORY Geography__c NEAR asia__c
    0-6   : Keyword         select                         completions 0 
    7-4   : FieldPath       name                           completions 0 
-       7-4   : Field           name                           completions 32 
+       7-4   : Field           name                           completions 33 
   12-4   : Keyword         from                           completions 0 
   17-7   : SObject         account                        completions 2 
   25-18  : Keyword         WITH DATA CATEGORY             completions 0 
