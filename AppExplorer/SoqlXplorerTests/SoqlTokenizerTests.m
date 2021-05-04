@@ -180,7 +180,7 @@ NSObject<Describer> *descs;
 }
 
 -(void)testForDebugging {
-    [self writeSoqlTokensForQuerys:@[@"SELECT subject, TYPEOF what WHEN account Then id,BillingCity,createdBy.alias WHEN opportunity then name,nextStep ELSE id,email END FROM Task"] toFile:@"debug.txt" withDebug:YES];
+    [self writeSoqlTokensForQuerys:@[@"select amount, count(id) from account group by amount"] toFile:@"debug.txt" withDebug:YES];
 }
 
 - (void)testWhere {
@@ -223,6 +223,7 @@ NSObject<Describer> *descs;
 
 - (void)testGroupBy {
     NSArray<NSString*>* queries = @[
+        @"select amount, count(id) from account group by amount", // amount is not groupable in describe
         @"select city, count(id) from account group by city",
         @"select city, count(id) from account group by city order by count(id) asc",
         // city is not aggregatable, so there should be an error for the count_distinct(city) expr

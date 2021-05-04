@@ -189,11 +189,11 @@ const NSString *KeySoqlText = @"soql";
         } while(true);
         
         return [[f seq:seq] onMatch:^ZKParserResult*(ZKArrayParserResult*r) {
-            Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
-            t.type = type;
-            t.value = t;
-            r.val = t;
-            [r.userContext[KeyTokens] addToken:t];
+            Token *tkn = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
+            tkn.type = type;
+            tkn.value = t;
+            r.val = tkn;
+            [r.userContext[KeyTokens] addToken:tkn];
             return r;
         }];
     };

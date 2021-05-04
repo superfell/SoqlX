@@ -204,7 +204,7 @@ SELECT calendar_year(lastModifiedDate), count(id) from account group by calendar
   50-4   : Keyword         from                           completions 0 
   55-7   : SObject         account                        completions 2 
   63-8   : Keyword         group by                       completions 0 
-  72-13  : Function        calendar_year                  completions 33 
+  72-13  : Function        calendar_year                  completions 29 
       86-16  : FieldPath       lastModifiedDate               completions 0 
           86-16  : Field           lastModifiedDate               completions 2 
  104-8   : Keyword         order by                       completions 0 
@@ -225,7 +225,7 @@ SELECT calendar_year(lastModifiedDate), count(id) from account group by rollup (
   50-4   : Keyword         from                           completions 0 
   55-7   : SObject         account                        completions 2 
   63-15  : Keyword         group by rollup                completions 0 
-  80-13  : Function        calendar_year                  completions 33 
+  80-13  : Function        calendar_year                  completions 29 
       94-11  : FieldPath       createdDate                    completions 0 
           94-11  : Error           createdDate                    completions 2 There is no field or relationship createdDate on SObject Account
  108-8   : Keyword         order by                       completions 0 
@@ -245,7 +245,7 @@ SELECT calendar_year(lastModifiedDate), count(id) from account group by cube( ca
   50-4   : Keyword         from                           completions 0 
   55-7   : SObject         account                        completions 2 
   63-13  : Keyword         group by cube                  completions 0 
-  78-13  : Function        calendar_year                  completions 33 
+  78-13  : Function        calendar_year                  completions 29 
       92-11  : FieldPath       createdDate                    completions 0 
           92-11  : Error           createdDate                    completions 2 There is no field or relationship createdDate on SObject Account
  106-8   : Keyword         order by                       completions 0 
@@ -265,7 +265,7 @@ SELECT email, count(id) from contact group by email order by email nulls last
   29-7   : SObject         contact                        completions 2 
   37-8   : Keyword         group by                       completions 0 
   46-5   : FieldPath       email                          completions 0 
-      46-5   : Error           email                          completions 32 There is no field or relationship email on SObject Contact
+      46-5   : Error           email                          completions 29 There is no field or relationship email on SObject Contact
   52-8   : Keyword         order by                       completions 0 
   61-5   : FieldPath       email                          completions 0 
       61-5   : Error           email                          completions 32 There is no field or relationship email on SObject Contact
@@ -282,7 +282,7 @@ SELECT email, count(id) from contact group by email having count(id) > 1 order b
   29-7   : SObject         contact                        completions 2 
   37-8   : Keyword         group by                       completions 0 
   46-5   : FieldPath       email                          completions 0 
-      46-5   : Error           email                          completions 32 There is no field or relationship email on SObject Contact
+      46-5   : Error           email                          completions 29 There is no field or relationship email on SObject Contact
   52-6   : Keyword         having                         completions 0 
   59-5   : Function        count                          completions 32 
       65-2   : FieldPath       id                             completions 0 
@@ -306,5 +306,5 @@ SELECT email, bogus(id) from contact group by email
   29-7   : SObject         contact                        completions 2 
   37-8   : Keyword         group by                       completions 0 
   46-5   : FieldPath       email                          completions 0 
-      46-5   : Error           email                          completions 32 There is no field or relationship email on SObject Contact
+      46-5   : Error           email                          completions 29 There is no field or relationship email on SObject Contact
 

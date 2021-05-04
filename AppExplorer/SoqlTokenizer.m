@@ -107,7 +107,7 @@ static NSString *KeyCompletions = @"completions";
 -(Tokens*)parseAndResolve:(NSString*)soql {
     [self scanWithParser:soql];
     [self resolveTokens:self.tokens];
-//    NSLog(@"resolved tokens\n%@\n", self.tokens);
+    NSLog(@"resolved tokens\n%@\n", self.tokens);
     return self.tokens;
 }
 
@@ -152,19 +152,28 @@ static NSString *KeyCompletions = @"completions";
 
 -(void)resolveSelectExprs:(Tokens*)tokens ctx:(Context*)ctx {
     NSMutableArray<Token*> *newTokens = [NSMutableArray arrayWithCapacity:4];
-    NSMutableArray<Token*> *delTokens = [NSMutableArray arrayWithCapacity:4];
+    NSPredicate *groupable = [NSPredicate predicateWithFormat:@"groupable=TRUE"];
+    __block BOOL inGroupBy = FALSE;
+    __block NSPredicate *oldFilter = nil;
     [tokens.tokens enumerateObjectsUsingBlock:^(Token * _Nonnull sel, NSUInteger idx, BOOL * _Nonnull stop) {
-        [self resolveSelectExpr:sel new:newTokens del:delTokens ctx:ctx];
+        if (!inGroupBy && (sel.type == TTKeyword) && ([sel.value isEqualTo:@"GROUP BY"] ||
+                                      [sel.value isEqualTo:@"GROUP BY ROLLUP"] ||
+                                      [sel.value isEqualTo:@"GROUP BY CUBE"])) {
+            inGroupBy = TRUE;
+            oldFilter = ctx.fieldCompletionsFilter;
+            ctx.fieldCompletionsFilter = groupable;
+        } else if (inGroupBy && (sel.type == TTKeyword)) {
+            inGroupBy = FALSE;
+            ctx.fieldCompletionsFilter = oldFilter;
+        }
+        [self resolveSelectExpr:sel new:newTokens ctx:ctx];
     }];
-    for (Token *t in delTokens) {
-        [tokens removeToken:t];
-    }
     for (Token *t in newTokens) {
         [tokens addToken:t];
     }
 }
 
--(void)resolveSelectExpr:(Token*)expr new:(NSMutableArray<Token*>*)newTokens del:(NSMutableArray<Token*>*)delTokens ctx:(Context*)ctx {
+-(void)resolveSelectExpr:(Token*)expr new:(NSMutableArray<Token*>*)newTokens ctx:(Context*)ctx {
     switch (expr.type) {
         case TTFieldPath:
             [self resolveFieldPath:expr ctx:ctx];
@@ -204,7 +213,6 @@ static NSString *KeyCompletions = @"completions";
         [newTokens addObject:err];
     }
     NSMutableArray *argsNewTokens = [NSMutableArray array];
-    NSMutableArray *argsDelTokens = [NSMutableArray array];
     NSEnumerator<SoqlFuncArg*> *fnArgs = fn.args.objectEnumerator;
     NSPredicate *fieldFilter = ctx.fieldCompletionsFilter;
     NSPredicate *fnFilter = ctx.fnCompletionsFilter;
@@ -214,7 +222,7 @@ static NSString *KeyCompletions = @"completions";
         ctx.fieldCompletionsFilter = argSpec.fieldFilter;
         ctx.restrictCompletionsToType = argSpec.type;
         ctx.fnCompletionsFilter = argSpec.funcFilter;
-        [self resolveSelectExpr:argToken new:argsNewTokens del:argsDelTokens ctx:ctx];
+        [self resolveSelectExpr:argToken new:argsNewTokens ctx:ctx];
         Token *newToken = [argSpec validateToken:argToken];
         if (newToken != nil) {
             [argsNewTokens addObject:newToken];
@@ -223,9 +231,6 @@ static NSString *KeyCompletions = @"completions";
     ctx.fieldCompletionsFilter = fieldFilter;
     ctx.fnCompletionsFilter = fnFilter;
     ctx.restrictCompletionsToType = completionRestriction;
-    for (Token *t in argsDelTokens) {
-        [argTokens removeToken:t];
-    }
     for (Token *t in argsNewTokens) {
         [argTokens addToken:t];
     }
