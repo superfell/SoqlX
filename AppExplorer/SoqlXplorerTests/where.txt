@@ -478,7 +478,7 @@ select name from account where name bob 'bob'
   31-4   : FieldPath       name                           completions 0 
       31-4   : Field           name                           completions 33 
   36-3   : AliasDecl       bob                            completions 0 
-  40-5   : Error           'bob'                          completions 11 expecting one of <,<=,>,>=,=,!=,LIKE at position 41
+  40-5   : Error           'bob'                          completions 11 expecting one of <,<=,>,>=,=,!=,LIKE,INCLUDES,EXCLUDES,IN,NOT IN at position 41
 
 select name from account where name ^ 'bob'
    0-6   : Keyword         select                         completions 0 
@@ -489,5 +489,5 @@ select name from account where name ^ 'bob'
   25-5   : Keyword         where                          completions 0 
   31-4   : FieldPath       name                           completions 0 
       31-4   : Field           name                           completions 33 
-  36-1   : Error           ^                              completions 11 expecting one of <,<=,>,>=,=,!=,LIKE at position 37
+  36-1   : Error           ^                              completions 11 expecting one of <,<=,>,>=,=,!=,LIKE,INCLUDES,EXCLUDES,IN,NOT IN at position 37
 

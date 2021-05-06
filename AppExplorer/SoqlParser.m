@@ -387,7 +387,7 @@ const NSString *KeySoqlText = @"soql";
         } else {
             *err = [NSError errorWithDomain:@"Parser" code:33 userInfo:@{
                 NSLocalizedDescriptionKey:[NSString stringWithFormat:@"expecting one of %@ at position %lu",
-                                           [opCompletions valueForKey:@"displayText"], input.pos+1],
+                                           [[opCompletions valueForKey:@"displayText"] componentsJoinedByString:@","], input.pos+1],
                 @"Position": @(input.pos+1),
                 @"Completions" : opCompletions
             }];
@@ -412,7 +412,7 @@ const NSString *KeySoqlText = @"soql";
         }
         return r;
     }];
-    ZKBaseParser *operatorRHS = [f oneOf:@[
+    ZKBaseParser *operatorRHS = [f firstOf:@[
         [f seq:@[operator, cut, maybeWs, literalValue]],
         [f seq:@[opIncExcl, cut, maybeWs, literalStringList]],
         [f seq:@[opInNotIn, cut, maybeWs, semiJoinValues]]]];
