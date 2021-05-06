@@ -432,7 +432,7 @@ const NSString *KeySoqlText = @"soql";
     // use parserRef so that we can set up the recursive decent for x op y and (y op z or z op t)
     // be careful not to use oneOf with it as that will recurse infinitly because it checks all branches.
     ZKParserRef *exprList = [f parserRef];
-    ZKBaseParser *parens = [f onMatch:[f seq:@[[f eq:@"("], maybeWs, exprList, maybeWs, [f eq:@")"]]] perform:pick(2)];
+    ZKBaseParser *parensExpr = [f onMatch:[f seq:@[[f eq:@"("], maybeWs, exprList, maybeWs, [f eq:@")"]]] perform:pick(2)];
 
     // we don't want to add the and/or token to context as soon as possible because OR is ambigious with ORDER BY. we need to wait til we pass
     // the whitespace tests.
@@ -443,7 +443,7 @@ const NSString *KeySoqlText = @"soql";
         return r;
     }];
     ZKBaseParser *not = [f seq:@[tokenSeqType(@"NOT", TTOperator), maybeWs]];
-    exprList.parser = [f seq:@[[f zeroOrOne:not],[f firstOf:@[parens, baseExpr]], [f zeroOrOne:[f seq:@[andOr, exprList]]]]];
+    exprList.parser = [f seq:@[[f zeroOrOne:not],[f firstOf:@[parensExpr, baseExpr]], [f zeroOrOne:[f seq:@[andOr, exprList]]]]];
     
     ZKBaseParser *where = [f zeroOrOne:[f seq:@[ws ,tokenSeq(@"WHERE"), cut, ws, exprList]]];
     
@@ -485,7 +485,7 @@ const NSString *KeySoqlText = @"soql";
     ZKBaseParser *groupByClause = [f zeroOrOne:[f seq:@[[f firstOf:@[groupByRollup, groupByCube, groupBy]], having]]];
     
     /// ORDER BY
-    ZKBaseParser *ascDesc = [f seq:@[ws,  oneOfTokensWithCompletions(TTKeyword, @[@"ASC",@"DESC"], nil, TRUE)]];
+    ZKBaseParser *ascDesc = [f seq:@[ws, oneOfTokensWithCompletions(TTKeyword, @[@"ASC",@"DESC"], nil, TRUE)]];
     ZKBaseParser *nulls = [f seq:@[ws, tokenSeq(@"NULLS"), ws, oneOfTokensWithCompletions(TTKeyword, @[@"FIRST",@"LAST"],nil, TRUE)]];
                                 
     ZKBaseParser *orderByField = [f seq:@[fieldOrFunc, [f zeroOrOne:ascDesc], [f zeroOrOne:nulls]]];
@@ -517,7 +517,4 @@ const NSString *KeySoqlText = @"soql";
     return selectStmt;
 }
 
-
 @end
-
-
