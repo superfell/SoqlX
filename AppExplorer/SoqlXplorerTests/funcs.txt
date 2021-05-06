@@ -199,7 +199,7 @@ SELECT calendar_year(lastModifiedDate), count(id) from account group by calendar
      127-4   : FieldPath       name                           completions 0 
          127-4   : Field           name                           completions 2 
          127-4   : Error           name                           completions 0 Field Name exists, but is not valid for use here
- 133-4   : Keyword         desc                           completions 0 
+ 133-4   : Keyword         desc                           completions 2 
 
 SELECT calendar_year(lastModifiedDate), count(id) from account group by rollup (calendar_year(createdDate)) order by calendar_year(createdDate) desc
    0-6   : Keyword         SELECT                         completions 0 
@@ -219,7 +219,7 @@ SELECT calendar_year(lastModifiedDate), count(id) from account group by rollup (
  117-13  : Function        calendar_year                  completions 33 
      131-11  : FieldPath       createdDate                    completions 0 
          131-11  : Error           createdDate                    completions 2 There is no field or relationship createdDate on SObject Account
- 144-4   : Keyword         desc                           completions 0 
+ 144-4   : Keyword         desc                           completions 2 
 
 SELECT calendar_year(lastModifiedDate), count(id) from account group by cube( calendar_year(createdDate)) order by calendar_year(createdDate) desc
    0-6   : Keyword         SELECT                         completions 0 
@@ -239,7 +239,7 @@ SELECT calendar_year(lastModifiedDate), count(id) from account group by cube( ca
  115-13  : Function        calendar_year                  completions 33 
      129-11  : FieldPath       createdDate                    completions 0 
          129-11  : Error           createdDate                    completions 2 There is no field or relationship createdDate on SObject Account
- 142-4   : Keyword         desc                           completions 0 
+ 142-4   : Keyword         desc                           completions 2 
 
 SELECT email, count(id) from contact group by email order by email nulls last
    0-6   : Keyword         SELECT                         completions 0 
@@ -256,7 +256,8 @@ SELECT email, count(id) from contact group by email order by email nulls last
   52-8   : Keyword         order by                       completions 0 
   61-5   : FieldPath       email                          completions 0 
       61-5   : Error           email                          completions 32 There is no field or relationship email on SObject Contact
-  67-10  : Keyword         nulls last                     completions 0 
+  67-5   : Keyword         nulls                          completions 0 
+  73-4   : Keyword         last                           completions 2 
 
 SELECT email, count(id) from contact group by email having count(id) > 1 order by email nulls last
    0-6   : Keyword         SELECT                         completions 0 
@@ -279,7 +280,8 @@ SELECT email, count(id) from contact group by email having count(id) > 1 order b
   73-8   : Keyword         order by                       completions 0 
   82-5   : FieldPath       email                          completions 0 
       82-5   : Error           email                          completions 32 There is no field or relationship email on SObject Contact
-  88-10  : Keyword         nulls last                     completions 0 
+  88-5   : Keyword         nulls                          completions 0 
+  94-4   : Keyword         last                           completions 2 
 
 SELECT email, bogus(id) from contact group by email
    0-6   : Keyword         SELECT                         completions 0 

@@ -41,7 +41,7 @@ select city, count(id) from account group by city order by count(id) asc
   59-5   : Function        count                          completions 33 
       65-2   : FieldPath       id                             completions 0 
           65-2   : Field           id                             completions 4 
-  69-3   : Keyword         asc                            completions 0 
+  69-3   : Keyword         asc                            completions 2 
 
 select count_distinct(city) from account group by calendar_year(lastModifiedDate)
    0-6   : Keyword         select                         completions 0 

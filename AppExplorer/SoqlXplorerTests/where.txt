@@ -303,8 +303,9 @@ SELECT x.name FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias
  152-6   : FieldPath       x.name                         completions 0 
      152-1   : Aias            x                              completions 2 
      154-4   : Field           name                           completions 32 
- 159-4   : Keyword         desc                           completions 0 
- 164-11  : Keyword         nulls first                    completions 0 
+ 159-4   : Keyword         desc                           completions 2 
+ 164-5   : Keyword         nulls                          completions 0 
+ 170-5   : Keyword         first                          completions 2 
 
 SELECT account.name.name FROM account
    0-6   : Keyword         SELECT                         completions 0 
@@ -367,7 +368,7 @@ select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 FOR view
   56-6   : Keyword         OFFSET                         completions 0 
   63-1   : Number          5                              completions 0 
   65-3   : Keyword         FOR                            completions 0 
-  69-4   : Keyword         view                           completions 0 
+  69-4   : Keyword         view                           completions 2 
 
 select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 update viewstat
    0-6   : Keyword         select                         completions 0 
@@ -387,7 +388,7 @@ select a.name from account a where name > 'bob' LIMIt 5 OFFSET 5 update viewstat
   56-6   : Keyword         OFFSET                         completions 0 
   63-1   : Number          5                              completions 0 
   65-6   : Keyword         update                         completions 0 
-  72-8   : Keyword         viewstat                       completions 0 
+  72-8   : Keyword         viewstat                       completions 2 
 
 SELECT Id, Name FROM Account WHERE Amount > USD5000
    0-6   : Keyword         SELECT                         completions 0 
