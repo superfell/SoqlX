@@ -133,33 +133,27 @@ select max(name) from account where CALENDARY_YEAR(createdDate) > 2018
 
 SELECT count() FROM Contact c, c.Account a WHERE a.name = 'MyriadPubs'
    0-6   : Keyword         SELECT                         completions 0 
-   7-5   : Error           count                          completions 0 expecting whitespace at position 13
-   7-5   : FieldPath       count                          completions 0 
+  13-0   : Error                                          completions 0 expecting a named literal at position 14
 
 SELECT count() FROM Contact WHERE account.name = 'Salesforce.com'
    0-6   : Keyword         SELECT                         completions 0 
-   7-5   : Error           count                          completions 0 expecting whitespace at position 13
-   7-5   : FieldPath       count                          completions 0 
+  13-0   : Error                                          completions 0 expecting a named literal at position 14
 
 SELECT count() FROM Contact c, c.Account a, a.CreatedBy u WHERE u.alias = 'Sfell'
    0-6   : Keyword         SELECT                         completions 0 
-   7-5   : Error           count                          completions 0 expecting whitespace at position 13
-   7-5   : FieldPath       count                          completions 0 
+  13-0   : Error                                          completions 0 expecting a named literal at position 14
 
 SELECT count() FROM Contact c, a.CreatedBy u, c.Account a WHERE u.alias = 'Sfell'
    0-6   : Keyword         SELECT                         completions 0 
-   7-5   : Error           count                          completions 0 expecting whitespace at position 13
-   7-5   : FieldPath       count                          completions 0 
+  13-0   : Error                                          completions 0 expecting a named literal at position 14
 
 SELECT count() FROM Contact c, c.CreatedBy u, c.Account a WHERE u.alias = 'Sfell' and a.Name > 'a'
    0-6   : Keyword         SELECT                         completions 0 
-   7-5   : Error           count                          completions 0 expecting whitespace at position 13
-   7-5   : FieldPath       count                          completions 0 
+  13-0   : Error                                          completions 0 expecting a named literal at position 14
 
 SELECT count() FROM Contact x, x.Account.CreatedBy u, x.CreatedBy a WHERE u.alias = 'Sfell' and a.alias='Sfell'
    0-6   : Keyword         SELECT                         completions 0 
-   7-5   : Error           count                          completions 0 expecting whitespace at position 13
-   7-5   : FieldPath       count                          completions 0 
+  13-0   : Error                                          completions 0 expecting a named literal at position 14
 
 SELECT calendar_year(lastModifiedDate) from account
    0-6   : Keyword         SELECT                         completions 0 

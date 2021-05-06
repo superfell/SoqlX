@@ -188,8 +188,8 @@ const NSString *KeySoqlText = @"soql";
             [seq addObject:ws];
             [seq addObject:[f eq:next]];
         } while(true);
-        
-        return [f onMatch:[f seq:seq] perform:^ZKParserResult*(ZKParserResult*r) {
+        ZKBaseParser *p = seq.count == 1 ? seq[0] : [f seq:seq];
+        return [f onMatch:p perform:^ZKParserResult*(ZKParserResult*r) {
             Token *tkn = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
             tkn.type = type;
             tkn.value = t;
@@ -201,25 +201,30 @@ const NSString *KeySoqlText = @"soql";
     ZKBaseParser*(^tokenSeq)(NSString*) = ^ZKBaseParser*(NSString *t) {
         return tokenSeqType(t, TTKeyword);
     };
-    ZKBaseParser*(^oneOfTokensWithCompletions)(TokenType,NSArray<NSString*>*,NSArray<Completion*>*) =
-        ^ZKBaseParser*(TokenType type, NSArray<NSString*>* tokens, NSArray<Completion*>*completions) {
+    ZKBaseParser*(^oneOfTokensWithCompletions)(TokenType, NSArray<NSString*>*, NSArray<Completion*>*, BOOL) =
+        ^ZKBaseParser*(TokenType type, NSArray<NSString*>* tokens, NSArray<Completion*>*completions, BOOL addTokenToContext) {
             
         ZKBaseParser *p = [f oneOfTokensList:tokens];
-        return [f fromBlock:^ZKParserResult *(ZKParsingState *input, NSError *__autoreleasing *err) {
-            ZKParserResult *r = [p parse:input error:err];
-            if (*err != nil) {
-                *err = [NSError errorWithDomain:@"Parser" code:33 userInfo:@{
-                    NSLocalizedDescriptionKey:[NSString stringWithFormat:@"expecting one of %@ at position %lu",
-                                               [tokens componentsJoinedByString:@","], input.pos+1],
-                    @"Position": @(input.pos+1),
-                    @"Completions" : completions
-                }];
+        p = [f onError:p perform:^(NSError *__autoreleasing *err) {
+            NSInteger pos = [(*err).userInfo[@"Position"] integerValue];
+            *err = [NSError errorWithDomain:@"Parser" code:33 userInfo:@{
+                NSLocalizedDescriptionKey:[NSString stringWithFormat:@"expecting one of %@ at position %lu",
+                                           [tokens componentsJoinedByString:@","], pos],
+                @"Position": @(pos),
+                @"Completions" : completions
+            }];
+        }];
+        p = [f onMatch:p perform:^ZKParserResult *(ZKParserResult *r) {
+            Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
+            t.type = type;
+            [t.completions addObjectsFromArray:completions];
+            r.val = t;
+            if (addTokenToContext) {
+                [r.userContext[KeyTokens] addToken:t];
             }
             return r;
         }];
-    };
-    ZKBaseParser*(^oneOfTokens)(TokenType,NSArray<NSString*>*) = ^ZKBaseParser*(TokenType type, NSArray<NSString*>* tokens) {
-        return oneOfTokensWithCompletions(type,tokens,[Completion completions:tokens type:type]);
+        return p;
     };
     // USING is not in the doc, but appears to not be allowed
     // ORDER & OFFSET are issues for our parser, but not the sfdc one.
@@ -256,7 +261,7 @@ const NSString *KeySoqlText = @"soql";
         }
         return r;
     }];
-    ZKBaseParser* fieldOnly = [f onMatch:[f oneOrMore:ident separator:[f eq:@"."]] perform:^ZKParserResult *(ZKParserResult *r) {
+    ZKBaseParser* fieldPath = [f onMatch:[f oneOrMore:ident separator:[f eq:@"."]] perform:^ZKParserResult *(ZKParserResult *r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
         t.type = TTFieldPath;
         t.value = r.childVals;
@@ -264,15 +269,18 @@ const NSString *KeySoqlText = @"soql";
         r.val = t;
         return r;
     }];
-    fieldOnly.debugName = @"fieldOnly";
-    ZKBaseParser* fieldAndAlias = [f seq:@[fieldOnly, alias]];
+    fieldPath.debugName = @"fieldPath";
+    
+    ZKBaseParser* fieldAndAlias = [f seq:@[fieldPath, alias]];
     fieldAndAlias.debugName = @"field";
+    
     ZKBaseParser *literalValue = [self literalValue:f];
 
     ZKParserRef *fieldOrFunc = [f parserRef];
     ZKBaseParser* func = [f onMatch:[f seq:@[ident,
                               maybeWs,
                               [f eq:@"("],
+                              cut,
                               maybeWs,
                               [f oneOrMore:[f firstOf:@[fieldOrFunc,literalValue]] separator:commaSep],
                               maybeWs,
@@ -283,29 +291,30 @@ const NSString *KeySoqlText = @"soql";
         Token *fn = [Token txt:r.userContext[KeySoqlText] loc:[[r child:0] loc]];
         fn.type = TTFunc;
         Tokens *tk = r.userContext[KeyTokens];
-        fn.value = [tk cutPositionRange:NSUnionRange([[r child:0] loc], [[r child:6] loc])]; // doesn't include alais
+        fn.value = [tk cutPositionRange:NSUnionRange([[r child:0] loc], [[r child:7] loc])]; // doesn't include alias
         [tk addToken:fn];
         return r;
     }];
+    // TODO, add onError handler that changes the error message to expected field, func or literal value. needs errorCodes sorting out
     
     fieldOrFunc.parser = [f firstOf:@[func, fieldAndAlias]];
     
     ZKBaseParser *nestedSelectStmt = [f onMatch:[f seq:@[[f eq:@"("], selectStmt, [f eq:@")"]]] perform:^ZKParserResult*(ZKParserResult*r) {
-        // Similar to Func, I think we'd need start/stop tokens for this.
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
         t.type = TTChildSelect;
         [r.userContext[KeyTokens] addToken:t];
+        // TODO, cut child tokens out into value here?
         r.val = t;
         return r;
     }];
     ZKBaseParser *typeOfWhen = [f onMatch:[f seq:@[tokenSeq(@"WHEN"), cut, ws, ident, ws, tokenSeq(@"THEN"), ws,
-                                         [f oneOrMore:fieldOnly separator:commaSep]]] perform:^ZKParserResult *(ZKParserResult *r) {
+                                         [f oneOrMore:fieldPath separator:commaSep]]] perform:^ZKParserResult *(ZKParserResult *r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:[[r child:3] loc]];
         t.type = TTSObject;
         [r.userContext[KeyTokens] addToken:t];
         return r;
     }];
-    ZKBaseParser *typeOfElse = [f seq:@[tokenSeq(@"ELSE"), ws, [f oneOrMore:fieldOnly separator:commaSep]]];
+    ZKBaseParser *typeOfElse = [f seq:@[tokenSeq(@"ELSE"), ws, [f oneOrMore:fieldPath separator:commaSep]]];
     ZKBaseParser *typeofRel = [f onMatch:ident perform:^ZKParserResult *(ZKParserResult *r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
         t.type = TTRelationship;
@@ -368,20 +377,8 @@ const NSString *KeySoqlText = @"soql";
     compNotIn.nonFinalInsertionText = @"NOT_IN";
     compNotIn.finalInsertionText = @"NOT IN";
     opCompletions = [opCompletions arrayByAddingObject:compNotIn];
-    ZKBaseParser *operator = [f onMatch:oneOfTokensWithCompletions(TTOperator,@[@"<",@"<=",@">",@">=",@"=",@"!=",@"LIKE"],opCompletions) perform:^ZKParserResult *(ZKParserResult *r) {
-        Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
-        t.type = TTOperator;
-        [t.completions addObjectsFromArray:opCompletions];
-        [r.userContext[KeyTokens] addToken:t];
-        return r;
-    }];
-    ZKBaseParser *opIncExcl = [f onMatch:oneOfTokensWithCompletions(TTOperator,@[@"INCLUDES",@"EXCLUDES"], opCompletions) perform:^ZKParserResult *(ZKParserResult *r) {
-        Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
-        t.type = TTOperator;
-        [t.completions addObjectsFromArray:opCompletions];
-        [r.userContext[KeyTokens] addToken:t];
-        return r;
-    }];
+    ZKBaseParser *operator = oneOfTokensWithCompletions(TTOperator,@[@"<",@"<=",@">",@">=",@"=",@"!=",@"LIKE"],opCompletions, TRUE);
+    ZKBaseParser *opIncExcl = oneOfTokensWithCompletions(TTOperator,@[@"INCLUDES",@"EXCLUDES"], opCompletions, TRUE);
     ZKBaseParser *inOrNotIn = [f oneOf:@[tokenSeqType(@"IN", TTOperator), tokenSeqType(@"NOT IN", TTOperator)]];
     ZKBaseParser *opInNotIn = [f fromBlock:^ZKParserResult *(ZKParsingState *input, NSError *__autoreleasing *err) {
         ZKParserResult *r = [inOrNotIn parse:input error:err];
@@ -422,24 +419,21 @@ const NSString *KeySoqlText = @"soql";
 
     ZKBaseParser *baseExpr = [f seq:@[fieldOrFunc, maybeWs, operatorRHS]];
 
-    // use parserRef so that we can set up the recursive decent for (...)
+    // use parserRef so that we can set up the recursive decent for x op y and (y op z or z op t)
     // be careful not to use oneOf with it as that will recurse infinitly because it checks all branches.
     ZKParserRef *exprList = [f parserRef];
     ZKBaseParser *parens = [f onMatch:[f seq:@[[f eq:@"("], maybeWs, exprList, maybeWs, [f eq:@")"]]] perform:pick(2)];
-    ZKBaseParser *andOrToken = [f onMatch:oneOfTokens(TTOperator,@[@"AND",@"OR"]) perform:^ZKParserResult *(ZKParserResult *r) {
-        Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
-        t.type = TTOperator;
-        [t.completions addObjectsFromArray:[Completion completions:@[@"AND",@"OR"] type:TTOperator]];
-        r.val = t;
+
+    // we don't want to add the and/or token to context as soon as possible because OR is ambigious with ORDER BY. we need to wait til we pass
+    // the whitespace tests.
+    ZKBaseParser *andOrToken = oneOfTokensWithCompletions(TTOperator, @[@"AND",@"OR"],[Completion completions:@[@"AND",@"OR"] type:TTOperator], FALSE);
+    ZKBaseParser *andOr = [f onMatch:[f seq:@[maybeWs, andOrToken, ws]] perform:^ZKParserResult*(ZKParserResult*r) {
+        Token *t = [[r child:1] val];
+        [r.userContext[KeyTokens] addToken:t];
         return r;
     }];
-    ZKBaseParser *andOr = [f onMatch:[f seq:@[maybeWs, andOrToken, ws]] perform:pick(1)];
     ZKBaseParser *not = [f seq:@[tokenSeqType(@"NOT", TTOperator), maybeWs]];
-    exprList.parser = [f seq:@[[f zeroOrOne:not],[f firstOf:@[parens, baseExpr]], [f zeroOrOne:[f onMatch:[f seq:@[andOr, exprList]] perform:^ZKParserResult *(ZKParserResult *r) {
-        Token *andOrTkn = [[r child:0] val];
-        [r.userContext[KeyTokens] addToken:andOrTkn];
-        return r;
-    }]]]];
+    exprList.parser = [f seq:@[[f zeroOrOne:not],[f firstOf:@[parens, baseExpr]], [f zeroOrOne:[f seq:@[andOr, exprList]]]]];
     
     ZKBaseParser *where = [f zeroOrOne:[f seq:@[ws ,tokenSeq(@"WHERE"), cut, ws, exprList]]];
     
@@ -461,13 +455,10 @@ const NSString *KeySoqlText = @"soql";
     ZKBaseParser *catList = [f seq:@[[f eq:@"("], maybeWs, [f oneOrMore:aCategory separator:commaSep], maybeWs, [f eq:@")"]]];
     ZKBaseParser *catFilterVal = [f firstOf:@[catList, aCategory]];
     
-    NSArray<NSString*>* catOperators = @[@"AT",@"ABOVE",@"BELOW", @"ABOVE_OR_BELOW"];
-    ZKBaseParser *catFilter = [f onMatch:[f seq:@[ident, ws, oneOfTokens(TTKeyword,catOperators), cut, maybeWs, catFilterVal]] perform:^ZKParserResult*(ZKParserResult*r) {
-        Token *t = [Token txt:r.userContext[KeySoqlText] loc:[[r child:2] loc]];
-        t.type = TTKeyword;
-        [t.completions addObjectsFromArray:[Completion completions:catOperators type:TTKeyword]];
-        [r.userContext[KeyTokens] addToken:t];
-        t = [t tokenOf:[[r child:0] loc]];
+    NSArray<NSString*>* catOperators = @[@"AT", @"ABOVE", @"BELOW", @"ABOVE_OR_BELOW"];
+    NSArray<Completion*>* catOpCompletions = [Completion completions:catOperators type:TTKeyword];
+    ZKBaseParser *catFilter = [f onMatch:[f seq:@[ident, ws, oneOfTokensWithCompletions(TTKeyword, catOperators, catOpCompletions, TRUE), cut, maybeWs, catFilterVal]] perform:^ZKParserResult*(ZKParserResult*r) {
+        Token *t = [Token txt:r.userContext[KeySoqlText] loc:[[r child:0] loc]];
         t.type = TTDataCategory;
         [r.userContext[KeyTokens] addToken:t];
         return r;
@@ -513,7 +504,7 @@ const NSString *KeySoqlText = @"soql";
     /// SELECT
     selectStmt.parser = [f seq:@[maybeWs, tokenSeq(@"SELECT"), ws, selectExprs, ws, tokenSeq(@"FROM"), ws, objectRefs,
                                   filterScope, where, withDataCat, groupByClause, orderByFields, limit, offset, forView, updateTracking, maybeWs]];
-    
+    selectStmt.debugName = @"SelectStmt";
     return selectStmt;
 }
 
