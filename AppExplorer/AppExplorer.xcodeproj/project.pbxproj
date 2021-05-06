@@ -66,6 +66,7 @@
 		F4BD5DCA2641B3EA00ACBBAB /* limit_offset.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4BD5DC92641B3EA00ACBBAB /* limit_offset.txt */; };
 		F4BD5DCE2641B59A00ACBBAB /* group_by.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4BD5DCD2641B59A00ACBBAB /* group_by.txt */; };
 		F4BD5DD22641B91900ACBBAB /* using_scope.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4BD5DD12641B91900ACBBAB /* using_scope.txt */; };
+		F4BD5DD6264457DA00ACBBAB /* literals.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4BD5DD5264457DA00ACBBAB /* literals.txt */; };
 		F4BF72A70F79E58C0089F459 /* NSWindow_additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F4BF72A60F79E58C0089F459 /* NSWindow_additions.m */; };
 		F4C440CA15DB50BC00590A1E /* SearchQueryResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C440C915DB50BC00590A1E /* SearchQueryResult.m */; };
 		F4C877FA0F395DB4000075D4 /* ProgressController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C877F90F395DB4000075D4 /* ProgressController.m */; };
@@ -321,6 +322,7 @@
 		F4BD5DC92641B3EA00ACBBAB /* limit_offset.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = limit_offset.txt; sourceTree = "<group>"; };
 		F4BD5DCD2641B59A00ACBBAB /* group_by.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = group_by.txt; sourceTree = "<group>"; };
 		F4BD5DD12641B91900ACBBAB /* using_scope.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = using_scope.txt; sourceTree = "<group>"; };
+		F4BD5DD5264457DA00ACBBAB /* literals.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = literals.txt; sourceTree = "<group>"; };
 		F4BF72A50F79E58C0089F459 /* NSWindow_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSWindow_additions.h; path = ../common/NSWindow_additions.h; sourceTree = SOURCE_ROOT; };
 		F4BF72A60F79E58C0089F459 /* NSWindow_additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSWindow_additions.m; path = ../common/NSWindow_additions.m; sourceTree = SOURCE_ROOT; };
 		F4C440C815DB50BC00590A1E /* SearchQueryResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchQueryResult.h; sourceTree = "<group>"; };
@@ -695,6 +697,7 @@
 		F4DE4050256205D300FBA200 /* SoqlXplorerTests */ = {
 			isa = PBXGroup;
 			children = (
+				F4BD5DD5264457DA00ACBBAB /* literals.txt */,
 				F4BD5DD12641B91900ACBBAB /* using_scope.txt */,
 				F4BD5DCD2641B59A00ACBBAB /* group_by.txt */,
 				F4BD5DC92641B3EA00ACBBAB /* limit_offset.txt */,
@@ -923,6 +926,7 @@
 			files = (
 				F4BD5DCA2641B3EA00ACBBAB /* limit_offset.txt in Resources */,
 				F4BD5DCE2641B59A00ACBBAB /* group_by.txt in Resources */,
+				F4BD5DD6264457DA00ACBBAB /* literals.txt in Resources */,
 				F4BD5DD22641B91900ACBBAB /* using_scope.txt in Resources */,
 				F4F2E72A2640633F005C49B9 /* select_exprs.txt in Resources */,
 				F4C889F12624FC75006D606A /* Media.xcassets in Resources */,

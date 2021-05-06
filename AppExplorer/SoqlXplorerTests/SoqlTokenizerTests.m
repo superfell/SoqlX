@@ -225,6 +225,27 @@ NSObject<TokenizerDescriber> *descs;
     [self writeSoqlTokensForQuerys:queries toFile:@"where.txt"];
 }
 
+-(void)testLiterals {
+    NSArray<NSString*>* queries = @[
+        @"select id from account where name='bob'",
+        @"select id from account where name='bob",
+        @"select id from account where name='bob\\",
+        @"select id from account where name in ('bob','alice')",
+        @"select id from account where name in ('bob','alice'",
+        @"select id from account where lastModifiedDate >= 2020-01-01",
+        @"select id from account where lastModifiedDate >= 2020-01-01T13:14:15Z",
+        @"select id from account where lastModifiedDate >= 2020-01-01T13:14:15-08:00",
+        @"select id from account where name=null",
+        @"select id from account where name=true",
+        @"select id from account where name=false",
+        @"select id from account where name> 10",
+        @"select id from account where name> 10.123",
+        @"select id from account where name> USD200",
+        @"select id from account where lastModifiedDate < YESTERDAY",
+    ];
+    [self writeSoqlTokensForQuerys:queries toFile:@"literals.txt"];
+}
+
 - (void)testGroupBy {
     NSArray<NSString*>* queries = @[
         @"select amount, count(id) from account group by amount", // amount is not groupable in describe

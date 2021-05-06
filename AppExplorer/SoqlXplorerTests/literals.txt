@@ -1,0 +1,181 @@
+select id from account where name='bob'
+   0-6   : Keyword         select                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+       7-2   : Field           id                             completions 33 
+  10-4   : Keyword         from                           completions 0 
+  15-7   : SObject         account                        completions 2 
+  23-5   : Keyword         where                          completions 0 
+  29-4   : FieldPath       name                           completions 0 
+      29-4   : Field           name                           completions 33 
+  33-1   : Op              =                              completions 11 
+  34-5   : String          'bob'                          completions 0 
+
+select id from account where name='bob
+   0-6   : Keyword         select                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+       7-2   : Field           id                             completions 33 
+  10-4   : Keyword         from                           completions 0 
+  15-7   : SObject         account                        completions 2 
+  23-5   : Keyword         where                          completions 0 
+  29-9   : Error           name='bob                      completions 0 reached end of input while parsing a string literal, missing closing ' at 38
+  29-4   : FieldPath       name                           completions 0 
+      29-4   : Field           name                           completions 33 
+  33-1   : Op              =                              completions 11 
+
+select id from account where name='bob\
+   0-6   : Keyword         select                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+       7-2   : Field           id                             completions 33 
+  10-4   : Keyword         from                           completions 0 
+  15-7   : SObject         account                        completions 2 
+  23-5   : Keyword         where                          completions 0 
+  29-10  : Error           name='bob\                     completions 0 reached end of input while parsing a string literal, missing closing ' at 40
+  29-4   : FieldPath       name                           completions 0 
+      29-4   : Field           name                           completions 33 
+  33-1   : Op              =                              completions 11 
+
+select id from account where name in ('bob','alice')
+   0-6   : Keyword         select                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+       7-2   : Field           id                             completions 33 
+  10-4   : Keyword         from                           completions 0 
+  15-7   : SObject         account                        completions 2 
+  23-5   : Keyword         where                          completions 0 
+  29-4   : FieldPath       name                           completions 0 
+      29-4   : Field           name                           completions 33 
+  34-2   : Op              in                             completions 2 
+  38-5   : String          'bob'                          completions 0 
+  44-7   : String          'alice'                        completions 0 
+
+select id from account where name in ('bob','alice'
+   0-6   : Keyword         select                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+       7-2   : Field           id                             completions 33 
+  10-4   : Keyword         from                           completions 0 
+  15-7   : SObject         account                        completions 2 
+  23-5   : Keyword         where                          completions 0 
+  29-4   : FieldPath       name                           completions 0 
+      29-4   : Field           name                           completions 33 
+  34-2   : Op              in                             completions 2 
+  44-7   : Error           'alice'                        completions 0 expecting ')' at position 52
+
+select id from account where lastModifiedDate >= 2020-01-01
+   0-6   : Keyword         select                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+       7-2   : Field           id                             completions 33 
+  10-4   : Keyword         from                           completions 0 
+  15-7   : SObject         account                        completions 2 
+  23-5   : Keyword         where                          completions 0 
+  29-16  : FieldPath       lastModifiedDate               completions 0 
+      29-16  : Field           lastModifiedDate               completions 33 
+  46-2   : Op              >=                             completions 11 
+  49-10  : Date            2020-01-01                     completions 0 
+
+select id from account where lastModifiedDate >= 2020-01-01T13:14:15Z
+   0-6   : Keyword         select                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+       7-2   : Field           id                             completions 33 
+  10-4   : Keyword         from                           completions 0 
+  15-7   : SObject         account                        completions 2 
+  23-5   : Keyword         where                          completions 0 
+  29-16  : FieldPath       lastModifiedDate               completions 0 
+      29-16  : Field           lastModifiedDate               completions 33 
+  46-2   : Op              >=                             completions 11 
+  49-20  : DateTime        2020-01-01T13:14:15Z           completions 0 
+
+select id from account where lastModifiedDate >= 2020-01-01T13:14:15-08:00
+   0-6   : Keyword         select                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+       7-2   : Field           id                             completions 33 
+  10-4   : Keyword         from                           completions 0 
+  15-7   : SObject         account                        completions 2 
+  23-5   : Keyword         where                          completions 0 
+  29-16  : FieldPath       lastModifiedDate               completions 0 
+      29-16  : Field           lastModifiedDate               completions 33 
+  46-2   : Op              >=                             completions 11 
+  49-25  : DateTime        2020-01-01T13:14:15-08:00      completions 0 
+
+select id from account where name=null
+   0-6   : Keyword         select                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+       7-2   : Field           id                             completions 33 
+  10-4   : Keyword         from                           completions 0 
+  15-7   : SObject         account                        completions 2 
+  23-5   : Keyword         where                          completions 0 
+  29-4   : FieldPath       name                           completions 0 
+      29-4   : Field           name                           completions 33 
+  33-1   : Op              =                              completions 11 
+  34-4   : Null            null                           completions 0 
+
+select id from account where name=true
+   0-6   : Keyword         select                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+       7-2   : Field           id                             completions 33 
+  10-4   : Keyword         from                           completions 0 
+  15-7   : SObject         account                        completions 2 
+  23-5   : Keyword         where                          completions 0 
+  29-4   : FieldPath       name                           completions 0 
+      29-4   : Field           name                           completions 33 
+  33-1   : Op              =                              completions 11 
+  34-4   : Boolean         true                           completions 0 
+
+select id from account where name=false
+   0-6   : Keyword         select                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+       7-2   : Field           id                             completions 33 
+  10-4   : Keyword         from                           completions 0 
+  15-7   : SObject         account                        completions 2 
+  23-5   : Keyword         where                          completions 0 
+  29-4   : FieldPath       name                           completions 0 
+      29-4   : Field           name                           completions 33 
+  33-1   : Op              =                              completions 11 
+  34-5   : Boolean         false                          completions 0 
+
+select id from account where name> 10
+   0-6   : Keyword         select                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+       7-2   : Field           id                             completions 33 
+  10-4   : Keyword         from                           completions 0 
+  15-7   : SObject         account                        completions 2 
+  23-5   : Keyword         where                          completions 0 
+  29-4   : FieldPath       name                           completions 0 
+      29-4   : Field           name                           completions 33 
+  33-1   : Op              >                              completions 11 
+  35-2   : Number          10                             completions 0 
+
+select id from account where name> 10.123
+   0-6   : Keyword         select                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+       7-2   : Field           id                             completions 33 
+  10-4   : Keyword         from                           completions 0 
+  15-7   : SObject         account                        completions 2 
+  23-5   : Keyword         where                          completions 0 
+  29-4   : FieldPath       name                           completions 0 
+      29-4   : Field           name                           completions 33 
+  33-1   : Op              >                              completions 11 
+  35-6   : Number          10.123                         completions 0 
+
+select id from account where name> USD200
+   0-6   : Keyword         select                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+       7-2   : Field           id                             completions 33 
+  10-4   : Keyword         from                           completions 0 
+  15-7   : SObject         account                        completions 2 
+  23-5   : Keyword         where                          completions 0 
+  29-4   : FieldPath       name                           completions 0 
+      29-4   : Field           name                           completions 33 
+  33-1   : Op              >                              completions 11 
+  35-6   : NamedDateTime   USD200                         completions 0 
+
+select id from account where lastModifiedDate < YESTERDAY
+   0-6   : Keyword         select                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+       7-2   : Field           id                             completions 33 
+  10-4   : Keyword         from                           completions 0 
+  15-7   : SObject         account                        completions 2 
+  23-5   : Keyword         where                          completions 0 
+  29-16  : FieldPath       lastModifiedDate               completions 0 
+      29-16  : Field           lastModifiedDate               completions 33 
+  46-1   : Op              <                              completions 11 
+  48-9   : NamedDateTime   YESTERDAY                      completions 0 
+

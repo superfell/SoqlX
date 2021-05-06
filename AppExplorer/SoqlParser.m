@@ -60,8 +60,8 @@ const NSString *KeySoqlText = @"soql";
                 *err = [NSError errorWithDomain:@"Soql"
                                           code:1
                                       userInfo:@{
-                                          NSLocalizedDescriptionKey:[NSString stringWithFormat:@"reached end of input while parsing a string literal, missing closing ' at %lu", input.pos+1],
-                                          @"Position": @(input.pos+1)
+                                          NSLocalizedDescriptionKey:[NSString stringWithFormat:@"reached end of input while parsing a string literal, missing closing ' at %lu", input.pos],
+                                          @"Position": @(input.pos)
                                       }];
                 return nil;
             }
@@ -156,7 +156,8 @@ const NSString *KeySoqlText = @"soql";
         r.val = t;
         return r;
     }];
-    ZKBaseParser *literalValue = [f onMatch:[f oneOf:@[literalStringValue, literalNullValue, literalTrueValue, literalFalseValue, literalNumberValue, literalDateTimeValue, literalToken]] perform:^ZKParserResult *(ZKParserResult *r) {
+    ZKBaseParser *literalValue = [f onMatch:[f firstOf:@[literalStringValue, literalNullValue, literalTrueValue, literalFalseValue, literalDateTimeValue,
+                                                         literalNumberValue, literalToken]] perform:^ZKParserResult *(ZKParserResult *r) {
             [r.userContext[KeyTokens] addToken:r.val];
             return r;
     }];
