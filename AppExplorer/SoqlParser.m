@@ -230,13 +230,6 @@ const NSString *KeySoqlText = @"soql";
         }];
         return p;
     };
-    // USING is not in the doc, but appears to not be allowed
-    // ORDER & OFFSET are issues for our parser, but not the sfdc one.
-    NSSet<NSString*>* keywords = [NSSet setWithArray:[@"ORDER OFFSET USING   AND ASC DESC EXCLUDES FIRST FROM GROUP HAVING IN INCLUDES LAST LIKE LIMIT NOT NULL NULLS OR SELECT WHERE WITH" componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
-    BOOL(^ignoreKeywords)(NSObject*) = ^BOOL(NSObject *v) {
-        NSString *s = (NSString *)v;
-        return [keywords containsObject:[s uppercaseString]];
-    };
     ZKBaseParser* commaSep = [f seq:@[maybeWs, [f eq:@","], maybeWs]];
     ZKBaseParser* identHead = [f characters:[NSCharacterSet characterSetWithCharactersInString:@"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"]
                                name:@"identifier"
@@ -256,8 +249,21 @@ const NSString *KeySoqlText = @"soql";
     
     // SELECT LIST
     ZKParserRef *selectStmt = [f parserRef];
-    ZKBaseParser *alias = [f onMatch:[f zeroOrOne:[f onMatch:[f seq:@[ws, ident]] perform:pick(1)] ignoring:ignoreKeywords] perform:^ZKParserResult *(ZKParserResult *r) {
+
+    // USING is not in the doc, but appears to not be allowed
+    // ORDER & OFFSET are issues for our parser, but not the sfdc one.
+    NSSet<NSString*> *keywords = [NSSet setWithArray:[@"ORDER OFFSET USING AND ASC DESC EXCLUDES FIRST FROM GROUP HAVING IN INCLUDES LAST LIKE LIMIT NOT NULL NULLS OR SELECT WHERE WITH" componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
+    ZKBaseParser *aliasOnly = [f zeroOrOne:[f onMatch:[f seq:@[ws, ident]] perform:pick(1)]];
+    ZKBaseParser *alias = [f fromBlock:^ZKParserResult *(ZKParsingState *input, NSError *__autoreleasing *err) {
+        NSInteger start = input.pos;
+        ZKParserResult *r = [aliasOnly parse:input error:err];
         if (r.val != [NSNull null]) {
+            NSString *txt = [r.val uppercaseString];
+            if ([keywords containsObject:txt]) {
+                [input moveTo:start];
+                *err = nil;
+                return [ZKParserResult result:[NSNull null] ctx:input.userContext loc:r.loc];
+            }
             Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
             t.type = TTAliasDecl;
             [r.userContext[KeyTokens] addToken:t];
