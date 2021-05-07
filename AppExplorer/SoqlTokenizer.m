@@ -48,6 +48,12 @@ typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasM
         for (Completion *c in comps) {
             c.finalInsertionText = [NSString stringWithFormat:@"%@.Id", c.finalInsertionText];
             c.onFinalInsert = ^BOOL(ZKTextView *tv, id<ZKTextViewCompletion> c) {
+                // This selects the 'Id' we just inserted so that the user can start typing and it'll replace the Id.
+                // otherwise typing starts after the Id.
+                NSRange sel = tv.selectedRange;
+                sel.location -= 2;
+                sel.length += 2;
+                tv.selectedRange = sel;
                 [tv showPopup];
                 return TRUE;
             };
