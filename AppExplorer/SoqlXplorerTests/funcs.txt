@@ -410,3 +410,38 @@ SELECT calendar_year(convertCurrency(amount)) from account
   46-4   : Keyword         from                           completions 0 
   51-7   : SObject         account                        completions 2 
 
+SELECT count(), name from account
+   0-6   : Keyword         SELECT                         completions 0 
+   7-5   : Function        count                          completions 33 
+  16-4   : FieldPath       name                           completions 0 
+      16-4   : Field           name                           completions 33 
+  21-4   : Keyword         from                           completions 0 
+  26-7   : SObject         account                        completions 2 
+
+SELECT name, count() from account
+   0-6   : Keyword         SELECT                         completions 0 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 33 
+  13-5   : Function        count                          completions 33 
+  21-4   : Keyword         from                           completions 0 
+  26-7   : SObject         account                        completions 2 
+
+select calendar_year() from account
+   0-6   : Keyword         select                         completions 0 
+   7-13  : Error           calendar_year                  completions 0 The function Calendar_Year should have 1 arguments, but has 0
+   7-13  : Function        calendar_year                  completions 33 
+  23-4   : Keyword         from                           completions 0 
+  28-7   : SObject         account                        completions 2 
+
+select distance(mailing__c,geolocation(0,0)) from account
+   0-6   : Keyword         select                         completions 0 
+   7-8   : Error           distance                       completions 0 The function Distance should have 3 arguments, but has 2
+   7-8   : Function        distance                       completions 33 
+      16-10  : FieldPath       mailing__c                     completions 0 
+          16-10  : Error           mailing__c                     completions 0 There is no field or relationship mailing__c on SObject Account
+      27-11  : Function        geolocation                    completions 1 
+          39-1   : Number          0                              completions 0 
+          41-1   : Number          0                              completions 0 
+  45-4   : Keyword         from                           completions 0 
+  50-7   : SObject         account                        completions 2 
+

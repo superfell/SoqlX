@@ -140,6 +140,10 @@ NSObject<TokenizerDescriber> *descs;
         @"SELECT calendar_year(convertTimeZone(LastModifiedDate)) from account",
         @"SELECT calendar_year(convertCurrency(LastModifiedDate)) from account",
         @"SELECT calendar_year(convertCurrency(amount)) from account",
+        @"SELECT count(), name from account",
+        @"SELECT name, count() from account",
+        @"select calendar_year() from account",
+        @"select distance(mailing__c,geolocation(0,0)) from account"
     ];
     [self writeSoqlTokensForQuerys:q toFile:@"funcs.txt"];
 }
