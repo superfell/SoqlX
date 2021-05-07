@@ -412,6 +412,7 @@ SELECT calendar_year(convertCurrency(amount)) from account
 
 SELECT count(), name from account
    0-6   : Keyword         SELECT                         completions 0 
+   7-5   : Error           count                          completions 0 A count() query can't select any additional fields
    7-5   : Function        count                          completions 33 
   16-4   : FieldPath       name                           completions 0 
       16-4   : Field           name                           completions 33 
@@ -422,6 +423,7 @@ SELECT name, count() from account
    0-6   : Keyword         SELECT                         completions 0 
    7-4   : FieldPath       name                           completions 0 
        7-4   : Field           name                           completions 33 
+  13-5   : Error           count                          completions 0 A count() query can't select any additional fields
   13-5   : Function        count                          completions 33 
   21-4   : Keyword         from                           completions 0 
   26-7   : SObject         account                        completions 2 

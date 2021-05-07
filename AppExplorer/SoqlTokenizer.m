@@ -151,6 +151,27 @@ static NSString *KeyCompletions = @"completions";
 }
 
 -(void)resolveSelectExprs:(Tokens*)tokens ctx:(Context*)ctx {
+    // Check that count() is only used on its own.
+    __block NSInteger selectExprCount = 0;
+    __block Token *countStar = nil;
+    [tokens.tokens enumerateObjectsUsingBlock:^(Token * _Nonnull sel, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (sel.type == TTFunc && [(Tokens*)sel.value count] == 0 && [sel.tokenTxt caseInsensitiveCompare:@"COUNT"] == NSOrderedSame) {
+            countStar = sel;
+        }
+        if (sel.type == TTFunc || sel.type == TTField || sel.type == TTFieldPath || sel.type == TTTypeOf || sel.type == TTChildSelect) {
+            selectExprCount++;
+        }
+        if (sel.type == TTKeyword && [sel.value isEqualTo:@"FROM"]) {
+            *stop = TRUE;
+        }
+    }];
+    if (countStar != nil && selectExprCount > 1) {
+        Token *err = [countStar tokenOf:countStar.loc];
+        err.type = TTError;
+        err.value = @"A count() query can't select any additional fields";
+        [tokens addToken:err];
+    }
+
     NSMutableArray<Token*> *newTokens = [NSMutableArray arrayWithCapacity:4];
     NSPredicate *groupable = [NSPredicate predicateWithFormat:@"groupable=TRUE"];
     __block BOOL inGroupBy = FALSE;
