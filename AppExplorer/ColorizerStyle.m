@@ -23,17 +23,20 @@ static ColorizerStyle *style;
 
 -(instancetype)init {
     self = [super init];
-    // TODO, why is colorNamed:@ returning nil in unit tests?
-    self.keywordColor = [NSColor colorNamed:@"soql.keyword"];
-    self.fieldColor   = [NSColor colorNamed:@"soql.field"];
-    self.funcColor    = [NSColor colorNamed:@"soql.func"];
-    self.sobjectColor = [NSColor colorNamed:@"soql.sobject"];
-    self.relColor     = [NSColor colorNamed:@"soql.rel"];
-    self.aliasColor   = [NSColor colorNamed:@"soql.alias"];
-    self.literalColor = [NSColor colorNamed:@"soql.literal"];
+    // In unit tests the main bundle is the test runner bundle, not our bundle so it doesn't find the colors
+    // so we do this dance to load the colors from an explict bundle.
+    NSBundle *b = [NSBundle bundleForClass:self.class];
+    self.keywordColor = [NSColor colorNamed:@"soql.keyword" bundle:b];
+    self.fieldColor   = [NSColor colorNamed:@"soql.field"   bundle:b];
+    self.funcColor    = [NSColor colorNamed:@"soql.func"    bundle:b];
+    self.sobjectColor = [NSColor colorNamed:@"soql.sobject" bundle:b];
+    self.relColor     = [NSColor colorNamed:@"soql.rel"     bundle:b];
+    self.aliasColor   = [NSColor colorNamed:@"soql.alias"   bundle:b];
+    self.literalColor = [NSColor colorNamed:@"soql.literal" bundle:b];
+    NSColor *errColor = [NSColor colorNamed:@"soql.error"   bundle:b];
     
     self.underlined = @{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle),
-                        NSUnderlineColorAttributeName: [NSColor colorNamed:@"soql.error"]};
+                        NSUnderlineColorAttributeName: errColor};
     
     if (self.keywordColor != nil) {
         self.keyword = @{ NSForegroundColorAttributeName:self.keywordColor};
