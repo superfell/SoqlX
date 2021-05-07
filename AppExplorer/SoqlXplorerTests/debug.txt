@@ -1,0 +1,371 @@
+select count() from account
+   0-6   : Keyword         select                         completions 0 
+   7-5   : Function        count                          completions 33 
+  15-4   : Keyword         from                           completions 0 
+  20-7   : SObject         account                        completions 2 
+
+Parser debug
+
+Parser Debug Log 2021-05-07 21:47:47 +0000
+=> [SelectStmt] : select count() from account
+=> [seq: [[0+ whitespace],[onMatch:[eq: SELECT]],[1+ whitespace],[selectExprs],[1+ ... : select count() from account
+   => [0+ whitespace] : select count() from account
+   <= [0+ whitespace] :result:  {0,0}
+   => [onMatch:[eq: SELECT]] : select count() from account
+      => [eq: SELECT] : select count() from account
+      <= [eq: SELECT] :result: select {0,6}
+   <= [onMatch:[eq: SELECT]] :result: <Token: 0x10970a370> {0,6}
+   => [1+ whitespace] :  count() from account
+   <= [1+ whitespace] :result:   {6,1}
+   => [selectExprs] : count() from account
+      => [firstOf: [[func],[typeOf],[field],[NestedSelect]]] : count() from account
+         => [func] : count() from account
+            => [seq: [[ident],[0+ whitespace],[eq: (],[CUT],[0+ whitespace],[0+ r:[firstOf: [[r... : count() from account
+               => [ident] : count() from account
+                  => [seq: [[1+ identifier],[0+ identifier]]] : count() from account
+                     => [1+ identifier] : count() from account
+                     <= [1+ identifier] :result: count {7,5}
+                     => [0+ identifier] : () from account
+                     <= [0+ identifier] :result:  {12,0}
+                  <= [seq: [[1+ identifier],[0+ identifier]]] :result: (
+    "count {7,5}",
+    " {12,0}"
+) {7,5}
+               <= [ident] :result: count {7,5}
+               => [0+ whitespace] : () from account
+               <= [0+ whitespace] :result:  {12,0}
+               => [eq: (] : () from account
+               <= [eq: (] :result: ( {12,1}
+               => [CUT] : ) from account
+               <= [CUT] :result: <null> {13,0}
+               => [0+ whitespace] : ) from account
+               <= [0+ whitespace] :result:  {13,0}
+               => [0+ r:[firstOf: [[ref:0x100eccde0],[LiteralVal]]] s:[seq: [[0+ whitespace],[eq: ... : ) from account
+                  => [firstOf: [[ref:0x100eccde0],[LiteralVal]]] : ) from account
+                     => [ref:0x100eccde0] : ) from account
+                     => [firstOf: [[func],[field]]] : ) from account
+                        => [func] : ) from account
+                           => [seq: [[ident],[0+ whitespace],[eq: (],[CUT],[0+ whitespace],[0+ r:[firstOf: [[r... : ) from account
+                              => [ident] : ) from account
+                                 => [seq: [[1+ identifier],[0+ identifier]]] : ) from account
+                                    => [1+ identifier] : ) from account
+                                    <= [1+ identifier] :error : expecting identifier at position 14
+                                 <= [seq: [[1+ identifier],[0+ identifier]]] :error : expecting identifier at position 14
+                              <= [ident] :error : expecting identifier at position 14
+                           <= [seq: [[ident],[0+ whitespace],[eq: (],[CUT],[0+ whitespace],[0+ r:[firstOf: [[r... :error : expecting identifier at position 14
+                        <= [func] :error : expecting identifier at position 14
+                        => [field] : ) from account
+                           => [fieldPath] : ) from account
+                              => [1+ r:[ident] s:[eq: .]] : ) from account
+                                 => [ident] : ) from account
+                                    => [seq: [[1+ identifier],[0+ identifier]]] : ) from account
+                                       => [1+ identifier] : ) from account
+                                       <= [1+ identifier] :error : expecting identifier at position 14
+                                    <= [seq: [[1+ identifier],[0+ identifier]]] :error : expecting identifier at position 14
+                                 <= [ident] :error : expecting identifier at position 14
+                              <= [1+ r:[ident] s:[eq: .]] :error : expecting identifier at position 14
+                           <= [fieldPath] :error : expecting identifier at position 14
+                        <= [field] :error : expecting identifier at position 14
+                     <= [firstOf: [[func],[field]]] :error : expecting identifier at position 14
+                     <= [ref:0x100eccde0] :error : expecting identifier at position 14
+                     => [LiteralVal] : ) from account
+                        => [firstOf: [[Literal String],[onMatch:[eq: null]],[onMatch:[eq: true]],[onMatch:[... : ) from account
+                           => [Literal String] : ) from account
+                           <= [Literal String] :error : expecting ' at position 14
+                           => [onMatch:[eq: null]] : ) from account
+                              => [eq: null] : ) from account
+                              <= [eq: null] :error : expecting 'null' at position 14
+                           <= [onMatch:[eq: null]] :error : expecting 'null' at position 14
+                           => [onMatch:[eq: true]] : ) from account
+                              => [eq: true] : ) from account
+                              <= [eq: true] :error : expecting 'true' at position 14
+                           <= [onMatch:[eq: true]] :error : expecting 'true' at position 14
+                           => [onMatch:[eq: false]] : ) from account
+                              => [eq: false] : ) from account
+                              <= [eq: false] :error : expecting 'false' at position 14
+                           <= [onMatch:[eq: false]] :error : expecting 'false' at position 14
+                           => [onMatch:[regex date/time literal]] : ) from account
+                              => [regex date/time literal] : ) from account
+                              <= [regex date/time literal] :error : expecting a date/time literal at position 14
+                           <= [onMatch:[regex date/time literal]] :error : expecting a date/time literal at position 14
+                           => [onMatch:[decimal]] : ) from account
+                              => [decimal] : ) from account
+                              <= [decimal] :error : expecting a decimal at position 14
+                           <= [onMatch:[decimal]] :error : expecting a decimal at position 14
+                           => [onMatch:[regex named literal]] : ) from account
+                              => [regex named literal] : ) from account
+                              <= [regex named literal] :error : expecting a named literal at position 14
+                           <= [onMatch:[regex named literal]] :error : expecting a named literal at position 14
+                        <= [firstOf: [[Literal String],[onMatch:[eq: null]],[onMatch:[eq: true]],[onMatch:[... :error : expecting a named literal at position 14
+                     <= [LiteralVal] :error : expecting a named literal at position 14
+                  <= [firstOf: [[ref:0x100eccde0],[LiteralVal]]] :error : expecting a named literal at position 14
+               <= [0+ r:[firstOf: [[ref:0x100eccde0],[LiteralVal]]] s:[seq: [[0+ whitespace],[eq: ... :result: (
+) {13,0}
+               => [0+ whitespace] : ) from account
+               <= [0+ whitespace] :result:  {13,0}
+               => [eq: )] : ) from account
+               <= [eq: )] :result: ) {13,1}
+               => [block:0x100c31ca0] :  from account
+               => [onMatch:[seq: [[1+ whitespace],[ident]]]]? :  from account
+               => [onMatch:[seq: [[1+ whitespace],[ident]]]] :  from account
+                  => [seq: [[1+ whitespace],[ident]]] :  from account
+                     => [1+ whitespace] :  from account
+                     <= [1+ whitespace] :result:   {14,1}
+                     => [ident] : from account
+                        => [seq: [[1+ identifier],[0+ identifier]]] : from account
+                           => [1+ identifier] : from account
+                           <= [1+ identifier] :result: from {15,4}
+                           => [0+ identifier] :  account
+                           <= [0+ identifier] :result:  {19,0}
+                        <= [seq: [[1+ identifier],[0+ identifier]]] :result: (
+    "from {15,4}",
+    " {19,0}"
+) {15,4}
+                     <= [ident] :result: from {15,4}
+                  <= [seq: [[1+ whitespace],[ident]]] :result: (
+    "  {14,1}",
+    "from {15,4}"
+) {14,5}
+               <= [onMatch:[seq: [[1+ whitespace],[ident]]]] :result: from {15,4}
+               <= [onMatch:[seq: [[1+ whitespace],[ident]]]]? :result: from {15,4}
+               <= [block:0x100c31ca0] :result: <null> {15,4}
+            <= [seq: [[ident],[0+ whitespace],[eq: (],[CUT],[0+ whitespace],[0+ r:[firstOf: [[r... :result: (
+    "count {7,5}",
+    " {12,0}",
+    "( {12,1}",
+    "<null> {13,0}",
+    " {13,0}",
+    "(\n) {13,0}",
+    " {13,0}",
+    ") {13,1}",
+    "<null> {15,4}"
+) {7,7}
+         <= [func] :result: (
+    "count {7,5}",
+    " {12,0}",
+    "( {12,1}",
+    "<null> {13,0}",
+    " {13,0}",
+    "(\n) {13,0}",
+    " {13,0}",
+    ") {13,1}",
+    "<null> {15,4}"
+) {7,7}
+      <= [firstOf: [[func],[typeOf],[field],[NestedSelect]]] :result: (
+    "count {7,5}",
+    " {12,0}",
+    "( {12,1}",
+    "<null> {13,0}",
+    " {13,0}",
+    "(\n) {13,0}",
+    " {13,0}",
+    ") {13,1}",
+    "<null> {15,4}"
+) {7,7}
+      => [seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]] :  from account
+         => [0+ whitespace] :  from account
+         <= [0+ whitespace] :result:   {14,1}
+         => [eq: ,] : from account
+         <= [eq: ,] :error : expecting ',' at position 16
+      <= [seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]] :error : expecting ',' at position 16
+   <= [selectExprs] :result: (
+    "(\n    \"count {7,5}\",\n    \" {12,0}\",\n    \"( {12,1}\",\n    \"<null> {13,0}\",\n    \" {13,0}\",\n    \"(\\n) {13,0}\",\n    \" {13,0}\",\n    \") {13,1}\",\n    \"<null> {15,4}\"\n) {7,7}"
+) {7,7}
+   => [1+ whitespace] :  from account
+   <= [1+ whitespace] :result:   {14,1}
+   => [onMatch:[eq: FROM]] : from account
+      => [eq: FROM] : from account
+      <= [eq: FROM] :result: from {15,4}
+   <= [onMatch:[eq: FROM]] :result: <Token: 0x100efc010> {15,4}
+   => [1+ whitespace] :  account
+   <= [1+ whitespace] :result:   {19,1}
+   => [onMatch:[seq: [[onMatch:[seq: [[ident],[block:0x100c31ca0]]]],[onMatch:[seq: [[... : account
+      => [seq: [[onMatch:[seq: [[ident],[block:0x100c31ca0]]]],[onMatch:[seq: [[seq: [[0+... : account
+         => [onMatch:[seq: [[ident],[block:0x100c31ca0]]]] : account
+            => [seq: [[ident],[block:0x100c31ca0]]] : account
+               => [ident] : account
+                  => [seq: [[1+ identifier],[0+ identifier]]] : account
+                     => [1+ identifier] : account
+                     <= [1+ identifier] :result: account {20,7}
+                     => [0+ identifier] : 
+                     <= [0+ identifier] :result:  {27,0}
+                  <= [seq: [[1+ identifier],[0+ identifier]]] :result: (
+    "account {20,7}",
+    " {27,0}"
+) {20,7}
+               <= [ident] :result: account {20,7}
+               => [block:0x100c31ca0] : 
+               => [onMatch:[seq: [[1+ whitespace],[ident]]]]? : 
+               => [onMatch:[seq: [[1+ whitespace],[ident]]]] : 
+                  => [seq: [[1+ whitespace],[ident]]] : 
+                     => [1+ whitespace] : 
+                     <= [1+ whitespace] :error : expecting whitespace at position 28
+                  <= [seq: [[1+ whitespace],[ident]]] :error : expecting whitespace at position 28
+               <= [onMatch:[seq: [[1+ whitespace],[ident]]]] :error : expecting whitespace at position 28
+               <= [onMatch:[seq: [[1+ whitespace],[ident]]]]? :result: <null> {27,0}
+               <= [block:0x100c31ca0] :result: <null> {27,0}
+            <= [seq: [[ident],[block:0x100c31ca0]]] :result: (
+    "account {20,7}",
+    "<null> {27,0}"
+) {20,7}
+         <= [onMatch:[seq: [[ident],[block:0x100c31ca0]]]] :result: (
+    "account {20,7}",
+    "<null> {27,0}"
+) {20,7}
+         => [onMatch:[seq: [[seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]],[1+ r:[field] s... : 
+         => [onMatch:[seq: [[seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]],[1+ r:[field] s... : 
+            => [seq: [[seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]],[1+ r:[field] s:[seq: [[... : 
+               => [seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]] : 
+                  => [0+ whitespace] : 
+                  <= [0+ whitespace] :result:  {27,0}
+                  => [eq: ,] : 
+                  <= [eq: ,] :error : expecting ',' at position 28
+               <= [seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]] :error : expecting ',' at position 28
+            <= [seq: [[seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]],[1+ r:[field] s:[seq: [[... :error : expecting ',' at position 28
+         <= [onMatch:[seq: [[seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]],[1+ r:[field] s... :error : expecting ',' at position 28
+         <= [onMatch:[seq: [[seq: [[0+ whitespace],[eq: ,],[0+ whitespace]]],[1+ r:[field] s... :result: <null> {27,0}
+      <= [seq: [[onMatch:[seq: [[ident],[block:0x100c31ca0]]]],[onMatch:[seq: [[seq: [[0+... :result: (
+    "(\n    \"account {20,7}\",\n    \"<null> {27,0}\"\n) {20,7}",
+    "<null> {27,0}"
+) {20,7}
+   <= [onMatch:[seq: [[onMatch:[seq: [[ident],[block:0x100c31ca0]]]],[onMatch:[seq: [[... :result: (
+    "(\n    \"account {20,7}\",\n    \"<null> {27,0}\"\n) {20,7}",
+    "<null> {27,0}"
+) {20,7}
+   => [onMatch:[seq: [[1+ whitespace],[onMatch:[seq: [[eq: USING],[1+ whitespace],[eq:... : 
+   => [onMatch:[seq: [[1+ whitespace],[onMatch:[seq: [[eq: USING],[1+ whitespace],[eq:... : 
+      => [seq: [[1+ whitespace],[onMatch:[seq: [[eq: USING],[1+ whitespace],[eq: SCOPE]]]... : 
+         => [1+ whitespace] : 
+         <= [1+ whitespace] :error : expecting whitespace at position 28
+      <= [seq: [[1+ whitespace],[onMatch:[seq: [[eq: USING],[1+ whitespace],[eq: SCOPE]]]... :error : expecting whitespace at position 28
+   <= [onMatch:[seq: [[1+ whitespace],[onMatch:[seq: [[eq: USING],[1+ whitespace],[eq:... :error : expecting whitespace at position 28
+   <= [onMatch:[seq: [[1+ whitespace],[onMatch:[seq: [[eq: USING],[1+ whitespace],[eq:... :result: <null> {27,0}
+   => [seq: [[1+ whitespace],[onMatch:[eq: WHERE]],[CUT],[1+ whitespace],[ref:0x100eda... : 
+   => [seq: [[1+ whitespace],[onMatch:[eq: WHERE]],[CUT],[1+ whitespace],[ref:0x100eda... : 
+      => [1+ whitespace] : 
+      <= [1+ whitespace] :error : expecting whitespace at position 28
+   <= [seq: [[1+ whitespace],[onMatch:[eq: WHERE]],[CUT],[1+ whitespace],[ref:0x100eda... :error : expecting whitespace at position 28
+   <= [seq: [[1+ whitespace],[onMatch:[eq: WHERE]],[CUT],[1+ whitespace],[ref:0x100eda... :result: <null> {27,0}
+   => [seq: [[1+ whitespace],[onMatch:[seq: [[eq: WITH],[1+ whitespace],[eq: DATA],[1+... : 
+   => [seq: [[1+ whitespace],[onMatch:[seq: [[eq: WITH],[1+ whitespace],[eq: DATA],[1+... : 
+      => [1+ whitespace] : 
+      <= [1+ whitespace] :error : expecting whitespace at position 28
+   <= [seq: [[1+ whitespace],[onMatch:[seq: [[eq: WITH],[1+ whitespace],[eq: DATA],[1+... :error : expecting whitespace at position 28
+   <= [seq: [[1+ whitespace],[onMatch:[seq: [[eq: WITH],[1+ whitespace],[eq: DATA],[1+... :result: <null> {27,0}
+   => [seq: [[firstOf: [[seq: [[1+ whitespace],[onMatch:[seq: [[eq: GROUP],[1+ whitesp... : 
+   => [seq: [[firstOf: [[seq: [[1+ whitespace],[onMatch:[seq: [[eq: GROUP],[1+ whitesp... : 
+      => [firstOf: [[seq: [[1+ whitespace],[onMatch:[seq: [[eq: GROUP],[1+ whitespace],[e... : 
+         => [seq: [[1+ whitespace],[onMatch:[seq: [[eq: GROUP],[1+ whitespace],[eq: BY],[1+ ... : 
+            => [1+ whitespace] : 
+            <= [1+ whitespace] :error : expecting whitespace at position 28
+         <= [seq: [[1+ whitespace],[onMatch:[seq: [[eq: GROUP],[1+ whitespace],[eq: BY],[1+ ... :error : expecting whitespace at position 28
+         => [seq: [[1+ whitespace],[onMatch:[seq: [[eq: GROUP],[1+ whitespace],[eq: BY],[1+ ... : 
+            => [1+ whitespace] : 
+            <= [1+ whitespace] :error : expecting whitespace at position 28
+         <= [seq: [[1+ whitespace],[onMatch:[seq: [[eq: GROUP],[1+ whitespace],[eq: BY],[1+ ... :error : expecting whitespace at position 28
+         => [seq: [[1+ whitespace],[onMatch:[seq: [[eq: GROUP],[1+ whitespace],[eq: BY]]]],[... : 
+            => [1+ whitespace] : 
+            <= [1+ whitespace] :error : expecting whitespace at position 28
+         <= [seq: [[1+ whitespace],[onMatch:[seq: [[eq: GROUP],[1+ whitespace],[eq: BY]]]],[... :error : expecting whitespace at position 28
+      <= [firstOf: [[seq: [[1+ whitespace],[onMatch:[seq: [[eq: GROUP],[1+ whitespace],[e... :error : expecting whitespace at position 28
+   <= [seq: [[firstOf: [[seq: [[1+ whitespace],[onMatch:[seq: [[eq: GROUP],[1+ whitesp... :error : expecting whitespace at position 28
+   <= [seq: [[firstOf: [[seq: [[1+ whitespace],[onMatch:[seq: [[eq: GROUP],[1+ whitesp... :result: <null> {27,0}
+   => [seq: [[0+ whitespace],[onMatch:[seq: [[eq: ORDER],[1+ whitespace],[eq: BY]]]],[... : 
+   => [seq: [[0+ whitespace],[onMatch:[seq: [[eq: ORDER],[1+ whitespace],[eq: BY]]]],[... : 
+      => [0+ whitespace] : 
+      <= [0+ whitespace] :result:  {27,0}
+      => [onMatch:[seq: [[eq: ORDER],[1+ whitespace],[eq: BY]]]] : 
+         => [seq: [[eq: ORDER],[1+ whitespace],[eq: BY]]] : 
+            => [eq: ORDER] : 
+            <= [eq: ORDER] :error : expecting 'ORDER' at position 28
+         <= [seq: [[eq: ORDER],[1+ whitespace],[eq: BY]]] :error : expecting 'ORDER' at position 28
+      <= [onMatch:[seq: [[eq: ORDER],[1+ whitespace],[eq: BY]]]] :error : expecting 'ORDER' at position 28
+   <= [seq: [[0+ whitespace],[onMatch:[seq: [[eq: ORDER],[1+ whitespace],[eq: BY]]]],[... :error : expecting 'ORDER' at position 28
+   <= [seq: [[0+ whitespace],[onMatch:[seq: [[eq: ORDER],[1+ whitespace],[eq: BY]]]],[... :result: <null> {27,0}
+   => [onMatch:[seq: [[0+ whitespace],[onMatch:[eq: LIMIT]],[CUT],[0+ whitespace],[int... : 
+   => [onMatch:[seq: [[0+ whitespace],[onMatch:[eq: LIMIT]],[CUT],[0+ whitespace],[int... : 
+      => [seq: [[0+ whitespace],[onMatch:[eq: LIMIT]],[CUT],[0+ whitespace],[integer]]] : 
+         => [0+ whitespace] : 
+         <= [0+ whitespace] :result:  {27,0}
+         => [onMatch:[eq: LIMIT]] : 
+            => [eq: LIMIT] : 
+            <= [eq: LIMIT] :error : expecting 'LIMIT' at position 28
+         <= [onMatch:[eq: LIMIT]] :error : expecting 'LIMIT' at position 28
+      <= [seq: [[0+ whitespace],[onMatch:[eq: LIMIT]],[CUT],[0+ whitespace],[integer]]] :error : expecting 'LIMIT' at position 28
+   <= [onMatch:[seq: [[0+ whitespace],[onMatch:[eq: LIMIT]],[CUT],[0+ whitespace],[int... :error : expecting 'LIMIT' at position 28
+   <= [onMatch:[seq: [[0+ whitespace],[onMatch:[eq: LIMIT]],[CUT],[0+ whitespace],[int... :result: <null> {27,0}
+   => [onMatch:[seq: [[0+ whitespace],[onMatch:[eq: OFFSET]],[CUT],[0+ whitespace],[in... : 
+   => [onMatch:[seq: [[0+ whitespace],[onMatch:[eq: OFFSET]],[CUT],[0+ whitespace],[in... : 
+      => [seq: [[0+ whitespace],[onMatch:[eq: OFFSET]],[CUT],[0+ whitespace],[integer]]] : 
+         => [0+ whitespace] : 
+         <= [0+ whitespace] :result:  {27,0}
+         => [onMatch:[eq: OFFSET]] : 
+            => [eq: OFFSET] : 
+            <= [eq: OFFSET] :error : expecting 'OFFSET' at position 28
+         <= [onMatch:[eq: OFFSET]] :error : expecting 'OFFSET' at position 28
+      <= [seq: [[0+ whitespace],[onMatch:[eq: OFFSET]],[CUT],[0+ whitespace],[integer]]] :error : expecting 'OFFSET' at position 28
+   <= [onMatch:[seq: [[0+ whitespace],[onMatch:[eq: OFFSET]],[CUT],[0+ whitespace],[in... :error : expecting 'OFFSET' at position 28
+   <= [onMatch:[seq: [[0+ whitespace],[onMatch:[eq: OFFSET]],[CUT],[0+ whitespace],[in... :result: <null> {27,0}
+   => [seq: [[0+ whitespace],[onMatch:[eq: FOR]],[CUT],[1+ whitespace],[onMatch:[onErr... : 
+   => [seq: [[0+ whitespace],[onMatch:[eq: FOR]],[CUT],[1+ whitespace],[onMatch:[onErr... : 
+      => [0+ whitespace] : 
+      <= [0+ whitespace] :result:  {27,0}
+      => [onMatch:[eq: FOR]] : 
+         => [eq: FOR] : 
+         <= [eq: FOR] :error : expecting 'FOR' at position 28
+      <= [onMatch:[eq: FOR]] :error : expecting 'FOR' at position 28
+   <= [seq: [[0+ whitespace],[onMatch:[eq: FOR]],[CUT],[1+ whitespace],[onMatch:[onErr... :error : expecting 'FOR' at position 28
+   <= [seq: [[0+ whitespace],[onMatch:[eq: FOR]],[CUT],[1+ whitespace],[onMatch:[onErr... :result: <null> {27,0}
+   => [seq: [[0+ whitespace],[onMatch:[eq: UPDATE]],[CUT],[1+ whitespace],[onMatch:[on... : 
+   => [seq: [[0+ whitespace],[onMatch:[eq: UPDATE]],[CUT],[1+ whitespace],[onMatch:[on... : 
+      => [0+ whitespace] : 
+      <= [0+ whitespace] :result:  {27,0}
+      => [onMatch:[eq: UPDATE]] : 
+         => [eq: UPDATE] : 
+         <= [eq: UPDATE] :error : expecting 'UPDATE' at position 28
+      <= [onMatch:[eq: UPDATE]] :error : expecting 'UPDATE' at position 28
+   <= [seq: [[0+ whitespace],[onMatch:[eq: UPDATE]],[CUT],[1+ whitespace],[onMatch:[on... :error : expecting 'UPDATE' at position 28
+   <= [seq: [[0+ whitespace],[onMatch:[eq: UPDATE]],[CUT],[1+ whitespace],[onMatch:[on... :result: <null> {27,0}
+   => [0+ whitespace] : 
+   <= [0+ whitespace] :result:  {27,0}
+<= [seq: [[0+ whitespace],[onMatch:[eq: SELECT]],[1+ whitespace],[selectExprs],[1+ ... :result: (
+    " {0,0}",
+    "<Token: 0x10970a370> {0,6}",
+    "  {6,1}",
+    "(\n    \"(\\n    \\\"count {7,5}\\\",\\n    \\\" {12,0}\\\",\\n    \\\"( {12,1}\\\",\\n    \\\"<null> {13,0}\\\",\\n    \\\" {13,0}\\\",\\n    \\\"(\\\\n) {13,0}\\\",\\n    \\\" {13,0}\\\",\\n    \\\") {13,1}\\\",\\n    \\\"<null> {15,4}\\\"\\n) {7,7}\"\n) {7,7}",
+    "  {14,1}",
+    "<Token: 0x100efc010> {15,4}",
+    "  {19,1}",
+    "(\n    \"(\\n    \\\"account {20,7}\\\",\\n    \\\"<null> {27,0}\\\"\\n) {20,7}\",\n    \"<null> {27,0}\"\n) {20,7}",
+    "<null> {27,0}",
+    "<null> {27,0}",
+    "<null> {27,0}",
+    "<null> {27,0}",
+    "<null> {27,0}",
+    "<null> {27,0}",
+    "<null> {27,0}",
+    "<null> {27,0}",
+    "<null> {27,0}",
+    " {27,0}"
+) {0,27}
+<= [SelectStmt] :result: (
+    " {0,0}",
+    "<Token: 0x10970a370> {0,6}",
+    "  {6,1}",
+    "(\n    \"(\\n    \\\"count {7,5}\\\",\\n    \\\" {12,0}\\\",\\n    \\\"( {12,1}\\\",\\n    \\\"<null> {13,0}\\\",\\n    \\\" {13,0}\\\",\\n    \\\"(\\\\n) {13,0}\\\",\\n    \\\" {13,0}\\\",\\n    \\\") {13,1}\\\",\\n    \\\"<null> {15,4}\\\"\\n) {7,7}\"\n) {7,7}",
+    "  {14,1}",
+    "<Token: 0x100efc010> {15,4}",
+    "  {19,1}",
+    "(\n    \"(\\n    \\\"account {20,7}\\\",\\n    \\\"<null> {27,0}\\\"\\n) {20,7}\",\n    \"<null> {27,0}\"\n) {20,7}",
+    "<null> {27,0}",
+    "<null> {27,0}",
+    "<null> {27,0}",
+    "<null> {27,0}",
+    "<null> {27,0}",
+    "<null> {27,0}",
+    "<null> {27,0}",
+    "<null> {27,0}",
+    "<null> {27,0}",
+    " {27,0}"
+) {0,27}
+

@@ -229,8 +229,8 @@ ExampleProvider fixed(NSString*value) {
     NSMutableString *s = [NSMutableString stringWithCapacity:32];
     NSInteger posAtEndOfFirstArg = 0;
     [s appendString:self.name];
+    [s appendString:@"("];
     if (self.args.count > 0) {
-        [s appendString:@"("];
         NSEnumerator<SoqlFuncArg*> *e = [self.args objectEnumerator];
         [s appendString:e.nextObject.example(primary)];
         posAtEndOfFirstArg = s.length;
@@ -240,8 +240,8 @@ ExampleProvider fixed(NSString*value) {
             [s appendString:arg.example(primary)];
             arg = e.nextObject;
         }
-        [s appendString:@")"];
     }
+    [s appendString:@")"];
     Completion *fc = [Completion txt:self.name type:TTFunc];
     fc.finalInsertionText = s;
     if (posAtEndOfFirstArg > 0) {

@@ -75,7 +75,7 @@ SELECT subject, TYPEOF what WHEN account Then id,BillingCity,createdBy.alias WHE
 
 SELECT fields(STANDARD) FROM KnowledgeArticleVersion WITH DATA CATEGORY Geography__c BELOW usa__c AND Product__c AT mobile_phones__c
    0-6   : Keyword         SELECT                         completions 0 
-   7-6   : Function        fields                         completions 28 
+   7-6   : Function        fields                         completions 1 
       14-8   : Keyword         STANDARD                       completions 3 
   24-4   : Keyword         FROM                           completions 0 
   29-23  : Error           KnowledgeArticleVersion        completions 2 The SObject 'KnowledgeArticleVersion' does not exist or is inaccessible
@@ -90,7 +90,7 @@ SELECT fields(STANDARD) FROM KnowledgeArticleVersion WITH DATA CATEGORY Geograph
 
 SELECT fields(STANDARD) FROM KnowledgeArticleVersion WITH DATA CATEGORY Geography__c NEAR usa__c AND Product__c AT mobile_phones__c
    0-6   : Keyword         SELECT                         completions 0 
-   7-6   : Function        fields                         completions 28 
+   7-6   : Function        fields                         completions 1 
       14-8   : Keyword         STANDARD                       completions 3 
   24-4   : Keyword         FROM                           completions 0 
   29-23  : Error           KnowledgeArticleVersion        completions 2 The SObject 'KnowledgeArticleVersion' does not exist or is inaccessible
@@ -99,7 +99,7 @@ SELECT fields(STANDARD) FROM KnowledgeArticleVersion WITH DATA CATEGORY Geograph
 
 SELECT fields(what) FROM KnowledgeArticleVersion
    0-6   : Keyword         SELECT                         completions 0 
-   7-6   : Function        fields                         completions 28 
+   7-6   : Function        fields                         completions 1 
       14-4   : Error           what                           completions 3 Fields argument should be one of STANDARD,ALL,CUSTOM
   20-4   : Keyword         FROM                           completions 0 
   25-23  : Error           KnowledgeArticleVersion        completions 2 The SObject 'KnowledgeArticleVersion' does not exist or is inaccessible

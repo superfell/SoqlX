@@ -29,6 +29,35 @@ typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasM
 }
 @end
 
+@implementation ZKDescribeField (Completion)
+-(Completion*)completion {
+    Completion *c = objc_getAssociatedObject(self, @selector(completion));
+    if (c == nil) {
+        c = [Completion txt:self.name type:TTField];
+        objc_setAssociatedObject(self, @selector(completion), c, OBJC_ASSOCIATION_RETAIN);
+    }
+    return c;
+}
+@end
+
+@implementation ZKDescribeSObject (Completions)
+-(NSArray<Completion*>*)parentRelCompletions {
+    NSArray<Completion*> *comps = objc_getAssociatedObject(self, @selector(parentRelCompletions));
+    if (comps == nil) {
+        comps = [Completion completions:[self.parentRelationshipsByName.allValues valueForKey:@"relationshipName"] type:TTRelationship];
+        for (Completion *c in comps) {
+            c.finalInsertionText = [NSString stringWithFormat:@"%@.Id", c.finalInsertionText];
+            c.onFinalInsert = ^BOOL(ZKTextView *tv, id<ZKTextViewCompletion> c) {
+                [tv showPopup];
+                return TRUE;
+            };
+        }
+        objc_setAssociatedObject(self, @selector(parentRelCompletions), comps, OBJC_ASSOCIATION_RETAIN);
+    }
+    return comps;
+}
+@end
+
 @interface Context : NSObject
 @property (strong,nonatomic) ZKDescribeSObject *primary;
 @property (strong,nonatomic) AliasMap *aliases;
@@ -43,18 +72,42 @@ typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasM
 @implementation Context
 @end
 
+// creating fn completions is called a lot, and is potentially expensive as many of them end up iterating all fields
+// and gets called for every field in the query, but they only vary by object, not field, so we can cache these
+
+typedef NSMutableDictionary<NSString *, Completion*> CompletionBySObject;
+
+@interface FnCompletionsCache : NSObject
+@property (strong,nonatomic) NSMutableDictionary<NSString*,CompletionBySObject*> *cache;   // fnName is the key
+-(Completion*)for:(SoqlFunction*)fn onObject:(ZKDescribeSObject*)obj;
+-(void)setCompletion:(Completion*)completion for:(SoqlFunction*)fn onObject:(ZKDescribeSObject*)obj;
+@end
+
 @interface SoqlTokenizer()
 @property (strong,nonatomic) Tokens *tokens;
 @property (strong,nonatomic) SoqlParser *soqlParser;
+@property (strong,nonatomic) FnCompletionsCache *fnCompletionsCache;
 @end
+
 
 @implementation SoqlTokenizer
 
 static NSString *KeyCompletions = @"completions";
+static double ticksToMilliseconds;
+
++(void)initialize {
+    // The first time we get here, ask the system
+    // how to convert mach time units to milliseconds
+    mach_timebase_info_data_t timebase;
+    // to be completely pedantic, check the return code of this next call.
+    mach_timebase_info(&timebase);
+    ticksToMilliseconds = (double)timebase.numer / timebase.denom / 1000000;
+}
 
 -(instancetype)init {
     self = [super init];
     self.soqlParser = [SoqlParser new];
+    self.fnCompletionsCache = [FnCompletionsCache new];
     return self;
 }
 
@@ -103,9 +156,13 @@ static NSString *KeyCompletions = @"completions";
 }
 
 -(Tokens*)parseAndResolve:(NSString*)soql {
+    uint64_t start = mach_absolute_time();
     [self scanWithParser:soql];
+    uint64_t parsed = mach_absolute_time();
     [self resolveTokens:self.tokens];
-    NSLog(@"resolved tokens\n%@\n", self.tokens);
+    uint64_t resolved = mach_absolute_time();
+    NSLog(@"parsed %ld tokens parse %.3fms resolve %.3fms", (long)self.tokens.count, (parsed-start) * ticksToMilliseconds, (resolved-parsed) * ticksToMilliseconds);
+    //NSLog(@"resolved tokens\n%@\n", self.tokens);
     return self.tokens;
 }
 
@@ -454,22 +511,14 @@ static NSString *KeyCompletions = @"completions";
 -(void)addFieldCompletionsFor:(ZKDescribeSObject*)obj to:(Token*)t ctx:(Context*)ctx {
     TokenType allowedTypes = ctx.restrictCompletionsToType;
     if (allowedTypes == 0 || ((allowedTypes & (TTField|TTFieldPath)) > 0)) {
-        NSArray *fields = obj.fields;
-        if (ctx.fieldCompletionsFilter != nil) {
-            fields = [fields filteredArrayUsingPredicate:ctx.fieldCompletionsFilter];
+        for (ZKDescribeField *field in obj.fields) {
+            if (ctx.fieldCompletionsFilter == nil || [ctx.fieldCompletionsFilter evaluateWithObject:field]) {
+                [t.completions addObject:[field completion]];
+            }
         }
-        [t.completions addObjectsFromArray:[Completion completions:[fields valueForKey:@"name"] type:TTField]];
     }
     if (allowedTypes == 0 || ((allowedTypes & (TTRelationship|TTFieldPath)) > 0)) {
-        NSArray<Completion*>* comps = [Completion completions:[obj.parentRelationshipsByName.allValues valueForKey:@"relationshipName"] type:TTRelationship];
-        for (Completion *c in comps) {
-            c.finalInsertionText = [NSString stringWithFormat:@"%@.Id", c.finalInsertionText];
-            c.onFinalInsert = ^BOOL(ZKTextView *tv, id<ZKTextViewCompletion> c) {
-                [tv showPopup];
-                return TRUE;
-            };
-        }
-        [t.completions addObjectsFromArray:comps];
+        [t.completions addObjectsFromArray:[obj parentRelCompletions]];
     }
     if (allowedTypes == 0 || ((allowedTypes & TTTypeOf) > 0)) {
         Completion *c = [Completion txt:@"TYPEOF" type:TTTypeOf];
@@ -477,10 +526,15 @@ static NSString *KeyCompletions = @"completions";
         c.onFinalInsert = [self moveSelection:-28];
         [t.completions addObject:c];
     }
-    if (allowedTypes == 0 || ((allowedTypes & TTFunc) > 0)) {
+    if ((allowedTypes == 0 || ((allowedTypes & TTFunc) > 0)) && obj != nil) {
         for (SoqlFunction *f in SoqlFunction.all.allValues) {
             if (ctx.fnCompletionsFilter == nil || [ctx.fnCompletionsFilter evaluateWithObject:f]) {
-                [t.completions addObject:[f completionOn:obj]];
+                Completion* cached = [self.fnCompletionsCache for:f onObject:obj];
+                if (cached == nil) {
+                    cached = [f completionOn:obj];
+                    [self.fnCompletionsCache setCompletion:cached for:f onObject:obj];
+                }
+                [t.completions addObject:cached];
             }
         }
     }
@@ -681,9 +735,33 @@ static NSString *KeyCompletions = @"completions";
 
 @end
 
+@implementation FnCompletionsCache
+-(instancetype)init {
+    self = [super init];
+    self.cache = [NSMutableDictionary dictionaryWithCapacity:[[SoqlFunction all] count]];
+    return self;
+}
+-(void)setCompletion:(Completion*)completion for:(SoqlFunction*)fn onObject:(ZKDescribeSObject*)obj {
+    CompletionBySObject *forObj = self.cache[fn.name];
+    if (forObj == nil) {
+        forObj = [CompletionBySObject dictionaryWithCapacity:128];
+        self.cache[fn.name] = forObj;
+    }
+    forObj[obj.name] = completion;
+}
+
+-(Completion*)for:(SoqlFunction*)fn onObject:(ZKDescribeSObject*)obj {
+    CompletionBySObject *forObj = self.cache[fn.name];
+    return forObj[obj.name];
+}
+
+@end
+
+
 @interface DLDDescriber()
 @property (strong,nonatomic) DescribeListDataSource *describes;
 @property (strong,nonatomic) NSMutableSet<NSString*>* pendingDescribes;
+@property (strong,nonatomic) NSArray<NSString*> *queryableSObjects;
 @end
 
 @implementation DLDDescriber
@@ -719,7 +797,10 @@ static NSString *KeyCompletions = @"completions";
 }
 
 -(NSArray<NSString*>*)allQueryableSObjects {
-    return [[self.describes.SObjects filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"queryable=true"]] valueForKey:@"name"];
+    if (self.queryableSObjects == nil && self.describes.SObjects != nil) {
+        self.queryableSObjects = [[self.describes.SObjects filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"queryable=true"]] valueForKey:@"name"];
+    }
+    return self.queryableSObjects;
 }
 
 -(NSImage *)iconForSObject:(NSString *)type {

@@ -19,7 +19,7 @@ SELECT FORMAT(Namer) Amt FROM account
 
 SELECT FORMAT(Namer) Amt FROM case
    0-6   : Keyword         SELECT                         completions 0 
-   7-6   : Function        FORMAT                         completions 28 
+   7-6   : Function        FORMAT                         completions 1 
       14-5   : FieldPath       Namer                          completions 0 
   21-3   : AliasDecl       Amt                            completions 0 
   25-4   : Keyword         FROM                           completions 0 
