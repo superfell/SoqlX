@@ -154,7 +154,7 @@ SELECT count() FROM Contact WHERE account.name = 'Salesforce.com'
   28-5   : Keyword         WHERE                          completions 0 
   34-12  : FieldPath       account.name                   completions 0 
       34-7   : Relationship    account                        completions 32 
-      42-4   : Field           name                           completions 33 
+      42-4   : Field           name                           completions 5 
   47-1   : Op              =                              completions 11 
   49-16  : String          'Salesforce.com'               completions 0 
 

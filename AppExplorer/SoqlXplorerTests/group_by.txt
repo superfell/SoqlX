@@ -60,7 +60,7 @@ select account.city, count(id) from contact group by account.city
    0-6   : Keyword         select                         completions 0 
    7-12  : FieldPath       account.city                   completions 0 
        7-7   : Relationship    account                        completions 32 
-      15-4   : Field           city                           completions 33 
+      15-4   : Field           city                           completions 5 
   21-5   : Function        count                          completions 32 
       27-2   : FieldPath       id                             completions 0 
           27-2   : Field           id                             completions 3 
@@ -69,7 +69,7 @@ select account.city, count(id) from contact group by account.city
   44-8   : Keyword         group by                       completions 0 
   53-12  : FieldPath       account.city                   completions 0 
       53-7   : Relationship    account                        completions 29 
-      61-4   : Field           city                           completions 29 
+      61-4   : Field           city                           completions 1 
 
 select city, count(id) from account group by rollup (city)
    0-6   : Keyword         select                         completions 0 

@@ -70,6 +70,11 @@ typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasM
 @end
 
 @implementation Context
+-(instancetype)init {
+    self = [super init];
+    self.restrictCompletionsToType = 0xFFFFFFFF;
+    return self;
+}
 @end
 
 // creating fn completions is called a lot, and is potentially expensive as many of them end up iterating all fields
@@ -435,6 +440,7 @@ static double ticksToMilliseconds;
         return;
     }
 
+    TokenType originalRestrictions = ctx.restrictCompletionsToType;
     for (NSString *step in path) {
         Token *tStep = [fieldPath tokenOf:NSMakeRange(position, step.length)];
         [self addFieldCompletionsFor:curr to:tStep ctx:ctx];
@@ -446,17 +452,17 @@ static double ticksToMilliseconds;
                     tStep.type = TTError;
                     tStep.value = [NSString stringWithFormat:@"There is no field or relationship %@ on SObject %@", step, curr.name];
                     [resolvedTokens addToken:tStep];
-                    return;
+                    break;
                     
                 } else if (step == path.lastObject) {
                     tStep.type = TTError;
                     tStep.value = [NSString stringWithFormat:@"%@ is a relationship, it should be followed by a field", df.relationshipName];
                     [resolvedTokens addToken:tStep];
-                    return;
+                    break;
                }
             }
             if (df == nil) {
-                return;
+                break;
             }
             tStep.type = TTRelationship;
             tStep.value = df;
@@ -474,7 +480,7 @@ static double ticksToMilliseconds;
                 err.type = TTError;
                 err.value = [NSString stringWithFormat:@"%@ is a field not a relationship, it should be the last item in the field path", step];
                 [resolvedTokens addToken:err];
-                return;
+                break;
             }
             tStep.type = TTField;
             ZKDescribeField *df = [curr fieldWithName:step];
@@ -491,7 +497,9 @@ static double ticksToMilliseconds;
         }
         [resolvedTokens addToken:tStep];
         position += step.length + 1;
+        ctx.restrictCompletionsToType = ctx.restrictCompletionsToType & (~(TTFunc | TTTypeOf));
     }
+    ctx.restrictCompletionsToType = originalRestrictions;
 }
 
 -(CompletionCallback)moveSelection:(NSInteger)amount {
@@ -510,23 +518,23 @@ static double ticksToMilliseconds;
 
 -(void)addFieldCompletionsFor:(ZKDescribeSObject*)obj to:(Token*)t ctx:(Context*)ctx {
     TokenType allowedTypes = ctx.restrictCompletionsToType;
-    if (allowedTypes == 0 || ((allowedTypes & (TTField|TTFieldPath)) > 0)) {
+    if (allowedTypes & (TTField|TTFieldPath)) {
         for (ZKDescribeField *field in obj.fields) {
             if (ctx.fieldCompletionsFilter == nil || [ctx.fieldCompletionsFilter evaluateWithObject:field]) {
                 [t.completions addObject:[field completion]];
             }
         }
     }
-    if (allowedTypes == 0 || ((allowedTypes & (TTRelationship|TTFieldPath)) > 0)) {
+    if (allowedTypes & (TTRelationship|TTFieldPath)) {
         [t.completions addObjectsFromArray:[obj parentRelCompletions]];
     }
-    if (allowedTypes == 0 || ((allowedTypes & TTTypeOf) > 0)) {
+    if (allowedTypes & TTTypeOf) {
         Completion *c = [Completion txt:@"TYPEOF" type:TTTypeOf];
         c.finalInsertionText = @"TYPEOF Relation WHEN ObjectType THEN id END";
         c.onFinalInsert = [self moveSelection:-28];
         [t.completions addObject:c];
     }
-    if ((allowedTypes == 0 || ((allowedTypes & TTFunc) > 0)) && obj != nil) {
+    if (((allowedTypes & TTFunc) != 0) && obj != nil) {
         for (SoqlFunction *f in SoqlFunction.all.allValues) {
             if (ctx.fnCompletionsFilter == nil || [ctx.fnCompletionsFilter evaluateWithObject:f]) {
                 Completion* cached = [self.fnCompletionsCache for:f onObject:obj];
@@ -703,7 +711,7 @@ static double ticksToMilliseconds;
                 if (t.value != nil) {
                     [txt addAttribute:NSToolTipAttributeName value:t.value range:t.loc];
                     [txt addAttribute:NSCursorAttributeName value:NSCursor.pointingHandCursor range:t.loc];
-                    NSLog(@"%lu-%lu %@", t.loc.location, t.loc.length, t.value);
+                    //NSLog(@"%lu-%lu %@", t.loc.location, t.loc.length, t.value);
                 }
         }
     }

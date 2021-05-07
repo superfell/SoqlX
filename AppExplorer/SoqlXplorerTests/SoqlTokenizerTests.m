@@ -188,7 +188,7 @@ NSObject<TokenizerDescriber> *descs;
 }
 
 -(void)testForDebugging {
-    [self writeSoqlTokensForQuerys:@[@"select count() from account"] toFile:@"debug.txt" withDebug:YES];
+    [self writeSoqlTokensForQuerys:@[@"select id,owner.name,fields(standard) from account"] toFile:@"debug.txt" withDebug:YES];
 }
 
 - (void)testWhere {

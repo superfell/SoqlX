@@ -199,7 +199,7 @@ select account.city from contact where name LIKE 'b%'
    0-6   : Keyword         select                         completions 0 
    7-12  : FieldPath       account.city                   completions 0 
        7-7   : Relationship    account                        completions 32 
-      15-4   : Field           city                           completions 33 
+      15-4   : Field           city                           completions 5 
   20-4   : Keyword         from                           completions 0 
   25-7   : SObject         contact                        completions 2 
   33-5   : Keyword         where                          completions 0 
@@ -212,7 +212,7 @@ select account.city from contact where name LIKE 'b%' OR name='eve'
    0-6   : Keyword         select                         completions 0 
    7-12  : FieldPath       account.city                   completions 0 
        7-7   : Relationship    account                        completions 32 
-      15-4   : Field           city                           completions 33 
+      15-4   : Field           city                           completions 5 
   20-4   : Keyword         from                           completions 0 
   25-7   : SObject         contact                        completions 2 
   33-5   : Keyword         where                          completions 0 
@@ -231,7 +231,7 @@ select c.account.city from contact c where name LIKE 'b%'
    7-14  : FieldPath       c.account.city                 completions 0 
        7-1   : Aias            c                              completions 2 
        9-7   : Relationship    account                        completions 32 
-      17-4   : Field           city                           completions 33 
+      17-4   : Field           city                           completions 5 
   22-4   : Keyword         from                           completions 0 
   27-7   : SObject         contact                        completions 2 
   35-1   : AliasDecl       c                              completions 0 
@@ -312,7 +312,7 @@ SELECT account.name.name FROM account
    7-17  : FieldPath       account.name.name              completions 0 
        7-7   : Aias            account                        completions 1 
       15-4   : Field           name                           completions 33 
-      20-4   : Field           name                           completions 33 
+      20-4   : Field           name                           completions 5 
   25-4   : Keyword         FROM                           completions 0 
   30-7   : SObject         account                        completions 2 
 
