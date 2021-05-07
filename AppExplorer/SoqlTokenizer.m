@@ -46,7 +46,6 @@ typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasM
 @interface SoqlTokenizer()
 @property (strong,nonatomic) Tokens *tokens;
 @property (strong,nonatomic) SoqlParser *soqlParser;
-@property (strong,nonatomic) NSDictionary<CaseInsensitiveStringKey*,SoqlFunction*> *functions;
 @end
 
 @implementation SoqlTokenizer
@@ -56,7 +55,6 @@ static NSString *KeyCompletions = @"completions";
 -(instancetype)init {
     self = [super init];
     self.soqlParser = [SoqlParser new];
-    self.functions = [SoqlFunction all];
     return self;
 }
 

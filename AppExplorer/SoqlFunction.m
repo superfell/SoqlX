@@ -164,52 +164,58 @@ ExampleProvider fixed(NSString*value) {
 @implementation SoqlFunction
 
 +(NSDictionary<CaseInsensitiveStringKey*,SoqlFunction*>*)all {
-    SoqlFunction *cvtTz = [self fn:@"ConvertTimezone" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"type='datetime' OR type='date'"]]];
-    NSPredicate *cvzTzOnly = [NSPredicate predicateWithFormat:@"name=%@", cvtTz.name];
+    static dispatch_once_t onceToken;
+    static NSDictionary<CaseInsensitiveStringKey*,SoqlFunction*>* funcs;
     
-    SoqlFunction *geoLoc = [self fn:@"Geolocation" args:@[[SoqlFuncArg arg:TTLiteralNumber ex:fixed(@"1.0")], [SoqlFuncArg arg:TTLiteralNumber ex:fixed(@"1.0")]]];
-    SoqlFuncArg *distGeoArg = [SoqlFuncArg arg:TTFunc ex:fixed(@"GeoLocation(1.0,1.0)")];
-    distGeoArg.funcFilter = [NSPredicate predicateWithFormat:@"name=%@", geoLoc.name];
-    
-    SoqlFunction *convCurrency = [self fn:@"ConvertCurrency" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"type='currency'"]]];
-    NSPredicate *convCurrencyOnly = [NSPredicate predicateWithFormat:@"name=%@", convCurrency.name];
+    dispatch_once(&onceToken, ^{
+        SoqlFunction *cvtTz = [self fn:@"ConvertTimezone" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"type='datetime' OR type='date'"]]];
+        NSPredicate *cvzTzOnly = [NSPredicate predicateWithFormat:@"name=%@", cvtTz.name];
+        
+        SoqlFunction *geoLoc = [self fn:@"Geolocation" args:@[[SoqlFuncArg arg:TTLiteralNumber ex:fixed(@"1.0")], [SoqlFuncArg arg:TTLiteralNumber ex:fixed(@"1.0")]]];
+        SoqlFuncArg *distGeoArg = [SoqlFuncArg arg:TTFunc ex:fixed(@"GeoLocation(1.0,1.0)")];
+        distGeoArg.funcFilter = [NSPredicate predicateWithFormat:@"name=%@", geoLoc.name];
+        
+        SoqlFunction *convCurrency = [self fn:@"ConvertCurrency" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"type='currency'"]]];
+        NSPredicate *convCurrencyOnly = [NSPredicate predicateWithFormat:@"name=%@", convCurrency.name];
 
-    NSArray<SoqlFunction*>* fns = @[
-        [self fn:@"Fields" args:@[[FieldsArg new]]],
-        [self fn:@"ToLabel" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"type!='id' AND type!='reference'"]]],
-        [SoqlCountFunction new],
-        [self fn:@"Count_Distinct" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"aggregatable=true"]]],
-        [self fn:@"Avg" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"aggregatable=true AND (type='double' OR type='integer' OR type='currency')" fnPred:convCurrencyOnly]]],
-        [self fn:@"Sum" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"aggregatable=true AND (type='double' OR type='integer' OR type='currency')" fnPred:convCurrencyOnly]]],
-        [self fn:@"Min" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"aggregatable=true AND type!='id' AND type!='reference'" fnPred:convCurrencyOnly]]],
-        [self fn:@"Max" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"aggregatable=true AND type!='id' AND type!='reference'" fnPred:convCurrencyOnly]]],
-        [self fn:@"Format" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc
-                                           fldPred:@"type='datetime' OR type='date' OR type='time' or type='currency' or type='double' or type='integer'"]]],    
-        [self fn:@"Distance" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"type='location'"],
-                                    distGeoArg,
-                                    [DistanceMeasureArg new]]],
-        [self fn:@"Calendar_Month" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
-        [self fn:@"Calendar_Quarter" args:@[[SoqlFuncArg arg:TTFieldPath| TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
-        [self fn:@"Calendar_Year" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
-        [self fn:@"Day_In_Month" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
-        [self fn:@"Day_In_Week" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
-        [self fn:@"Day_In_Year" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
-        [self fn:@"Day_Only" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime'" fnPred:cvzTzOnly]]],
-        [self fn:@"Fiscal_Month" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
-        [self fn:@"Fiscal_Quarter" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
-        [self fn:@"Fiscal_Year" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
-        [self fn:@"Hour_In_Day" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime'" fnPred:cvzTzOnly]]],
-        [self fn:@"Week_In_Month" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
-        [self fn:@"Week_In_Year" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
-        [self fn:@"Grouping" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"groupable=TRUE"]]],
+        NSArray<SoqlFunction*>* fns = @[
+            [self fn:@"Fields" args:@[[FieldsArg new]]],
+            [self fn:@"ToLabel" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"type!='id' AND type!='reference'"]]],
+            [SoqlCountFunction new],
+            [self fn:@"Count_Distinct" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"aggregatable=true"]]],
+            [self fn:@"Avg" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"aggregatable=true AND (type='double' OR type='integer' OR type='currency')" fnPred:convCurrencyOnly]]],
+            [self fn:@"Sum" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"aggregatable=true AND (type='double' OR type='integer' OR type='currency')" fnPred:convCurrencyOnly]]],
+            [self fn:@"Min" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"aggregatable=true AND type!='id' AND type!='reference'" fnPred:convCurrencyOnly]]],
+            [self fn:@"Max" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"aggregatable=true AND type!='id' AND type!='reference'" fnPred:convCurrencyOnly]]],
+            [self fn:@"Format" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc
+                                               fldPred:@"type='datetime' OR type='date' OR type='time' or type='currency' or type='double' or type='integer'"]]],
+            [self fn:@"Distance" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"type='location'"],
+                                        distGeoArg,
+                                        [DistanceMeasureArg new]]],
+            [self fn:@"Calendar_Month" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
+            [self fn:@"Calendar_Quarter" args:@[[SoqlFuncArg arg:TTFieldPath| TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
+            [self fn:@"Calendar_Year" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
+            [self fn:@"Day_In_Month" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
+            [self fn:@"Day_In_Week" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
+            [self fn:@"Day_In_Year" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
+            [self fn:@"Day_Only" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime'" fnPred:cvzTzOnly]]],
+            [self fn:@"Fiscal_Month" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
+            [self fn:@"Fiscal_Quarter" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
+            [self fn:@"Fiscal_Year" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
+            [self fn:@"Hour_In_Day" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime'" fnPred:cvzTzOnly]]],
+            [self fn:@"Week_In_Month" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
+            [self fn:@"Week_In_Year" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"type='datetime' OR type='date'" fnPred:cvzTzOnly]]],
+            [self fn:@"Grouping" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"groupable=TRUE"]]],
 
-        convCurrency, cvtTz, geoLoc
-    ];
-    NSMutableDictionary *d = [NSMutableDictionary dictionaryWithCapacity:fns.count];
-    for (SoqlFunction *f in fns) {
-        [d setObject:f forKey:[CaseInsensitiveStringKey of:f.name]];
-    }
-    return [NSDictionary dictionaryWithDictionary:d];
+            convCurrency, cvtTz, geoLoc
+        ];
+        NSMutableDictionary *d = [NSMutableDictionary dictionaryWithCapacity:fns.count];
+        for (SoqlFunction *f in fns) {
+            [d setObject:f forKey:[CaseInsensitiveStringKey of:f.name]];
+        }
+        funcs = [NSDictionary dictionaryWithDictionary:d];
+    });
+    return funcs;
 }
 
 +(instancetype)fn:(NSString*)name args:(NSArray<SoqlFuncArg*>*)args {
