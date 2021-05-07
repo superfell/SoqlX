@@ -139,6 +139,28 @@ ExampleProvider fixed(NSString*value) {
 }
 
 @end
+
+@interface SoqlCountFunction : SoqlFunction
+@end
+
+@implementation SoqlCountFunction
+-(instancetype)init {
+    self = [super init];
+    self.name = @"Count";
+    self.args = @[[SoqlFuncArg arg:TTFieldPath fldPred:@"aggregatable=true"]];
+    return self;
+}
+-(Token*)validateArgCount:(Token*)tFunc {
+    // count is different in that there's both count() and count(field)
+    Tokens *args = (Tokens*)tFunc.value;
+    if (args.count == 0) {
+        return nil;
+    }
+    return [super validateArgCount:tFunc];
+}
+
+@end
+
 @implementation SoqlFunction
 
 +(NSDictionary<CaseInsensitiveStringKey*,SoqlFunction*>*)all {
@@ -155,7 +177,7 @@ ExampleProvider fixed(NSString*value) {
     NSArray<SoqlFunction*>* fns = @[
         [self fn:@"Fields" args:@[[FieldsArg new]]],
         [self fn:@"ToLabel" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"type!='id' AND type!='reference'"]]],
-        [self fn:@"Count" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"aggregatable=true"]]],
+        [SoqlCountFunction new],
         [self fn:@"Count_Distinct" args:@[[SoqlFuncArg arg:TTFieldPath fldPred:@"aggregatable=true"]]],
         [self fn:@"Avg" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"aggregatable=true AND (type='double' OR type='integer' OR type='currency')" fnPred:convCurrencyOnly]]],
         [self fn:@"Sum" args:@[[SoqlFuncArg arg:TTFieldPath | TTFunc fldPred:@"aggregatable=true AND (type='double' OR type='integer' OR type='currency')" fnPred:convCurrencyOnly]]],
@@ -220,6 +242,17 @@ ExampleProvider fixed(NSString*value) {
         fc.onFinalInsert = moveSelection(-(s.length-posAtEndOfFirstArg));
     }
     return fc;
+}
+
+-(Token*)validateArgCount:(Token*)tFunc {
+    Tokens *argTokens = (Tokens*)tFunc.value;
+    if (argTokens.count != self.args.count) {
+        Token *err = [tFunc tokenOf:tFunc.loc];
+        err.type = TTError;
+        err.value = [NSString stringWithFormat:@"The function %@ should have %ld arguments, but has %ld", self.name, self.args.count, argTokens.count];
+        return err;
+    }
+    return nil;
 }
 
 @end

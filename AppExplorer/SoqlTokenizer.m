@@ -194,24 +194,17 @@ static NSString *KeyCompletions = @"completions";
 }
 
 -(NSArray<Token*>*)resolveFunc:(Token*)f ctx:(Context*)ctx {
-    NSMutableArray *newTokens = [NSMutableArray array];
     SoqlFunction *fn = [SoqlFunction all][[CaseInsensitiveStringKey of:f.tokenTxt]];
     [self addFieldCompletionsFor:ctx.primary to:f ctx:ctx];
     if (fn == nil) {
         Token *err = [f tokenOf:f.loc];
         err.type = TTError;
         err.value = [NSString stringWithFormat:@"There is no function named '%@'", f.tokenTxt];
-        [newTokens addObject:err];
         [self resolveSelectExprs:(Tokens*)f.value ctx:ctx];
-        return newTokens;
+        return [NSArray arrayWithObject:err];
     }
-    Tokens *argTokens = (Tokens*)f.value;
-    if (argTokens.count != fn.args.count) {
-        Token *err = [f tokenOf:f.loc];
-        err.type = TTError;
-        err.value = [NSString stringWithFormat:@"The function %@ should have %ld arguments, but has %ld", f.tokenTxt, fn.args.count, argTokens.count];
-        [newTokens addObject:err];
-    }
+    Tokens *argTokens = (Tokens*)f.value;  
+    Token *err = [fn validateArgCount:f];
     NSMutableArray *argsNewTokens = [NSMutableArray array];
     NSEnumerator<SoqlFuncArg*> *fnArgs = fn.args.objectEnumerator;
     NSPredicate *fieldFilter = ctx.fieldCompletionsFilter;
@@ -234,7 +227,7 @@ static NSString *KeyCompletions = @"completions";
     for (Token *t in argsNewTokens) {
         [argTokens addToken:t];
     }
-    return newTokens;
+    return err == nil ? [NSArray array] : [NSArray arrayWithObject:err];
 }
 
 -(void)resolveTypeOf:(Token*)typeOf ctx:(Context*)ctx {

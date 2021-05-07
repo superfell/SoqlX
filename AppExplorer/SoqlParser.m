@@ -161,6 +161,7 @@ const NSString *KeySoqlText = @"soql";
             [r.userContext[KeyTokens] addToken:r.val];
             return r;
     }];
+    literalValue.debugName = @"LiteralVal";
     return literalValue;
 }
 
@@ -292,12 +293,11 @@ const NSString *KeySoqlText = @"soql";
                               [f eq:@"("],
                               cut,
                               maybeWs,
-                              [f oneOrMore:[f firstOf:@[fieldOrFunc,literalValue]] separator:commaSep],
+                              [f zeroOrMore:[f firstOf:@[fieldOrFunc,literalValue]] separator:commaSep],
                               maybeWs,
                               [f eq:@")"],
                               alias
                             ]] perform:^ZKParserResult*(ZKParserResult*r) {
-    
         Token *fn = [Token txt:r.userContext[KeySoqlText] loc:[[r child:0] loc]];
         fn.type = TTFunc;
         Tokens *tk = r.userContext[KeyTokens];
@@ -305,6 +305,7 @@ const NSString *KeySoqlText = @"soql";
         [tk addToken:fn];
         return r;
     }];
+    func.debugName = @"func";
     // TODO, add onError handler that changes the error message to expected field, func or literal value. needs errorCodes sorting out
     
     fieldOrFunc.parser = [f firstOf:@[func, fieldAndAlias]];
@@ -317,6 +318,7 @@ const NSString *KeySoqlText = @"soql";
         r.val = t;
         return r;
     }];
+    nestedSelectStmt.debugName = @"NestedSelect";
     ZKBaseParser *typeOfWhen = [f onMatch:[f seq:@[tokenSeq(@"WHEN"), cut, ws, ident, ws, tokenSeq(@"THEN"), ws,
                                          [f oneOrMore:fieldPath separator:commaSep]]] perform:^ZKParserResult *(ZKParserResult *r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:[[r child:3] loc]];
@@ -342,17 +344,12 @@ const NSString *KeySoqlText = @"soql";
         [r.userContext[KeyTokens] addToken:t];
         return r;
     }];
-    typeOfWhen.debugName = @"typeofWhen";
-    typeOfElse.debugName = @"typeofElse";
+    typeOf.debugName = @"typeOf";
+    typeOfWhen.debugName = @"typeOfWhen";
+    typeOfElse.debugName = @"typeOfElse";
     
     ZKBaseParser* selectExprs = [f oneOrMore:[f firstOf:@[func, typeOf, fieldAndAlias, nestedSelectStmt]] separator:commaSep];
-//    ZKBaseParser *countOnly = [[f seq:@[[f eq:@"count"], maybeWs, [f eq:@"("], maybeWs, [f eq:@")"]]] onMatch:^ZKParserResult *(ZKArrayParserResult *r) {
-//        // Should we just let count() be handled by the regular func matcher? and not deal with the fact it can only
-//        // appear on its own.
-//        r.val =@[[SelectFunc name:[r.child[0] posString] args:@[] alias:nil loc:r.loc]];
-//        return r;
-//    }];
-//    selectExprs = [f oneOf:@[selectExprs, countOnly]];
+    selectExprs.debugName = @"selectExprs";
 
     /// FROM
     ZKBaseParser *objectRef = [f onMatch:[f seq:@[ident, alias]] perform:^ZKParserResult *(ZKParserResult *r) {

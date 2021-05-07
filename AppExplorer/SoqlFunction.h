@@ -33,5 +33,7 @@ typedef NSString*(^ExampleProvider)(ZKDescribeSObject*);
 @property (strong,nonatomic) NSString *name;
 @property (strong,nonatomic) NSArray<SoqlFuncArg*>* args;
 -(Completion*)completionOn:(ZKDescribeSObject*)primary;
+// returns an error token if there's a problem
+-(Token*)validateArgCount:(Token*)tFunc;
 @end
 
