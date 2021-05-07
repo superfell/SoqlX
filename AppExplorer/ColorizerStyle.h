@@ -15,15 +15,22 @@
 @interface ColorizerStyle : NSObject
 +(instancetype)styles;
 
-@property (strong) NSColor *fieldColor;
 @property (strong) NSColor *keywordColor;
+@property (strong) NSColor *fieldColor;
+@property (strong) NSColor *funcColor;
+@property (strong) NSColor *sobjectColor;
+@property (strong) NSColor *aliasColor;
+@property (strong) NSColor *relColor;
 @property (strong) NSColor *literalColor;
-@property (strong) NSNumber *underlineStyle;
-@property (strong) NSDictionary *underlined;
-@property (strong) NSDictionary *noUnderline;
 
-@property (strong) NSDictionary *keyWord;
+@property (strong) NSDictionary *underlined;
+
+@property (strong) NSDictionary *keyword;
 @property (strong) NSDictionary *field;
+@property (strong) NSDictionary *func;
+@property (strong) NSDictionary *relationship;
+@property (strong) NSDictionary *sobject;
+@property (strong) NSDictionary *alias;
 @property (strong) NSDictionary *literal;
 
 @end

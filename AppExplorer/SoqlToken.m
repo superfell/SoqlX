@@ -23,12 +23,12 @@ static Icons *iconInstance;
     NSImage *lit = [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"V" color:style.literalColor]];
     iconInstance.icons = @{
         @(TTField) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"F" color:style.fieldColor]],
-        @(TTSObject) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"O" color:style.fieldColor]],
-        @(TTRelationship) : [NSImage imageWithSize:NSMakeSize(64, 64) flipped:NO drawingHandler:[self iconDrawingHandler:@"R" color:style.literalColor]],
+        @(TTSObject) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"O" color:style.sobjectColor]],
+        @(TTRelationship) : [NSImage imageWithSize:NSMakeSize(64, 64) flipped:NO drawingHandler:[self iconDrawingHandler:@"R" color:style.relColor]],
         @(TTOperator) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"Op" color:style.keywordColor]],
         @(TTKeyword) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"K" color:style.keywordColor]],
         @(TTTypeOf) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"T" color:style.keywordColor]],
-        @(TTFunc) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"\xF0\x9D\x91\x93"  color:style.keywordColor]],
+        @(TTFunc) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"\xF0\x9D\x91\x93"  color:style.funcColor]],
         @(TTLiteral) : lit,
         @(TTLiteralList) : lit,
         @(TTLiteralString) : lit,

@@ -23,22 +23,26 @@ static ColorizerStyle *style;
 
 -(instancetype)init {
     self = [super init];
-    self.fieldColor = [NSColor colorNamed:@"soql.field"];
+    // TODO, why is colorNamed:@ returning nil in unit tests?
     self.keywordColor = [NSColor colorNamed:@"soql.keyword"];
+    self.fieldColor   = [NSColor colorNamed:@"soql.field"];
+    self.funcColor    = [NSColor colorNamed:@"soql.func"];
+    self.sobjectColor = [NSColor colorNamed:@"soql.sobject"];
+    self.relColor     = [NSColor colorNamed:@"soql.rel"];
+    self.aliasColor   = [NSColor colorNamed:@"soql.alias"];
     self.literalColor = [NSColor colorNamed:@"soql.literal"];
     
-    self.underlineStyle = @(NSUnderlineStyleSingle);
-    self.underlined = @{
-                        NSUnderlineStyleAttributeName: self.underlineStyle,
-                        NSUnderlineColorAttributeName: [NSColor yellowColor],
-                        };
-    self.noUnderline = @{ NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone) };
+    self.underlined = @{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle),
+                        NSUnderlineColorAttributeName: [NSColor colorNamed:@"soql.error"]};
     
-    // TODO, why is colorNamed:@ returning nil in unit tests?
     if (self.keywordColor != nil) {
-        self.keyWord = @{ NSForegroundColorAttributeName:self.keywordColor};
-        self.field =   @{ NSForegroundColorAttributeName:self.fieldColor};
+        self.keyword = @{ NSForegroundColorAttributeName:self.keywordColor};
+        self.field   = @{ NSForegroundColorAttributeName:self.fieldColor};
+        self.func    = @{ NSForegroundColorAttributeName:self.funcColor};
+        self.sobject = @{ NSForegroundColorAttributeName:self.sobjectColor};
+        self.alias   = @{ NSForegroundColorAttributeName:self.aliasColor};
         self.literal = @{ NSForegroundColorAttributeName:self.literalColor};
+        self.relationship = @{ NSForegroundColorAttributeName:self.relColor};
     }
     return self;
 }

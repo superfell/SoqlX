@@ -177,7 +177,7 @@ static double ticksToMilliseconds;
     NSRange before =  [self.view selectedRange];
     [txt beginEditing];
     NSRange all = NSMakeRange(0,txt.length);
-    [txt addAttribute:NSForegroundColorAttributeName value:[NSColor whiteColor] range:all];
+    [txt addAttribute:NSForegroundColorAttributeName value:[NSColor textColor] range:all];
     [txt removeAttribute:NSToolTipAttributeName range:all];
     [txt removeAttribute:NSCursorAttributeName range:all];
     [txt removeAttribute:NSUnderlineStyleAttributeName range:all];
@@ -665,24 +665,27 @@ static double ticksToMilliseconds;
                     [self applyTokens:(Tokens*)t.value];
                 }
                 break;
+            case TTOperator:
             case TTKeyword:
                 [txt replaceCharactersInRange:t.loc withString:[t.tokenTxt uppercaseString]];
-                [txt addAttributes:style.keyWord range:t.loc];
-                break;
-            case TTOperator:
-                [txt replaceCharactersInRange:t.loc withString:[t.tokenTxt uppercaseString]];
-                [txt addAttributes:style.keyWord range:t.loc];
+                [txt addAttributes:style.keyword range:t.loc];
                 break;
             case TTAlias:
-            case TTField:
-            case TTRelationship:
-            case TTSObject:
-            case TTSObjectRelation:
             case TTAliasDecl:
+                [txt addAttributes:style.alias range:t.loc];
+                break;
+            case TTField:
                 [txt addAttributes:style.field range:t.loc];
                 break;
+            case TTSObjectRelation:
+            case TTRelationship:
+                [txt addAttributes:style.relationship range:t.loc];
+                break;
+            case TTSObject:
+                [txt addAttributes:style.sobject range:t.loc];
+                break;
             case TTFunc:
-                [txt addAttributes:style.field range:t.loc];
+                [txt addAttributes:style.func range:t.loc];
                 [self applyTokens:(Tokens*)t.value];
                 break;
             case TTLiteral:
@@ -703,8 +706,10 @@ static double ticksToMilliseconds;
                 break;
             case TTUsingScope:
             case TTDataCategory:
-            case TTDataCategoryValue:
                 [txt addAttributes:style.field range:t.loc];
+                break;
+            case TTDataCategoryValue:
+                [txt addAttributes:style.literal range:t.loc];
                 break;
             case TTError:
                 [txt addAttributes:style.underlined range:t.loc];
@@ -770,6 +775,7 @@ static double ticksToMilliseconds;
 @property (strong,nonatomic) DescribeListDataSource *describes;
 @property (strong,nonatomic) NSMutableSet<NSString*>* pendingDescribes;
 @property (strong,nonatomic) NSArray<NSString*> *queryableSObjects;
+@property (assign,nonatomic) BOOL typeListLoaded;
 @end
 
 @implementation DLDDescriber
@@ -777,6 +783,7 @@ static double ticksToMilliseconds;
     DLDDescriber *d = [self new];
     d.describes = describes;
     d.pendingDescribes = [NSMutableSet setWithCapacity:2];
+    d.typeListLoaded = NO;
     return d;
 }
 
@@ -826,11 +833,19 @@ static double ticksToMilliseconds;
             [arrived addObject:p];
         }
     }
-    if (arrived.count == 0) return;
-    NSLog(@"Pending describes for %@ have arrived", [arrived componentsJoinedByString:@","]);
     for (NSString *p in arrived) {
         [self.pendingDescribes removeObject:p];
     }
+    if (!self.typeListLoaded) {
+        // this deals with the small window at app startup where we don't have the global describe yet
+        // and so typeDescribable returns false, which means we don't prioritze the describe.
+        for (NSString *p in self.pendingDescribes) {
+            [self.describes prioritizeDescribe:p];
+        }
+        self.typeListLoaded = YES;
+    }
+    if (arrived.count == 0) return;
+    NSLog(@"Pending describes for %@ have arrived", [arrived componentsJoinedByString:@","]);
     if (self.onNewDescribe != nil) {
         self.onNewDescribe();
     }
