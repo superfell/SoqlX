@@ -116,12 +116,19 @@ double ticksToMilliseconds;
             unichar keyChar = [theArrow characterAtIndex:0];
             BOOL isFinal = NO;
             NSTextMovement movement;
+            NSInteger pageAmount = 8;
             switch (keyChar) {
+                case NSPageUpFunctionKey:
+                    pageAmount = -8;
+                case NSPageDownFunctionKey: {
+                    NSInteger row = self.table.selectedRow;
+                    row = MIN(MAX(0,row + pageAmount), self.table.numberOfRows-1);
+                    [self.table selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
+                    [self scrollRowToCenterVisible:row];
+                    break;
+                }
                 case NSUpArrowFunctionKey:
                 case NSDownArrowFunctionKey:
-                case NSPageUpFunctionKey:
-                case NSPageDownFunctionKey:
-                    NSLog(@"Passing keyDown to table");
                     [self.table keyDown:event];
                     isFinal = NO;
                     movement = NSTextMovementUp;
