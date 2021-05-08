@@ -250,7 +250,7 @@ double ticksToMilliseconds;
     NSString *txt = self.string;
     for (; sel.location > 0 ; sel.location--, sel.length++) {
         unichar c = [txt characterAtIndex:sel.location-1];
-        if (isblank(c) || c ==',' || c =='.' || c =='(' || c == ')') {
+        if (isspace(c) || c ==',' || c =='.' || c =='(' || c == ')') {
             break;
         }
     }
