@@ -67,6 +67,7 @@
 		F4BD5DCE2641B59A00ACBBAB /* group_by.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4BD5DCD2641B59A00ACBBAB /* group_by.txt */; };
 		F4BD5DD22641B91900ACBBAB /* using_scope.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4BD5DD12641B91900ACBBAB /* using_scope.txt */; };
 		F4BD5DD6264457DA00ACBBAB /* literals.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4BD5DD5264457DA00ACBBAB /* literals.txt */; };
+		F4BD5DD926470C8800ACBBAB /* Prefs.m in Sources */ = {isa = PBXBuildFile; fileRef = F48B6B8B1969E68700496C82 /* Prefs.m */; };
 		F4BF72A70F79E58C0089F459 /* NSWindow_additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F4BF72A60F79E58C0089F459 /* NSWindow_additions.m */; };
 		F4C440CA15DB50BC00590A1E /* SearchQueryResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C440C915DB50BC00590A1E /* SearchQueryResult.m */; };
 		F4C877FA0F395DB4000075D4 /* ProgressController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C877F90F395DB4000075D4 /* ProgressController.m */; };
@@ -1093,6 +1094,7 @@
 			files = (
 				F4DF0B5F2638BDA100B3A1A9 /* SoqlFunction.m in Sources */,
 				F4408FF02562F4C1005E8BB7 /* QueryColumns.m in Sources */,
+				F4BD5DD926470C8800ACBBAB /* Prefs.m in Sources */,
 				F48804DD2592BE57001D56F6 /* CaseInsensitiveKeyTest.m in Sources */,
 				F4DF0B632638BDB300B3A1A9 /* SoqlParser.m in Sources */,
 				F4DE40652562079100FBA200 /* QueryColumnsTest.m in Sources */,

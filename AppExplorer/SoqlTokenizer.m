@@ -15,6 +15,7 @@
 #import "SoqlToken.h"
 #import "SoqlParser.h"
 #import "SoqlFunction.h"
+#import "Prefs.h"
 
 typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasMap;
 
@@ -98,6 +99,7 @@ typedef NSMutableDictionary<NSString *, Completion*> CompletionBySObject;
 @property (strong,nonatomic) Tokens *tokens;
 @property (strong,nonatomic) SoqlParser *soqlParser;
 @property (strong,nonatomic) FnCompletionsCache *fnCompletionsCache;
+@property (assign,nonatomic) BOOL coloredLastTime;
 @end
 
 
@@ -173,24 +175,37 @@ static double ticksToMilliseconds;
     [self resolveTokens:self.tokens];
     uint64_t resolved = mach_absolute_time();
     NSLog(@"parsed %ld tokens parse %.3fms resolve %.3fms", (long)self.tokens.count, (parsed-start) * ticksToMilliseconds, (resolved-parsed) * ticksToMilliseconds);
-    NSLog(@"resolved tokens\n%@\n", self.tokens);
+    //NSLog(@"resolved tokens\n%@\n", self.tokens);
     return self.tokens;
 }
 
 -(void)color {
+    BOOL shouldColor = [[NSUserDefaults standardUserDefaults] boolForKey:PREF_SOQL_SYNTAX_HIGHLIGHTING];
+    if (!shouldColor) {
+        if (self.coloredLastTime) {
+            [self removeAttributes:self.view.textStorage];
+            self.coloredLastTime = FALSE;
+        }
+        return;
+    }
     [self parseAndResolve:self.view.textStorage.string];
     NSTextStorage *txt = self.view.textStorage;
     NSRange before =  [self.view selectedRange];
     [txt beginEditing];
-    NSRange all = NSMakeRange(0,txt.length);
+    [self removeAttributes:txt];
+    [self applyTokens:self.tokens];
+    [txt endEditing];
+    [self.view setSelectedRange:before];
+    self.coloredLastTime = TRUE;
+}
+
+-(void)removeAttributes:(NSTextStorage*)txt {
+    NSRange all = NSMakeRange(0, txt.length);
     [txt addAttribute:NSForegroundColorAttributeName value:[NSColor textColor] range:all];
     [txt removeAttribute:NSToolTipAttributeName range:all];
     [txt removeAttribute:NSCursorAttributeName range:all];
     [txt removeAttribute:NSUnderlineStyleAttributeName range:all];
     [txt removeAttribute:KeyCompletions range:all];
-    [self applyTokens:self.tokens];
-    [txt endEditing];
-    [self.view setSelectedRange:before];
 }
 
 -(void)resolveTokens:(Tokens*)tokens {
@@ -734,6 +749,7 @@ static double ticksToMilliseconds;
 -(void)applyTokens:(Tokens*)tokens {
     ColorizerStyle *style = [ColorizerStyle styles];
     NSTextStorage *txt = self.view.textStorage;
+    BOOL toUpper = [[NSUserDefaults standardUserDefaults] boolForKey:PREF_SOQL_UPPERCASE_KEYWORDS];
     for (Token *t in tokens.tokens) {
         if (t.completions.count > 0) {
             [txt addAttribute:KeyCompletions value:t.completions range:t.loc];
@@ -746,7 +762,9 @@ static double ticksToMilliseconds;
                 break;
             case TTOperator:
             case TTKeyword:
-                [txt replaceCharactersInRange:t.loc withString:[t.tokenTxt uppercaseString]];
+                if (toUpper) {
+                    [txt replaceCharactersInRange:t.loc withString:[t.tokenTxt uppercaseString]];
+                }
                 [txt addAttributes:style.keyword range:t.loc];
                 break;
             case TTAlias:

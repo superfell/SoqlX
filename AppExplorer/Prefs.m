@@ -28,3 +28,5 @@ NSString *PREF_TEXT_SIZE = @"TextSize";
 NSString *PREF_QUIT_ON_LAST_WINDOW_CLOSE = @"QuitOnLastWindowClose";
 NSString *PREF_MAX_RECENT_QUERIES = @"MaxRecentQueries";
 NSString *PREF_FILTER_EMPY_PROPS = @"DetailsFilterEmptyProps";
+NSString *PREF_SOQL_SYNTAX_HIGHLIGHTING = @"SoqlColoring";
+NSString *PREF_SOQL_UPPERCASE_KEYWORDS = @"SoqlUppercaseKeywords";
