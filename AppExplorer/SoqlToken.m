@@ -129,8 +129,9 @@ NSString *tokenName(TokenType type) {
         case TTLiteralBoolean: return @"Boolean";
         case TTLiteralNull: return @"Null";
         case TTError: return @"Error";
-        default: return @"<unknown>";
+        case TTLiteralCurrency: return @"Currency";
     }
+    return @"<unknown>";
 }
 
 NSString *tokenNames(TokenType types) {

@@ -165,7 +165,19 @@ select id from account where name> USD200
   29-4   : FieldPath       name                           completions 0 
       29-4   : Field           name                           completions 33 
   33-1   : Op              >                              completions 11 
-  35-6   : NamedDateTime   USD200                         completions 0 
+  35-6   : Currency        USD200                         completions 0 
+
+SELECT Id FROM Account WHERE Amount > EUR5.1000
+   0-6   : Keyword         SELECT                         completions 0 
+   7-2   : FieldPath       Id                             completions 0 
+       7-2   : Field           Id                             completions 33 
+  10-4   : Keyword         FROM                           completions 0 
+  15-7   : SObject         Account                        completions 2 
+  23-5   : Keyword         WHERE                          completions 0 
+  29-6   : FieldPath       Amount                         completions 0 
+      29-6   : Field           Amount                         completions 33 
+  36-1   : Op              >                              completions 11 
+  38-9   : Currency        EUR5.1000                      completions 0 
 
 select id from account where lastModifiedDate < YESTERDAY
    0-6   : Keyword         select                         completions 0 

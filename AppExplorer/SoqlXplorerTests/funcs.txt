@@ -47,7 +47,7 @@ SELECT format(convertCurrency(Amount)) FROM account WHERE amount > USD20
   58-6   : FieldPath       amount                         completions 0 
       58-6   : Field           amount                         completions 33 
   65-1   : Op              >                              completions 11 
-  67-5   : NamedDateTime   USD20                          completions 0 
+  67-5   : Currency        USD20                          completions 0 
 
 SELECT format(max(Amount)) FROM account WHERE amount > USD20
    0-6   : Keyword         SELECT                         completions 0 
@@ -61,7 +61,7 @@ SELECT format(max(Amount)) FROM account WHERE amount > USD20
   46-6   : FieldPath       amount                         completions 0 
       46-6   : Field           amount                         completions 33 
   53-1   : Op              >                              completions 11 
-  55-5   : NamedDateTime   USD20                          completions 0 
+  55-5   : Currency        USD20                          completions 0 
 
 SELECT max(convertCurrency(Amount)) FROM account WHERE amount > USD20
    0-6   : Keyword         SELECT                         completions 0 
@@ -75,7 +75,7 @@ SELECT max(convertCurrency(Amount)) FROM account WHERE amount > USD20
   55-6   : FieldPath       amount                         completions 0 
       55-6   : Field           amount                         completions 33 
   62-1   : Op              >                              completions 11 
-  64-5   : NamedDateTime   USD20                          completions 0 
+  64-5   : Currency        USD20                          completions 0 
 
 SELECT format(convertCurrency(city)) FROM account WHERE amount > USD20
    0-6   : Keyword         SELECT                         completions 0 
@@ -90,7 +90,7 @@ SELECT format(convertCurrency(city)) FROM account WHERE amount > USD20
   56-6   : FieldPath       amount                         completions 0 
       56-6   : Field           amount                         completions 33 
   63-1   : Op              >                              completions 11 
-  65-5   : NamedDateTime   USD20                          completions 0 
+  65-5   : Currency        USD20                          completions 0 
 
 SELECT name, DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') FROM account WHERE DISTANCE(mailing__c, GEOLOCATION(1,1), 'mi') > 20
    0-6   : Keyword         SELECT                         completions 0 

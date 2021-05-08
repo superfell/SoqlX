@@ -173,7 +173,7 @@ static double ticksToMilliseconds;
     [self resolveTokens:self.tokens];
     uint64_t resolved = mach_absolute_time();
     NSLog(@"parsed %ld tokens parse %.3fms resolve %.3fms", (long)self.tokens.count, (parsed-start) * ticksToMilliseconds, (resolved-parsed) * ticksToMilliseconds);
-    //NSLog(@"resolved tokens\n%@\n", self.tokens);
+    NSLog(@"resolved tokens\n%@\n", self.tokens);
     return self.tokens;
 }
 
@@ -703,6 +703,7 @@ static double ticksToMilliseconds;
             case TTLiteralNamedDateTime:
             case TTLiteralBoolean:
             case TTLiteralNull:
+            case TTLiteralCurrency:
                 [txt addAttributes:style.literal range:t.loc];
                 break;
             case TTTypeOf:

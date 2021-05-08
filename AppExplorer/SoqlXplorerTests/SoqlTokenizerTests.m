@@ -245,6 +245,7 @@ NSObject<TokenizerDescriber> *descs;
         @"select id from account where name> 10",
         @"select id from account where name> 10.123",
         @"select id from account where name> USD200",
+        @"SELECT Id FROM Account WHERE Amount > EUR5.1000",
         @"select id from account where lastModifiedDate < YESTERDAY",
     ];
     [self writeSoqlTokensForQuerys:queries toFile:@"literals.txt"];

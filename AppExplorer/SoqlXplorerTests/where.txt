@@ -402,7 +402,7 @@ SELECT Id, Name FROM Account WHERE Amount > USD5000
   35-6   : FieldPath       Amount                         completions 0 
       35-6   : Field           Amount                         completions 33 
   42-1   : Op              >                              completions 11 
-  44-7   : NamedDateTime   USD5000                        completions 0 
+  44-7   : Currency        USD5000                        completions 0 
 
 SELECT Id, Name FROM Account WHERE msp__c Includes('abc;def','q')
    0-6   : Keyword         SELECT                         completions 0 
@@ -443,7 +443,7 @@ SELECT Id, Name FROM case WHERE Amount > USD5000
   26-5   : Keyword         WHERE                          completions 0 
   32-6   : FieldPath       Amount                         completions 0 
   39-1   : Op              >                              completions 11 
-  41-7   : NamedDateTime   USD5000                        completions 0 
+  41-7   : Currency        USD5000                        completions 0 
 
 SELECT Id, Name FROM case WHERE msp__c Includes('abc;def','q')
    0-6   : Keyword         SELECT                         completions 0 

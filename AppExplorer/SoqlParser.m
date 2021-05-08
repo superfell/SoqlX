@@ -145,6 +145,18 @@ const NSString *KeySoqlText = @"soql";
         r.val = t;
         return r;
     }];
+    NSRegularExpression *currency = [NSRegularExpression regularExpressionWithPattern:@"[a-z]{3}\\d+(?:\\.\\d+)?"
+                                                                           options:NSRegularExpressionCaseInsensitive
+                                                                             error:&err];
+    NSAssert(err == nil, @"failed to compile regex %@", err);
+    ZKBaseParser *literalCurrency = [f onMatch:[f regex:currency name:@"currency"] perform:^ZKParserResult *(ZKParserResult *r) {
+        Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
+        t.type = TTLiteralCurrency;
+        t.value = r.val;
+        r.val = t;
+        return r;
+    }];
+
     NSRegularExpression *token = [NSRegularExpression regularExpressionWithPattern:@"[a-z]\\S*"
                                                                            options:NSRegularExpressionCaseInsensitive
                                                                              error:&err];
@@ -157,7 +169,7 @@ const NSString *KeySoqlText = @"soql";
         return r;
     }];
     ZKBaseParser *literalValue = [f onMatch:[f firstOf:@[literalStringValue, literalNullValue, literalTrueValue, literalFalseValue, literalDateTimeValue,
-                                                         literalNumberValue, literalToken]] perform:^ZKParserResult *(ZKParserResult *r) {
+                                                         literalNumberValue, literalCurrency, literalToken]] perform:^ZKParserResult *(ZKParserResult *r) {
             [r.userContext[KeyTokens] addToken:r.val];
             return r;
     }];

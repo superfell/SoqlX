@@ -34,7 +34,8 @@ typedef NS_OPTIONS(uint32_t, TokenType) {
     TTLiteralNamedDateTime= 1 << 22,
     TTLiteralBoolean    = 1 << 23,
     TTLiteralNull       = 1 << 24,
-    TTError             = 1 << 25,
+    TTLiteralCurrency   = 1 << 25,
+    TTError             = 1 << 26,
 };
 
 NSString *tokenName(TokenType type);
