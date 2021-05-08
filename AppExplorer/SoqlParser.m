@@ -157,7 +157,7 @@ const NSString *KeySoqlText = @"soql";
         return r;
     }];
 
-    NSRegularExpression *token = [NSRegularExpression regularExpressionWithPattern:@"[a-z]\\S*"
+    NSRegularExpression *token = [NSRegularExpression regularExpressionWithPattern:@"[a-z][a-z0-9:_\\-\\.]*"
                                                                            options:NSRegularExpressionCaseInsensitive
                                                                              error:&err];
     NSAssert(err == nil, @"failed to compile regex %@", err);
@@ -414,15 +414,11 @@ const NSString *KeySoqlText = @"soql";
         return r;
     }];
     opInNotIn.debugName=@"In/NotIn";
-    ZKBaseParser *literalStringList = [f onMatch:[f seq:@[[f eq:@"("], maybeWs,
-                                                [f oneOrMore:[self literalStringValue:f] separator:commaSep],
-                                                maybeWs, [f eq:@")"]]]
-                                   perform:^ZKParserResult*(ZKParserResult*r) {
-        NSArray<Token*>* tokens = [[[r child:2] val] valueForKey:@"val"];
-        [r.userContext[KeyTokens] addTokens:tokens];
-        return r;
-    }];
-    ZKBaseParser *semiJoinValues = [f onMatch:[f oneOf:@[literalStringList, nestedSelectStmt]] perform:^ZKParserResult *(ZKParserResult *r) {
+    ZKBaseParser *literalList = [f seq:@[[f eq:@"("], maybeWs,
+                                        [f oneOrMore:literalValue separator:commaSep],
+                                         maybeWs, [f eq:@")"]]];
+
+    ZKBaseParser *semiJoinValues = [f onMatch:[f firstOf:@[nestedSelectStmt, literalList]] perform:^ZKParserResult *(ZKParserResult *r) {
         if ([r.val isKindOfClass:[Token class]]) {
             Token *t = r.val;
             if (t.type == TTChildSelect) {
@@ -433,7 +429,7 @@ const NSString *KeySoqlText = @"soql";
     }];
     ZKBaseParser *operatorRHS = [f firstOf:@[
         [f seq:@[operator, cut, maybeWs, literalValue]],
-        [f seq:@[opIncExcl, cut, maybeWs, literalStringList]],
+        [f seq:@[opIncExcl, cut, maybeWs, literalList]],
         [f seq:@[opInNotIn, cut, maybeWs, semiJoinValues]]]];
 
     ZKBaseParser *baseExpr = [f seq:@[fieldOrFunc, maybeWs, operatorRHS]];
