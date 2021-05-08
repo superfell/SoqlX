@@ -247,6 +247,12 @@ NSObject<TokenizerDescriber> *descs;
         @"select id from account where name> USD200",
         @"SELECT Id FROM Account WHERE Amount > EUR5.1000",
         @"select id from account where lastModifiedDate < YESTERDAY",
+        @"select id from account where lastModifiedDate < LAST_N_DAYS:7",
+        @"select id from account where lastModifiedDate < LAST_N_DAYS:777777",
+        @"select id from account where lastModifiedDate < LAST_N_DAYS:",
+        @"select id from account where lastModifiedDate < LAST_N_DAYS:A",
+        @"select id from account where lastModifiedDate < BOB:2",
+        @"select id from account where lastModifiedDate < BOB",
     ];
     [self writeSoqlTokensForQuerys:queries toFile:@"literals.txt"];
 }

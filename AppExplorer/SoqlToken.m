@@ -35,7 +35,7 @@ static Icons *iconInstance;
         @(TTLiteralNumber) : lit,
         @(TTLiteralDate) : lit,
         @(TTLiteralDateTime) : lit,
-        @(TTLiteralNamedDateTime) : lit,
+        @(TTLiteralNamedDateTime) : [NSImage imageWithSize:sz flipped:NO drawingHandler:[self iconDrawingHandler:@"D" color:style.literalColor]],
         @(TTLiteralBoolean) : lit,
         @(TTLiteralNull) : lit,
     };

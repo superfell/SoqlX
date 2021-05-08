@@ -189,5 +189,81 @@ select id from account where lastModifiedDate < YESTERDAY
   29-16  : FieldPath       lastModifiedDate               completions 0 
       29-16  : Field           lastModifiedDate               completions 33 
   46-1   : Op              <                              completions 11 
-  48-9   : NamedDateTime   YESTERDAY                      completions 0 
+  48-9   : NamedDateTime   YESTERDAY                      completions 37 
+
+select id from account where lastModifiedDate < LAST_N_DAYS:7
+   0-6   : Keyword         select                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+       7-2   : Field           id                             completions 33 
+  10-4   : Keyword         from                           completions 0 
+  15-7   : SObject         account                        completions 2 
+  23-5   : Keyword         where                          completions 0 
+  29-16  : FieldPath       lastModifiedDate               completions 0 
+      29-16  : Field           lastModifiedDate               completions 33 
+  46-1   : Op              <                              completions 11 
+  48-13  : NamedDateTime   LAST_N_DAYS:7                  completions 37 
+
+select id from account where lastModifiedDate < LAST_N_DAYS:777777
+   0-6   : Keyword         select                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+       7-2   : Field           id                             completions 33 
+  10-4   : Keyword         from                           completions 0 
+  15-7   : SObject         account                        completions 2 
+  23-5   : Keyword         where                          completions 0 
+  29-16  : FieldPath       lastModifiedDate               completions 0 
+      29-16  : Field           lastModifiedDate               completions 33 
+  46-1   : Op              <                              completions 11 
+  48-18  : NamedDateTime   LAST_N_DAYS:777777             completions 37 
+
+select id from account where lastModifiedDate < LAST_N_DAYS:
+   0-6   : Keyword         select                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+       7-2   : Field           id                             completions 33 
+  10-4   : Keyword         from                           completions 0 
+  15-7   : SObject         account                        completions 2 
+  23-5   : Keyword         where                          completions 0 
+  29-16  : FieldPath       lastModifiedDate               completions 0 
+      29-16  : Field           lastModifiedDate               completions 33 
+  46-1   : Op              <                              completions 11 
+  48-12  : Error           LAST_N_DAYS:                   completions 0 LAST_N_DAYS: is not a valid date literal
+  48-12  : NamedDateTime   LAST_N_DAYS:                   completions 37 
+
+select id from account where lastModifiedDate < LAST_N_DAYS:A
+   0-6   : Keyword         select                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+       7-2   : Field           id                             completions 33 
+  10-4   : Keyword         from                           completions 0 
+  15-7   : SObject         account                        completions 2 
+  23-5   : Keyword         where                          completions 0 
+  29-16  : FieldPath       lastModifiedDate               completions 0 
+      29-16  : Field           lastModifiedDate               completions 33 
+  46-1   : Op              <                              completions 11 
+  48-13  : Error           LAST_N_DAYS:A                  completions 0 LAST_N_DAYS:A is not a valid date literal
+  48-13  : NamedDateTime   LAST_N_DAYS:A                  completions 37 
+
+select id from account where lastModifiedDate < BOB:2
+   0-6   : Keyword         select                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+       7-2   : Field           id                             completions 33 
+  10-4   : Keyword         from                           completions 0 
+  15-7   : SObject         account                        completions 2 
+  23-5   : Keyword         where                          completions 0 
+  29-16  : FieldPath       lastModifiedDate               completions 0 
+      29-16  : Field           lastModifiedDate               completions 33 
+  46-1   : Op              <                              completions 11 
+  48-5   : Error           BOB:2                          completions 0 BOB:2 is not a valid date literal
+  48-5   : NamedDateTime   BOB:2                          completions 37 
+
+select id from account where lastModifiedDate < BOB
+   0-6   : Keyword         select                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+       7-2   : Field           id                             completions 33 
+  10-4   : Keyword         from                           completions 0 
+  15-7   : SObject         account                        completions 2 
+  23-5   : Keyword         where                          completions 0 
+  29-16  : FieldPath       lastModifiedDate               completions 0 
+      29-16  : Field           lastModifiedDate               completions 33 
+  46-1   : Op              <                              completions 11 
+  48-3   : Error           BOB                            completions 0 BOB is not a valid date literal
+  48-3   : NamedDateTime   BOB                            completions 37 
 

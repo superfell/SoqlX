@@ -140,7 +140,7 @@ select name from case where LastModifiedDate >= YESTERDAY
   22-5   : Keyword         where                          completions 0 
   28-16  : FieldPath       LastModifiedDate               completions 0 
   45-2   : Op              >=                             completions 11 
-  48-9   : NamedDateTime   YESTERDAY                      completions 0 
+  48-9   : NamedDateTime   YESTERDAY                      completions 37 
 
 select name from case c
    0-6   : Keyword         select                         completions 0 

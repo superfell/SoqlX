@@ -275,6 +275,14 @@ static double ticksToMilliseconds;
         case TTSemiJoinSelect:
             ctx.containerType = expr.type;
             [self resolveTokens:(Tokens*)expr.value ctx:ctx];
+            break;
+        case TTLiteralNamedDateTime: {
+                Token *err = [self resolveNamedDateTime:expr ctx:ctx];
+                if (err != nil) {
+                    [newTokens addObject:err];
+                }
+                break;
+            }
         default:
             break;
     }
@@ -656,6 +664,71 @@ static double ticksToMilliseconds;
         }
     }
     return ctx;
+}
+
+-(Token*)resolveNamedDateTime:(Token*)token ctx:(Context*)ctx {
+    static dispatch_once_t onceToken;
+    static NSArray<NSString*> *names;
+    static NSArray<NSString*> *namesWithNumber;
+    static NSArray<Completion*> *completions;
+    dispatch_once(&onceToken, ^{
+        names = @[@"YESTERDAY", @"TODAY",@"TOMORROW",@"LAST_WEEK",@"THIS_WEEK",@"NEXT_WEEK",@"LAST_MONTH",
+                  @"THIS_MONTH",@"NEXT_MONTH",@"LAST_90_DAYS",@"NEXT_90_DAYS",@"THIS_QUARTER",@"LAST_QUARTER",@"NEXT_QUARTER",
+                  @"THIS_YEAR",@"LAST_YEAR",@"NEXT_YEAR",@"THIS_FISCAL_QUARTER",@"LAST_FISCAL_QUARTER",@"NEXT_FISCAL_QUARTER",
+                  @"THIS_FISCAL_YEAR",@"LAST_FISCAL_YEAR",@"NEXT_FISCAL_YEAR"];
+        names = [names sortedArrayUsingSelector:@selector(compare:)];
+        // These are all the ones with a trailing :n, e.g. LAST_N_DAYS:3
+        namesWithNumber = @[@"LAST_N_DAYS", @"NEXT_N_DAYS", @"NEXT_N_WEEKS",@"LAST_N_WEEKS",@"NEXT_N_MONTHS",@"LAST_N_MONTHS",
+                            @"NEXT_N_QUARTERS",@"LAST_N_QUARTERS",@"NEXT_N_YEARS",@"LAST_N_YEARS",@"NEXT_N_FISCAL_​QUARTERS",
+                            @"LAST_N_FISCAL_​QUARTERS",@"NEXT_N_FISCAL_​YEARS",@"LAST_N_FISCAL_​YEARS"];
+        namesWithNumber = [namesWithNumber sortedArrayUsingSelector:@selector(compare:)];
+        NSMutableArray *cs = [NSMutableArray arrayWithCapacity:names.count + namesWithNumber.count];
+        [cs addObjectsFromArray:[Completion completions:names type:TTLiteralNamedDateTime]];
+        for (NSString *n in namesWithNumber) {
+            [cs addObject:[Completion txt:[NSString stringWithFormat:@"%@:1", n] type:TTLiteralNamedDateTime]];
+        }
+        completions = [NSArray arrayWithArray:cs];
+    });
+    [token.completions addObjectsFromArray:completions];
+    NSString *val = [token.tokenTxt uppercaseString];
+    NSUInteger nameIdx = [names indexOfObject:val
+                                    inSortedRange:NSMakeRange(0, names.count)
+                                          options:NSBinarySearchingFirstEqual
+                                          usingComparator:^NSComparisonResult(id _Nonnull obj1, id _Nonnull obj2) {
+        return [obj1 compare:obj2];
+    }];
+    if (nameIdx != NSNotFound) {
+        return nil;
+    }
+    NSRange colon = [val rangeOfString:@":"];
+    if (colon.location != NSNotFound) {
+        NSString *name = [val substringToIndex:colon.location];
+        NSUInteger nameIdx = [namesWithNumber indexOfObject:name
+                                        inSortedRange:NSMakeRange(0, namesWithNumber.count)
+                                              options:NSBinarySearchingFirstEqual
+                                              usingComparator:^NSComparisonResult(id _Nonnull obj1, id _Nonnull obj2) {
+            return [obj1 compare:obj2];
+        }];
+        if (nameIdx != NSNotFound) {
+            BOOL valid = TRUE;
+            BOOL visited = FALSE;
+            for(NSInteger pos = colon.location+1; pos < val.length; pos++) {
+                unichar c = [val characterAtIndex:pos];
+                if (!(c >= '0' && c <= '9')) {
+                    valid = FALSE;
+                    break;
+                }
+                visited = TRUE;
+            }
+            if (valid && visited) {
+                return nil;
+            }
+        }
+    }
+    Token *err = [token tokenOf:token.loc];
+    err.type = TTError;
+    err.value = [NSString stringWithFormat:@"%@ is not a valid date literal", token.tokenTxt];
+    return err;
 }
 
 -(void)applyTokens:(Tokens*)tokens {
