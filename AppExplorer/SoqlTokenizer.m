@@ -213,10 +213,10 @@ static double ticksToMilliseconds;
 
 -(void)resolveTokens:(Tokens*)tokens ctx:(Context*)parentCtx {
     Context *ctx = [self resolveFrom:tokens parentCtx:parentCtx];
-    [self resolveSelectExprs:tokens ctx:ctx];
+    [self resolveTokenList:tokens ctx:ctx];
 }
 
--(void)resolveSelectExprs:(Tokens*)tokens ctx:(Context*)ctx {
+-(void)resolveTokenList:(Tokens*)tokens ctx:(Context*)ctx {
     // Check that count() is only used on its own.
     __block NSInteger selectExprCount = 0;
     __block Token *countStar = nil;
@@ -253,14 +253,14 @@ static double ticksToMilliseconds;
             inGroupBy = FALSE;
             ctx.fieldCompletionsFilter = oldFilter;
         }
-        [self resolveSelectExpr:sel new:newTokens ctx:ctx];
+        [self resolveToken:sel new:newTokens ctx:ctx];
     }];
     for (Token *t in newTokens) {
         [tokens addToken:t];
     }
 }
 
--(void)resolveSelectExpr:(Token*)expr new:(NSMutableArray<Token*>*)newTokens ctx:(Context*)ctx {
+-(void)resolveToken:(Token*)expr new:(NSMutableArray<Token*>*)newTokens ctx:(Context*)ctx {
     switch (expr.type) {
         case TTFieldPath:
             [self resolveFieldPath:expr ctx:ctx];
@@ -287,7 +287,7 @@ static double ticksToMilliseconds;
         Token *err = [f tokenOf:f.loc];
         err.type = TTError;
         err.value = [NSString stringWithFormat:@"There is no function named '%@'", f.tokenTxt];
-        [self resolveSelectExprs:(Tokens*)f.value ctx:ctx];
+        [self resolveTokenList:(Tokens*)f.value ctx:ctx];
         return [NSArray arrayWithObject:err];
     }
     Tokens *argTokens = (Tokens*)f.value;  
@@ -302,7 +302,7 @@ static double ticksToMilliseconds;
         ctx.fieldCompletionsFilter = argSpec.fieldFilter;
         ctx.restrictCompletionsToType = argSpec.type;
         ctx.fnCompletionsFilter = argSpec.funcFilter;
-        [self resolveSelectExpr:argToken new:argsNewTokens ctx:ctx];
+        [self resolveToken:argToken new:argsNewTokens ctx:ctx];
         Token *newToken = [argSpec validateToken:argToken];
         if (newToken != nil) {
             [argsNewTokens addObject:newToken];
