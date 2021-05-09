@@ -22,6 +22,7 @@
 #import "SoqlFunction.h"
 #import "CaseInsensitiveStringKey.h"
 #import "SoqlToken.h"
+#import "Completion.h"
 #import <ZKSforce/ZKSforce.h>
 
 ExampleProvider firstFieldP(NSPredicate*p) {

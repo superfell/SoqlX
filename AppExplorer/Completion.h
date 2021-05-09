@@ -20,26 +20,21 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SoqlToken.h"
 
-@interface ColorizerStyle : NSObject
-+(instancetype)styles;
+@interface Icons : NSObject
++(NSImage*)iconFor:(TokenType)t;
+@end
 
-@property (strong) NSColor *keywordColor;
-@property (strong) NSColor *fieldColor;
-@property (strong) NSColor *funcColor;
-@property (strong) NSColor *sobjectColor;
-@property (strong) NSColor *aliasColor;
-@property (strong) NSColor *relColor;
-@property (strong) NSColor *literalColor;
+@interface Completion : NSObject<ZKTextViewCompletion>
++(NSArray<Completion*>*)completions:(NSArray<NSString*>*)txt type:(TokenType)t;
++(instancetype)txt:(NSString*)txt type:(TokenType)t;
++(instancetype)display:(NSString*)d insert:(NSString*)i finalInsertion:(NSString*)fi type:(TokenType)t;
 
-@property (strong) NSDictionary *underlined;
-
-@property (strong) NSDictionary *keyword;
-@property (strong) NSDictionary *field;
-@property (strong) NSDictionary *func;
-@property (strong) NSDictionary *relationship;
-@property (strong) NSDictionary *sobject;
-@property (strong) NSDictionary *alias;
-@property (strong) NSDictionary *literal;
-
+@property (strong, nonatomic) NSString *displayText;
+@property (strong, nonatomic) NSString *nonFinalInsertionText;   // the insertion text to use before confirmation.
+@property (strong, nonatomic) NSString *finalInsertionText;      // the insertion text to use when confirmed as the completion to use.
+@property (copy,   nonatomic) CompletionCallback onFinalInsert;  // callback to customize outcome of final insertion.
+@property (assign, nonatomic) TokenType type;
+@property (strong, nonatomic) NSImage *icon;                    // will default to Icons.iconFor:(Type) if not set.
 @end

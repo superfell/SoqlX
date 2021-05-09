@@ -22,6 +22,7 @@
 #import "SoqlParser.h"
 #import "ZKParserFactory.h"
 #import "SoqlToken.h"
+#import "Completion.h"
 
 const NSString *KeyTokens = @"tokens";
 const NSString *KeySoqlText = @"soql";

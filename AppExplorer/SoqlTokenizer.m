@@ -27,8 +27,10 @@
 #import "CaseInsensitiveStringKey.h"
 #import "ColorizerStyle.h"
 #import "SoqlToken.h"
+#import "Completion.h"
 #import "SoqlParser.h"
 #import "SoqlFunction.h"
+#import "DescribeExtras.h"
 #import "Prefs.h"
 
 typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasMap;
@@ -41,41 +43,6 @@ typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasM
         }
     }
     return FALSE;
-}
-@end
-
-@implementation ZKDescribeField (Completion)
--(Completion*)completion {
-    Completion *c = objc_getAssociatedObject(self, @selector(completion));
-    if (c == nil) {
-        c = [Completion txt:self.name type:TTField];
-        objc_setAssociatedObject(self, @selector(completion), c, OBJC_ASSOCIATION_RETAIN);
-    }
-    return c;
-}
-@end
-
-@implementation ZKDescribeSObject (Completions)
--(NSArray<Completion*>*)parentRelCompletions {
-    NSArray<Completion*> *comps = objc_getAssociatedObject(self, @selector(parentRelCompletions));
-    if (comps == nil) {
-        comps = [Completion completions:[self.parentRelationshipsByName.allValues valueForKey:@"relationshipName"] type:TTRelationship];
-        for (Completion *c in comps) {
-            c.finalInsertionText = [NSString stringWithFormat:@"%@.Id", c.finalInsertionText];
-            c.onFinalInsert = ^BOOL(ZKTextView *tv, id<ZKTextViewCompletion> c) {
-                // This selects the 'Id' we just inserted so that the user can start typing and it'll replace the Id.
-                // otherwise typing starts after the Id.
-                NSRange sel = tv.selectedRange;
-                sel.location -= 2;
-                sel.length += 2;
-                tv.selectedRange = sel;
-                [tv showPopup];
-                return TRUE;
-            };
-        }
-        objc_setAssociatedObject(self, @selector(parentRelCompletions), comps, OBJC_ASSOCIATION_RETAIN);
-    }
-    return comps;
 }
 @end
 

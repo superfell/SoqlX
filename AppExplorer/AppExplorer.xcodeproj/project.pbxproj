@@ -68,6 +68,10 @@
 		F4BD5DD22641B91900ACBBAB /* using_scope.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4BD5DD12641B91900ACBBAB /* using_scope.txt */; };
 		F4BD5DD6264457DA00ACBBAB /* literals.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4BD5DD5264457DA00ACBBAB /* literals.txt */; };
 		F4BD5DD926470C8800ACBBAB /* Prefs.m in Sources */ = {isa = PBXBuildFile; fileRef = F48B6B8B1969E68700496C82 /* Prefs.m */; };
+		F4BD5DDD264760A000ACBBAB /* DescribeExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = F4BD5DDC264760A000ACBBAB /* DescribeExtras.m */; };
+		F4BD5DDE264760A000ACBBAB /* DescribeExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = F4BD5DDC264760A000ACBBAB /* DescribeExtras.m */; };
+		F4BD5DE2264762F900ACBBAB /* Completion.m in Sources */ = {isa = PBXBuildFile; fileRef = F4BD5DE1264762F900ACBBAB /* Completion.m */; };
+		F4BD5DE3264762F900ACBBAB /* Completion.m in Sources */ = {isa = PBXBuildFile; fileRef = F4BD5DE1264762F900ACBBAB /* Completion.m */; };
 		F4BF72A70F79E58C0089F459 /* NSWindow_additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F4BF72A60F79E58C0089F459 /* NSWindow_additions.m */; };
 		F4C440CA15DB50BC00590A1E /* SearchQueryResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C440C915DB50BC00590A1E /* SearchQueryResult.m */; };
 		F4C877FA0F395DB4000075D4 /* ProgressController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C877F90F395DB4000075D4 /* ProgressController.m */; };
@@ -324,6 +328,10 @@
 		F4BD5DCD2641B59A00ACBBAB /* group_by.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = group_by.txt; sourceTree = "<group>"; };
 		F4BD5DD12641B91900ACBBAB /* using_scope.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = using_scope.txt; sourceTree = "<group>"; };
 		F4BD5DD5264457DA00ACBBAB /* literals.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = literals.txt; sourceTree = "<group>"; };
+		F4BD5DDB264760A000ACBBAB /* DescribeExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DescribeExtras.h; sourceTree = "<group>"; };
+		F4BD5DDC264760A000ACBBAB /* DescribeExtras.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DescribeExtras.m; sourceTree = "<group>"; };
+		F4BD5DE0264762F900ACBBAB /* Completion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Completion.h; sourceTree = "<group>"; };
+		F4BD5DE1264762F900ACBBAB /* Completion.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Completion.m; sourceTree = "<group>"; };
 		F4BF72A50F79E58C0089F459 /* NSWindow_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSWindow_additions.h; path = ../common/NSWindow_additions.h; sourceTree = SOURCE_ROOT; };
 		F4BF72A60F79E58C0089F459 /* NSWindow_additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSWindow_additions.m; path = ../common/NSWindow_additions.m; sourceTree = SOURCE_ROOT; };
 		F4C440C815DB50BC00590A1E /* SearchQueryResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchQueryResult.h; sourceTree = "<group>"; };
@@ -724,12 +732,16 @@
 				F4F2870A26337DEF00CCEA7D /* SoqlParser.m */,
 				F4F286F3263372FE00CCEA7D /* SoqlToken.h */,
 				F4F286F4263372FE00CCEA7D /* SoqlToken.m */,
+				F4BD5DE0264762F900ACBBAB /* Completion.h */,
+				F4BD5DE1264762F900ACBBAB /* Completion.m */,
 				F4DF0B4D26388CFF00B3A1A9 /* SoqlFunction.h */,
 				F4DF0B4E26388CFF00B3A1A9 /* SoqlFunction.m */,
 				F424A81B262B595C00AD4F42 /* SoqlTokenizer.h */,
 				F424A81C262B595C00AD4F42 /* SoqlTokenizer.m */,
 				F424A835262BCF1B00AD4F42 /* ColorizerStyle.h */,
 				F424A836262BCF1B00AD4F42 /* ColorizerStyle.m */,
+				F4BD5DDB264760A000ACBBAB /* DescribeExtras.h */,
+				F4BD5DDC264760A000ACBBAB /* DescribeExtras.m */,
 			);
 			name = SoqlSyntax;
 			sourceTree = "<group>";
@@ -1038,6 +1050,7 @@
 				F4CD511B0B0C342100345D9E /* PlusMinusWidget.m in Sources */,
 				F4CD51200B0C350300345D9E /* FieldImportance.m in Sources */,
 				F46D91070B33DFC800913AD2 /* StandAloneTableHeaderView.m in Sources */,
+				F4BD5DE2264762F900ACBBAB /* Completion.m in Sources */,
 				F4FDA6DA0B3916DE00A541E5 /* ReportDocument.m in Sources */,
 				F45C7EDD0B5FDA5200F93DD7 /* SchemaProtocol.m in Sources */,
 				F4D8DC792569CFF7002C9FC1 /* SObject.m in Sources */,
@@ -1069,6 +1082,7 @@
 				F4AC556715996D8500F5CA45 /* zkApexClient.m in Sources */,
 				F4AC556815996D8500F5CA45 /* ZKCodeCoverageResult.m in Sources */,
 				F4AC556915996D8500F5CA45 /* ZKCodeLocation.m in Sources */,
+				F4BD5DDD264760A000ACBBAB /* DescribeExtras.m in Sources */,
 				F4F286F5263372FE00CCEA7D /* SoqlToken.m in Sources */,
 				F4AC556A15996D8500F5CA45 /* ZKCompileResult.m in Sources */,
 				F4F2870E26337DF000CCEA7D /* SoqlParser.m in Sources */,
@@ -1102,10 +1116,12 @@
 				F48804DF2592BE63001D56F6 /* CaseInsensitiveStringKey.m in Sources */,
 				F4E0F2B7256F123A00446C2B /* SObjectTest.m in Sources */,
 				F4DF0B612638BDA700B3A1A9 /* SoqlToken.m in Sources */,
+				F4BD5DDE264760A000ACBBAB /* DescribeExtras.m in Sources */,
 				F4C889D22624F272006D606A /* SoqlTokenizerTests.m in Sources */,
 				F424A81E262B595C00AD4F42 /* SoqlTokenizer.m in Sources */,
 				F4E0F2C0256F183E00446C2B /* QueryResultCell.m in Sources */,
 				F4E0F2BC256F15A500446C2B /* QRWrapperTest.m in Sources */,
+				F4BD5DE3264762F900ACBBAB /* Completion.m in Sources */,
 				F4E0F2BE256F17DF00446C2B /* EditableQueryResultWrapper.m in Sources */,
 				F424A838262BCF1B00AD4F42 /* ColorizerStyle.m in Sources */,
 			);

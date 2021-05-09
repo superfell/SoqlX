@@ -20,26 +20,22 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <ZKSforce/ZKDescribeSObject.h>
 
-@interface ColorizerStyle : NSObject
-+(instancetype)styles;
+@class CaseInsensitiveStringKey;
+@class ZKDescribeField;
+@class ZKChildRelationship;
+@class Completion;
 
-@property (strong) NSColor *keywordColor;
-@property (strong) NSColor *fieldColor;
-@property (strong) NSColor *funcColor;
-@property (strong) NSColor *sobjectColor;
-@property (strong) NSColor *aliasColor;
-@property (strong) NSColor *relColor;
-@property (strong) NSColor *literalColor;
+@interface ZKDescribeSObject (Relationships)
+-(NSDictionary<CaseInsensitiveStringKey*,ZKDescribeField*>*)parentRelationshipsByName;
+-(NSDictionary<CaseInsensitiveStringKey*,ZKChildRelationship*>*)childRelationshipsByName;
+@end
 
-@property (strong) NSDictionary *underlined;
+@interface ZKDescribeSObject (Completions)
+-(NSArray<Completion*>*)parentRelCompletions;
+@end
 
-@property (strong) NSDictionary *keyword;
-@property (strong) NSDictionary *field;
-@property (strong) NSDictionary *func;
-@property (strong) NSDictionary *relationship;
-@property (strong) NSDictionary *sobject;
-@property (strong) NSDictionary *alias;
-@property (strong) NSDictionary *literal;
-
+@interface ZKDescribeField (Completion)
+-(Completion*)completion;
 @end
