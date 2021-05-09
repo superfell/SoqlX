@@ -13,6 +13,8 @@
 const NSString *KeyTokens = @"tokens";
 const NSString *KeySoqlText = @"soql";
 
+NSString *KeyPosition = @"Position";
+NSString *KeyCompletions = @"Completions";
 
 
 @interface SoqlParser()
@@ -49,7 +51,7 @@ const NSString *KeySoqlText = @"soql";
                                       code:1
                                   userInfo:@{
                                       NSLocalizedDescriptionKey:[NSString stringWithFormat:@"expecting ' at position %lu", input.pos+1],
-                                      @"Position": @(input.pos+1)
+                                      KeyPosition: @(input.pos+1)
                                   }];
             return nil;
         }
@@ -61,7 +63,7 @@ const NSString *KeySoqlText = @"soql";
                                           code:1
                                       userInfo:@{
                                           NSLocalizedDescriptionKey:[NSString stringWithFormat:@"reached end of input while parsing a string literal, missing closing ' at %lu", input.pos],
-                                          @"Position": @(input.pos)
+                                          KeyPosition: @(input.pos)
                                       }];
                 return nil;
             }
@@ -73,7 +75,7 @@ const NSString *KeySoqlText = @"soql";
                                               code:1
                                           userInfo:@{
                                               NSLocalizedDescriptionKey:[NSString stringWithFormat:@"invalid escape sequence at %lu", input.pos],
-                                              @"Position": @(input.pos)
+                                              KeyPosition: @(input.pos)
                                           }];
                 }
                 input.pos++;
@@ -223,12 +225,12 @@ const NSString *KeySoqlText = @"soql";
         }
         ZKBaseParser *p = [f oneOfTokensList:tokens];
         p = [f onError:p perform:^(NSError *__autoreleasing *err) {
-            NSInteger pos = [(*err).userInfo[@"Position"] integerValue];
+            NSInteger pos = [(*err).userInfo[KeyPosition] integerValue];
             *err = [NSError errorWithDomain:@"Parser" code:33 userInfo:@{
                 NSLocalizedDescriptionKey:[NSString stringWithFormat:@"expecting one of %@ at position %lu",
                                            [tokens componentsJoinedByString:@","], pos],
-                @"Position": @(pos),
-                @"Completions" : completions
+                KeyPosition: @(pos),
+                KeyCompletions : completions
             }];
         }];
         p = [f onMatch:p perform:^ZKParserResult *(ZKParserResult *r) {
@@ -407,8 +409,8 @@ const NSString *KeySoqlText = @"soql";
             *err = [NSError errorWithDomain:@"Parser" code:33 userInfo:@{
                 NSLocalizedDescriptionKey:[NSString stringWithFormat:@"expecting one of %@ at position %lu",
                                            [[opCompletions valueForKey:@"displayText"] componentsJoinedByString:@","], input.pos+1],
-                @"Position": @(input.pos+1),
-                @"Completions" : opCompletions
+                KeyPosition: @(input.pos+1),
+                KeyCompletions : opCompletions
             }];
         }
         return r;

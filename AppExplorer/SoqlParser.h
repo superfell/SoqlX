@@ -10,6 +10,10 @@
 
 @class Tokens;
 
+// Keys used in the userInfo dictionary in errors.
+extern NSString *KeyPosition;
+extern NSString *KeyCompletions;
+
 @interface SoqlParser : NSObject
 -(Tokens*)parse:(NSString *)input error:(NSError**)err;
 -(void)setDebugOutputTo:(NSString*)filename;

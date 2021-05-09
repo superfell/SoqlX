@@ -86,9 +86,9 @@ typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasM
 
 // creating fn completions is called a lot, and is potentially expensive as many of them end up iterating all fields
 // and gets called for every field in the query, but they only vary by object, not field, so we can cache these
-
 typedef NSMutableDictionary<NSString *, Completion*> CompletionBySObject;
 
+// TODO, replace with an associated field on the describe?
 @interface FnCompletionsCache : NSObject
 @property (strong,nonatomic) NSMutableDictionary<NSString*,CompletionBySObject*> *cache;   // fnName is the key
 -(Completion*)for:(SoqlFunction*)fn onObject:(ZKDescribeSObject*)obj;
@@ -105,7 +105,6 @@ typedef NSMutableDictionary<NSString *, Completion*> CompletionBySObject;
 
 @implementation SoqlTokenizer
 
-static NSString *KeyCompletions = @"completions";
 static double ticksToMilliseconds;
 
 +(void)initialize {
@@ -155,12 +154,12 @@ static double ticksToMilliseconds;
     NSError *err = nil;
     self.tokens = [self.soqlParser parse:input error:&err];
     if (err != nil) {
-        NSInteger pos = [err.userInfo[@"Position"] integerValue];
+        NSInteger pos = [err.userInfo[KeyPosition] integerValue];
         NSRange word = [self wordAtIndex:pos-1 inString:input];
         Token *t = [Token txt:input loc:word];
         t.type = TTError;
         t.value = err.localizedDescription;
-        NSArray* completions = err.userInfo[@"Completions"];
+        NSArray* completions = err.userInfo[KeyCompletions];
         if (completions != nil) {
             [t.completions addObjectsFromArray:completions];
         }
