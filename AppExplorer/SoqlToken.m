@@ -86,13 +86,6 @@ NSString *tokenNames(TokenType types) {
     return _tokenTxt;
 }
 
--(BOOL)matches:(NSString *)match caseSensitive:(BOOL)cs {
-    if (cs) {
-        return [self.tokenTxt isEqualToString:match];
-    }
-    return [self.tokenTxt caseInsensitiveCompare:match] == NSOrderedSame;
-}
-
 -(BOOL)matches:(NSString *)match {
     return [self.tokenTxt caseInsensitiveCompare:match] == NSOrderedSame;
 }

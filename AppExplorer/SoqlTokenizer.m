@@ -349,7 +349,7 @@ static double ticksToMilliseconds;
     }
     ZKDescribeSObject *originalPrimary = ctx.primary;
     t = e.nextObject;
-    while (t.type == TTKeyword && [t matches:@"WHEN" caseSensitive:NO]) {
+    while (t.type == TTKeyword && [t matches:@"WHEN"]) {
         t = e.nextObject;
         if (t.type == TTSObject) {
             [t.completions addObjectsFromArray:[Completion completions:relField.referenceTo type:TTSObject]];

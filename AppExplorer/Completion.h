@@ -31,7 +31,7 @@
 +(instancetype)txt:(NSString*)txt type:(TokenType)t;
 +(instancetype)display:(NSString*)d insert:(NSString*)i finalInsertion:(NSString*)fi type:(TokenType)t;
 
-@property (strong, nonatomic) NSString *displayText;
+@property (strong, nonatomic) NSString *displayText;             // the text shown in the completions popup.
 @property (strong, nonatomic) NSString *nonFinalInsertionText;   // the insertion text to use before confirmation.
 @property (strong, nonatomic) NSString *finalInsertionText;      // the insertion text to use when confirmed as the completion to use.
 @property (copy,   nonatomic) CompletionCallback onFinalInsert;  // callback to customize outcome of final insertion.
