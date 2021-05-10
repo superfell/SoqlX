@@ -50,15 +50,13 @@ static ColorizerStyle *style;
     self.underlined = @{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle),
                         NSUnderlineColorAttributeName: errColor};
     
-    if (self.keywordColor != nil) {
-        self.keyword = @{ NSForegroundColorAttributeName:self.keywordColor};
-        self.field   = @{ NSForegroundColorAttributeName:self.fieldColor};
-        self.func    = @{ NSForegroundColorAttributeName:self.funcColor};
-        self.sobject = @{ NSForegroundColorAttributeName:self.sobjectColor};
-        self.alias   = @{ NSForegroundColorAttributeName:self.aliasColor};
-        self.literal = @{ NSForegroundColorAttributeName:self.literalColor};
-        self.relationship = @{ NSForegroundColorAttributeName:self.relColor};
-    }
+    self.keyword = @{ NSForegroundColorAttributeName:self.keywordColor};
+    self.field   = @{ NSForegroundColorAttributeName:self.fieldColor};
+    self.func    = @{ NSForegroundColorAttributeName:self.funcColor};
+    self.sobject = @{ NSForegroundColorAttributeName:self.sobjectColor};
+    self.alias   = @{ NSForegroundColorAttributeName:self.aliasColor};
+    self.literal = @{ NSForegroundColorAttributeName:self.literalColor};
+    self.relationship = @{ NSForegroundColorAttributeName:self.relColor};
     return self;
 }
 @end
