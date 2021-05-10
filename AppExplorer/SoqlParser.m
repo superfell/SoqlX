@@ -198,7 +198,7 @@ NSString *KeyCompletions = @"Completions";
     if (debugFilename.length > 0) {
         f.debugFile = debugFilename;
     }
-    f.defaultCaseSensitivity = CaseInsensitive;
+    f.defaultCaseSensitivity = ZKCaseInsensitive;
 
     ZKBaseParser* ws = [f characters:[NSCharacterSet whitespaceAndNewlineCharacterSet] name:@"whitespace" min:1];
     ZKBaseParser* maybeWs = [f characters:[NSCharacterSet whitespaceAndNewlineCharacterSet] name:@"whitespace" min:0];
@@ -238,7 +238,7 @@ NSString *KeyCompletions = @"Completions";
             completions = [Completion completions:tokens type:type];
         }
         ZKBaseParser *p = [f oneOfTokensList:tokens];
-        p = [f onError:p perform:^(NSError *__autoreleasing *err) {
+        p = [f onError:p perform:^(NSDictionary*ctx, NSError *__autoreleasing *err) {
             NSInteger pos = [(*err).userInfo[KeyPosition] integerValue];
             *err = [NSError errorWithDomain:@"Parser" code:33 userInfo:@{
                 NSLocalizedDescriptionKey:[NSString stringWithFormat:@"expecting one of %@ at position %lu",
