@@ -51,4 +51,56 @@
             <referenceTo>Account</referenceTo>
         </fields>
     </describe>
+    <describe>
+        <name>Task</name>
+        <fields>
+            <name>Id</name>
+            <type>id</type>
+            <aggregatable>true</aggregatable>
+        </fields>
+        <fields>
+            <name>Subject</name>
+            <type>string</type>
+            <aggregatable>true</aggregatable>
+        </fields>
+        <fields>
+            <name>WhatId</name>
+            <type>reference</type>
+            <namePointing>true</namePointing>
+            <relationshipName>What</relationshipName>
+            <referenceTo>Account</referenceTo>
+            <referenceTo>Opportunity</referenceTo>
+        </fields>
+    </describe>
+    <describe>
+        <name>Opportunity</name>
+        <fields>
+            <name>Id</name>
+            <type>id</type>
+            <aggregatable>true</aggregatable>
+        </fields>
+        <fields>
+            <name>Name</name>
+            <type>string</type>
+            <aggregatable>true</aggregatable>
+        </fields>
+    </describe>
+    <describe>
+        <name>Name</name>
+        <fields>
+            <name>Id</name>
+            <type>id</type>
+            <aggregatable>true</aggregatable>
+        </fields>
+        <fields>
+            <name>Name</name>
+            <type>string</type>
+            <aggregatable>true</aggregatable>
+        </fields>
+        <fields>
+            <name>Email</name>
+            <type>string</type>
+            <aggregatable>true</aggregatable>
+        </fields>
+    </describe>
 </describes>

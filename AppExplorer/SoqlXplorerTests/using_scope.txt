@@ -11,7 +11,7 @@ select id,(select name from contacts),name from account using scope team
   38-4   : FieldPath       name                           completions 0 
       38-4   : Field           name                           completions 33 
   43-4   : Keyword         from                           completions 0 
-  48-7   : SObject         account                        completions 2 
+  48-7   : SObject         account                        completions 5 
   56-11  : Keyword         using scope                    completions 0 
   68-4   : Scope           team                           completions 0 
 
@@ -28,7 +28,7 @@ select id,(select name from contacts),name from account using team
   38-4   : FieldPath       name                           completions 0 
       38-4   : Field           name                           completions 33 
   43-4   : Keyword         from                           completions 0 
-  48-7   : SObject         account                        completions 2 
+  48-7   : SObject         account                        completions 5 
   56-5   : Error           using                          completions 0 Unexpected input 'using team' at position 57
 
 select id,(select name from contacts),name from account scope team
@@ -44,7 +44,7 @@ select id,(select name from contacts),name from account scope team
   38-4   : FieldPath       name                           completions 0 
       38-4   : Field           name                           completions 33 
   43-4   : Keyword         from                           completions 0 
-  48-7   : SObject         account                        completions 2 
+  48-7   : SObject         account                        completions 5 
   56-5   : AliasDecl       scope                          completions 0 
   62-4   : Error           team                           completions 0 Unexpected input 'team' at position 63
 
@@ -61,7 +61,7 @@ select id,(select name from contacts),name from account using scope team team2
   38-4   : FieldPath       name                           completions 0 
       38-4   : Field           name                           completions 33 
   43-4   : Keyword         from                           completions 0 
-  48-7   : SObject         account                        completions 2 
+  48-7   : SObject         account                        completions 5 
   56-11  : Keyword         using scope                    completions 0 
   68-4   : Scope           team                           completions 0 
   73-5   : Error           team2                          completions 0 Unexpected input 'team2' at position 74

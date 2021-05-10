@@ -3,7 +3,7 @@ SELECT name FROM contact order by name
    7-4   : FieldPath       name                           completions 0 
        7-4   : Field           name                           completions 32 
   12-4   : Keyword         FROM                           completions 0 
-  17-7   : SObject         contact                        completions 2 
+  17-7   : SObject         contact                        completions 5 
   25-8   : Keyword         order by                       completions 0 
   34-4   : FieldPath       name                           completions 0 
       34-4   : Field           name                           completions 32 
@@ -13,7 +13,7 @@ SELECT name FROM contact order by name asc
    7-4   : FieldPath       name                           completions 0 
        7-4   : Field           name                           completions 32 
   12-4   : Keyword         FROM                           completions 0 
-  17-7   : SObject         contact                        completions 2 
+  17-7   : SObject         contact                        completions 5 
   25-8   : Keyword         order by                       completions 0 
   34-4   : FieldPath       name                           completions 0 
       34-4   : Field           name                           completions 32 
@@ -24,7 +24,7 @@ SELECT name FROM contact order by name asc nulls last
    7-4   : FieldPath       name                           completions 0 
        7-4   : Field           name                           completions 32 
   12-4   : Keyword         FROM                           completions 0 
-  17-7   : SObject         contact                        completions 2 
+  17-7   : SObject         contact                        completions 5 
   25-8   : Keyword         order by                       completions 0 
   34-4   : FieldPath       name                           completions 0 
       34-4   : Field           name                           completions 32 
@@ -37,7 +37,7 @@ SELECT name FROM contact order by name asc nulls last, account.name desc
    7-4   : FieldPath       name                           completions 0 
        7-4   : Field           name                           completions 32 
   12-4   : Keyword         FROM                           completions 0 
-  17-7   : SObject         contact                        completions 2 
+  17-7   : SObject         contact                        completions 5 
   25-8   : Keyword         order by                       completions 0 
   34-4   : FieldPath       name                           completions 0 
       34-4   : Field           name                           completions 32 
@@ -54,7 +54,7 @@ SELECT name FROM contact x order by name asc nulls last, x.account.name desc
    7-4   : FieldPath       name                           completions 0 
        7-4   : Field           name                           completions 32 
   12-4   : Keyword         FROM                           completions 0 
-  17-7   : SObject         contact                        completions 2 
+  17-7   : SObject         contact                        completions 5 
   25-1   : AliasDecl       x                              completions 0 
   27-8   : Keyword         order by                       completions 0 
   36-4   : FieldPath       name                           completions 0 
@@ -73,7 +73,7 @@ SELECT name FROM contact order by name asc limit 1
    7-4   : FieldPath       name                           completions 0 
        7-4   : Field           name                           completions 32 
   12-4   : Keyword         FROM                           completions 0 
-  17-7   : SObject         contact                        completions 2 
+  17-7   : SObject         contact                        completions 5 
   25-8   : Keyword         order by                       completions 0 
   34-4   : FieldPath       name                           completions 0 
       34-4   : Field           name                           completions 32 
@@ -86,7 +86,7 @@ SELECT name FROM contact orderby name
    7-4   : FieldPath       name                           completions 0 
        7-4   : Field           name                           completions 32 
   12-4   : Keyword         FROM                           completions 0 
-  17-7   : SObject         contact                        completions 2 
+  17-7   : SObject         contact                        completions 5 
   25-7   : AliasDecl       orderby                        completions 0 
   33-4   : Error           name                           completions 0 Unexpected input 'name' at position 34
 
@@ -95,7 +95,7 @@ SELECT name FROM contact order name
    7-4   : FieldPath       name                           completions 0 
        7-4   : Field           name                           completions 32 
   12-4   : Keyword         FROM                           completions 0 
-  17-7   : SObject         contact                        completions 2 
+  17-7   : SObject         contact                        completions 5 
   25-5   : Error           order                          completions 0 Unexpected input 'order name' at position 26
 
 SELECT name FROM contact by name
@@ -103,7 +103,7 @@ SELECT name FROM contact by name
    7-4   : FieldPath       name                           completions 0 
        7-4   : Field           name                           completions 32 
   12-4   : Keyword         FROM                           completions 0 
-  17-7   : SObject         contact                        completions 2 
+  17-7   : SObject         contact                        completions 5 
   25-2   : AliasDecl       by                             completions 0 
   28-4   : Error           name                           completions 0 Unexpected input 'name' at position 29
 
@@ -112,7 +112,7 @@ SELECT name FROM contact order by
    7-4   : FieldPath       name                           completions 0 
        7-4   : Field           name                           completions 32 
   12-4   : Keyword         FROM                           completions 0 
-  17-7   : SObject         contact                        completions 2 
+  17-7   : SObject         contact                        completions 5 
   25-8   : Keyword         order by                       completions 0 
   31-2   : Error           by                             completions 0 expecting whitespace at position 34
 

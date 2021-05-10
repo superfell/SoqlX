@@ -6,7 +6,7 @@ select amount, count(id) from account group by amount
       21-2   : FieldPath       id                             completions 0 
           21-2   : Field           id                             completions 4 
   25-4   : Keyword         from                           completions 0 
-  30-7   : SObject         account                        completions 2 
+  30-7   : SObject         account                        completions 5 
   38-8   : Keyword         group by                       completions 0 
   47-6   : FieldPath       amount                         completions 0 
       47-6   : Field           amount                         completions 29 
@@ -20,7 +20,7 @@ select city, count(id) from account group by city
       19-2   : FieldPath       id                             completions 0 
           19-2   : Field           id                             completions 4 
   23-4   : Keyword         from                           completions 0 
-  28-7   : SObject         account                        completions 2 
+  28-7   : SObject         account                        completions 5 
   36-8   : Keyword         group by                       completions 0 
   45-4   : FieldPath       city                           completions 0 
       45-4   : Field           city                           completions 29 
@@ -33,7 +33,7 @@ select city, count(id) from account group by city order by count(id) asc
       19-2   : FieldPath       id                             completions 0 
           19-2   : Field           id                             completions 4 
   23-4   : Keyword         from                           completions 0 
-  28-7   : SObject         account                        completions 2 
+  28-7   : SObject         account                        completions 5 
   36-8   : Keyword         group by                       completions 0 
   45-4   : FieldPath       city                           completions 0 
       45-4   : Field           city                           completions 29 
@@ -50,7 +50,7 @@ select count_distinct(city) from account group by calendar_year(lastModifiedDate
           22-4   : Field           city                           completions 4 
           22-4   : Error           city                           completions 0 Field city exists, but is not valid for use here
   28-4   : Keyword         from                           completions 0 
-  33-7   : SObject         account                        completions 2 
+  33-7   : SObject         account                        completions 5 
   41-8   : Keyword         group by                       completions 0 
   50-13  : Function        calendar_year                  completions 29 
       64-16  : FieldPath       lastModifiedDate               completions 0 
@@ -65,7 +65,7 @@ select account.city, count(id) from contact group by account.city
       27-2   : FieldPath       id                             completions 0 
           27-2   : Field           id                             completions 3 
   31-4   : Keyword         from                           completions 0 
-  36-7   : SObject         contact                        completions 2 
+  36-7   : SObject         contact                        completions 5 
   44-8   : Keyword         group by                       completions 0 
   53-12  : FieldPath       account.city                   completions 0 
       53-7   : Relationship    account                        completions 29 
@@ -79,7 +79,7 @@ select city, count(id) from account group by rollup (city)
       19-2   : FieldPath       id                             completions 0 
           19-2   : Field           id                             completions 4 
   23-4   : Keyword         from                           completions 0 
-  28-7   : SObject         account                        completions 2 
+  28-7   : SObject         account                        completions 5 
   36-15  : Keyword         group by rollup                completions 0 
   53-4   : FieldPath       city                           completions 0 
       53-4   : Field           city                           completions 29 
@@ -92,7 +92,7 @@ select city, count(id) from account group by rollup (city,state)
       19-2   : FieldPath       id                             completions 0 
           19-2   : Field           id                             completions 4 
   23-4   : Keyword         from                           completions 0 
-  28-7   : SObject         account                        completions 2 
+  28-7   : SObject         account                        completions 5 
   36-15  : Keyword         group by rollup                completions 0 
   53-4   : FieldPath       city                           completions 0 
       53-4   : Field           city                           completions 29 
@@ -107,7 +107,7 @@ select city, count(id) from account group by cube(city)
       19-2   : FieldPath       id                             completions 0 
           19-2   : Field           id                             completions 4 
   23-4   : Keyword         from                           completions 0 
-  28-7   : SObject         account                        completions 2 
+  28-7   : SObject         account                        completions 5 
   36-13  : Keyword         group by cube                  completions 0 
   50-4   : FieldPath       city                           completions 0 
       50-4   : Field           city                           completions 29 
@@ -121,7 +121,7 @@ SELECT city, GROUPING(city) grpCity FROM Account GROUP BY CUBE(city) ORDER BY GR
           22-4   : Field           city                           completions 1 
   28-7   : AliasDecl       grpCity                        completions 0 
   36-4   : Keyword         FROM                           completions 0 
-  41-7   : SObject         Account                        completions 2 
+  41-7   : SObject         Account                        completions 5 
   49-13  : Keyword         GROUP BY CUBE                  completions 0 
   63-4   : FieldPath       city                           completions 0 
       63-4   : Field           city                           completions 29 
@@ -138,7 +138,7 @@ select city, count(id) from account group by city having count(id) < 10
       19-2   : FieldPath       id                             completions 0 
           19-2   : Field           id                             completions 4 
   23-4   : Keyword         from                           completions 0 
-  28-7   : SObject         account                        completions 2 
+  28-7   : SObject         account                        completions 5 
   36-8   : Keyword         group by                       completions 0 
   45-4   : FieldPath       city                           completions 0 
       45-4   : Field           city                           completions 29 
@@ -157,7 +157,7 @@ select city, count(id) from account group by city having count(id) < 10 or count
       19-2   : FieldPath       id                             completions 0 
           19-2   : Field           id                             completions 4 
   23-4   : Keyword         from                           completions 0 
-  28-7   : SObject         account                        completions 2 
+  28-7   : SObject         account                        completions 5 
   36-8   : Keyword         group by                       completions 0 
   45-4   : FieldPath       city                           completions 0 
       45-4   : Field           city                           completions 29 

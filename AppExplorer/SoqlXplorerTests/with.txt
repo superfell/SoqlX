@@ -3,7 +3,7 @@ select name from account WITH DATA CATEGORY Geography__c AT asia__c
    7-4   : FieldPath       name                           completions 0 
        7-4   : Field           name                           completions 33 
   12-4   : Keyword         from                           completions 0 
-  17-7   : SObject         account                        completions 2 
+  17-7   : SObject         account                        completions 5 
   25-18  : Keyword         WITH DATA CATEGORY             completions 0 
   44-12  : Category        Geography__c                   completions 0 
   57-2   : Keyword         AT                             completions 4 
@@ -14,7 +14,7 @@ select name from account WITH DATA CATEGORY Geography__c AT asia__c AND product_
    7-4   : FieldPath       name                           completions 0 
        7-4   : Field           name                           completions 33 
   12-4   : Keyword         from                           completions 0 
-  17-7   : SObject         account                        completions 2 
+  17-7   : SObject         account                        completions 5 
   25-18  : Keyword         WITH DATA CATEGORY             completions 0 
   44-12  : Category        Geography__c                   completions 0 
   57-2   : Keyword         AT                             completions 4 
@@ -29,7 +29,7 @@ select name from account WITH DATA CATEGORY Geography__c AT asia__c OR product__
    7-4   : FieldPath       name                           completions 0 
        7-4   : Field           name                           completions 33 
   12-4   : Keyword         from                           completions 0 
-  17-7   : SObject         account                        completions 2 
+  17-7   : SObject         account                        completions 5 
   25-18  : Keyword         WITH DATA CATEGORY             completions 0 
   44-12  : Category        Geography__c                   completions 0 
   57-2   : Keyword         AT                             completions 4 
@@ -41,7 +41,7 @@ select name from account WITH DATA CATEGORY Geography__c NEAR asia__c
    7-4   : FieldPath       name                           completions 0 
        7-4   : Field           name                           completions 33 
   12-4   : Keyword         from                           completions 0 
-  17-7   : SObject         account                        completions 2 
+  17-7   : SObject         account                        completions 5 
   25-18  : Keyword         WITH DATA CATEGORY             completions 0 
   57-4   : Error           NEAR                           completions 4 expecting one of AT,ABOVE,BELOW,ABOVE_OR_BELOW at position 58
 

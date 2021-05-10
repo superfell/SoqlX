@@ -11,7 +11,7 @@ select id,(select name from contacts),name from account where name in ('bob','ev
   38-4   : FieldPath       name                           completions 0 
       38-4   : Field           name                           completions 33 
   43-4   : Keyword         from                           completions 0 
-  48-7   : SObject         account                        completions 2 
+  48-7   : SObject         account                        completions 5 
   56-5   : Keyword         where                          completions 0 
   62-4   : FieldPath       name                           completions 0 
       62-4   : Field           name                           completions 33 
@@ -33,7 +33,7 @@ select (select c.name from contacts c),name from account a where a.name>='bob'
   39-4   : FieldPath       name                           completions 0 
       39-4   : Field           name                           completions 33 
   44-4   : Keyword         from                           completions 0 
-  49-7   : SObject         account                        completions 2 
+  49-7   : SObject         account                        completions 5 
   57-1   : AliasDecl       a                              completions 0 
   59-5   : Keyword         where                          completions 0 
   65-6   : FieldPath       a.name                         completions 0 
@@ -42,43 +42,71 @@ select (select c.name from contacts c),name from account a where a.name>='bob'
   71-2   : Op              >=                             completions 11 
   73-5   : String          'bob'                          completions 0 
 
-SELECT subject, TYPEOF what WHEN account Then id,BillingCity,createdBy.alias WHEN opportunity then name,nextStep ELSE id,email END FROM Task
+SELECT subject, TYPEOF what WHEN account Then id,BillingCity,createdBy.alias WHEN opportunity then name,nextStep ELSE id,email,createdDate END FROM Task
    0-6   : Keyword         SELECT                         completions 0 
    7-7   : FieldPath       subject                        completions 0 
-  16-114 : TypeOf          TYPEOF what WHEN account Then  completions 0 
+       7-7   : Field           subject                        completions 32 
+  16-126 : TypeOf          TYPEOF what WHEN account Then  completions 0 
       16-6   : Keyword         TYPEOF                         completions 0 
-      23-4   : Relationship    what                           completions 0 
+      23-4   : Relationship    what                           completions 1 
       28-4   : Keyword         WHEN                           completions 0 
-      33-7   : SObject         account                        completions 0 
+      33-7   : SObject         account                        completions 2 
+      41-4   : Keyword         Then                           completions 0 
+      46-2   : FieldPath       id                             completions 0 
+          46-2   : Field           id                             completions 33 
+      49-11  : FieldPath       BillingCity                    completions 0 
+          49-11  : Error           BillingCity                    completions 33 There is no field or relationship BillingCity on SObject Account
+      61-15  : FieldPath       createdBy.alias                completions 0 
+          61-9   : Error           createdBy                      completions 33 There is no field or relationship createdBy on SObject Account
+      77-4   : Keyword         WHEN                           completions 0 
+      82-11  : SObject         opportunity                    completions 2 
+      94-4   : Keyword         then                           completions 0 
+      99-4   : FieldPath       name                           completions 0 
+          99-4   : Field           name                           completions 30 
+     104-8   : FieldPath       nextStep                       completions 0 
+         104-8   : Error           nextStep                       completions 30 There is no field or relationship nextStep on SObject Opportunity
+     113-4   : Keyword         ELSE                           completions 0 
+     118-2   : FieldPath       id                             completions 0 
+         118-2   : Field           id                             completions 31 
+     121-5   : FieldPath       email                          completions 0 
+         121-5   : Field           email                          completions 31 
+     127-11  : FieldPath       createdDate                    completions 0 
+         127-11  : Error           createdDate                    completions 31 There is no field or relationship createdDate on SObject Name
+     139-3   : Keyword         END                            completions 0 
+ 143-4   : Keyword         FROM                           completions 0 
+ 148-4   : SObject         Task                           completions 5 
+
+SELECT subject, TYPEOF what WHEN contact Then id,name ELSE id,email,createdDate END FROM Task
+   0-6   : Keyword         SELECT                         completions 0 
+   7-7   : FieldPath       subject                        completions 0 
+       7-7   : Field           subject                        completions 32 
+  16-67  : TypeOf          TYPEOF what WHEN contact Then  completions 0 
+      16-6   : Keyword         TYPEOF                         completions 0 
+      23-4   : Relationship    what                           completions 1 
+      28-4   : Keyword         WHEN                           completions 0 
+      33-7   : Error           contact                        completions 2 WhatId is not a reference to contact
       41-4   : Keyword         Then                           completions 0 
       46-2   : FieldPath       id                             completions 0 
                   strings:id
-      49-11  : FieldPath       BillingCity                    completions 0 
-                  strings:BillingCity
-      61-15  : FieldPath       createdBy.alias                completions 0 
-                  strings:createdBy,alias
-      77-4   : Keyword         WHEN                           completions 0 
-      82-11  : SObject         opportunity                    completions 0 
-      94-4   : Keyword         then                           completions 0 
-      99-4   : FieldPath       name                           completions 0 
+      49-4   : FieldPath       name                           completions 0 
                   strings:name
-     104-8   : FieldPath       nextStep                       completions 0 
-                  strings:nextStep
-     113-4   : Keyword         ELSE                           completions 0 
-     118-2   : FieldPath       id                             completions 0 
+      54-4   : Keyword         ELSE                           completions 0 
+      59-2   : FieldPath       id                             completions 0 
                   strings:id
-     121-5   : FieldPath       email                          completions 0 
+      62-5   : FieldPath       email                          completions 0 
                   strings:email
-     127-3   : Keyword         END                            completions 0 
- 131-4   : Keyword         FROM                           completions 0 
- 136-4   : Error           Task                           completions 2 The SObject 'Task' does not exist or is inaccessible
+      68-11  : FieldPath       createdDate                    completions 0 
+                  strings:createdDate
+      80-3   : Keyword         END                            completions 0 
+  84-4   : Keyword         FROM                           completions 0 
+  89-4   : SObject         Task                           completions 5 
 
 SELECT fields(STANDARD) FROM KnowledgeArticleVersion WITH DATA CATEGORY Geography__c BELOW usa__c AND Product__c AT mobile_phones__c
    0-6   : Keyword         SELECT                         completions 0 
    7-6   : Function        fields                         completions 1 
       14-8   : Keyword         STANDARD                       completions 3 
   24-4   : Keyword         FROM                           completions 0 
-  29-23  : Error           KnowledgeArticleVersion        completions 2 The SObject 'KnowledgeArticleVersion' does not exist or is inaccessible
+  29-23  : Error           KnowledgeArticleVersion        completions 5 The SObject 'KnowledgeArticleVersion' does not exist or is inaccessible
   53-18  : Keyword         WITH DATA CATEGORY             completions 0 
   72-12  : Category        Geography__c                   completions 0 
   85-5   : Keyword         BELOW                          completions 4 
@@ -93,7 +121,7 @@ SELECT fields(STANDARD) FROM KnowledgeArticleVersion WITH DATA CATEGORY Geograph
    7-6   : Function        fields                         completions 1 
       14-8   : Keyword         STANDARD                       completions 3 
   24-4   : Keyword         FROM                           completions 0 
-  29-23  : Error           KnowledgeArticleVersion        completions 2 The SObject 'KnowledgeArticleVersion' does not exist or is inaccessible
+  29-23  : Error           KnowledgeArticleVersion        completions 5 The SObject 'KnowledgeArticleVersion' does not exist or is inaccessible
   53-18  : Keyword         WITH DATA CATEGORY             completions 0 
   85-4   : Error           NEAR                           completions 4 expecting one of AT,ABOVE,BELOW,ABOVE_OR_BELOW at position 86
 
@@ -102,12 +130,12 @@ SELECT fields(what) FROM KnowledgeArticleVersion
    7-6   : Function        fields                         completions 1 
       14-4   : Error           what                           completions 3 Fields argument should be one of STANDARD,ALL,CUSTOM
   20-4   : Keyword         FROM                           completions 0 
-  25-23  : Error           KnowledgeArticleVersion        completions 2 The SObject 'KnowledgeArticleVersion' does not exist or is inaccessible
+  25-23  : Error           KnowledgeArticleVersion        completions 5 The SObject 'KnowledgeArticleVersion' does not exist or is inaccessible
 
 SELECT account from contact
    0-6   : Keyword         SELECT                         completions 0 
    7-7   : FieldPath       account                        completions 0 
        7-7   : Error           account                        completions 32 Account is a relationship, it should be followed by a field
   15-4   : Keyword         from                           completions 0 
-  20-7   : SObject         contact                        completions 2 
+  20-7   : SObject         contact                        completions 5 
 
