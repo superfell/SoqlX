@@ -46,36 +46,68 @@ typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasM
 }
 @end
 
-@interface Context : NSObject
+@interface ContextFilters : NSObject<NSCopying>
 @property (strong,nonatomic) ZKDescribeSObject *primary;
-@property (strong,nonatomic) AliasMap *aliases;
 @property (assign,nonatomic) TokenType containerType;
-
-// completion filtering
 @property (strong,nonatomic) NSPredicate *fieldCompletionsFilter;
 @property (assign,nonatomic) TokenType restrictCompletionsToType;
 @property (strong,nonatomic) NSPredicate *fnCompletionsFilter;
-
--(void)execWithFieldFilter:(NSPredicate*)ff funcFilter:(NSPredicate*)funcf typesFilter:(TokenType)types block:(void(^)(void))block;
 @end
 
-@implementation Context
+@implementation ContextFilters
 -(instancetype)init {
     self = [super init];
     self.restrictCompletionsToType = 0xFFFFFFFF;
     return self;
 }
--(void)execWithFieldFilter:(NSPredicate*)ff funcFilter:(NSPredicate*)funcf typesFilter:(TokenType)types block:(void(^)(void))block {
-    NSPredicate *oldFieldsFilter = self.fieldCompletionsFilter;
-    NSPredicate *oldFuncFilter = self.fnCompletionsFilter;
-    TokenType oldTypeRestriction = self.restrictCompletionsToType;
-    self.fieldCompletionsFilter = ff;
-    self.fnCompletionsFilter = funcf;
-    self.restrictCompletionsToType = types;
-    block();
-    self.fieldCompletionsFilter = oldFieldsFilter;
-    self.fnCompletionsFilter = oldFuncFilter;
-    self.restrictCompletionsToType = oldTypeRestriction;
+- (id)copyWithZone:(nullable NSZone *)zone {
+    ContextFilters *c = [ContextFilters new];
+    c.primary = self.primary;
+    c.containerType = self.containerType;
+    c.fieldCompletionsFilter = self.fieldCompletionsFilter;
+    c.restrictCompletionsToType = self.restrictCompletionsToType;
+    c.fnCompletionsFilter = self.fnCompletionsFilter;
+    return c;
+}
+@end
+
+@interface Context : NSObject
+@property (strong,nonatomic) AliasMap *aliases;
+
+-(ContextFilters*)createChild;
+-(void)popChild;
+-(ContextFilters*)filter;
+// executes the block with a new child filters, and then throws it away at the end
+-(void)execWithChildFilters:(void(^)(ContextFilters*childFilters))block;
+@end
+
+@interface Context()
+@property (strong,nonatomic) NSMutableArray<ContextFilters*>* filters;
+@end
+
+@implementation Context
+
+-(instancetype)init {
+    self = [super init];
+    self.filters = [NSMutableArray arrayWithObject:[ContextFilters new]];
+    return self;
+}
+-(ContextFilters*)filter {
+    return self.filters.lastObject;
+}
+-(ContextFilters*)createChild {
+    ContextFilters *c = [self.filters.lastObject copy];
+    [self.filters addObject:c];
+    return c;
+}
+-(void)popChild {
+    NSAssert(self.filters.count > 1, @"Too many pops");
+    [self.filters removeLastObject];
+}
+-(void)execWithChildFilters:(void(^)(ContextFilters*child))block {
+    ContextFilters *c = [self createChild];
+    block(c);
+    [self popChild];
 }
 @end
 
@@ -249,23 +281,25 @@ static double ticksToMilliseconds;
 
     NSMutableArray<Token*> *newTokens = [NSMutableArray arrayWithCapacity:4];
     NSPredicate *groupable = [NSPredicate predicateWithFormat:@"groupable=TRUE"];
-    __block BOOL inGroupBy = FALSE;
-    __block NSPredicate *oldFilter = nil;
-    [tokens.tokens enumerateObjectsUsingBlock:^(Token * _Nonnull sel, NSUInteger idx, BOOL * _Nonnull stop) {
+    BOOL inGroupBy = FALSE;
+    for (Token *sel in tokens.tokens) {
         if (!inGroupBy && (sel.type == TTKeyword) && ([sel.value isEqualTo:@"GROUP BY"] ||
                                       [sel.value isEqualTo:@"GROUP BY ROLLUP"] ||
                                       [sel.value isEqualTo:@"GROUP BY CUBE"])) {
             inGroupBy = TRUE;
-            oldFilter = ctx.fieldCompletionsFilter;
-            ctx.fieldCompletionsFilter = groupable;
+            [ctx createChild].fieldCompletionsFilter = groupable;
+
         } else if (inGroupBy && (sel.type == TTKeyword)) {
             inGroupBy = FALSE;
-            ctx.fieldCompletionsFilter = oldFilter;
+            [ctx popChild];
         }
         [self resolveToken:sel new:newTokens ctx:ctx];
-    }];
+    }
     for (Token *t in newTokens) {
         [tokens addToken:t];
+    }
+    if (inGroupBy) {
+        [ctx popChild];
     }
 }
 
@@ -281,10 +315,13 @@ static double ticksToMilliseconds;
             [self resolveTypeOf:expr ctx:ctx];
             break;
         case TTChildSelect:
-        case TTSemiJoinSelect:
-            ctx.containerType = expr.type;
-            [self resolveTokens:(Tokens*)expr.value ctx:ctx];
+        case TTSemiJoinSelect: {
+            [ctx execWithChildFilters:^(ContextFilters *childFilters) {
+                childFilters.containerType = expr.type;
+                [self resolveTokens:(Tokens*)expr.value ctx:ctx];
+            }];
             break;
+        }
         case TTLiteralNamedDateTime: {
                 Token *err = [self resolveNamedDateTime:expr ctx:ctx];
                 if (err != nil) {
@@ -299,7 +336,7 @@ static double ticksToMilliseconds;
 
 -(NSArray<Token*>*)resolveFunc:(Token*)f ctx:(Context*)ctx {
     SoqlFunction *fn = [SoqlFunction all][[CaseInsensitiveStringKey of:f.tokenTxt]];
-    [self addFieldCompletionsFor:ctx.primary to:f ctx:ctx];
+    [self addFieldCompletionsFor:ctx.filter.primary to:f ctx:ctx];
     if (fn == nil) {
         Token *err = [f tokenOf:f.loc];
         err.type = TTError;
@@ -314,7 +351,11 @@ static double ticksToMilliseconds;
     for (Token *argToken in argTokens.tokens) {
         SoqlFuncArg *argSpec = fnArgs.nextObject;
 
-        [ctx execWithFieldFilter:argSpec.fieldFilter funcFilter:argSpec.funcFilter typesFilter:argSpec.type block:^{
+        [ctx execWithChildFilters:^(ContextFilters *childFilters) {
+            childFilters.fieldCompletionsFilter = argSpec.fieldFilter;
+            childFilters.fnCompletionsFilter = argSpec.funcFilter;
+            childFilters.restrictCompletionsToType = argSpec.type;
+            
             [self resolveToken:argToken new:argsNewTokens ctx:ctx];
             Token *newToken = [argSpec validateToken:argToken];
             if (newToken != nil) {
@@ -329,7 +370,7 @@ static double ticksToMilliseconds;
 }
 
 -(void)resolveTypeOf:(Token*)typeOf ctx:(Context*)ctx {
-    if (ctx.primary == nil) {
+    if (ctx.filter.primary == nil) {
         return;
     }
     NSAssert([typeOf.value isKindOfClass:[Tokens class]], @"TypeOf token should have an child tokens value");
@@ -340,7 +381,7 @@ static double ticksToMilliseconds;
     ZKDescribeField *relField = nil;
     if (t.type == TTRelationship) {
         BOOL found = FALSE;
-        for (ZKDescribeField *f in ctx.primary.fields) {
+        for (ZKDescribeField *f in ctx.filter.primary.fields) {
             if (f.referenceTo.count > 1 && f.relationshipName.length > 0) {
                 [t.completions addObject:[Completion txt:f.relationshipName type:TTRelationship]];
                 if ([t.tokenTxt caseInsensitiveCompare:f.relationshipName] == NSOrderedSame) {
@@ -351,57 +392,50 @@ static double ticksToMilliseconds;
         }
         if (!found) {
             t.type = TTError;
-            t.value = [NSString stringWithFormat:@"There is no polymorphic relationship '%@' on SObject %@", t.tokenTxt, ctx.primary.name];
+            t.value = [NSString stringWithFormat:@"There is no polymorphic relationship '%@' on SObject %@", t.tokenTxt, ctx.filter.primary.name];
             return;
         }
     }
-    ZKDescribeSObject *originalPrimary = ctx.primary;
-    TokenType oldTypeRestrictions = ctx.restrictCompletionsToType;
-    ctx.restrictCompletionsToType = ctx.restrictCompletionsToType & (~TTFunc|TTTypeOf);
-    t = e.nextObject;
-    while (t.type == TTKeyword && [t matches:@"WHEN"]) {
-        t = e.nextObject;
-        if (t.type == TTSObject) {
-            [t.completions addObjectsFromArray:[Completion completions:relField.referenceTo type:TTSObject]];
-            if (![relField.referenceTo containsStringIgnoringCase:t.tokenTxt]) {
-                t.type = TTError;
-                t.value = [NSString stringWithFormat:@"Relationship %@ does not reference SObject %@", relField.relationshipName, t.tokenTxt];
-                ctx.restrictCompletionsToType = oldTypeRestrictions;
-                ctx.primary = originalPrimary;
-                return;
-            }
-            ZKDescribeSObject *curr = [self.describer describe:t.tokenTxt];
+    [ctx execWithChildFilters:^(ContextFilters *childFilters) {
+        childFilters.restrictCompletionsToType = childFilters.restrictCompletionsToType & (~TTFunc|TTTypeOf);
+        Token *t = e.nextObject;
+        while (t.type == TTKeyword && [t matches:@"WHEN"]) {
             t = e.nextObject;
-            if (t.type == TTKeyword) t = e.nextObject; // THEN
-            ctx.primary = curr;
+            if (t.type == TTSObject) {
+                [t.completions addObjectsFromArray:[Completion completions:relField.referenceTo type:TTSObject]];
+                if (![relField.referenceTo containsStringIgnoringCase:t.tokenTxt]) {
+                    t.type = TTError;
+                    t.value = [NSString stringWithFormat:@"Relationship %@ does not reference SObject %@", relField.relationshipName, t.tokenTxt];
+                    return;
+                }
+                childFilters.primary = [self.describer describe:t.tokenTxt];
+                t = e.nextObject;
+                if (t.type == TTKeyword) t = e.nextObject; // THEN
+                while (t.type == TTFieldPath) {
+                    [self resolveFieldPath:t ctx:ctx];
+                    t = e.nextObject;
+                }
+            }
+        }
+        if (t.type == TTKeyword && [t matches:@"ELSE"]) {
+            childFilters.primary = [self.describer describe:@"Name"];
+            t = e.nextObject;
             while (t.type == TTFieldPath) {
                 [self resolveFieldPath:t ctx:ctx];
                 t = e.nextObject;
             }
-            ctx.primary = originalPrimary;
         }
-    }
-    if (t.type == TTKeyword && [t matches:@"ELSE"]) {
-        ZKDescribeSObject *curr = [self.describer describe:@"Name"];
+        if (t.type != TTKeyword || ![t matches:@"END"]) {
+            t.type = TTError;
+            t.value = @"Expecting keyword END";
+        }
         t = e.nextObject;
-        ctx.primary = curr;
-        while (t.type == TTFieldPath) {
-            [self resolveFieldPath:t ctx:ctx];
+        while (t != nil) {
+            t.type = TTError;
+            t.value = [NSString stringWithFormat:@"Unexpected token %@", t.tokenTxt];
             t = e.nextObject;
         }
-        ctx.primary = originalPrimary;
-    }
-    if (t.type != TTKeyword || ![t matches:@"END"]) {
-        t.type = TTError;
-        t.value = @"Expecting keyword END";
-    }
-    t = e.nextObject;
-    while (t != nil) {
-        t.type = TTError;
-        t.value = [NSString stringWithFormat:@"Unexpected token %@", t.tokenTxt];
-        t = e.nextObject;
-    }
-    ctx.restrictCompletionsToType = oldTypeRestrictions;
+    }];
 }
 
 // The first step in the path is optionally the object name, e.g.
@@ -424,13 +458,13 @@ static double ticksToMilliseconds;
     NSAssert([fieldPath.value isKindOfClass:[NSArray class]], @"TTFieldPath should have an array value");
     NSArray *path = (NSArray*)fieldPath.value;
     NSString *firstStep = path[0];
-    ZKDescribeSObject *curr = ctx.primary;
-    NSInteger position = fieldPath.loc.location;
+    __block ZKDescribeSObject *curr = ctx.filter.primary;
+    __block NSInteger position = fieldPath.loc.location;
     Tokens *resolvedTokens = [Tokens new];
     fieldPath.value = resolvedTokens;
 
     // this deals with the direct object name
-    if ([firstStep caseInsensitiveCompare:ctx.primary.name] == NSOrderedSame) {
+    if ([firstStep caseInsensitiveCompare:ctx.filter.primary.name] == NSOrderedSame) {
         path = [path subarrayWithRange:NSMakeRange(1, path.count-1)];
         Token *tStep = [fieldPath tokenOf:NSMakeRange(position, firstStep.length)];
         tStep.type = TTAlias;
@@ -456,72 +490,73 @@ static double ticksToMilliseconds;
         // if they've only specified the object name, then that's not valid.
         Token *err = [fieldPath tokenOf:fieldPath.loc];
         err.type = TTError;
-        err.value = [NSString stringWithFormat:@"Need to add a field to the SObject %@", ctx.primary.name];
+        err.value = [NSString stringWithFormat:@"Need to add a field to the SObject %@", ctx.filter.primary.name];
         [self addSObjectAliasCompletions:ctx to:err];
         [resolvedTokens addToken:err];
         return;
     }
 
-    TokenType originalRestrictions = ctx.restrictCompletionsToType;
-    for (NSString *step in path) {
-        Token *tStep = [fieldPath tokenOf:NSMakeRange(position, step.length)];
-        [self addFieldCompletionsFor:curr to:tStep ctx:ctx];
-        if ([curr fieldWithName:step] == nil) {
-            // see if its a relationship instead
-            ZKDescribeField *df = [curr parentRelationshipsByName][[CaseInsensitiveStringKey of:step]];
-            if (curr != nil) {
+    [ctx execWithChildFilters:^(ContextFilters *childFilters) {
+        // childFilters is updated at the bottom of the loop after the first item
+        for (NSString *step in path) {
+            Token *tStep = [fieldPath tokenOf:NSMakeRange(position, step.length)];
+            [self addFieldCompletionsFor:curr to:tStep ctx:ctx];
+            if ([curr fieldWithName:step] == nil) {
+                // see if its a relationship instead
+                ZKDescribeField *df = [curr parentRelationshipsByName][[CaseInsensitiveStringKey of:step]];
+                if (curr != nil) {
+                    if (df == nil) {
+                        tStep.type = TTError;
+                        tStep.value = [NSString stringWithFormat:@"There is no field or relationship %@ on SObject %@", step, curr.name];
+                        [resolvedTokens addToken:tStep];
+                        break;
+                        
+                    } else if (step == path.lastObject) {
+                        tStep.type = TTError;
+                        tStep.value = [NSString stringWithFormat:@"%@ is a relationship, it should be followed by a field", df.relationshipName];
+                        [resolvedTokens addToken:tStep];
+                        break;
+                   }
+                }
                 if (df == nil) {
-                    tStep.type = TTError;
-                    tStep.value = [NSString stringWithFormat:@"There is no field or relationship %@ on SObject %@", step, curr.name];
-                    [resolvedTokens addToken:tStep];
                     break;
-                    
-                } else if (step == path.lastObject) {
-                    tStep.type = TTError;
-                    tStep.value = [NSString stringWithFormat:@"%@ is a relationship, it should be followed by a field", df.relationshipName];
-                    [resolvedTokens addToken:tStep];
-                    break;
-               }
-            }
-            if (df == nil) {
-                break;
-            }
-            tStep.type = TTRelationship;
-            tStep.value = df;
-            if (df.namePointing) {
-                // polymorphic rel, valid fields are from Name, not any of the actual related types.
-                curr = [self.describer describe:@"Name"];
+                }
+                tStep.type = TTRelationship;
+                tStep.value = df;
+                if (df.namePointing) {
+                    // polymorphic rel, valid fields are from Name, not any of the actual related types.
+                    curr = [self.describer describe:@"Name"];
+                } else {
+                    curr = [self.describer describe:df.referenceTo[0]];
+                }
             } else {
-                curr = [self.describer describe:df.referenceTo[0]];
-            }
-        } else {
-            // its a field, it better be the last item on the path.
-            if (step != path.lastObject) {
-                NSRange stepEnd = NSMakeRange(tStep.loc.location+tStep.loc.length,1);
-                Token *err = [fieldPath tokenOf:stepEnd];
-                err.type = TTError;
-                err.value = [NSString stringWithFormat:@"%@ is a field not a relationship, it should be the last item in the field path", step];
-                [resolvedTokens addToken:err];
-                break;
-            }
-            tStep.type = TTField;
-            ZKDescribeField *df = [curr fieldWithName:step];
-            tStep.value = df;
-            // if there's a fields completions filter, check tha the field passes that
-            if (ctx.fieldCompletionsFilter != nil) {
-                if (![ctx.fieldCompletionsFilter evaluateWithObject:df]) {
-                    Token *err = [fieldPath tokenOf:tStep.loc];
+                // its a field, it better be the last item on the path.
+                if (step != path.lastObject) {
+                    NSRange stepEnd = NSMakeRange(tStep.loc.location+tStep.loc.length,1);
+                    Token *err = [fieldPath tokenOf:stepEnd];
                     err.type = TTError;
-                    err.value = [NSString stringWithFormat:@"Field %@ exists, but is not valid for use here", df.name];
+                    err.value = [NSString stringWithFormat:@"%@ is a field not a relationship, it should be the last item in the field path", step];
                     [resolvedTokens addToken:err];
+                    break;
+                }
+                tStep.type = TTField;
+                ZKDescribeField *df = [curr fieldWithName:step];
+                tStep.value = df;
+                // if there's a fields completions filter, check tha the field passes that
+                if (childFilters.fieldCompletionsFilter != nil) {
+                    if (![childFilters.fieldCompletionsFilter evaluateWithObject:df]) {
+                        Token *err = [fieldPath tokenOf:tStep.loc];
+                        err.type = TTError;
+                        err.value = [NSString stringWithFormat:@"Field %@ exists, but is not valid for use here", df.name];
+                        [resolvedTokens addToken:err];
+                    }
                 }
             }
+            [resolvedTokens addToken:tStep];
+            position += step.length + 1;
+            childFilters.restrictCompletionsToType = childFilters.restrictCompletionsToType & (~(TTFunc | TTTypeOf));
         }
-        [resolvedTokens addToken:tStep];
-        position += step.length + 1;
-        ctx.restrictCompletionsToType = ctx.restrictCompletionsToType & (~(TTFunc | TTTypeOf));
-    }
-    ctx.restrictCompletionsToType = originalRestrictions;
+    }];
 }
 
 -(CompletionCallback)moveSelection:(NSInteger)amount {
@@ -534,15 +569,15 @@ static double ticksToMilliseconds;
 }
 
 -(void)addSObjectAliasCompletions:(Context*)ctx to:(Token*)t {
-    [t.completions addObject:[Completion txt:ctx.primary.name type:TTAlias]];
+    [t.completions addObject:[Completion txt:ctx.filter.primary.name type:TTAlias]];
     [t.completions addObjectsFromArray:[Completion completions:[ctx.aliases.allKeys valueForKey:@"value"] type:TTAlias]];
 }
 
 -(void)addFieldCompletionsFor:(ZKDescribeSObject*)obj to:(Token*)t ctx:(Context*)ctx {
-    TokenType allowedTypes = ctx.restrictCompletionsToType;
+    TokenType allowedTypes = ctx.filter.restrictCompletionsToType;
     if (allowedTypes & (TTField|TTFieldPath)) {
         for (ZKDescribeField *field in obj.fields) {
-            if (ctx.fieldCompletionsFilter == nil || [ctx.fieldCompletionsFilter evaluateWithObject:field]) {
+            if (ctx.filter.fieldCompletionsFilter == nil || [ctx.filter.fieldCompletionsFilter evaluateWithObject:field]) {
                 [t.completions addObject:[field completion]];
             }
         }
@@ -558,7 +593,7 @@ static double ticksToMilliseconds;
     }
     if (((allowedTypes & TTFunc) != 0) && obj != nil) {
         for (SoqlFunction *f in SoqlFunction.all.allValues) {
-            if (ctx.fnCompletionsFilter == nil || [ctx.fnCompletionsFilter evaluateWithObject:f]) {
+            if (ctx.filter.fnCompletionsFilter == nil || [ctx.filter.fnCompletionsFilter evaluateWithObject:f]) {
                 Completion* cached = [self.fnCompletionsCache for:f onObject:obj];
                 if (cached == nil) {
                     cached = [f completionOn:obj];
@@ -585,8 +620,8 @@ static double ticksToMilliseconds;
         return ctx;
     }
     Token *tSObject = tokens.tokens[idx];
-    if (parentCtx == nil || parentCtx.containerType == TTSemiJoinSelect) {
-        ctx.primary = [self.describer describe:tSObject.tokenTxt];
+    if (parentCtx == nil || parentCtx.filter.containerType == TTSemiJoinSelect) {
+        ctx.filter.primary = [self.describer describe:tSObject.tokenTxt];
         NSArray<Completion*> *completions = [Completion completions:self.describer.allQueryableSObjects type:TTSObject];
         for (Completion *c in completions) {
             NSImage *objIcon = [self.describer iconForSObject:c.displayText];
@@ -600,26 +635,26 @@ static double ticksToMilliseconds;
             tSObject.value = [NSString stringWithFormat:@"The SObject '%@' does not exist or is inaccessible", tSObject.tokenTxt];
             return ctx;
         }
-        if (ctx.primary == nil) {
+        if (ctx.filter.primary == nil) {
             return ctx; // cant do anymore without the describe.
         }
     } else {
         // for a nested select the from is a child relationship not an object
-        [tSObject.completions addObjectsFromArray:[Completion completions:[parentCtx.primary.childRelationshipsByName.allKeys valueForKey:@"value"] type:TTRelationship]];
-        ZKChildRelationship * cr = parentCtx.primary.childRelationshipsByName[[CaseInsensitiveStringKey of:tSObject.tokenTxt]];
+        [tSObject.completions addObjectsFromArray:[Completion completions:[parentCtx.filter.primary.childRelationshipsByName.allKeys valueForKey:@"value"] type:TTRelationship]];
+        ZKChildRelationship * cr = parentCtx.filter.primary.childRelationshipsByName[[CaseInsensitiveStringKey of:tSObject.tokenTxt]];
         if (cr == nil) {
             tSObject.type = TTError;
-            tSObject.value = [NSString stringWithFormat:@"The SObject '%@' does not have a child relationship called %@", parentCtx.primary.name, tSObject.tokenTxt];
+            tSObject.value = [NSString stringWithFormat:@"The SObject '%@' does not have a child relationship called %@", parentCtx.filter.primary.name, tSObject.tokenTxt];
             return ctx;
         }
         tSObject.type = TTRelationship;
-        ctx.primary = [self.describer describe:cr.childSObject];
+        ctx.filter.primary = [self.describer describe:cr.childSObject];
     }
     // does the primary sobject have an alias?
     if (tokens.count > idx+1) {
         Token *tSObjectAlias = tokens.tokens[idx+1];
         if (tSObjectAlias.type == TTAliasDecl) {
-            ctx.aliases[[CaseInsensitiveStringKey of:tSObjectAlias.tokenTxt]] = ctx.primary;
+            ctx.aliases[[CaseInsensitiveStringKey of:tSObjectAlias.tokenTxt]] = ctx.filter.primary;
         }
     }
     NSEnumerator<Token*> *e = [[tokens.tokens subarrayWithRange:NSMakeRange(idx, tokens.tokens.count-idx)] objectEnumerator];
@@ -641,7 +676,7 @@ static double ticksToMilliseconds;
                 path = [path subarrayWithRange:NSMakeRange(1,path.count-1)];
                 pos += firstKey.value.length + 1;
             } else {
-                curr = ctx.primary;
+                curr = ctx.filter.primary;
             }
             for (NSString *step in path) {
                 ZKDescribeField *df = [curr parentRelationshipsByName][[CaseInsensitiveStringKey of:step]];
