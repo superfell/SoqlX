@@ -55,6 +55,8 @@ typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasM
 @property (strong,nonatomic) NSPredicate *fieldCompletionsFilter;
 @property (assign,nonatomic) TokenType restrictCompletionsToType;
 @property (strong,nonatomic) NSPredicate *fnCompletionsFilter;
+
+-(void)execWithFieldFilter:(NSPredicate*)ff funcFilter:(NSPredicate*)funcf typesFilter:(TokenType)types block:(void(^)(void))block;
 @end
 
 @implementation Context
@@ -62,6 +64,18 @@ typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasM
     self = [super init];
     self.restrictCompletionsToType = 0xFFFFFFFF;
     return self;
+}
+-(void)execWithFieldFilter:(NSPredicate*)ff funcFilter:(NSPredicate*)funcf typesFilter:(TokenType)types block:(void(^)(void))block {
+    NSPredicate *oldFieldsFilter = self.fieldCompletionsFilter;
+    NSPredicate *oldFuncFilter = self.fnCompletionsFilter;
+    TokenType oldTypeRestriction = self.restrictCompletionsToType;
+    self.fieldCompletionsFilter = ff;
+    self.fnCompletionsFilter = funcf;
+    self.restrictCompletionsToType = types;
+    block();
+    self.fieldCompletionsFilter = oldFieldsFilter;
+    self.fnCompletionsFilter = oldFuncFilter;
+    self.restrictCompletionsToType = oldTypeRestriction;
 }
 @end
 
@@ -297,23 +311,17 @@ static double ticksToMilliseconds;
     Token *err = [fn validateArgCount:f];
     NSMutableArray *argsNewTokens = [NSMutableArray array];
     NSEnumerator<SoqlFuncArg*> *fnArgs = fn.args.objectEnumerator;
-    NSPredicate *fieldFilter = ctx.fieldCompletionsFilter;
-    NSPredicate *fnFilter = ctx.fnCompletionsFilter;
-    TokenType completionRestriction = ctx.restrictCompletionsToType;
     for (Token *argToken in argTokens.tokens) {
         SoqlFuncArg *argSpec = fnArgs.nextObject;
-        ctx.fieldCompletionsFilter = argSpec.fieldFilter;
-        ctx.restrictCompletionsToType = argSpec.type;
-        ctx.fnCompletionsFilter = argSpec.funcFilter;
-        [self resolveToken:argToken new:argsNewTokens ctx:ctx];
-        Token *newToken = [argSpec validateToken:argToken];
-        if (newToken != nil) {
-            [argsNewTokens addObject:newToken];
-        }
+
+        [ctx execWithFieldFilter:argSpec.fieldFilter funcFilter:argSpec.funcFilter typesFilter:argSpec.type block:^{
+            [self resolveToken:argToken new:argsNewTokens ctx:ctx];
+            Token *newToken = [argSpec validateToken:argToken];
+            if (newToken != nil) {
+                [argsNewTokens addObject:newToken];
+            }
+        }];
     }
-    ctx.fieldCompletionsFilter = fieldFilter;
-    ctx.fnCompletionsFilter = fnFilter;
-    ctx.restrictCompletionsToType = completionRestriction;
     for (Token *t in argsNewTokens) {
         [argTokens addToken:t];
     }
