@@ -61,45 +61,14 @@
 
 NSObject<TokenizerDescriber> *descs;
 
-- (void)setUp {
-    // Put setup code here. This method is called before the invocation of each test method in the class.
-    ZKDescribeField *fid = [ZKDescribeField new];
-    fid.name = @"Id";
-    fid.type = @"id";
-    fid.aggregatable = TRUE;
-    ZKDescribeField *fAccount = [ZKDescribeField new];
-    fAccount.referenceTo = @[@"Account"];
-    fAccount.name = @"AccountId";
-    fAccount.relationshipName = @"Account";
-    fAccount.namePointing = NO;
-    ZKDescribeField *fName = [ZKDescribeField new];
-    fName.name = @"Name";
-    fName.aggregatable = TRUE;
-    ZKDescribeSObject *contact = [ZKDescribeSObject new];
-    contact.name = @"Contact";
-    contact.fields = @[fid, fAccount,fName];
-    
-    ZKDescribeSObject *account = [ZKDescribeSObject new];
-    account.name = @"Account";
-    ZKDescribeField *fCity = [ZKDescribeField new];
-    fCity.name = @"city";
-    fCity.groupable = TRUE;
-    ZKDescribeField *fAmount = [ZKDescribeField new];
-    fAmount.name = @"amount";
-    fAmount.type = @"currency";
-    fAmount.aggregatable = TRUE;
-    ZKDescribeField *fLastMod = [ZKDescribeField new];
-    fLastMod.name = @"LastModifiedDate";
-    fLastMod.type = @"datetime";
-    fLastMod.aggregatable = TRUE;
-    account.fields = @[fid, fLastMod, fAmount, fName, fCity];
-    ZKChildRelationship *contacts = [ZKChildRelationship new];
-    contacts.childSObject = @"Contact";
-    contacts.relationshipName = @"Contacts";
-    account.childRelationships = @[contacts];
-    
+-(void)setUp {
+    NSString *thisFile = [NSString stringWithUTF8String:__FILE__];
+    NSString *descFile = [[thisFile stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"describes.xml"];
+    NSData *descData = [NSData dataWithContentsOfFile:descFile];
+    ZKElement *root = [ZKParser parseData:descData];
     TestDescriber *d = [TestDescriber new];
-    d.objects = @[account, contact];
+    ZKXmlDeserializer *deser = [[ZKXmlDeserializer alloc] initWithXmlElement:root];
+    d.objects = [deser complexTypeArrayFromElements:@"describe" cls:[ZKDescribeSObject class]];
     descs = d;
 }
 
