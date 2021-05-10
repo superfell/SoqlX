@@ -65,7 +65,6 @@ double ticksToMilliseconds;
 -(void)awakeFromNib {
     // tableView makeView will call awakeFromNib on the owner, which is us, but we only want to initialize the tableview once.
     if (!self.awake) {
-        NSLog(@"awakeFromNib");
         self.table.dataSource = self;
         self.table.delegate = self;
         self.table.rowHeight = 24;
@@ -169,6 +168,9 @@ double ticksToMilliseconds;
             }
             return;
         }
+    }
+    if (self.errorPopover.isShown) {
+        [self.errorPopover performClose:self];
     }
     hasTyped = TRUE;
     [super keyDown:event];
