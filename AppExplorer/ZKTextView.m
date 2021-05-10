@@ -99,6 +99,8 @@ double ticksToMilliseconds;
             [self.errorPopover showRelativeToRect:layoutRect ofView:self preferredEdge:NSRectEdgeMaxY];
         }
     }
+    hasTyped = TRUE;
+    lastEvent = mach_absolute_time();
     [super mouseDown:theEvent];
 }
 
