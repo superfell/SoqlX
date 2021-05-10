@@ -21,6 +21,7 @@
 
 #import "ZKTextView.h"
 #include <mach/mach_time.h>
+#include "ZKLayoutManager.h"
 
 double ticksToMilliseconds;
 
@@ -72,6 +73,7 @@ double ticksToMilliseconds;
         self.table.selectionHighlightStyle = NSTableViewSelectionHighlightStyleSourceList;
         self.tableScollView.verticalScroller.controlSize = NSControlSizeRegular;
         self.automaticTextCompletionEnabled = NO;
+        [self.textContainer replaceLayoutManager:[[ZKLayoutManager alloc] init]];
         self.awake = YES;
     }
 }

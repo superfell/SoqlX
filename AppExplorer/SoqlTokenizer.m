@@ -184,6 +184,10 @@ static double ticksToMilliseconds;
     if (err != nil) {
         NSInteger pos = [err.userInfo[KeyPosition] integerValue];
         NSRange word = [self wordAtIndex:pos-1 inString:input];
+        if (word.length == 0) {
+            word.location -= 1;
+            word.length += 1;
+        }
         Token *t = [Token txt:input loc:word];
         t.type = TTError;
         t.value = err.localizedDescription;
@@ -853,7 +857,6 @@ static double ticksToMilliseconds;
                 if (t.value != nil) {
                     [txt addAttribute:NSToolTipAttributeName value:t.value range:t.loc];
                     [txt addAttribute:NSCursorAttributeName value:NSCursor.pointingHandCursor range:t.loc];
-                    //NSLog(@"%lu-%lu %@", t.loc.location, t.loc.length, t.value);
                 }
         }
     }

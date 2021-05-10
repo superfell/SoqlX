@@ -21,6 +21,7 @@
 		F424A838262BCF1B00AD4F42 /* ColorizerStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = F424A836262BCF1B00AD4F42 /* ColorizerStyle.m */; };
 		F428A2D30F677BC3007BD862 /* BlueView.m in Sources */ = {isa = PBXBuildFile; fileRef = F428A2D20F677BC3007BD862 /* BlueView.m */; };
 		F4394F9C264981C000ABFA2B /* describes.xml in Resources */ = {isa = PBXBuildFile; fileRef = F4394F9B264981C000ABFA2B /* describes.xml */; };
+		F4394FA92649E3A400ABFA2B /* ZKLayoutManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F4394FA82649E3A400ABFA2B /* ZKLayoutManager.m */; };
 		F4408FEF2562F4C1005E8BB7 /* QueryColumns.m in Sources */ = {isa = PBXBuildFile; fileRef = F4408FEE2562F4C1005E8BB7 /* QueryColumns.m */; };
 		F4408FF02562F4C1005E8BB7 /* QueryColumns.m in Sources */ = {isa = PBXBuildFile; fileRef = F4408FEE2562F4C1005E8BB7 /* QueryColumns.m */; };
 		F44FC9E10E1EB69D00B5F70C /* ResultsSaver.m in Sources */ = {isa = PBXBuildFile; fileRef = F44FC9E00E1EB69D00B5F70C /* ResultsSaver.m */; };
@@ -263,6 +264,8 @@
 		F428A2D10F677BC3007BD862 /* BlueView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlueView.h; sourceTree = "<group>"; };
 		F428A2D20F677BC3007BD862 /* BlueView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlueView.m; sourceTree = "<group>"; };
 		F4394F9B264981C000ABFA2B /* describes.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = describes.xml; sourceTree = "<group>"; };
+		F4394FA72649E3A400ABFA2B /* ZKLayoutManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZKLayoutManager.h; sourceTree = "<group>"; };
+		F4394FA82649E3A400ABFA2B /* ZKLayoutManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZKLayoutManager.m; sourceTree = "<group>"; };
 		F4408FED2562F4C1005E8BB7 /* QueryColumns.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QueryColumns.h; sourceTree = "<group>"; };
 		F4408FEE2562F4C1005E8BB7 /* QueryColumns.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QueryColumns.m; sourceTree = "<group>"; };
 		F44DAD4623418A6800EF8C44 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -629,6 +632,8 @@
 				F4B461FE0F79EB850099C434 /* FieldResizer.m */,
 				F4B58B451D31D21200D62683 /* ZKTextView.h */,
 				F4B58B461D31D21200D62683 /* ZKTextView.m */,
+				F4394FA72649E3A400ABFA2B /* ZKLayoutManager.h */,
+				F4394FA82649E3A400ABFA2B /* ZKLayoutManager.m */,
 			);
 			name = "UI Widgets";
 			sourceTree = "<group>";
@@ -1082,6 +1087,7 @@
 				F494FA490F7EFE22001216EC /* RRGlossCausticShader.m in Sources */,
 				F494FA4A0F7EFE22001216EC /* RRLuminanceFromRGBComponents.m in Sources */,
 				F454D163126785EA00DC16D9 /* ApexController.m in Sources */,
+				F4394FA92649E3A400ABFA2B /* ZKLayoutManager.m in Sources */,
 				F4D8DC87256AD4E2002C9FC1 /* SObjectSortDescriptor.m in Sources */,
 				F4AC556715996D8500F5CA45 /* zkApexClient.m in Sources */,
 				F4AC556815996D8500F5CA45 /* ZKCodeCoverageResult.m in Sources */,
