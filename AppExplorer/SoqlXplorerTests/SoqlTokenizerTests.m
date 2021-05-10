@@ -122,7 +122,7 @@ NSObject<TokenizerDescriber> *descs;
         @"select id,(select name from contacts),name from account where name in ('bob','eve','alice')",
         @"select (select c.name from contacts c),name from account a where a.name>='bob'",
         @"SELECT subject, TYPEOF what WHEN account Then id,BillingCity,createdBy.alias WHEN opportunity then name,nextStep ELSE id,email,createdDate END FROM Task",
-        @"SELECT subject, TYPEOF what WHEN contact Then id,name ELSE id,email,createdDate END FROM Task",
+        @"SELECT TYPEOF what WHEN contact Then id,name ELSE id,email,createdDate END,subject FROM Task",
         @"SELECT fields(STANDARD) FROM KnowledgeArticleVersion WITH DATA CATEGORY Geography__c BELOW usa__c AND Product__c AT mobile_phones__c",
         @"SELECT fields(STANDARD) FROM KnowledgeArticleVersion WITH DATA CATEGORY Geography__c NEAR usa__c AND Product__c AT mobile_phones__c",
         @"SELECT fields(what) FROM KnowledgeArticleVersion",

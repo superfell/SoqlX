@@ -356,6 +356,8 @@ static double ticksToMilliseconds;
         }
     }
     ZKDescribeSObject *originalPrimary = ctx.primary;
+    TokenType oldTypeRestrictions = ctx.restrictCompletionsToType;
+    ctx.restrictCompletionsToType = ctx.restrictCompletionsToType & (~TTFunc|TTTypeOf);
     t = e.nextObject;
     while (t.type == TTKeyword && [t matches:@"WHEN"]) {
         t = e.nextObject;
@@ -363,7 +365,9 @@ static double ticksToMilliseconds;
             [t.completions addObjectsFromArray:[Completion completions:relField.referenceTo type:TTSObject]];
             if (![relField.referenceTo containsStringIgnoringCase:t.tokenTxt]) {
                 t.type = TTError;
-                t.value = [NSString stringWithFormat:@"%@ is not a reference to %@", relField.name, t.tokenTxt];
+                t.value = [NSString stringWithFormat:@"Relationship %@ does not reference SObject %@", relField.relationshipName, t.tokenTxt];
+                ctx.restrictCompletionsToType = oldTypeRestrictions;
+                ctx.primary = originalPrimary;
                 return;
             }
             ZKDescribeSObject *curr = [self.describer describe:t.tokenTxt];
@@ -397,6 +401,7 @@ static double ticksToMilliseconds;
         t.value = [NSString stringWithFormat:@"Unexpected token %@", t.tokenTxt];
         t = e.nextObject;
     }
+    ctx.restrictCompletionsToType = oldTypeRestrictions;
 }
 
 // The first step in the path is optionally the object name, e.g.
