@@ -58,6 +58,7 @@ typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasM
 -(instancetype)init {
     self = [super init];
     self.restrictCompletionsToType = 0xFFFFFFFF;
+    self.fnCompletionsFilter = [SoqlFunction defaultFuncFilter];
     return self;
 }
 - (id)copyWithZone:(nullable NSZone *)zone {
@@ -344,8 +345,18 @@ static double ticksToMilliseconds;
         [self resolveTokenList:(Tokens*)f.value ctx:ctx];
         return [NSArray arrayWithObject:err];
     }
+    NSMutableArray<Token*>* errors = [NSMutableArray array];
+    if (ctx.filter.fnCompletionsFilter != nil && ![ctx.filter.fnCompletionsFilter evaluateWithObject:fn]) {
+        Token *err = [f tokenOf:f.loc];
+        err.type = TTError;
+        err.value = [NSString stringWithFormat:@"The function %@ is not valid at this location", fn.name];
+        [errors addObject:err];
+    }
     Tokens *argTokens = (Tokens*)f.value;  
     Token *err = [fn validateArgCount:f];
+    if (err != nil) {
+        [errors addObject:err];
+    }
     NSMutableArray *argsNewTokens = [NSMutableArray array];
     NSEnumerator<SoqlFuncArg*> *fnArgs = fn.args.objectEnumerator;
     for (Token *argToken in argTokens.tokens) {
@@ -366,7 +377,7 @@ static double ticksToMilliseconds;
     for (Token *t in argsNewTokens) {
         [argTokens addToken:t];
     }
-    return err == nil ? [NSArray array] : [NSArray arrayWithObject:err];
+    return errors;
 }
 
 -(void)resolveTypeOf:(Token*)typeOf ctx:(Context*)ctx {

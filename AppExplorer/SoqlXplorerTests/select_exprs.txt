@@ -1,20 +1,20 @@
 select id,(select name from contacts),name from account where name in ('bob','eve','alice')
    0-6   : Keyword         select                         completions 0 
    7-2   : FieldPath       id                             completions 0 
-       7-2   : Field           id                             completions 33 
+       7-2   : Field           id                             completions 31 
   10-27  : ChildSelect     (select name from contacts)    completions 0 
       11-6   : Keyword         select                         completions 0 
       18-4   : FieldPath       name                           completions 0 
-          18-4   : Field           name                           completions 32 
+          18-4   : Field           name                           completions 30 
       23-4   : Keyword         from                           completions 0 
       28-8   : Relationship    contacts                       completions 1 
   38-4   : FieldPath       name                           completions 0 
-      38-4   : Field           name                           completions 33 
+      38-4   : Field           name                           completions 31 
   43-4   : Keyword         from                           completions 0 
   48-7   : SObject         account                        completions 5 
   56-5   : Keyword         where                          completions 0 
   62-4   : FieldPath       name                           completions 0 
-      62-4   : Field           name                           completions 33 
+      62-4   : Field           name                           completions 31 
   67-2   : Op              in                             completions 2 
   71-5   : String          'bob'                          completions 0 
   77-5   : String          'eve'                          completions 0 
@@ -26,26 +26,26 @@ select (select c.name from contacts c),name from account a where a.name>='bob'
        8-6   : Keyword         select                         completions 0 
       15-6   : FieldPath       c.name                         completions 0 
           15-1   : Aias            c                              completions 2 
-          17-4   : Field           name                           completions 32 
+          17-4   : Field           name                           completions 30 
       22-4   : Keyword         from                           completions 0 
       27-8   : Relationship    contacts                       completions 1 
       36-1   : AliasDecl       c                              completions 0 
   39-4   : FieldPath       name                           completions 0 
-      39-4   : Field           name                           completions 33 
+      39-4   : Field           name                           completions 31 
   44-4   : Keyword         from                           completions 0 
   49-7   : SObject         account                        completions 5 
   57-1   : AliasDecl       a                              completions 0 
   59-5   : Keyword         where                          completions 0 
   65-6   : FieldPath       a.name                         completions 0 
       65-1   : Aias            a                              completions 2 
-      67-4   : Field           name                           completions 33 
+      67-4   : Field           name                           completions 31 
   71-2   : Op              >=                             completions 11 
   73-5   : String          'bob'                          completions 0 
 
 SELECT subject, TYPEOF what WHEN account Then id,BillingCity,createdBy.alias WHEN opportunity then name,nextStep ELSE id,email,createdDate END FROM Task
    0-6   : Keyword         SELECT                         completions 0 
    7-7   : FieldPath       subject                        completions 0 
-       7-7   : Field           subject                        completions 32 
+       7-7   : Field           subject                        completions 30 
   16-126 : TypeOf          TYPEOF what WHEN account Then  completions 0 
       16-6   : Keyword         TYPEOF                         completions 0 
       23-4   : Relationship    what                           completions 1 
@@ -97,7 +97,7 @@ SELECT TYPEOF what WHEN contact Then id,name ELSE id,email,createdDate END,subje
                   strings:createdDate
       71-3   : Keyword         END                            completions 0 
   75-7   : FieldPath       subject                        completions 0 
-      75-7   : Field           subject                        completions 32 
+      75-7   : Field           subject                        completions 30 
   83-4   : Keyword         FROM                           completions 0 
   88-4   : SObject         Task                           completions 5 
 
@@ -135,7 +135,25 @@ SELECT fields(what) FROM KnowledgeArticleVersion
 SELECT account from contact
    0-6   : Keyword         SELECT                         completions 0 
    7-7   : FieldPath       account                        completions 0 
-       7-7   : Error           account                        completions 32 Account is a relationship, it should be followed by a field
+       7-7   : Error           account                        completions 30 Account is a relationship, it should be followed by a field
   15-4   : Keyword         from                           completions 0 
   20-7   : SObject         contact                        completions 5 
+
+Select GEOLOCATION(1,1) FROM account
+   0-6   : Keyword         Select                         completions 0 
+   7-11  : Error           GEOLOCATION                    completions 0 The function Geolocation is not valid at this location
+   7-11  : Function        GEOLOCATION                    completions 31 
+      19-1   : Number          1                              completions 0 
+      21-1   : Number          1                              completions 0 
+  24-4   : Keyword         FROM                           completions 0 
+  29-7   : SObject         account                        completions 5 
+
+Select ConvertTimeZone(LastModifiedDate)  FROM account
+   0-6   : Keyword         Select                         completions 0 
+   7-15  : Error           ConvertTimeZone                completions 0 The function ConvertTimezone is not valid at this location
+   7-15  : Function        ConvertTimeZone                completions 31 
+      23-16  : FieldPath       LastModifiedDate               completions 0 
+          23-16  : Field           LastModifiedDate               completions 1 
+  42-4   : Keyword         FROM                           completions 0 
+  47-7   : SObject         account                        completions 5 
 

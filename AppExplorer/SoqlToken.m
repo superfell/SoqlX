@@ -90,6 +90,10 @@ NSString *tokenNames(TokenType types) {
     return [self.tokenTxt caseInsensitiveCompare:match] == NSOrderedSame;
 }
 
+-(NSString *)description {
+    return [self dump:0];
+}
+
 -(NSString *)dump:(NSInteger)depth {
     NSString *indent = [@"" stringByPaddingToLength:depth *4 withString:@" " startingAtIndex:0];
     NSString *t = [NSString stringWithFormat:@"%@%4lu-%-4lu: %@ %@ completions %lu %@", indent, self.loc.location, self.loc.length,

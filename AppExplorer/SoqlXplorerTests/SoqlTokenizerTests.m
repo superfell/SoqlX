@@ -126,7 +126,9 @@ NSObject<TokenizerDescriber> *descs;
         @"SELECT fields(STANDARD) FROM KnowledgeArticleVersion WITH DATA CATEGORY Geography__c BELOW usa__c AND Product__c AT mobile_phones__c",
         @"SELECT fields(STANDARD) FROM KnowledgeArticleVersion WITH DATA CATEGORY Geography__c NEAR usa__c AND Product__c AT mobile_phones__c",
         @"SELECT fields(what) FROM KnowledgeArticleVersion",
-        @"SELECT account from contact"
+        @"SELECT account from contact",
+        @"Select GEOLOCATION(1,1) FROM account",
+        @"Select ConvertTimeZone(LastModifiedDate)  FROM account",
     ];
     [self writeSoqlTokensForQuerys:queries toFile:@"select_exprs.txt"];
 }
@@ -158,7 +160,7 @@ NSObject<TokenizerDescriber> *descs;
 }
 
 -(void)testForDebugging {
-    [self writeSoqlTokensForQuerys:@[@"select id,owner.name,fields(standard) from account"] toFile:@"debug.txt" withDebug:YES];
+    [self writeSoqlTokensForQuerys:@[@"SELECT calendar_year(convertCurrency(LastModifiedDate)) from account"] toFile:@"debug.txt" withDebug:YES];
 }
 
 - (void)testWhere {

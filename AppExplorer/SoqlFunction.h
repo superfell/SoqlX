@@ -41,6 +41,7 @@ typedef NSString*(^ExampleProvider)(ZKDescribeSObject*);
 
 @interface SoqlFunction : NSObject
 +(NSDictionary<CaseInsensitiveStringKey*,SoqlFunction*>*)all;
++(NSPredicate*)defaultFuncFilter;
 
 +(instancetype)fn:(NSString*)name args:(NSArray<SoqlFuncArg*>*)args;
 
