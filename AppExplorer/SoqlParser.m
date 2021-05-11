@@ -58,39 +58,24 @@ NSString *KeyCompletions = @"Completions";
 }
 
 -(ZKBaseParser*)literalStringValue:(ZKParserFactory*)f {
-    ZKBaseParser *p = [f fromBlock:^ZKParserResult *(ZKParsingState *input, NSError *__autoreleasing *err) {
+    ZKBaseParser *p = [f fromBlock:^ZKParserResult *(ZKParsingState *input) {
         NSInteger start = input.pos;
         if ((!input.hasMoreInput) || input.currentChar != '\'') {
-            *err = [NSError errorWithDomain:@"Soql"
-                                      code:1
-                                  userInfo:@{
-                                      NSLocalizedDescriptionKey:[NSString stringWithFormat:@"expecting ' at position %lu", input.pos+1],
-                                      KeyPosition: @(input.pos+1)
-                                  }];
+            [input expected:@"'"];
             return nil;
         }
         input.pos++;
         [input markCut];
         while (true) {
             if (!input.hasMoreInput) {
-                *err = [NSError errorWithDomain:@"Soql"
-                                          code:1
-                                      userInfo:@{
-                                          NSLocalizedDescriptionKey:[NSString stringWithFormat:@"reached end of input while parsing a string literal, missing closing ' at %lu", input.pos],
-                                          KeyPosition: @(input.pos)
-                                      }];
+                [input error:[NSString stringWithFormat:@"reached end of input while parsing a string literal, missing closing ' at %lu", input.pos]].pos--;
                 return nil;
             }
             unichar c = input.currentChar;
             if (c == '\\') {
                 input.pos++;
                 if (!input.hasMoreInput) {
-                    *err = [NSError errorWithDomain:@"Soql"
-                                              code:1
-                                          userInfo:@{
-                                              NSLocalizedDescriptionKey:[NSString stringWithFormat:@"invalid escape sequence at %lu", input.pos],
-                                              KeyPosition: @(input.pos)
-                                          }];
+                    [input error:[NSString stringWithFormat:@"invalid escape sequence at %lu", input.pos]].pos--;
                 }
                 input.pos++;
                 continue;
@@ -238,14 +223,9 @@ NSString *KeyCompletions = @"Completions";
             completions = [Completion completions:tokens type:type];
         }
         ZKBaseParser *p = [f oneOfTokensList:tokens];
-        p = [f onError:p perform:^(NSDictionary*ctx, NSError *__autoreleasing *err) {
-            NSInteger pos = [(*err).userInfo[KeyPosition] integerValue];
-            *err = [NSError errorWithDomain:@"Parser" code:33 userInfo:@{
-                NSLocalizedDescriptionKey:[NSString stringWithFormat:@"expecting one of %@ at position %lu",
-                                           [tokens componentsJoinedByString:@","], pos],
-                KeyPosition: @(pos),
-                KeyCompletions : completions
-            }];
+        p = [f onError:p perform:^(ZKParsingState *input) {
+            NSString *errClass = [NSString stringWithFormat:@"one of %@", [tokens componentsJoinedByString:@","]];
+            [input expectedClass:errClass].userInfo = [NSMutableDictionary dictionaryWithObject:completions forKey:KeyCompletions];
         }];
         p = [f onMatch:p perform:^ZKParserResult *(ZKParserResult *r) {
             Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
@@ -283,14 +263,14 @@ NSString *KeyCompletions = @"Completions";
     // ORDER & OFFSET are issues for our parser, but not the sfdc one.
     NSSet<NSString*> *keywords = [NSSet setWithArray:[@"ORDER OFFSET USING AND ASC DESC EXCLUDES FIRST FROM GROUP HAVING IN INCLUDES LAST LIKE LIMIT NOT NULL NULLS OR SELECT WHERE WITH" componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
     ZKBaseParser *aliasOnly = [f zeroOrOne:[f onMatch:[f seq:@[ws, ident]] perform:pick(1)]];
-    ZKBaseParser *alias = [f fromBlock:^ZKParserResult *(ZKParsingState *input, NSError *__autoreleasing *err) {
+    ZKBaseParser *alias = [f fromBlock:^ZKParserResult *(ZKParsingState *input) {
         NSInteger start = input.pos;
-        ZKParserResult *r = [aliasOnly parse:input error:err];
+        ZKParserResult *r = [aliasOnly parse:input];
         if (r.val != [NSNull null]) {
             NSString *txt = [r.val uppercaseString];
             if ([keywords containsObject:txt]) {
                 [input moveTo:start];
-                *err = nil;
+                [input clearError];
                 return [ZKParserResult result:[NSNull null] ctx:input.userContext loc:r.loc];
             }
             Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
@@ -415,17 +395,14 @@ NSString *KeyCompletions = @"Completions";
     ZKBaseParser *operator = oneOfTokensWithCompletions(TTOperator,@[@"<",@"<=",@">",@">=",@"=",@"!=",@"LIKE"],opCompletions, TRUE);
     ZKBaseParser *opIncExcl = oneOfTokensWithCompletions(TTOperator,@[@"INCLUDES",@"EXCLUDES"], opCompletions, TRUE);
     ZKBaseParser *inOrNotIn = [f oneOf:@[tokenSeqType(@"IN", TTOperator), tokenSeqType(@"NOT IN", TTOperator)]];
-    ZKBaseParser *opInNotIn = [f fromBlock:^ZKParserResult *(ZKParsingState *input, NSError *__autoreleasing *err) {
-        ZKParserResult *r = [inOrNotIn parse:input error:err];
-        if (*err == nil) {
+    ZKBaseParser *opInNotIn = [f fromBlock:^ZKParserResult *(ZKParsingState *input) {
+        ZKParserResult *r = [inOrNotIn parse:input];
+        if (!input.hasError) {
             [[r.val completions] addObjectsFromArray:[Completion completions:@[@"IN",@"NOT IN"] type:TTOperator]];
         } else {
-            *err = [NSError errorWithDomain:@"Parser" code:33 userInfo:@{
-                NSLocalizedDescriptionKey:[NSString stringWithFormat:@"expecting one of %@ at position %lu",
-                                           [[opCompletions valueForKey:@"displayText"] componentsJoinedByString:@","], input.pos+1],
-                KeyPosition: @(input.pos+1),
-                KeyCompletions : opCompletions
-            }];
+            ZKParserError *e = [input error:[NSString stringWithFormat:@"expecting one of %@ at position %lu",
+                          [[opCompletions valueForKey:@"displayText"] componentsJoinedByString:@","], input.pos+1]];
+            e.userInfo = [NSMutableDictionary dictionaryWithObject:opCompletions forKey:KeyCompletions];
         }
         return r;
     }];
