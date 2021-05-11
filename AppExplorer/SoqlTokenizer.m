@@ -607,15 +607,13 @@ static double ticksToMilliseconds;
         [t.completions addObject:c];
     }
     if (((allowedTypes & TTFunc) != 0) && obj != nil) {
-        for (SoqlFunction *f in SoqlFunction.all.allValues) {
-            if (ctx.filter.fnCompletionsFilter == nil || [ctx.filter.fnCompletionsFilter evaluateWithObject:f]) {
-                Completion* cached = [self.fnCompletionsCache for:f onObject:obj];
-                if (cached == nil) {
-                    cached = [f completionOn:obj];
-                    [self.fnCompletionsCache setCompletion:cached for:f onObject:obj];
-                }
-                [t.completions addObject:cached];
+        for (SoqlFunction *f in [SoqlFunction functionsFilteredBy:ctx.filter.fnCompletionsFilter]) {
+            Completion* cached = [self.fnCompletionsCache for:f onObject:obj];
+            if (cached == nil) {
+                cached = [f completionOn:obj];
+                [self.fnCompletionsCache setCompletion:cached for:f onObject:obj];
             }
+            [t.completions addObject:cached];
         }
     }
 }

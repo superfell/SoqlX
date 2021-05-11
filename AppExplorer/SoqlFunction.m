@@ -236,6 +236,25 @@ ExampleProvider fixed(NSString*value) {
     return filter;
 }
 
++(NSArray<SoqlFunction*>*)functionsFilteredBy:(NSPredicate*)p {
+    static dispatch_once_t onceToken;
+    static NSArray<SoqlFunction*>* allFuncs;
+    static NSMutableDictionary<NSPredicate*, NSArray<SoqlFunction*>*> *predicateCache;
+    dispatch_once(&onceToken, ^() {
+        allFuncs = [NSArray arrayWithArray:[[self all] allValues]];
+        predicateCache = [NSMutableDictionary dictionaryWithCapacity:32];
+    });
+    if (p == nil) {
+        return allFuncs;
+    }
+    NSArray<SoqlFunction*>* res = predicateCache[p];
+    if (res == nil) {
+        res = [allFuncs filteredArrayUsingPredicate:p];
+        predicateCache[p] = res;
+    }
+    return res;
+}
+
 +(instancetype)fn:(NSString*)name args:(NSArray<SoqlFuncArg*>*)args {
     SoqlFunction *f = [self new];
     f.name = name;
