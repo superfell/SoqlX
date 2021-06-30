@@ -50,6 +50,7 @@ NSString *tokenName(TokenType type) {
         case TTLiteralNull: return @"Null";
         case TTError: return @"Error";
         case TTLiteralCurrency: return @"Currency";
+        case TTListViewName: return @"ListViewName";
     }
     return @"<unknown>";
 }

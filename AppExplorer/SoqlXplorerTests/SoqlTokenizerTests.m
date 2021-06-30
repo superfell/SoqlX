@@ -160,7 +160,7 @@ NSObject<TokenizerDescriber> *descs;
 }
 
 -(void)testForDebugging {
-    [self writeSoqlTokensForQuerys:@[@"SELECT calendar_year(convertCurrency(LastModifiedDate)) from account"] toFile:@"debug.txt" withDebug:YES];
+    [self writeSoqlTokensForQuerys:@[@"FIND {MyAcccount} IN ALL FIELDS RETURNING Account(Id, Name USING ListView=ListViewName)"] toFile:@"debug.txt" withDebug:YES];
 }
 
 - (void)testWhere {
@@ -275,6 +275,37 @@ NSObject<TokenizerDescriber> *descs;
         @"select name from account limit 1 for view",
     ];
     [self writeSoqlTokensForQuerys:queries toFile:@"limit_offset.txt"];
+}
+
+-(void)testSosl {
+    NSArray<NSString*>* queries = @[
+        @"find {bob}",
+        @"find {bob eve}",
+        @"find {bob} in all fields",
+        @"find { bob } in all fields",
+        @"find { bob or alice } in all fields",
+        @"find { \"Alice Bob\" } in all fields",
+        @"find { \"Alice Bob\" AND eve } in all fields",
+        @"find { \"Alice Bob\" AND NOT eve } in sidebar fields",
+        @"find { \"Alice Bob\" AND NOT eve OR bobby} in email fields",
+        @"find { \"Alice Bob\" AND NOT eve OR \"bobby bobson\" } in name fields",
+        @"find { bob and (eve or alice) } in all fields",
+        @"find { bob and (\"Alice eve\" or \"jim\") } in all fields",
+        @"FIND {Why not\\?}",
+        @"FIND {SF\\\\LA}",
+        @"FIND {SF\\{LA\\}}",
+        @"FIND {ALICE} WITH DATA CATEGORY Geography__c AT asia__c AND product__c BELOW electronics__c",
+        @"FIND {MyProspect} RETURNING Contact",
+        @"FIND {MyProspect} RETURNING Contact, Lead",
+        @"FIND {MyProspect} RETURNING Contact(FirstName, LastName)",
+        @"FIND {MyProspect} RETURNING Contact(FirstName, LastName LIMIT 20), Account(Name, Industry LIMIT 10), Opportunity LIMIT 50",
+        @"FIND {MyProspect} RETURNING Contact(FirstName, LastName OFFSET 10)",
+        @"FIND {MyProspect} RETURNING Contact(FirstName, LastName ORDER BY name,email desc)",
+        @"FIND {MyAcccount} IN ALL FIELDS RETURNING Account(Id, Name USING ListView=ListViewName)",
+        @"FIND {MyAcccount} IN ALL FIELDS RETURNING Account(Id, Name USING ListView=ListViewName order by name)",
+        @"FIND {MyProspect} RETURNING Contact(FirstName, LastName where name>'eve')",
+    ];
+    [self writeSoqlTokensForQuerys:queries toFile:@"sosl.txt"];
 }
 
 -(void)writeSoqlTokensForQuerys:(NSArray<NSString*>*)queries toFile:(NSString*)fn {

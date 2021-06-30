@@ -845,6 +845,7 @@ static double ticksToMilliseconds;
                 break;
             case TTUsingScope:
             case TTDataCategory:
+            case TTListViewName:
                 [txt addAttributes:style.field range:t.loc];
                 break;
             case TTDataCategoryValue:

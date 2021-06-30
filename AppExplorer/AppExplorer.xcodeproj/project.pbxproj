@@ -99,6 +99,7 @@
 		F4D7836B15D8814C00D00BB9 /* ZKDescribe_Reporting.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D7836A15D8814C00D00BB9 /* ZKDescribe_Reporting.m */; };
 		F4D8DC792569CFF7002C9FC1 /* SObject.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D8DC782569CFF7002C9FC1 /* SObject.m */; };
 		F4D8DC87256AD4E2002C9FC1 /* SObjectSortDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D8DC86256AD4E2002C9FC1 /* SObjectSortDescriptor.m */; };
+		F4DD80742650406400CFB641 /* sosl.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4DD806A2650406400CFB641 /* sosl.txt */; };
 		F4DD944B0AFEEC9400B0E3AC /* SchemaView.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DD94490AFEEC9400B0E3AC /* SchemaView.m */; };
 		F4DD94540AFEED9500B0E3AC /* SchemaController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DD94520AFEED9500B0E3AC /* SchemaController.m */; };
 		F4DE40652562079100FBA200 /* QueryColumnsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DE40642562079100FBA200 /* QueryColumnsTest.m */; };
@@ -380,6 +381,7 @@
 		F4D8DC782569CFF7002C9FC1 /* SObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SObject.m; sourceTree = "<group>"; };
 		F4D8DC85256AD4E2002C9FC1 /* SObjectSortDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SObjectSortDescriptor.h; sourceTree = "<group>"; };
 		F4D8DC86256AD4E2002C9FC1 /* SObjectSortDescriptor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SObjectSortDescriptor.m; sourceTree = "<group>"; };
+		F4DD806A2650406400CFB641 /* sosl.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sosl.txt; sourceTree = "<group>"; };
 		F4DD94480AFEEC9400B0E3AC /* SchemaView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchemaView.h; sourceTree = "<group>"; };
 		F4DD94490AFEEC9400B0E3AC /* SchemaView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SchemaView.m; sourceTree = "<group>"; };
 		F4DD94510AFEED9500B0E3AC /* SchemaController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SchemaController.h; sourceTree = "<group>"; };
@@ -713,6 +715,7 @@
 		F4DE4050256205D300FBA200 /* SoqlXplorerTests */ = {
 			isa = PBXGroup;
 			children = (
+				F4DD806A2650406400CFB641 /* sosl.txt */,
 				F4BD5DD5264457DA00ACBBAB /* literals.txt */,
 				F4BD5DD12641B91900ACBBAB /* using_scope.txt */,
 				F4BD5DCD2641B59A00ACBBAB /* group_by.txt */,
@@ -952,6 +955,7 @@
 				F4BD5DD22641B91900ACBBAB /* using_scope.txt in Resources */,
 				F4F2E72A2640633F005C49B9 /* select_exprs.txt in Resources */,
 				F4C889F12624FC75006D606A /* Media.xcassets in Resources */,
+				F4DD80742650406400CFB641 /* sosl.txt in Resources */,
 				F4F2E7282640633F005C49B9 /* order_by.txt in Resources */,
 				F4F2E7292640633F005C49B9 /* where.txt in Resources */,
 				F4BD5DC62641B10600ACBBAB /* with.txt in Resources */,

@@ -49,7 +49,8 @@ typedef NS_OPTIONS(uint32_t, TokenType) {
     TTLiteralBoolean    = 1 << 23,
     TTLiteralNull       = 1 << 24,
     TTLiteralCurrency   = 1 << 25,
-    TTError             = 1 << 26,
+    TTListViewName      = 1 << 26,
+    TTError             = 1 << 27,
 };
 
 NSString *tokenName(TokenType type);

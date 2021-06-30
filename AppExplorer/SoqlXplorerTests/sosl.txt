@@ -1,0 +1,229 @@
+find {bob}
+   0-4   : Keyword         find                           completions 0 
+   6-3   : String          bob                            completions 0 
+
+find {bob eve}
+   0-4   : Keyword         find                           completions 0 
+   6-3   : String          bob                            completions 0 
+  10-3   : String          eve                            completions 0 
+
+find {bob} in all fields
+   0-4   : Keyword         find                           completions 0 
+   6-3   : String          bob                            completions 0 
+  11-2   : Keyword         in                             completions 0 
+  14-3   : Keyword         all                            completions 5 
+  18-6   : Keyword         fields                         completions 0 
+
+find { bob } in all fields
+   0-4   : Keyword         find                           completions 0 
+   7-3   : String          bob                            completions 0 
+  13-2   : Keyword         in                             completions 0 
+  16-3   : Keyword         all                            completions 5 
+  20-6   : Keyword         fields                         completions 0 
+
+find { bob or alice } in all fields
+   0-4   : Keyword         find                           completions 0 
+   7-3   : String          bob                            completions 0 
+  11-2   : Keyword         or                             completions 0 
+  14-5   : String          alice                          completions 0 
+  22-2   : Keyword         in                             completions 0 
+  25-3   : Keyword         all                            completions 5 
+  29-6   : Keyword         fields                         completions 0 
+
+find { "Alice Bob" } in all fields
+   0-4   : Keyword         find                           completions 0 
+   7-11  : String          "Alice Bob"                    completions 0 
+  21-2   : Keyword         in                             completions 0 
+  24-3   : Keyword         all                            completions 5 
+  28-6   : Keyword         fields                         completions 0 
+
+find { "Alice Bob" AND eve } in all fields
+   0-4   : Keyword         find                           completions 0 
+   7-11  : String          "Alice Bob"                    completions 0 
+  19-3   : Keyword         AND                            completions 0 
+  23-3   : String          eve                            completions 0 
+  29-2   : Keyword         in                             completions 0 
+  32-3   : Keyword         all                            completions 5 
+  36-6   : Keyword         fields                         completions 0 
+
+find { "Alice Bob" AND NOT eve } in sidebar fields
+   0-4   : Keyword         find                           completions 0 
+   7-11  : String          "Alice Bob"                    completions 0 
+  19-3   : Keyword         AND                            completions 0 
+  23-3   : Keyword         NOT                            completions 0 
+  27-3   : String          eve                            completions 0 
+  33-2   : Keyword         in                             completions 0 
+  36-7   : Keyword         sidebar                        completions 5 
+  44-6   : Keyword         fields                         completions 0 
+
+find { "Alice Bob" AND NOT eve OR bobby} in email fields
+   0-4   : Keyword         find                           completions 0 
+   7-11  : String          "Alice Bob"                    completions 0 
+  19-3   : Keyword         AND                            completions 0 
+  23-3   : Keyword         NOT                            completions 0 
+  27-3   : String          eve                            completions 0 
+  31-2   : Keyword         OR                             completions 0 
+  34-5   : String          bobby                          completions 0 
+  41-2   : Keyword         in                             completions 0 
+  44-5   : Keyword         email                          completions 5 
+  50-6   : Keyword         fields                         completions 0 
+
+find { "Alice Bob" AND NOT eve OR "bobby bobson" } in name fields
+   0-4   : Keyword         find                           completions 0 
+   7-11  : String          "Alice Bob"                    completions 0 
+  19-3   : Keyword         AND                            completions 0 
+  23-3   : Keyword         NOT                            completions 0 
+  27-3   : String          eve                            completions 0 
+  31-2   : Keyword         OR                             completions 0 
+  34-14  : String          "bobby bobson"                 completions 0 
+  51-2   : Keyword         in                             completions 0 
+  54-4   : Keyword         name                           completions 5 
+  59-6   : Keyword         fields                         completions 0 
+
+find { bob and (eve or alice) } in all fields
+   0-4   : Keyword         find                           completions 0 
+   7-3   : String          bob                            completions 0 
+  11-3   : Keyword         and                            completions 0 
+  16-3   : String          eve                            completions 0 
+  20-2   : Keyword         or                             completions 0 
+  23-5   : String          alice                          completions 0 
+  32-2   : Keyword         in                             completions 0 
+  35-3   : Keyword         all                            completions 5 
+  39-6   : Keyword         fields                         completions 0 
+
+find { bob and ("Alice eve" or "jim") } in all fields
+   0-4   : Keyword         find                           completions 0 
+   7-3   : String          bob                            completions 0 
+  11-3   : Keyword         and                            completions 0 
+  16-11  : String          "Alice eve"                    completions 0 
+  28-2   : Keyword         or                             completions 0 
+  31-5   : String          "jim"                          completions 0 
+  40-2   : Keyword         in                             completions 0 
+  43-3   : Keyword         all                            completions 5 
+  47-6   : Keyword         fields                         completions 0 
+
+FIND {Why not\?}
+   0-4   : Keyword         FIND                           completions 0 
+   6-3   : String          Why                            completions 0 
+  10-5   : String          not\?                          completions 0 
+
+FIND {SF\\LA}
+   0-4   : Keyword         FIND                           completions 0 
+   6-6   : String          SF\\LA                         completions 0 
+
+FIND {SF\{LA\}}
+   0-4   : Keyword         FIND                           completions 0 
+   6-8   : String          SF\{LA\}                       completions 0 
+
+FIND {ALICE} WITH DATA CATEGORY Geography__c AT asia__c AND product__c BELOW electronics__c
+   0-4   : Keyword         FIND                           completions 0 
+   6-5   : String          ALICE                          completions 0 
+  13-18  : Keyword         WITH DATA CATEGORY             completions 0 
+  32-12  : Category        Geography__c                   completions 0 
+  45-2   : Keyword         AT                             completions 4 
+  48-7   : CategoryVal     asia__c                        completions 0 
+  56-3   : Op              AND                            completions 0 
+  60-10  : Category        product__c                     completions 0 
+  71-5   : Keyword         BELOW                          completions 4 
+  77-14  : CategoryVal     electronics__c                 completions 0 
+
+FIND {MyProspect} RETURNING Contact
+   0-4   : Keyword         FIND                           completions 0 
+   6-10  : String          MyProspect                     completions 0 
+  18-9   : Keyword         RETURNING                      completions 0 
+  28-7   : SObject         Contact                        completions 5 
+
+FIND {MyProspect} RETURNING Contact, Lead
+   0-4   : Keyword         FIND                           completions 0 
+   6-10  : String          MyProspect                     completions 0 
+  18-9   : Keyword         RETURNING                      completions 0 
+  28-7   : SObject         Contact                        completions 5 
+  37-4   : SObject         Lead                           completions 0 
+
+FIND {MyProspect} RETURNING Contact(FirstName, LastName)
+   0-4   : Keyword         FIND                           completions 0 
+   6-10  : String          MyProspect                     completions 0 
+  18-9   : Keyword         RETURNING                      completions 0 
+  28-7   : SObject         Contact                        completions 5 
+  36-9   : Field           FirstName                      completions 0 
+  47-8   : Field           LastName                       completions 0 
+
+FIND {MyProspect} RETURNING Contact(FirstName, LastName LIMIT 20), Account(Name, Industry LIMIT 10), Opportunity LIMIT 50
+   0-4   : Keyword         FIND                           completions 0 
+   6-10  : String          MyProspect                     completions 0 
+  18-9   : Keyword         RETURNING                      completions 0 
+  28-7   : SObject         Contact                        completions 5 
+  36-9   : Field           FirstName                      completions 0 
+  47-8   : Field           LastName                       completions 0 
+  56-5   : Keyword         LIMIT                          completions 0 
+  62-2   : Number          20                             completions 0 
+  67-7   : SObject         Account                        completions 0 
+  75-4   : Field           Name                           completions 0 
+  81-8   : Field           Industry                       completions 0 
+  90-5   : Keyword         LIMIT                          completions 0 
+  96-2   : Number          10                             completions 0 
+ 101-11  : SObject         Opportunity                    completions 0 
+ 113-5   : Keyword         LIMIT                          completions 0 
+ 119-2   : Number          50                             completions 0 
+
+FIND {MyProspect} RETURNING Contact(FirstName, LastName OFFSET 10)
+   0-4   : Keyword         FIND                           completions 0 
+   6-10  : String          MyProspect                     completions 0 
+  18-9   : Keyword         RETURNING                      completions 0 
+  28-7   : SObject         Contact                        completions 5 
+  36-9   : Field           FirstName                      completions 0 
+  47-8   : Field           LastName                       completions 0 
+  56-6   : Keyword         OFFSET                         completions 0 
+  63-2   : Number          10                             completions 0 
+
+FIND {MyProspect} RETURNING Contact(FirstName, LastName ORDER BY name,email desc)
+   0-4   : Keyword         FIND                           completions 0 
+   6-10  : String          MyProspect                     completions 0 
+  18-9   : Keyword         RETURNING                      completions 0 
+  28-7   : SObject         Contact                        completions 5 
+  36-9   : Field           FirstName                      completions 0 
+  47-8   : Field           LastName                       completions 0 
+  56-8   : Keyword         ORDER BY                       completions 0 
+  65-4   : Field           name                           completions 0 
+  70-5   : Field           email                          completions 0 
+  76-4   : Keyword         desc                           completions 2 
+
+FIND {MyAcccount} IN ALL FIELDS RETURNING Account(Id, Name USING ListView=ListViewName)
+   0-4   : Keyword         FIND                           completions 0 
+   6-10  : String          MyAcccount                     completions 0 
+  18-2   : Keyword         IN                             completions 0 
+  21-3   : Keyword         ALL                            completions 5 
+  25-6   : Keyword         FIELDS                         completions 0 
+  32-9   : Keyword         RETURNING                      completions 0 
+  42-7   : SObject         Account                        completions 5 
+  50-2   : Field           Id                             completions 0 
+  54-4   : Field           Name                           completions 0 
+  59-14  : Keyword         USING ListView                 completions 0 
+  73-1   : Keyword         =                              completions 0 
+  74-12  : ListViewName    ListViewName                   completions 0 
+
+FIND {MyAcccount} IN ALL FIELDS RETURNING Account(Id, Name USING ListView=ListViewName order by name)
+   0-4   : Keyword         FIND                           completions 0 
+   6-10  : String          MyAcccount                     completions 0 
+  18-2   : Keyword         IN                             completions 0 
+  21-3   : Keyword         ALL                            completions 5 
+  25-6   : Keyword         FIELDS                         completions 0 
+  32-9   : Keyword         RETURNING                      completions 0 
+  42-7   : SObject         Account                        completions 5 
+  50-2   : Field           Id                             completions 0 
+  54-4   : Field           Name                           completions 0 
+  59-14  : Keyword         USING ListView                 completions 0 
+  73-1   : Keyword         =                              completions 0 
+  74-12  : ListViewName    ListViewName                   completions 0 
+  87-8   : Keyword         order by                       completions 0 
+  96-4   : Field           name                           completions 0 
+
+FIND {MyProspect} RETURNING Contact(FirstName, LastName where name>'eve')
+   0-4   : Keyword         FIND                           completions 0 
+   6-10  : String          MyProspect                     completions 0 
+  18-9   : Keyword         RETURNING                      completions 0 
+  28-7   : Error           Contact                        completions 0 Unexpected input '(FirstName, LastName where name>'eve')' at position 36
+  28-7   : SObject         Contact                        completions 5 
+  36-9   : Field           FirstName                      completions 0 
+  47-8   : Field           LastName                       completions 0 
+
