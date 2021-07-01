@@ -325,3 +325,13 @@ FIND {test} RETURNING Account,Contact WITH DIVISION = 'Global' WITH Network IN (
   80-5   : String          '123'                          completions 0 
   86-5   : String          '132'                          completions 0 
 
+FIND {test} RETURNING Account,Contact WITH pricebookID='123'
+   0-4   : Keyword         FIND                           completions 0 
+   6-4   : String          test                           completions 0 
+  12-9   : Keyword         RETURNING                      completions 0 
+  22-7   : SObject         Account                        completions 5 
+  30-7   : SObject         Contact                        completions 5 
+  38-16  : Keyword         WITH pricebookID               completions 0 
+  54-1   : Op              =                              completions 0 
+  55-5   : String          '123'                          completions 0 
+

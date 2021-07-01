@@ -385,6 +385,8 @@ ZKResultMapper toToken(TokenType type) {
     ZKBaseParser *queryTerm = [self soslSearchQuery:f];
     ZKBaseParser *div      = [f seq:@[maybeWs, [f tokenSeq:@"WITH DIVISION"], maybeWs, cut, opEq, maybeWs, literalValue]];
     ZKBaseParser *metadata = [f seq:@[maybeWs, [f tokenSeq:@"WITH METADATA"], maybeWs, cut, opEq, maybeWs, literalValue]];
+    ZKBaseParser *pricebook= [f seq:@[maybeWs, [f tokenSeq:@"WITH PRICEBOOKID"], maybeWs, cut, opEq, maybeWs, literalValue]];
+    
     ZKBaseParser *netIn    = [f onMatch:[f eq:@"IN"] perform:toToken(TTOperator)];
     ZKBaseParser *network  = [f seq:@[maybeWs, [f tokenSeq:@"WITH NETWORK"], maybeWs, cut,
                                       [f firstOf:@[[f seq:@[opEq, maybeWs, literalValue]],
@@ -397,7 +399,8 @@ ZKResultMapper toToken(TokenType type) {
                                   [f zeroOrOne:[f withDataCategory]],
                                   [f zeroOrOne:[f seq:@[maybeWs, [f tokenSeq:@"WITH HIGHLIGHT"]]]],
                                   [f zeroOrOne:metadata],
-                                  [f zeroOrOne:network]
+                                  [f zeroOrOne:network],
+                                  [f zeroOrOne:pricebook]
                                 ]];
     sosl.debugName = @"SoslStmt";
 
