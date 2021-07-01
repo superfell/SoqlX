@@ -335,3 +335,87 @@ FIND {test} RETURNING Account,Contact WITH pricebookID='123'
   54-1   : Op              =                              completions 0 
   55-5   : String          '123'                          completions 0 
 
+FIND {test} RETURNING Account,Contact WITH SNIPPET(target_length=120)
+   0-4   : Keyword         FIND                           completions 0 
+   6-4   : String          test                           completions 0 
+  12-9   : Keyword         RETURNING                      completions 0 
+  22-7   : SObject         Account                        completions 5 
+  30-7   : SObject         Contact                        completions 5 
+  38-12  : Keyword         WITH SNIPPET                   completions 0 
+  51-13  : Keyword         target_length                  completions 0 
+  64-1   : Op              =                              completions 0 
+  65-3   : Number          120                            completions 0 
+
+FIND {test} RETURNING Account,Contact WITH SNIPPET
+   0-4   : Keyword         FIND                           completions 0 
+   6-4   : String          test                           completions 0 
+  12-9   : Keyword         RETURNING                      completions 0 
+  22-7   : SObject         Account                        completions 5 
+  30-7   : SObject         Contact                        completions 5 
+  38-12  : Keyword         WITH SNIPPET                   completions 0 
+
+FIND {test} RETURNING Account,Contact WITH SPELL_CORRECTION = false
+   0-4   : Keyword         FIND                           completions 0 
+   6-4   : String          test                           completions 0 
+  12-9   : Keyword         RETURNING                      completions 0 
+  22-7   : SObject         Account                        completions 5 
+  30-7   : SObject         Contact                        completions 5 
+  38-21  : Keyword         WITH SPELL_CORRECTION          completions 0 
+  60-1   : Op              =                              completions 0 
+  62-5   : Boolean         false                          completions 2 
+
+FIND {test} RETURNING Account,Contact UPDATE TRACKING
+   0-4   : Keyword         FIND                           completions 0 
+   6-4   : String          test                           completions 0 
+  12-9   : Keyword         RETURNING                      completions 0 
+  22-7   : SObject         Account                        completions 5 
+  30-7   : SObject         Contact                        completions 5 
+  38-6   : Keyword         UPDATE                         completions 0 
+  45-8   : Keyword         TRACKING                       completions 2 
+
+FIND {test} RETURNING Account,Contact UPDATE VIEWSTAT
+   0-4   : Keyword         FIND                           completions 0 
+   6-4   : String          test                           completions 0 
+  12-9   : Keyword         RETURNING                      completions 0 
+  22-7   : SObject         Account                        completions 5 
+  30-7   : SObject         Contact                        completions 5 
+  38-6   : Keyword         UPDATE                         completions 0 
+  45-8   : Keyword         VIEWSTAT                       completions 2 
+
+FIND {test} RETURNING Account,Contact UPDATE TRACKING,VIEWSTAT
+   0-4   : Keyword         FIND                           completions 0 
+   6-4   : String          test                           completions 0 
+  12-9   : Keyword         RETURNING                      completions 0 
+  22-7   : SObject         Account                        completions 5 
+  30-7   : SObject         Contact                        completions 5 
+  38-6   : Keyword         UPDATE                         completions 0 
+  45-8   : Keyword         TRACKING                       completions 2 
+  54-8   : Keyword         VIEWSTAT                       completions 2 
+
+FIND {test} RETURNING Account,Contact UPDATE VIEWSTAT,TRACKING
+   0-4   : Keyword         FIND                           completions 0 
+   6-4   : String          test                           completions 0 
+  12-9   : Keyword         RETURNING                      completions 0 
+  22-7   : SObject         Account                        completions 5 
+  30-7   : SObject         Contact                        completions 5 
+  38-6   : Keyword         UPDATE                         completions 0 
+  45-8   : Keyword         VIEWSTAT                       completions 2 
+  54-8   : Keyword         TRACKING                       completions 2 
+
+FIND {test} RETURNING Account,Contact UPDATE bob
+   0-4   : Keyword         FIND                           completions 0 
+   6-4   : String          test                           completions 0 
+  12-9   : Keyword         RETURNING                      completions 0 
+  22-7   : SObject         Account                        completions 5 
+  30-7   : SObject         Contact                        completions 5 
+  38-6   : Keyword         UPDATE                         completions 0 
+  45-3   : Error           bob                            completions 0 expecting 'VIEWSTAT' at position 46
+
+FIND {test} RETURNING Account,Contact with bob
+   0-4   : Keyword         FIND                           completions 0 
+   6-4   : String          test                           completions 0 
+  12-9   : Keyword         RETURNING                      completions 0 
+  22-7   : SObject         Account                        completions 5 
+  30-7   : SObject         Contact                        completions 5 
+  38-4   : Error           with                           completions 0 Unexpected input 'with bob' at position 39
+

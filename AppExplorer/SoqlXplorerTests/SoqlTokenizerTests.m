@@ -273,6 +273,7 @@ NSObject<TokenizerDescriber> *descs;
         @"select name from account limit 1 offset 123456 ",
         @"select name from account limit 1 offset 123456 update viewstat",
         @"select name from account limit 1 for view",
+        @"SELECT id FROM KnowledgeArticleVersion update tracking,viewstat"
     ];
     [self writeSoqlTokensForQuerys:queries toFile:@"limit_offset.txt"];
 }
@@ -310,6 +311,15 @@ NSObject<TokenizerDescriber> *descs;
         @"FIND {test} RETURNING Account,Contact WITH DIVISION = 'Global' WITH network='123'",
         @"FIND {test} RETURNING Account,Contact WITH DIVISION = 'Global' WITH Network IN ('123','132')",
         @"FIND {test} RETURNING Account,Contact WITH pricebookID='123'",
+        @"FIND {test} RETURNING Account,Contact WITH SNIPPET(target_length=120)",
+        @"FIND {test} RETURNING Account,Contact WITH SNIPPET",
+        @"FIND {test} RETURNING Account,Contact WITH SPELL_CORRECTION = false",
+        @"FIND {test} RETURNING Account,Contact UPDATE TRACKING",
+        @"FIND {test} RETURNING Account,Contact UPDATE VIEWSTAT",
+        @"FIND {test} RETURNING Account,Contact UPDATE TRACKING,VIEWSTAT",
+        @"FIND {test} RETURNING Account,Contact UPDATE VIEWSTAT,TRACKING",
+        @"FIND {test} RETURNING Account,Contact UPDATE bob",
+        @"FIND {test} RETURNING Account,Contact with bob"
     ];
     [self writeSoqlTokensForQuerys:queries toFile:@"sosl.txt"];
 }

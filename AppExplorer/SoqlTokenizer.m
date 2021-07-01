@@ -184,7 +184,7 @@ static double ticksToMilliseconds;
     if (err != nil) {
         NSInteger pos = [err.userInfo[KeyPosition] integerValue];
         NSRange word = [self wordAtIndex:pos-1 inString:input];
-        if (word.length == 0) {
+        if (word.length == 0 && word.location > 0) {
             word.location -= 1;
             word.length += 1;
         }
@@ -848,6 +848,9 @@ static double ticksToMilliseconds;
                 break;
             case TTSObject:
                 [txt addAttributes:style.sobject range:t.loc];
+                if ([t.value isKindOfClass:[Tokens class]]) {
+                    [self applyTokens:(Tokens*)t.value];
+                }
                 break;
             case TTFunc:
                 [txt addAttributes:style.func range:t.loc];
@@ -879,7 +882,7 @@ static double ticksToMilliseconds;
                 [txt addAttributes:style.literal range:t.loc];
                 break;
             case TTError:
-                [txt addAttributes:style.underlined range:t.loc];
+                    [txt addAttributes:style.underlined range:t.loc];
                 if (t.value != nil) {
                     [txt addAttribute:NSToolTipAttributeName value:t.value range:t.loc];
                     [txt addAttribute:NSCursorAttributeName value:NSCursor.pointingHandCursor range:t.loc];

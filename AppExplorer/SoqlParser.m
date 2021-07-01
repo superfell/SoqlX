@@ -102,8 +102,8 @@ ZKResultMapper toToken(TokenType type) {
     ZKParserRef *selectStmt = [f parserRef];
 
     // USING is not in the doc, but appears to not be allowed
-    // ORDER & OFFSET are issues for our parser, but not the sfdc one.
-    NSSet<NSString*> *keywords = [NSSet setWithArray:[@"ORDER OFFSET USING AND ASC DESC EXCLUDES FIRST FROM GROUP HAVING IN INCLUDES LAST LIKE LIMIT NOT NULL NULLS OR SELECT WHERE WITH" componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
+    // ORDER & OFFSET UPDATE are issues for our parser, but not the sfdc one.
+    NSSet<NSString*> *keywords = [NSSet setWithArray:[@"ORDER OFFSET UPDATE USING AND ASC DESC EXCLUDES FIRST FROM GROUP HAVING IN INCLUDES LAST LIKE LIMIT NOT NULL NULLS OR SELECT WHERE WITH" componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
     ZKBaseParser *aliasOnly = [f zeroOrOne:[f onMatch:[f seq:@[ws, ident]] perform:pick(1)]];
     ZKBaseParser *alias = [f fromBlock:^ZKParserResult *(ZKParsingState *input) {
         NSInteger start = input.pos;
@@ -321,7 +321,7 @@ ZKResultMapper toToken(TokenType type) {
         [r.userContext[KeyTokens] addToken:t];
         return r;
     }]];
-    ZKBaseParser *offset= [f zeroOrOne:[f onMatch:[f seq:@[maybeWs, [f tokenSeq:@"OFFSET"], cut, maybeWs, [f integerNumber]]] perform:^ZKParserResult*(ZKParserResult*r) {
+    ZKBaseParser *offset = [f zeroOrOne:[f onMatch:[f seq:@[maybeWs, [f tokenSeq:@"OFFSET"], cut, maybeWs, [f integerNumber]]] perform:^ZKParserResult*(ZKParserResult*r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:[[r child:4] loc]];
         t.type = TTLiteralNumber;
         t.value = r.val;
@@ -331,8 +331,19 @@ ZKResultMapper toToken(TokenType type) {
 
     ZKBaseParser *forView = [f zeroOrOne:[f seq:@[maybeWs, [f tokenSeq:@"FOR"], cut, ws,
                                                   [f oneOfTokens:@[@"VIEW",@"REFERENCE"] type:TTKeyword completions:nil addToContext:TRUE]]]];
-    ZKBaseParser *updateTracking = [f zeroOrOne:[f seq:@[maybeWs, [f tokenSeq:@"UPDATE"], cut, ws,
-                                                         [f oneOfTokens:@[@"TRACKING", @"VIEWSTAT"] type:TTKeyword completions:nil addToContext:TRUE]]]];
+    
+    NSArray *trvscompletions = [Completion completions:@[@"TRACKING", @"VIEWSTAT"] type:TTKeyword];
+    ZKBaseParser *tracking = [f onMatch:[f tokenSeq:@"TRACKING"] perform:^ZKParserResult *(ZKParserResult *r) {
+        [[r.val completions] addObjectsFromArray:trvscompletions];
+        return r;
+    }];
+    ZKBaseParser *viewstat = [f onMatch:[f tokenSeq:@"VIEWSTAT"] perform:^ZKParserResult *(ZKParserResult *r) {
+        [[r.val completions] addObjectsFromArray:trvscompletions];
+        return r;
+    }];
+    ZKBaseParser *trackviewstat = [f firstOf:@[[f seq:@[tracking, [f zeroOrOne:[f seq:@[commaSep, viewstat]]]]],
+                                               [f seq:@[viewstat, [f zeroOrOne:[f seq:@[commaSep, tracking]]]]]]];
+    ZKBaseParser *updateTracking = [f zeroOrOne:[f seq:@[maybeWs, [f tokenSeq:@"UPDATE"], cut, ws, trackviewstat]]];
 
     /// SELECT
     selectStmt.parser = [f seq:@[maybeWs, [f tokenSeq:@"SELECT"], ws, selectExprs, ws, [f tokenSeq:@"FROM"], ws, objectRefs,
@@ -386,21 +397,31 @@ ZKResultMapper toToken(TokenType type) {
     ZKBaseParser *div      = [f seq:@[maybeWs, [f tokenSeq:@"WITH DIVISION"], maybeWs, cut, opEq, maybeWs, literalValue]];
     ZKBaseParser *metadata = [f seq:@[maybeWs, [f tokenSeq:@"WITH METADATA"], maybeWs, cut, opEq, maybeWs, literalValue]];
     ZKBaseParser *pricebook= [f seq:@[maybeWs, [f tokenSeq:@"WITH PRICEBOOKID"], maybeWs, cut, opEq, maybeWs, literalValue]];
-    
+    ZKBaseParser *spellcorr= [f seq:@[maybeWs, [f tokenSeq:@"WITH SPELL_CORRECTION"], maybeWs, cut, opEq, maybeWs, literalValue]];
+
     ZKBaseParser *netIn    = [f onMatch:[f eq:@"IN"] perform:toToken(TTOperator)];
     ZKBaseParser *network  = [f seq:@[maybeWs, [f tokenSeq:@"WITH NETWORK"], maybeWs, cut,
                                       [f firstOf:@[[f seq:@[opEq, maybeWs, literalValue]],
                                                    [f seq:@[netIn, maybeWs, literalList]]]]]];
+    
+    ZKBaseParser *snippet = [f seq:@[maybeWs, [f tokenSeq:@"WITH SNIPPET"], maybeWs, cut,
+                                    [f zeroOrOne:[f seq:@[[f eq:@"("],maybeWs,[f tokenSeq:@"target_length"], maybeWs, opEq,
+                                                          maybeWs, literalValue, maybeWs, [f eq:@")"]]]]]];
+
     ZKBaseParser *sosl = [f seq:@[f.maybeWhitespace, [f tokenSeq:@"FIND"],
                                   f.maybeWhitespace, queryTerm,
                                   [f zeroOrOne:inExpr],
                                   [f zeroOrOne:returning],
                                   [f zeroOrOne:div],
                                   [f zeroOrOne:[f withDataCategory]],
-                                  [f zeroOrOne:[f seq:@[maybeWs, [f tokenSeq:@"WITH HIGHLIGHT"]]]],
-                                  [f zeroOrOne:metadata],
+                                  [f zeroOrOne:snippet],
                                   [f zeroOrOne:network],
-                                  [f zeroOrOne:pricebook]
+                                  [f zeroOrOne:pricebook],
+                                  [f zeroOrOne:metadata],
+                                  [f zeroOrOne:[f seq:@[maybeWs, [f tokenSeq:@"WITH HIGHLIGHT"]]]],
+                                  [f zeroOrOne:spellcorr],
+                                  updateTracking,
+                                  maybeWs
                                 ]];
     sosl.debugName = @"SoslStmt";
 
@@ -589,10 +610,12 @@ ZKResultMapper toToken(TokenType type) {
         r.val = t;
         return r;
     }];
+    NSArray* boolCompletions = [Completion completions:@[@"TRUE",@"FALSE"] type:TTLiteralBoolean];
     ZKBaseParser *literalTrueValue = [self onMatch:[self eq:@"true"] perform:^ZKParserResult *(ZKParserResult *r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
         t.type = TTLiteralBoolean;
         t.value = @TRUE;
+        [t.completions addObjectsFromArray:boolCompletions];
         r.val = t;
         return r;
     }];
@@ -600,6 +623,7 @@ ZKResultMapper toToken(TokenType type) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:r.loc];
         t.type = TTLiteralBoolean;
         t.value = @FALSE;
+        [t.completions addObjectsFromArray:boolCompletions];
         r.val = t;
         return r;
     }];

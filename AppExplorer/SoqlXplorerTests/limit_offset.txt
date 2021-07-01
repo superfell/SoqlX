@@ -101,3 +101,12 @@ select name from account limit 1 for view
   33-3   : Keyword         for                            completions 0 
   37-4   : Keyword         view                           completions 2 
 
+SELECT id FROM KnowledgeArticleVersion update tracking,viewstat
+   0-6   : Keyword         SELECT                         completions 0 
+   7-2   : FieldPath       id                             completions 0 
+  10-4   : Keyword         FROM                           completions 0 
+  15-23  : Error           KnowledgeArticleVersion        completions 5 The SObject 'KnowledgeArticleVersion' does not exist or is inaccessible
+  39-6   : Keyword         update                         completions 0 
+  46-8   : Keyword         tracking                       completions 2 
+  55-8   : Keyword         viewstat                       completions 2 
+

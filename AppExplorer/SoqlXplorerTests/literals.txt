@@ -174,7 +174,7 @@ select id from account where name=true
   29-4   : FieldPath       name                           completions 0 
       29-4   : Field           name                           completions 31 
   33-1   : Op              =                              completions 11 
-  34-4   : Boolean         true                           completions 0 
+  34-4   : Boolean         true                           completions 2 
 
 select id from account where name=false
    0-6   : Keyword         select                         completions 0 
@@ -186,7 +186,7 @@ select id from account where name=false
   29-4   : FieldPath       name                           completions 0 
       29-4   : Field           name                           completions 31 
   33-1   : Op              =                              completions 11 
-  34-5   : Boolean         false                          completions 0 
+  34-5   : Boolean         false                          completions 2 
 
 select id from account where name> 10
    0-6   : Keyword         select                         completions 0 
