@@ -329,36 +329,31 @@ NSString *KeyCompletions = @"Completions";
                                   filterScope, where, withDataCat, groupByClause, orderByFields, limit, offset, forView, updateTracking, maybeWs]];
     selectStmt.debugName = @"SelectStmt";
 
-    ZKBaseParser *soslStmt = [self soslParser:f];
-    return [f firstOf:@[selectStmt, soslStmt]];
-}
-
--(ZKBaseParser*)soslParser:(ZKParserFactory *)f {
-
+    ///
+    /// SOSL
+    ///
+    
     ZKBaseParser *inExpr = [f zeroOrOne:[f onMatch:[f seq:@[f.maybeWhitespace, [f tokenSeq:@"IN"], f.cut, f.whitespace,
                                                  [f oneOfTokens:@[@"ALL",@"NAME",@"EMAIL",@"PHONE",@"SIDEBAR"] type:TTKeyword completions:nil addToContext:TRUE],
                                                  f.whitespace, [f tokenSeq:@"FIELDS"]]] perform:pick(3)]];
-    ZKBaseParser *ident = [f ident];
+
     ZKBaseParser *object_id = [f onMatch:ident perform:^ZKParserResult *(ZKParserResult *r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:[r loc]];
         t.type = TTSObject;
         t.value = r.val;
         [r.userContext[KeyTokens] addToken:t];
+        r.val = t;
         return r;
     }];
     ZKBaseParser *field_id = [f onMatch:ident perform:^ZKParserResult *(ZKParserResult *r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:[r loc]];
-        t.type = TTField;
-        t.value = r.val;
+        t.type = TTFieldPath;
+        t.value = @[r.val];
         [r.userContext[KeyTokens] addToken:t];
         return r;
     }];
-    /// ORDER BY
-    ZKBaseParser *ascDesc = [f seq:@[f.whitespace, [f oneOfTokens:@[@"ASC",@"DESC"] type:TTKeyword completions:nil addToContext:TRUE]]];
-    ZKBaseParser *nulls = [f seq:@[f.whitespace, [f tokenSeq:@"NULLS"], f.whitespace, [f oneOfTokens:@[@"FIRST",@"LAST"] type:TTKeyword completions:nil addToContext:TRUE]]];
-                                
-    ZKBaseParser *comma = [f seq:@[f.maybeWhitespace,[f eq:@","],f.maybeWhitespace]];
     
+    /// USING LISTVIEW
     ZKBaseParser *listview_name = [f onMatch:ident perform:^ZKParserResult *(ZKParserResult *r) {
         Token *t = [Token txt:r.userContext[KeySoqlText] loc:[r loc]];
         t.type = TTListViewName;
@@ -366,28 +361,21 @@ NSString *KeyCompletions = @"Completions";
         [r.userContext[KeyTokens] addToken:t];
         return r;
     }];
-    ZKBaseParser *listview = [f zeroOrOne:[f seq:@[f.maybeWhitespace, [f tokenSeq:@"USING LISTVIEW"], f.maybeWhitespace, f.cut, [f tokenSeq:@"="], f.maybeWhitespace, listview_name]]];
-    ZKBaseParser *orderByField = [f seq:@[field_id, [f zeroOrOne:ascDesc], [f zeroOrOne:nulls]]];
-    ZKBaseParser *orderByFields = [f zeroOrOne:[f seq:@[f.maybeWhitespace, [f tokenSeq:@"ORDER BY"], f.cut, f.whitespace, [f oneOrMore:orderByField separator:comma]]]];
+    ZKBaseParser *listview = [f zeroOrOne:[f seq:@[maybeWs, [f tokenSeq:@"USING LISTVIEW"], maybeWs, cut, [f tokenSeq:@"="], maybeWs, listview_name]]];
  
-    ZKBaseParser *limit = [f onMatch:[f seq:@[f.whitespace, [f tokenSeq:@"LIMIT"], f.maybeWhitespace, [f integerNumber]]] perform:^ZKParserResult *(ZKParserResult *r) {
-        Token *t = [Token txt:r.userContext[KeySoqlText] loc:[[r child:3] loc]];
-        t.type = TTLiteralNumber;
-        t.value = [[r child:3] val];
-        [r.userContext[KeyTokens] addToken:t];
+    ZKBaseParser *limitoffset = [f seq:@[maybeWs, [f zeroOrOne:limit], [f zeroOrOne:offset]]];
+    ZKBaseParser *fields = [f seq:@[f.maybeWhitespace, [f eq:@"("], f.maybeWhitespace, [f oneOrMore:field_id separator:commaSep], where, listview, orderByFields, limitoffset, [f eq:@")"]]];
+    ZKBaseParser *object = [f onMatch:[f seq:@[maybeWs, object_id, [f zeroOrOne:fields], limitoffset]] perform:^ZKParserResult *(ZKParserResult *r) {
+        ZKParserResult *o = [r child:1];
+        if (![r childIsNull:2]) {
+            Token *to = o.val;
+            Tokens *tokens = r.userContext[KeyTokens];
+            NSInteger objend = NSMaxRange(o.loc);
+            to.value = [tokens cutPositionRange:NSMakeRange(objend, NSMaxRange(r.loc)-objend)];
+        }
         return r;
     }];
-    ZKBaseParser *offset = [f onMatch:[f seq:@[f.whitespace, [f tokenSeq:@"OFFSET"], f.maybeWhitespace, [f integerNumber]]] perform:^ZKParserResult *(ZKParserResult *r) {
-        Token *t = [Token txt:r.userContext[KeySoqlText] loc:[[r child:3] loc]];
-        t.type = TTLiteralNumber;
-        t.value = [[r child:3] val];
-        [r.userContext[KeyTokens] addToken:t];
-        return r;
-    }];
-    ZKBaseParser *limitoffset = [f seq:@[[f zeroOrOne:limit], [f zeroOrOne:offset]]];
-    ZKBaseParser *fields = [f onMatch:[f seq:@[f.maybeWhitespace, [f eq:@"("],f.maybeWhitespace, [f oneOrMore:field_id separator:comma], listview, orderByFields, limitoffset, [f eq:@")"]]]  perform:pick(3)];
-    ZKBaseParser *object = [f seq:@[f.maybeWhitespace, object_id,  [f zeroOrOne:fields], limitoffset]];
-    ZKBaseParser *returning = [f seq:@[f.maybeWhitespace, [f tokenSeq:@"RETURNING"], [f oneOrMore:object separator:comma]]];
+    ZKBaseParser *returning = [f seq:@[f.maybeWhitespace, [f tokenSeq:@"RETURNING"], [f oneOrMore:object separator:commaSep]]];
     ZKBaseParser *queryTerm = [self soslSearchQuery:f];
     ZKBaseParser *sosl = [f seq:@[f.maybeWhitespace, [f tokenSeq:@"FIND"],
                                   f.maybeWhitespace, queryTerm,
@@ -396,7 +384,9 @@ NSString *KeyCompletions = @"Completions";
                                   [f zeroOrOne:[f withDataCategory]]
                                 ]];
     sosl.debugName = @"SoslStmt";
-    return sosl;
+
+
+    return [f firstOf:@[selectStmt, sosl]];
 }
 
 

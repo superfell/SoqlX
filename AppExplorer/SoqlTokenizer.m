@@ -205,7 +205,7 @@ static double ticksToMilliseconds;
     uint64_t parsed = mach_absolute_time();
     [self resolveTokens:self.tokens];
     uint64_t resolved = mach_absolute_time();
-    NSLog(@"parsed %ld tokens parse %.3fms resolve %.3fms", (long)self.tokens.count, (parsed-start) * ticksToMilliseconds, (resolved-parsed) * ticksToMilliseconds);
+    NSLog(@"parsed %ld tokens, parse %.3fms resolve %.3fms", (long)self.tokens.count, (parsed-start) * ticksToMilliseconds, (resolved-parsed) * ticksToMilliseconds);
     //NSLog(@"resolved tokens\n%@\n", self.tokens);
     return self.tokens;
 }
@@ -258,8 +258,12 @@ static double ticksToMilliseconds;
 }
 
 -(void)resolveTokens:(Tokens*)tokens ctx:(Context*)parentCtx {
-    Context *ctx = [self resolveFrom:tokens parentCtx:parentCtx];
-    [self resolveTokenList:tokens ctx:ctx];
+    if ([tokens.tokens[0].value isEqualTo:@"SELECT"]) {
+        Context *ctx = [self resolveFrom:tokens parentCtx:parentCtx];
+        [self resolveTokenList:tokens ctx:ctx];
+    } else {
+        [self resolveSoslReturning:tokens];
+    }
 }
 
 -(void)resolveTokenList:(Tokens*)tokens ctx:(Context*)ctx {
@@ -288,7 +292,7 @@ static double ticksToMilliseconds;
     NSPredicate *groupable = [NSPredicate predicateWithFormat:@"groupable=TRUE"];
     BOOL inGroupBy = FALSE;
     for (Token *sel in tokens.tokens) {
-        if (!inGroupBy && (sel.type == TTKeyword) && ([sel.value isEqualTo:@"GROUP BY"] ||
+            if (!inGroupBy && (sel.type == TTKeyword) && ([sel.value isEqualTo:@"GROUP BY"] ||
                                       [sel.value isEqualTo:@"GROUP BY ROLLUP"] ||
                                       [sel.value isEqualTo:@"GROUP BY CUBE"])) {
             inGroupBy = TRUE;
@@ -618,6 +622,39 @@ static double ticksToMilliseconds;
     }
 }
 
+-(BOOL)addSObjectToToken:(Token*)t {
+    NSArray<Completion*> *completions = [Completion completions:self.describer.allQueryableSObjects type:TTSObject];
+    for (Completion *c in completions) {
+        NSImage *objIcon = [self.describer iconForSObject:c.displayText];
+        if (objIcon != nil) {
+            c.icon = objIcon;
+        }
+    }
+    [t.completions addObjectsFromArray:completions];
+    if (![self.describer knownSObject:t.tokenTxt]) {
+        t.type = TTError;
+        t.value = [NSString stringWithFormat:@"The SObject '%@' does not exist or is inaccessible", t.tokenTxt];
+        return FALSE;
+    }
+    return TRUE;
+}
+
+-(Context*)resolveSoslReturning:(Tokens*)tokens  {
+    Context *ctx = [Context new];
+    ZKDescribeSObject *o = nil;
+    for (Token *t in tokens.tokens) {
+        if (t.type == TTSObject) {
+            [self addSObjectToToken:t];
+            o = [self.describer describe:t.tokenTxt];
+            ctx.filter.primary = o;
+            if ([t.value isKindOfClass:[Tokens class]]) {
+                [self resolveTokenList:(Tokens*)t.value ctx:ctx];
+            }
+        }
+    }
+    return ctx;
+}
+
 -(Context*)resolveFrom:(Tokens*)tokens parentCtx:(Context*)parentCtx {
     __block NSUInteger skipUntil = 0;
     NSInteger idx = [tokens.tokens indexOfObjectPassingTest:^BOOL(Token * _Nonnull t, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -635,17 +672,7 @@ static double ticksToMilliseconds;
     Token *tSObject = tokens.tokens[idx];
     if (parentCtx == nil || parentCtx.filter.containerType == TTSemiJoinSelect) {
         ctx.filter.primary = [self.describer describe:tSObject.tokenTxt];
-        NSArray<Completion*> *completions = [Completion completions:self.describer.allQueryableSObjects type:TTSObject];
-        for (Completion *c in completions) {
-            NSImage *objIcon = [self.describer iconForSObject:c.displayText];
-            if (objIcon != nil) {
-                c.icon = objIcon;
-            }
-        }
-        [tSObject.completions addObjectsFromArray:completions];
-        if (![self.describer knownSObject:tSObject.tokenTxt]) {
-            tSObject.type = TTError;
-            tSObject.value = [NSString stringWithFormat:@"The SObject '%@' does not exist or is inaccessible", tSObject.tokenTxt];
+        if (![self addSObjectToToken:tSObject]) {
             return ctx;
         }
         if (ctx.filter.primary == nil) {

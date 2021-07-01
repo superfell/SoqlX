@@ -138,31 +138,37 @@ FIND {MyProspect} RETURNING Contact, Lead
    6-10  : String          MyProspect                     completions 0 
   18-9   : Keyword         RETURNING                      completions 0 
   28-7   : SObject         Contact                        completions 5 
-  37-4   : SObject         Lead                           completions 0 
+  37-4   : Error           Lead                           completions 5 The SObject 'Lead' does not exist or is inaccessible
 
 FIND {MyProspect} RETURNING Contact(FirstName, LastName)
    0-4   : Keyword         FIND                           completions 0 
    6-10  : String          MyProspect                     completions 0 
   18-9   : Keyword         RETURNING                      completions 0 
   28-7   : SObject         Contact                        completions 5 
-  36-9   : Field           FirstName                      completions 0 
-  47-8   : Field           LastName                       completions 0 
+      36-9   : FieldPath       FirstName                      completions 0 
+          36-9   : Error           FirstName                      completions 30 There is no field or relationship FirstName on SObject Contact
+      47-8   : FieldPath       LastName                       completions 0 
+          47-8   : Error           LastName                       completions 30 There is no field or relationship LastName on SObject Contact
 
 FIND {MyProspect} RETURNING Contact(FirstName, LastName LIMIT 20), Account(Name, Industry LIMIT 10), Opportunity LIMIT 50
    0-4   : Keyword         FIND                           completions 0 
    6-10  : String          MyProspect                     completions 0 
   18-9   : Keyword         RETURNING                      completions 0 
   28-7   : SObject         Contact                        completions 5 
-  36-9   : Field           FirstName                      completions 0 
-  47-8   : Field           LastName                       completions 0 
-  56-5   : Keyword         LIMIT                          completions 0 
-  62-2   : Number          20                             completions 0 
-  67-7   : SObject         Account                        completions 0 
-  75-4   : Field           Name                           completions 0 
-  81-8   : Field           Industry                       completions 0 
-  90-5   : Keyword         LIMIT                          completions 0 
-  96-2   : Number          10                             completions 0 
- 101-11  : SObject         Opportunity                    completions 0 
+      36-9   : FieldPath       FirstName                      completions 0 
+          36-9   : Error           FirstName                      completions 30 There is no field or relationship FirstName on SObject Contact
+      47-8   : FieldPath       LastName                       completions 0 
+          47-8   : Error           LastName                       completions 30 There is no field or relationship LastName on SObject Contact
+      56-5   : Keyword         LIMIT                          completions 0 
+      62-2   : Number          20                             completions 0 
+  67-7   : SObject         Account                        completions 5 
+      75-4   : FieldPath       Name                           completions 0 
+          75-4   : Field           Name                           completions 31 
+      81-8   : FieldPath       Industry                       completions 0 
+          81-8   : Error           Industry                       completions 31 There is no field or relationship Industry on SObject Account
+      90-5   : Keyword         LIMIT                          completions 0 
+      96-2   : Number          10                             completions 0 
+ 101-11  : SObject         Opportunity                    completions 5 
  113-5   : Keyword         LIMIT                          completions 0 
  119-2   : Number          50                             completions 0 
 
@@ -171,22 +177,28 @@ FIND {MyProspect} RETURNING Contact(FirstName, LastName OFFSET 10)
    6-10  : String          MyProspect                     completions 0 
   18-9   : Keyword         RETURNING                      completions 0 
   28-7   : SObject         Contact                        completions 5 
-  36-9   : Field           FirstName                      completions 0 
-  47-8   : Field           LastName                       completions 0 
-  56-6   : Keyword         OFFSET                         completions 0 
-  63-2   : Number          10                             completions 0 
+      36-9   : FieldPath       FirstName                      completions 0 
+          36-9   : Error           FirstName                      completions 30 There is no field or relationship FirstName on SObject Contact
+      47-8   : FieldPath       LastName                       completions 0 
+          47-8   : Error           LastName                       completions 30 There is no field or relationship LastName on SObject Contact
+      56-6   : Keyword         OFFSET                         completions 0 
+      63-2   : Number          10                             completions 0 
 
 FIND {MyProspect} RETURNING Contact(FirstName, LastName ORDER BY name,email desc)
    0-4   : Keyword         FIND                           completions 0 
    6-10  : String          MyProspect                     completions 0 
   18-9   : Keyword         RETURNING                      completions 0 
   28-7   : SObject         Contact                        completions 5 
-  36-9   : Field           FirstName                      completions 0 
-  47-8   : Field           LastName                       completions 0 
-  56-8   : Keyword         ORDER BY                       completions 0 
-  65-4   : Field           name                           completions 0 
-  70-5   : Field           email                          completions 0 
-  76-4   : Keyword         desc                           completions 2 
+      36-9   : FieldPath       FirstName                      completions 0 
+          36-9   : Error           FirstName                      completions 30 There is no field or relationship FirstName on SObject Contact
+      47-8   : FieldPath       LastName                       completions 0 
+          47-8   : Error           LastName                       completions 30 There is no field or relationship LastName on SObject Contact
+      56-8   : Keyword         ORDER BY                       completions 0 
+      65-4   : FieldPath       name                           completions 0 
+          65-4   : Field           name                           completions 30 
+      70-5   : FieldPath       email                          completions 0 
+          70-5   : Error           email                          completions 30 There is no field or relationship email on SObject Contact
+      76-4   : Keyword         desc                           completions 2 
 
 FIND {MyAcccount} IN ALL FIELDS RETURNING Account(Id, Name USING ListView=ListViewName)
    0-4   : Keyword         FIND                           completions 0 
@@ -196,11 +208,13 @@ FIND {MyAcccount} IN ALL FIELDS RETURNING Account(Id, Name USING ListView=ListVi
   25-6   : Keyword         FIELDS                         completions 0 
   32-9   : Keyword         RETURNING                      completions 0 
   42-7   : SObject         Account                        completions 5 
-  50-2   : Field           Id                             completions 0 
-  54-4   : Field           Name                           completions 0 
-  59-14  : Keyword         USING ListView                 completions 0 
-  73-1   : Keyword         =                              completions 0 
-  74-12  : ListViewName    ListViewName                   completions 0 
+      50-2   : FieldPath       Id                             completions 0 
+          50-2   : Field           Id                             completions 31 
+      54-4   : FieldPath       Name                           completions 0 
+          54-4   : Field           Name                           completions 31 
+      59-14  : Keyword         USING ListView                 completions 0 
+      73-1   : Keyword         =                              completions 0 
+      74-12  : ListViewName    ListViewName                   completions 0 
 
 FIND {MyAcccount} IN ALL FIELDS RETURNING Account(Id, Name USING ListView=ListViewName order by name)
    0-4   : Keyword         FIND                           completions 0 
@@ -210,20 +224,29 @@ FIND {MyAcccount} IN ALL FIELDS RETURNING Account(Id, Name USING ListView=ListVi
   25-6   : Keyword         FIELDS                         completions 0 
   32-9   : Keyword         RETURNING                      completions 0 
   42-7   : SObject         Account                        completions 5 
-  50-2   : Field           Id                             completions 0 
-  54-4   : Field           Name                           completions 0 
-  59-14  : Keyword         USING ListView                 completions 0 
-  73-1   : Keyword         =                              completions 0 
-  74-12  : ListViewName    ListViewName                   completions 0 
-  87-8   : Keyword         order by                       completions 0 
-  96-4   : Field           name                           completions 0 
+      50-2   : FieldPath       Id                             completions 0 
+          50-2   : Field           Id                             completions 31 
+      54-4   : FieldPath       Name                           completions 0 
+          54-4   : Field           Name                           completions 31 
+      59-14  : Keyword         USING ListView                 completions 0 
+      73-1   : Keyword         =                              completions 0 
+      74-12  : ListViewName    ListViewName                   completions 0 
+      87-8   : Keyword         order by                       completions 0 
+      96-4   : FieldPath       name                           completions 0 
+          96-4   : Field           name                           completions 31 
 
 FIND {MyProspect} RETURNING Contact(FirstName, LastName where name>'eve')
    0-4   : Keyword         FIND                           completions 0 
    6-10  : String          MyProspect                     completions 0 
   18-9   : Keyword         RETURNING                      completions 0 
-  28-7   : Error           Contact                        completions 0 Unexpected input '(FirstName, LastName where name>'eve')' at position 36
   28-7   : SObject         Contact                        completions 5 
-  36-9   : Field           FirstName                      completions 0 
-  47-8   : Field           LastName                       completions 0 
+      36-9   : FieldPath       FirstName                      completions 0 
+          36-9   : Error           FirstName                      completions 30 There is no field or relationship FirstName on SObject Contact
+      47-8   : FieldPath       LastName                       completions 0 
+          47-8   : Error           LastName                       completions 30 There is no field or relationship LastName on SObject Contact
+      56-5   : Keyword         where                          completions 0 
+      62-4   : FieldPath       name                           completions 0 
+          62-4   : Field           name                           completions 30 
+      66-1   : Op              >                              completions 11 
+      67-5   : String          'eve'                          completions 0 
 

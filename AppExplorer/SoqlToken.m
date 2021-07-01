@@ -101,7 +101,12 @@ NSString *tokenNames(TokenType types) {
             [self.typeName stringByPaddingToLength:15 withString:@" " startingAtIndex:0],
             [self.tokenTxt stringByPaddingToLength:30 withString:@" " startingAtIndex:0], (unsigned long)self.completions.count,
              self.type == TTError ? self.value : @""];
-    if (self.type == TTChildSelect || self.type == TTSemiJoinSelect || self.type == TTTypeOf || self.type == TTFunc || self.type == TTFieldPath) {
+    if (self.type == TTChildSelect ||
+        self.type == TTSemiJoinSelect ||
+        self.type == TTSObject ||
+        self.type == TTTypeOf ||
+        self.type == TTFunc ||
+        self.type == TTFieldPath) {
         NSMutableString *c = [NSMutableString string];
         [c appendString:t];
         if ([self.value isKindOfClass:[Tokens class]]) {
