@@ -285,3 +285,16 @@ FIND {test} RETURNING Account,Contact WITH DIVISION = 'Global' WITH HIGHLIGHT
   54-8   : String          'Global'                       completions 0 
   63-14  : Keyword         WITH HIGHLIGHT                 completions 0 
 
+FIND {test} RETURNING Account,Contact WITH DIVISION = 'Global' WITH METADATA='Labels'
+   0-4   : Keyword         FIND                           completions 0 
+   6-4   : String          test                           completions 0 
+  12-9   : Keyword         RETURNING                      completions 0 
+  22-7   : SObject         Account                        completions 5 
+  30-7   : SObject         Contact                        completions 5 
+  38-13  : Keyword         WITH DIVISION                  completions 0 
+  52-1   : Op              =                              completions 0 
+  54-8   : String          'Global'                       completions 0 
+  63-13  : Keyword         WITH METADATA                  completions 0 
+  76-1   : Op              =                              completions 0 
+  77-8   : String          'Labels'                       completions 0 
+

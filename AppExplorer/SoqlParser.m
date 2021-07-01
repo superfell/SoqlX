@@ -381,15 +381,18 @@ ZKResultMapper toToken(TokenType type) {
         return r;
     }];
     
-    ZKBaseParser *div = [f seq:@[maybeWs, [f tokenSeq:@"WITH DIVISION"], maybeWs,cut, opEq, maybeWs, literalValue]];
     ZKBaseParser *returning = [f seq:@[f.maybeWhitespace, [f tokenSeq:@"RETURNING"], [f oneOrMore:object separator:commaSep]]];
     ZKBaseParser *queryTerm = [self soslSearchQuery:f];
+    ZKBaseParser *div      = [f seq:@[maybeWs, [f tokenSeq:@"WITH DIVISION"], maybeWs, cut, opEq, maybeWs, literalValue]];
+    ZKBaseParser *metadata = [f seq:@[maybeWs, [f tokenSeq:@"WITH METADATA"], maybeWs, cut, opEq, maybeWs, literalValue]];
+
     ZKBaseParser *sosl = [f seq:@[f.maybeWhitespace, [f tokenSeq:@"FIND"],
                                   f.maybeWhitespace, queryTerm,
                                   [f zeroOrOne:inExpr],
                                   [f zeroOrOne:returning],
                                   [f zeroOrOne:div],
                                   [f zeroOrOne:[f seq:@[maybeWs, [f tokenSeq:@"WITH HIGHLIGHT"]]]],
+                                  [f zeroOrOne:metadata],
                                   [f zeroOrOne:[f withDataCategory]]
                                 ]];
     sosl.debugName = @"SoslStmt";
