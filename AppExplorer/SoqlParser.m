@@ -35,6 +35,16 @@ NSString *KeyCompletions = @"Completions";
 @property (strong,nonatomic) ZKBaseParser *parser;
 @end
 
+ZKResultMapper toToken(TokenType type) {
+    return ^ZKParserResult *(ZKParserResult *r) {
+        Token *t = [Token txt:r.userContext[KeySoqlText] loc:[r loc]];
+        t.type = type;
+        t.value = r.val;
+        [r.userContext[KeyTokens] addToken:t];
+        return r;
+    };
+}
+
 @interface ZKParserFactory(SoqlX)
 // constructs a seq parser for each whitespace separated token, e.g. given input "NULLS LAST" will generate
 // seq:"NULLS", ws, "LAST".
@@ -354,16 +364,11 @@ NSString *KeyCompletions = @"Completions";
     }];
     
     /// USING LISTVIEW
-    ZKBaseParser *listview_name = [f onMatch:ident perform:^ZKParserResult *(ZKParserResult *r) {
-        Token *t = [Token txt:r.userContext[KeySoqlText] loc:[r loc]];
-        t.type = TTListViewName;
-        t.value = r.val;
-        [r.userContext[KeyTokens] addToken:t];
-        return r;
-    }];
-    ZKBaseParser *listview = [f zeroOrOne:[f seq:@[maybeWs, [f tokenSeq:@"USING LISTVIEW"], maybeWs, cut, [f tokenSeq:@"="], maybeWs, listview_name]]];
+    ZKBaseParser *listview_name = [f onMatch:ident perform:toToken(TTListViewName)];
+    ZKBaseParser *opEq = [f onMatch:[f eq:@"="] perform:toToken(TTOperator)];
+    ZKBaseParser *listview = [f zeroOrOne:[f seq:@[maybeWs, [f tokenSeq:@"USING LISTVIEW"], maybeWs, cut,opEq, maybeWs, listview_name]]];
  
-    ZKBaseParser *limitoffset = [f seq:@[maybeWs, [f zeroOrOne:limit], [f zeroOrOne:offset]]];
+    ZKBaseParser *limitoffset = [f seq:@[[f zeroOrOne:limit], [f zeroOrOne:offset]]];
     ZKBaseParser *fields = [f seq:@[f.maybeWhitespace, [f eq:@"("], f.maybeWhitespace, [f oneOrMore:field_id separator:commaSep], where, listview, orderByFields, limitoffset, [f eq:@")"]]];
     ZKBaseParser *object = [f onMatch:[f seq:@[maybeWs, object_id, [f zeroOrOne:fields], limitoffset]] perform:^ZKParserResult *(ZKParserResult *r) {
         ZKParserResult *o = [r child:1];
@@ -375,12 +380,16 @@ NSString *KeyCompletions = @"Completions";
         }
         return r;
     }];
+    
+    ZKBaseParser *div = [f seq:@[maybeWs, [f tokenSeq:@"WITH DIVISION"], maybeWs,cut, opEq, maybeWs, literalValue]];
     ZKBaseParser *returning = [f seq:@[f.maybeWhitespace, [f tokenSeq:@"RETURNING"], [f oneOrMore:object separator:commaSep]]];
     ZKBaseParser *queryTerm = [self soslSearchQuery:f];
     ZKBaseParser *sosl = [f seq:@[f.maybeWhitespace, [f tokenSeq:@"FIND"],
                                   f.maybeWhitespace, queryTerm,
                                   [f zeroOrOne:inExpr],
                                   [f zeroOrOne:returning],
+                                  [f zeroOrOne:div],
+                                  [f zeroOrOne:[f seq:@[maybeWs, [f tokenSeq:@"WITH HIGHLIGHT"]]]],
                                   [f zeroOrOne:[f withDataCategory]]
                                 ]];
     sosl.debugName = @"SoslStmt";

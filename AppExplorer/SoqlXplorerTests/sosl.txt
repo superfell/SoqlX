@@ -213,7 +213,7 @@ FIND {MyAcccount} IN ALL FIELDS RETURNING Account(Id, Name USING ListView=ListVi
       54-4   : FieldPath       Name                           completions 0 
           54-4   : Field           Name                           completions 31 
       59-14  : Keyword         USING ListView                 completions 0 
-      73-1   : Keyword         =                              completions 0 
+      73-1   : Op              =                              completions 0 
       74-12  : ListViewName    ListViewName                   completions 0 
 
 FIND {MyAcccount} IN ALL FIELDS RETURNING Account(Id, Name USING ListView=ListViewName order by name)
@@ -229,7 +229,7 @@ FIND {MyAcccount} IN ALL FIELDS RETURNING Account(Id, Name USING ListView=ListVi
       54-4   : FieldPath       Name                           completions 0 
           54-4   : Field           Name                           completions 31 
       59-14  : Keyword         USING ListView                 completions 0 
-      73-1   : Keyword         =                              completions 0 
+      73-1   : Op              =                              completions 0 
       74-12  : ListViewName    ListViewName                   completions 0 
       87-8   : Keyword         order by                       completions 0 
       96-4   : FieldPath       name                           completions 0 
@@ -249,4 +249,39 @@ FIND {MyProspect} RETURNING Contact(FirstName, LastName where name>'eve')
           62-4   : Field           name                           completions 30 
       66-1   : Op              >                              completions 11 
       67-5   : String          'eve'                          completions 0 
+
+FIND {test} RETURNING Account (id where name like '%test%'),Contact (id where name like '%test%') WITH DIVISION = 'Global'
+   0-4   : Keyword         FIND                           completions 0 
+   6-4   : String          test                           completions 0 
+  12-9   : Keyword         RETURNING                      completions 0 
+  22-7   : SObject         Account                        completions 5 
+      31-2   : FieldPath       id                             completions 0 
+          31-2   : Field           id                             completions 31 
+      34-5   : Keyword         where                          completions 0 
+      40-4   : FieldPath       name                           completions 0 
+          40-4   : Field           name                           completions 31 
+      45-4   : Op              like                           completions 11 
+      50-8   : String          '%test%'                       completions 0 
+  60-7   : SObject         Contact                        completions 5 
+      69-2   : FieldPath       id                             completions 0 
+          69-2   : Field           id                             completions 30 
+      72-5   : Keyword         where                          completions 0 
+      78-4   : FieldPath       name                           completions 0 
+          78-4   : Field           name                           completions 30 
+      83-4   : Op              like                           completions 11 
+      88-8   : String          '%test%'                       completions 0 
+  98-13  : Keyword         WITH DIVISION                  completions 0 
+ 112-1   : Op              =                              completions 0 
+ 114-8   : String          'Global'                       completions 0 
+
+FIND {test} RETURNING Account,Contact WITH DIVISION = 'Global' WITH HIGHLIGHT
+   0-4   : Keyword         FIND                           completions 0 
+   6-4   : String          test                           completions 0 
+  12-9   : Keyword         RETURNING                      completions 0 
+  22-7   : SObject         Account                        completions 5 
+  30-7   : SObject         Contact                        completions 5 
+  38-13  : Keyword         WITH DIVISION                  completions 0 
+  52-1   : Op              =                              completions 0 
+  54-8   : String          'Global'                       completions 0 
+  63-14  : Keyword         WITH HIGHLIGHT                 completions 0 
 
