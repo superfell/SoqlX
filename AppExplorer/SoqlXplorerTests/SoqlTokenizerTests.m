@@ -306,7 +306,9 @@ NSObject<TokenizerDescriber> *descs;
         @"FIND {MyProspect} RETURNING Contact(FirstName, LastName where name>'eve')",
         @"FIND {test} RETURNING Account (id where name like '%test%'),Contact (id where name like '%test%') WITH DIVISION = 'Global'",
         @"FIND {test} RETURNING Account,Contact WITH DIVISION = 'Global' WITH HIGHLIGHT",
-        @"FIND {test} RETURNING Account,Contact WITH DIVISION = 'Global' WITH METADATA='Labels'"
+        @"FIND {test} RETURNING Account,Contact WITH DIVISION = 'Global' WITH METADATA='Labels'",
+        @"FIND {test} RETURNING Account,Contact WITH DIVISION = 'Global' WITH network='123'",
+        @"FIND {test} RETURNING Account,Contact WITH DIVISION = 'Global' WITH Network IN ('123','132')"
     ];
     [self writeSoqlTokensForQuerys:queries toFile:@"sosl.txt"];
 }

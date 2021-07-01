@@ -298,3 +298,30 @@ FIND {test} RETURNING Account,Contact WITH DIVISION = 'Global' WITH METADATA='La
   76-1   : Op              =                              completions 0 
   77-8   : String          'Labels'                       completions 0 
 
+FIND {test} RETURNING Account,Contact WITH DIVISION = 'Global' WITH network='123'
+   0-4   : Keyword         FIND                           completions 0 
+   6-4   : String          test                           completions 0 
+  12-9   : Keyword         RETURNING                      completions 0 
+  22-7   : SObject         Account                        completions 5 
+  30-7   : SObject         Contact                        completions 5 
+  38-13  : Keyword         WITH DIVISION                  completions 0 
+  52-1   : Op              =                              completions 0 
+  54-8   : String          'Global'                       completions 0 
+  63-12  : Keyword         WITH network                   completions 0 
+  75-1   : Op              =                              completions 0 
+  76-5   : String          '123'                          completions 0 
+
+FIND {test} RETURNING Account,Contact WITH DIVISION = 'Global' WITH Network IN ('123','132')
+   0-4   : Keyword         FIND                           completions 0 
+   6-4   : String          test                           completions 0 
+  12-9   : Keyword         RETURNING                      completions 0 
+  22-7   : SObject         Account                        completions 5 
+  30-7   : SObject         Contact                        completions 5 
+  38-13  : Keyword         WITH DIVISION                  completions 0 
+  52-1   : Op              =                              completions 0 
+  54-8   : String          'Global'                       completions 0 
+  63-12  : Keyword         WITH Network                   completions 0 
+  76-2   : Op              IN                             completions 0 
+  80-5   : String          '123'                          completions 0 
+  86-5   : String          '132'                          completions 0 
+
