@@ -43,5 +43,6 @@ select name from account WITH DATA CATEGORY Geography__c NEAR asia__c
   12-4   : Keyword         from                           completions 0 
   17-7   : SObject         account                        completions 5 
   25-18  : Keyword         WITH DATA CATEGORY             completions 0 
+  44-12  : Category        Geography__c                   completions 0 
   57-4   : Error           NEAR                           completions 4 expecting one of AT,ABOVE,BELOW,ABOVE_OR_BELOW at position 58
 

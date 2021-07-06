@@ -123,6 +123,7 @@ SELECT fields(STANDARD) FROM KnowledgeArticleVersion WITH DATA CATEGORY Geograph
   24-4   : Keyword         FROM                           completions 0 
   29-23  : Error           KnowledgeArticleVersion        completions 5 The SObject 'KnowledgeArticleVersion' does not exist or is inaccessible
   53-18  : Keyword         WITH DATA CATEGORY             completions 0 
+  72-12  : Category        Geography__c                   completions 0 
   85-4   : Error           NEAR                           completions 4 expecting one of AT,ABOVE,BELOW,ABOVE_OR_BELOW at position 86
 
 SELECT fields(what) FROM KnowledgeArticleVersion
