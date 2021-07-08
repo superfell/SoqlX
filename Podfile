@@ -10,7 +10,7 @@ target 'SoqlXplorer' do
   # Pods for SoqlXplorer
   pod 'Sparkle', '~> 1.22'
   pod 'ZKSforce', '~> 51.0.2'
-  pod 'ZKParser', :path => '~/Github/ZKParser/'
+  pod 'ZKParser', '~> 0.8'
 end
 
 target 'SoqlXplorerTests' do
@@ -19,6 +19,6 @@ target 'SoqlXplorerTests' do
 
   # Pods for SoqlXplorer
   pod 'ZKSforce', '~> 51.0.2'
-  pod 'ZKParser', :path => '~/Github/ZKParser/'
+  pod 'ZKParser', '~> 0.8'
   # pod 'ZKSforce', :path => '~/Github/zkSforce/'
 end
