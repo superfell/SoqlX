@@ -89,6 +89,13 @@
         if ([val isKindOfClass:[ZKSObject class]]) {
             ZKSObject *o = (ZKSObject*)val;
             val = [o typedValueOfField:step withDescribe:self.describer(o.type)];
+            // if a query uses format then the describe will say its a datetime
+            // but its not because it was formatted. In this case the returned
+            // value from the type conversion is nil.
+            if (val == nil) {
+                // fall back to the string version
+                val = [o fieldValue:step];
+            }
         } else {
             val = [val valueForKey:step];
         }
