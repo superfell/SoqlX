@@ -23,7 +23,7 @@
 #import "credential.h"
 
 
-int DEFAULT_API_VERSION = 51;
+int DEFAULT_API_VERSION = 52;
 
 
 @interface ZKLoginController ()
