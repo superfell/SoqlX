@@ -124,7 +124,8 @@
         NSString *fullName = prefix.length > 0 ? [NSString stringWithFormat:@"%@.%@", prefix, fn] : fn;
         QueryColumn *qc = [parent getOrAddQueryColumn:fullName];
         NSObject *val = [row fieldValue:fn];
-        if (!(val == nil || val == [NSNull null])) {
+        // we have to look at all rows for related sobjects
+        if (prefix == nil && (!(val == nil || val == [NSNull null]))) {
             qc.hasSeenValue = YES;
         }
         if ((![qc hasChildNames]) && [[val class] respondsToSelector:@selector(wsdlSchema)]) {
