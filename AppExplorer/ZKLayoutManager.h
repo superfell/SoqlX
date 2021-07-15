@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2014,2016,2018,2019,2020 Simon Fell
+// Copyright (c) 2021 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -19,29 +19,10 @@
 // THE SOFTWARE.
 //
 
-#import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
 
-NS_ASSUME_NONNULL_BEGIN
 
-@class ZKDescribeSObject;
-
-@protocol DescriberDelegate
--(void)described:(NSArray<ZKDescribeSObject*> *)sobjects;
--(void)describe:(NSString *)sobject failed:(NSError *)err;
-@end
-
-@interface Describer : NSObject
-
-@property (weak) NSObject<DescriberDelegate> *delegate;
-
--(void)describe:(ZKDescribeGlobalTheme*)theme withClient:(ZKSforceClient*)c andDelegate:(NSObject<DescriberDelegate> *)delegate;
--(void)prioritize:(NSString *)name;
--(void)stop;
+@interface ZKLayoutManager : NSLayoutManager
 
 @end
 
-@interface DescriberDelegates : NSObject<DescriberDelegate>
--(void)addDelegate:(NSObject<DescriberDelegate>*)d;
-@end
-
-NS_ASSUME_NONNULL_END

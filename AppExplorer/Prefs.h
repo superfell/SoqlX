@@ -42,3 +42,9 @@ extern NSString *PREF_MAX_RECENT_QUERIES;
 
 // In the details window should we filter out empty property values?
 extern NSString *PREF_FILTER_EMPY_PROPS;
+
+// enable the syntax highlighter in the SOQL editor
+extern NSString *PREF_SOQL_SYNTAX_HIGHLIGHTING;
+
+// Automatically upper case keywords in the SOQL editor
+extern NSString *PREF_SOQL_UPPERCASE_KEYWORDS;

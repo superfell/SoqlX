@@ -31,6 +31,7 @@
 -(void)updateFilter;
 -(void)prefsChanged:(NSNotification *)notif;
 @property Describer *describer;
+@property (strong,nonatomic) DescriberDelegates *delegates;
 @end
 
 
@@ -55,18 +56,21 @@
 
 @implementation DescribeListDataSource
 
-@synthesize delegate;
-
 - (instancetype)init {
     self = [super init];
     fieldSortOrder = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(prefsChanged:) name:NSUserDefaultsDidChangeNotification object:nil];
     self.describer = [[Describer alloc] init];
+    self.delegates = [DescriberDelegates new];
     return self;
 }
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)addDelegate:(NSObject<DescriberDelegate>*)d {
+    [self.delegates addDelegate:d];
 }
 
 -(void)prefsChanged:(NSNotification *)notif {
@@ -252,11 +256,11 @@
 // DescriberDelegate
 -(void)described:(NSArray<ZKDescribeSObject*> *)sobjects {
     [self addDescribesToCache:sobjects];
-    [self.delegate described:sobjects];
+    [self.delegates described:sobjects];
 }
 
 -(void)describe:(NSString *)sobject failed:(NSError *)err {
-    [self.delegate describe:sobject failed:err];
+    [self.delegates describe:sobject failed:err];
 }
 
 // for use in an table view

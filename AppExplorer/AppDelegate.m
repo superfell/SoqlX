@@ -50,6 +50,8 @@
     defaults[PREF_QUIT_ON_LAST_WINDOW_CLOSE] = @YES;
     defaults[PREF_MAX_RECENT_QUERIES] = @10;
     defaults[PREF_FILTER_EMPY_PROPS] = @YES;
+    defaults[PREF_SOQL_SYNTAX_HIGHLIGHTING] = @YES;
+    defaults[PREF_SOQL_UPPERCASE_KEYWORDS] = @YES;
     
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
     [defs registerDefaults:defaults];

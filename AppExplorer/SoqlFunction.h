@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2014,2016,2018,2019,2020 Simon Fell
+// Copyright (c) 2021 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -20,28 +20,37 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SoqlToken.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
+@class Completion;
+@class CaseInsensitiveStringKey;
 @class ZKDescribeSObject;
 
-@protocol DescriberDelegate
--(void)described:(NSArray<ZKDescribeSObject*> *)sobjects;
--(void)describe:(NSString *)sobject failed:(NSError *)err;
+typedef NSString*(^ExampleProvider)(ZKDescribeSObject*);
+
+@interface SoqlFuncArg : NSObject
++(instancetype)arg:(TokenType)type ex:(ExampleProvider)ex;
+@property (assign,nonatomic) TokenType type;
+@property (strong,nonatomic) NSPredicate *fieldFilter;
+@property (strong,nonatomic) NSPredicate *funcFilter;
+@property (copy,  nonatomic) ExampleProvider example;
+// validate the supplied token against this argument, returns a new (typically error)
+// token if needed.
+-(Token*)validateToken:(Token*)tkn;
 @end
 
-@interface Describer : NSObject
+@interface SoqlFunction : NSObject
++(NSDictionary<CaseInsensitiveStringKey*,SoqlFunction*>*)all;
++(NSArray<SoqlFunction*>*)functionsFilteredBy:(NSPredicate*)p;
 
-@property (weak) NSObject<DescriberDelegate> *delegate;
++(NSPredicate*)defaultFuncFilter;
 
--(void)describe:(ZKDescribeGlobalTheme*)theme withClient:(ZKSforceClient*)c andDelegate:(NSObject<DescriberDelegate> *)delegate;
--(void)prioritize:(NSString *)name;
--(void)stop;
++(instancetype)fn:(NSString*)name args:(NSArray<SoqlFuncArg*>*)args;
 
+@property (strong,nonatomic) NSString *name;
+@property (strong,nonatomic) NSArray<SoqlFuncArg*>* args;
+-(Completion*)completionOn:(ZKDescribeSObject*)primary;
+// returns an error token if there's a problem
+-(Token*)validateArgCount:(Token*)tFunc;
 @end
 
-@interface DescriberDelegates : NSObject<DescriberDelegate>
--(void)addDelegate:(NSObject<DescriberDelegate>*)d;
-@end
-
-NS_ASSUME_NONNULL_END

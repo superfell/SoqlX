@@ -12,3 +12,5 @@ AppExplorer/AppExplorer.xcodeproj/xcuserdata/simon.xcuserdatad/xcdebugger/Breakp
 /Podfile.lock
 /AppExplorer.xcworkspace
 sign.sh
+todo.txt
+AppExplorer/SoqlXplorerTests/debug.txt

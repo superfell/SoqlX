@@ -1,0 +1,48 @@
+select name from account WITH DATA CATEGORY Geography__c AT asia__c
+   0-6   : Keyword         select                         completions 0 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 31 
+  12-4   : Keyword         from                           completions 0 
+  17-7   : SObject         account                        completions 5 
+  25-18  : Keyword         WITH DATA CATEGORY             completions 0 
+  44-12  : Category        Geography__c                   completions 0 
+  57-2   : Keyword         AT                             completions 4 
+  60-7   : CategoryVal     asia__c                        completions 0 
+
+select name from account WITH DATA CATEGORY Geography__c AT asia__c AND product__c BELOW electronics__c
+   0-6   : Keyword         select                         completions 0 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 31 
+  12-4   : Keyword         from                           completions 0 
+  17-7   : SObject         account                        completions 5 
+  25-18  : Keyword         WITH DATA CATEGORY             completions 0 
+  44-12  : Category        Geography__c                   completions 0 
+  57-2   : Keyword         AT                             completions 4 
+  60-7   : CategoryVal     asia__c                        completions 0 
+  68-3   : Op              AND                            completions 0 
+  72-10  : Category        product__c                     completions 0 
+  83-5   : Keyword         BELOW                          completions 4 
+  89-14  : CategoryVal     electronics__c                 completions 0 
+
+select name from account WITH DATA CATEGORY Geography__c AT asia__c OR product__c BELOW electronics__c
+   0-6   : Keyword         select                         completions 0 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 31 
+  12-4   : Keyword         from                           completions 0 
+  17-7   : SObject         account                        completions 5 
+  25-18  : Keyword         WITH DATA CATEGORY             completions 0 
+  44-12  : Category        Geography__c                   completions 0 
+  57-2   : Keyword         AT                             completions 4 
+  60-7   : CategoryVal     asia__c                        completions 0 
+  68-2   : Error           OR                             completions 0 Unexpected input 'OR product__c BELOW electronics__c' at position 69
+
+select name from account WITH DATA CATEGORY Geography__c NEAR asia__c
+   0-6   : Keyword         select                         completions 0 
+   7-4   : FieldPath       name                           completions 0 
+       7-4   : Field           name                           completions 31 
+  12-4   : Keyword         from                           completions 0 
+  17-7   : SObject         account                        completions 5 
+  25-18  : Keyword         WITH DATA CATEGORY             completions 0 
+  44-12  : Category        Geography__c                   completions 0 
+  57-4   : Error           NEAR                           completions 4 expecting one of AT,ABOVE,BELOW,ABOVE_OR_BELOW at position 58
+

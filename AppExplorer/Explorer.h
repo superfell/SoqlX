@@ -36,6 +36,7 @@
 @class ZKQueryResult;
 @class QueryResultTable;
 @class ApexController;
+@class ZKTextView;
 
 @interface Explorer : NSObject<EditableQueryResultWrapperDelegate, NSWindowDelegate, NSTabViewDelegate, QueryTextListViewDelegate, ZKLoginControllerDelegate, ZKBaseClientDelegate, DescriberDelegate>
 {
@@ -43,7 +44,7 @@
     IBOutlet NSOutlineView          *describeList;
     IBOutlet NSTableView            *rootTableView;
     IBOutlet NSTableView            *childTableView;
-    IBOutlet NSTextView             *soql;
+    IBOutlet ZKTextView             *soql;
     IBOutlet NSMenu                 *soqlContextMenu;
     IBOutlet NSProgressIndicator    *progress;
     IBOutlet NSWindow               *myWindow;
