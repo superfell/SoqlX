@@ -71,7 +71,8 @@
 
     NSArray<CaseInsensitiveStringKey*> __block *leftTodo = toDescribe;
     NSMutableDictionary<CaseInsensitiveStringKey*, NSNumber*> __block *errors = [[NSMutableDictionary alloc] init];
-
+    NSSet<CaseInsensitiveStringKey*> *validSobjects = [NSSet setWithArray:toDescribe];
+    
     // allow for the batch size to get halved all the way to one, and then allow a few more attempts
     const int MAX_ERRORS_BEFORE_GIVING_UP = 10;
     const int DEFAULT_DESC_BATCH = 16;
@@ -104,10 +105,18 @@
         for (CaseInsensitiveStringKey *name in self.describes.allKeys) {
             [self.priorityDescribes removeObject:name];
         }
-        for (CaseInsensitiveStringKey *item in self.priorityDescribes) {
-            [priority addObject:item];
-            if (priority.count >= batchSize) {
-                break;
+        for (CaseInsensitiveStringKey *item in [self.priorityDescribes allObjects]) {
+            // items can get added to the priority set before the list of valid sobjects is available
+            // so we have to check here now that the list of sobjects is available. This can happen
+            // right after login when we're still waiting for the describe theme call to return.
+            if ([validSobjects containsObject:item]) {
+                [priority addObject:item];
+                if (priority.count >= batchSize) {
+                    break;
+                }
+            } else {
+                NSLog(@"skipping describe of invalid sobject %@", item);
+                [self.priorityDescribes removeObject:item];
             }
         }
         if (priority.count > 0) {
