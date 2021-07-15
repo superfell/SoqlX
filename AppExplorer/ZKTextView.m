@@ -113,10 +113,10 @@ double ticksToMilliseconds;
 
 -(void)keyDown:(NSEvent *)event {
     lastEvent = mach_absolute_time();
+    NSString *key = [event charactersIgnoringModifiers];
     if (self.completionsPopover.shown) {
-        NSString *theArrow = [event charactersIgnoringModifiers];
-        if ( [theArrow length] == 1 ) {
-            unichar keyChar = [theArrow characterAtIndex:0];
+        if ([key length] == 1) {
+            unichar keyChar = [key characterAtIndex:0];
             BOOL isFinal = NO;
             NSTextMovement movement;
             NSInteger pageAmount = 8;
@@ -177,6 +177,12 @@ double ticksToMilliseconds;
         [self.errorPopover performClose:self];
     }
     hasTyped = TRUE;
+    if ([key length] == 1) {
+        unichar keyChar = [key characterAtIndex:0];
+        if (keyChar == NSUpArrowFunctionKey || keyChar == NSDownArrowFunctionKey) {
+            hasTyped = FALSE;
+        }
+    }
     [super keyDown:event];
 }
 
