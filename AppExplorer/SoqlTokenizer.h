@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2014,2016,2018,2019,2020 Simon Fell
+// Copyright (c) 2021 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -20,28 +20,30 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Describer.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
+@class Tokens;
 @class ZKDescribeSObject;
+@class DescribeListDataSource;
+@class ZKTextView;
 
-@protocol DescriberDelegate
--(void)described:(NSArray<ZKDescribeSObject*> *)sobjects;
--(void)describe:(NSString *)sobject failed:(NSError *)err;
+@protocol TokenizerDescriber
+-(ZKDescribeSObject*)describe:(NSString*)obj;   // returns the describe if we have it?
+-(BOOL)knownSObject:(NSString*)obj;             // is the object in the describeGlobal list of objects?
+-(NSArray<NSString*>*)allQueryableSObjects;
+-(NSImage *)iconForSObject:(NSString *)type;
 @end
 
-@interface Describer : NSObject
-
-@property (weak) NSObject<DescriberDelegate> *delegate;
-
--(void)describe:(ZKDescribeGlobalTheme*)theme withClient:(ZKSforceClient*)c andDelegate:(NSObject<DescriberDelegate> *)delegate;
--(void)prioritize:(NSString *)name;
--(void)stop;
-
+@interface DLDDescriber : NSObject<TokenizerDescriber, DescriberDelegate>
++(instancetype)describer:(DescribeListDataSource *)describes;
+@property (copy,nonatomic) void(^onNewDescribe)(void);
 @end
 
-@interface DescriberDelegates : NSObject<DescriberDelegate>
--(void)addDelegate:(NSObject<DescriberDelegate>*)d;
+@interface SoqlTokenizer : NSObject<NSTextViewDelegate, NSTextStorageDelegate>
+@property (strong,nonatomic) id<TokenizerDescriber> describer;
+@property (strong,nonatomic) ZKTextView *view;
+-(void)color;
+// for testing
+-(Tokens*)parseAndResolve:(NSString*)soql;
+-(void)setDebugOutputTo:(NSString*)filename;
 @end
-
-NS_ASSUME_NONNULL_END

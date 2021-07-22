@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2014,2016,2018,2019,2020 Simon Fell
+// Copyright (c) 2021 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -21,27 +21,25 @@
 
 #import <Foundation/Foundation.h>
 
-NS_ASSUME_NONNULL_BEGIN
+@interface ColorizerStyle : NSObject
++(instancetype)styles;
 
-@class ZKDescribeSObject;
+@property (strong) NSColor *keywordColor;
+@property (strong) NSColor *fieldColor;
+@property (strong) NSColor *funcColor;
+@property (strong) NSColor *sobjectColor;
+@property (strong) NSColor *aliasColor;
+@property (strong) NSColor *relColor;
+@property (strong) NSColor *literalColor;
 
-@protocol DescriberDelegate
--(void)described:(NSArray<ZKDescribeSObject*> *)sobjects;
--(void)describe:(NSString *)sobject failed:(NSError *)err;
+@property (strong) NSDictionary *underlined;
+
+@property (strong) NSDictionary *keyword;
+@property (strong) NSDictionary *field;
+@property (strong) NSDictionary *func;
+@property (strong) NSDictionary *relationship;
+@property (strong) NSDictionary *sobject;
+@property (strong) NSDictionary *alias;
+@property (strong) NSDictionary *literal;
+
 @end
-
-@interface Describer : NSObject
-
-@property (weak) NSObject<DescriberDelegate> *delegate;
-
--(void)describe:(ZKDescribeGlobalTheme*)theme withClient:(ZKSforceClient*)c andDelegate:(NSObject<DescriberDelegate> *)delegate;
--(void)prioritize:(NSString *)name;
--(void)stop;
-
-@end
-
-@interface DescriberDelegates : NSObject<DescriberDelegate>
--(void)addDelegate:(NSObject<DescriberDelegate>*)d;
-@end
-
-NS_ASSUME_NONNULL_END

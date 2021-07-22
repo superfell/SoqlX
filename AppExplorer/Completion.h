@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2014,2016,2018,2019,2020 Simon Fell
+// Copyright (c) 2021 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -20,28 +20,21 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SoqlToken.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
-@class ZKDescribeSObject;
-
-@protocol DescriberDelegate
--(void)described:(NSArray<ZKDescribeSObject*> *)sobjects;
--(void)describe:(NSString *)sobject failed:(NSError *)err;
+@interface Icons : NSObject
++(NSImage*)iconFor:(TokenType)t;
 @end
 
-@interface Describer : NSObject
+@interface Completion : NSObject<ZKTextViewCompletion>
++(NSArray<Completion*>*)completions:(NSArray<NSString*>*)txt type:(TokenType)t;
++(instancetype)txt:(NSString*)txt type:(TokenType)t;
++(instancetype)display:(NSString*)d insert:(NSString*)i finalInsertion:(NSString*)fi type:(TokenType)t;
 
-@property (weak) NSObject<DescriberDelegate> *delegate;
-
--(void)describe:(ZKDescribeGlobalTheme*)theme withClient:(ZKSforceClient*)c andDelegate:(NSObject<DescriberDelegate> *)delegate;
--(void)prioritize:(NSString *)name;
--(void)stop;
-
+@property (strong, nonatomic) NSString *displayText;             // the text shown in the completions popup.
+@property (strong, nonatomic) NSString *nonFinalInsertionText;   // the insertion text to use before confirmation.
+@property (strong, nonatomic) NSString *finalInsertionText;      // the insertion text to use when confirmed as the completion to use.
+@property (copy,   nonatomic) CompletionCallback onFinalInsert;  // callback to customize outcome of final insertion.
+@property (assign, nonatomic) TokenType type;
+@property (strong, nonatomic) NSImage *icon;                    // will default to Icons.iconFor:(Type) if not set.
 @end
-
-@interface DescriberDelegates : NSObject<DescriberDelegate>
--(void)addDelegate:(NSObject<DescriberDelegate>*)d;
-@end
-
-NS_ASSUME_NONNULL_END

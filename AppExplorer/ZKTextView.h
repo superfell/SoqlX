@@ -21,6 +21,38 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface ZKTextView : NSTextView
+@class ZKTextView;
+@protocol ZKTextViewCompletion;
+
+typedef BOOL (^CompletionCallback)(ZKTextView*,id<ZKTextViewCompletion>);
+
+@protocol ZKTextViewCompletion
+-(NSString*)displayText;
+-(NSString*)nonFinalInsertionText;
+-(NSString*)finalInsertionText;
+-(CompletionCallback)onFinalInsert;
+-(NSImage*)icon;
+@end
+
+@protocol ZKTextViewDelegate <NSTextViewDelegate>
+-(NSArray<id<ZKTextViewCompletion>>*)textView:(NSTextView *)textView completionsForPartialWordRange:(NSRange)charRange;
+@end
+
+@interface ZKTextView : NSTextView<NSTableViewDataSource, NSTableViewDelegate> {
+    uint64_t lastEvent;
+    BOOL hasTyped;
+}
+@property  (strong,nonatomic) IBOutlet NSViewController *completionsViewController;
+@property  (strong,nonatomic) IBOutlet NSPopover *completionsPopover;
+@property  (strong,nonatomic) IBOutlet NSTableView *table;
+@property  (strong,nonatomic) IBOutlet NSScrollView *tableScollView;
+
+-(IBAction)completionDoubleClicked:(id)sender;
+
+@property (strong,nonatomic) IBOutlet NSViewController *errorViewController;
+@property (strong,nonatomic) IBOutlet NSPopover *errorPopover;
+@property (strong,nonatomic) IBOutlet NSTextField *errorText;
+
+-(void)showPopup;
 
 @end

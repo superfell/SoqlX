@@ -15,7 +15,13 @@
 		F412DE1721B341D300D8889F /* SessionIdAuthInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F412DE1621B341D300D8889F /* SessionIdAuthInfo.m */; };
 		F413C6540AACABD5000A8CDC /* DataSources.m in Sources */ = {isa = PBXBuildFile; fileRef = F413C6530AACABD5000A8CDC /* DataSources.m */; };
 		F413C7260AACB9B4000A8CDC /* sf.icns in Resources */ = {isa = PBXBuildFile; fileRef = F413C7250AACB9B4000A8CDC /* sf.icns */; };
+		F424A81D262B595C00AD4F42 /* SoqlTokenizer.m in Sources */ = {isa = PBXBuildFile; fileRef = F424A81C262B595C00AD4F42 /* SoqlTokenizer.m */; };
+		F424A81E262B595C00AD4F42 /* SoqlTokenizer.m in Sources */ = {isa = PBXBuildFile; fileRef = F424A81C262B595C00AD4F42 /* SoqlTokenizer.m */; };
+		F424A837262BCF1B00AD4F42 /* ColorizerStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = F424A836262BCF1B00AD4F42 /* ColorizerStyle.m */; };
+		F424A838262BCF1B00AD4F42 /* ColorizerStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = F424A836262BCF1B00AD4F42 /* ColorizerStyle.m */; };
 		F428A2D30F677BC3007BD862 /* BlueView.m in Sources */ = {isa = PBXBuildFile; fileRef = F428A2D20F677BC3007BD862 /* BlueView.m */; };
+		F4394F9C264981C000ABFA2B /* describes.xml in Resources */ = {isa = PBXBuildFile; fileRef = F4394F9B264981C000ABFA2B /* describes.xml */; };
+		F4394FA92649E3A400ABFA2B /* ZKLayoutManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F4394FA82649E3A400ABFA2B /* ZKLayoutManager.m */; };
 		F4408FEF2562F4C1005E8BB7 /* QueryColumns.m in Sources */ = {isa = PBXBuildFile; fileRef = F4408FEE2562F4C1005E8BB7 /* QueryColumns.m */; };
 		F4408FF02562F4C1005E8BB7 /* QueryColumns.m in Sources */ = {isa = PBXBuildFile; fileRef = F4408FEE2562F4C1005E8BB7 /* QueryColumns.m */; };
 		F44FC9E10E1EB69D00B5F70C /* ResultsSaver.m in Sources */ = {isa = PBXBuildFile; fileRef = F44FC9E00E1EB69D00B5F70C /* ResultsSaver.m */; };
@@ -58,10 +64,22 @@
 		F4B8DFF70B61F4B900DDD00A /* key_r.png in Resources */ = {isa = PBXBuildFile; fileRef = F4B8DFF50B61F4B900DDD00A /* key_r.png */; };
 		F4BAD5750AF717D200E335DF /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4BAD5740AF717D200E335DF /* Security.framework */; };
 		F4BBAA152186C3E100647C27 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F4BBAA142186C3E100647C27 /* Media.xcassets */; };
+		F4BD5DC62641B10600ACBBAB /* with.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4BD5DBC2641B10600ACBBAB /* with.txt */; };
+		F4BD5DCA2641B3EA00ACBBAB /* limit_offset.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4BD5DC92641B3EA00ACBBAB /* limit_offset.txt */; };
+		F4BD5DCE2641B59A00ACBBAB /* group_by.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4BD5DCD2641B59A00ACBBAB /* group_by.txt */; };
+		F4BD5DD22641B91900ACBBAB /* using_scope.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4BD5DD12641B91900ACBBAB /* using_scope.txt */; };
+		F4BD5DD6264457DA00ACBBAB /* literals.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4BD5DD5264457DA00ACBBAB /* literals.txt */; };
+		F4BD5DD926470C8800ACBBAB /* Prefs.m in Sources */ = {isa = PBXBuildFile; fileRef = F48B6B8B1969E68700496C82 /* Prefs.m */; };
+		F4BD5DDD264760A000ACBBAB /* DescribeExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = F4BD5DDC264760A000ACBBAB /* DescribeExtras.m */; };
+		F4BD5DDE264760A000ACBBAB /* DescribeExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = F4BD5DDC264760A000ACBBAB /* DescribeExtras.m */; };
+		F4BD5DE2264762F900ACBBAB /* Completion.m in Sources */ = {isa = PBXBuildFile; fileRef = F4BD5DE1264762F900ACBBAB /* Completion.m */; };
+		F4BD5DE3264762F900ACBBAB /* Completion.m in Sources */ = {isa = PBXBuildFile; fileRef = F4BD5DE1264762F900ACBBAB /* Completion.m */; };
 		F4BF72A70F79E58C0089F459 /* NSWindow_additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F4BF72A60F79E58C0089F459 /* NSWindow_additions.m */; };
 		F4C440CA15DB50BC00590A1E /* SearchQueryResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C440C915DB50BC00590A1E /* SearchQueryResult.m */; };
 		F4C877FA0F395DB4000075D4 /* ProgressController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C877F90F395DB4000075D4 /* ProgressController.m */; };
 		F4C878B80F3964BD000075D4 /* BulkDelete.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C878B70F3964BD000075D4 /* BulkDelete.m */; };
+		F4C889D22624F272006D606A /* SoqlTokenizerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C889D12624F272006D606A /* SoqlTokenizerTests.m */; };
+		F4C889F12624FC75006D606A /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F4BBAA142186C3E100647C27 /* Media.xcassets */; };
 		F4C8BF332197C5740000E312 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = F4C8BF322197C5740000E312 /* Credits.rtf */; };
 		F4CD2AB71B76881500BDD68D /* NSTableView_additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CD2AB61B76881500BDD68D /* NSTableView_additions.m */; };
 		F4CD3DAD0B85701100084479 /* ZKLoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CD3DAB0B85701100084479 /* ZKLoginController.m */; };
@@ -81,10 +99,16 @@
 		F4D7836B15D8814C00D00BB9 /* ZKDescribe_Reporting.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D7836A15D8814C00D00BB9 /* ZKDescribe_Reporting.m */; };
 		F4D8DC792569CFF7002C9FC1 /* SObject.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D8DC782569CFF7002C9FC1 /* SObject.m */; };
 		F4D8DC87256AD4E2002C9FC1 /* SObjectSortDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D8DC86256AD4E2002C9FC1 /* SObjectSortDescriptor.m */; };
+		F4DD80742650406400CFB641 /* sosl.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4DD806A2650406400CFB641 /* sosl.txt */; };
 		F4DD944B0AFEEC9400B0E3AC /* SchemaView.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DD94490AFEEC9400B0E3AC /* SchemaView.m */; };
 		F4DD94540AFEED9500B0E3AC /* SchemaController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DD94520AFEED9500B0E3AC /* SchemaController.m */; };
 		F4DE40652562079100FBA200 /* QueryColumnsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DE40642562079100FBA200 /* QueryColumnsTest.m */; };
 		F4DE40692562088B00FBA200 /* ZKSforce.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4DE40682562088B00FBA200 /* ZKSforce.framework */; };
+		F4DF0B4F26388CFF00B3A1A9 /* SoqlFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DF0B4E26388CFF00B3A1A9 /* SoqlFunction.m */; };
+		F4DF0B5F2638BDA100B3A1A9 /* SoqlFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = F4DF0B4E26388CFF00B3A1A9 /* SoqlFunction.m */; };
+		F4DF0B612638BDA700B3A1A9 /* SoqlToken.m in Sources */ = {isa = PBXBuildFile; fileRef = F4F286F4263372FE00CCEA7D /* SoqlToken.m */; };
+		F4DF0B632638BDB300B3A1A9 /* SoqlParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F4F2870A26337DEF00CCEA7D /* SoqlParser.m */; };
+		F4DF0B6B263902E300B3A1A9 /* funcs.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4DF0B6A263902E300B3A1A9 /* funcs.txt */; };
 		F4E0F2B7256F123A00446C2B /* SObjectTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E0F2AC256F115E00446C2B /* SObjectTest.m */; };
 		F4E0F2B9256F127B00446C2B /* SObject.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D8DC782569CFF7002C9FC1 /* SObject.m */; };
 		F4E0F2BC256F15A500446C2B /* QRWrapperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E0F2BB256F15A500446C2B /* QRWrapperTest.m */; };
@@ -94,6 +118,11 @@
 		F4E3194B2198ECE3009B8C4F /* ReportDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4E319472198ECE3009B8C4F /* ReportDocument.xib */; };
 		F4E3194E2198EF4E009B8C4F /* ProgressWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4E3194C2198EF4E009B8C4F /* ProgressWindow.xib */; };
 		F4E8BB10184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E8BB0F184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m */; };
+		F4F286F5263372FE00CCEA7D /* SoqlToken.m in Sources */ = {isa = PBXBuildFile; fileRef = F4F286F4263372FE00CCEA7D /* SoqlToken.m */; };
+		F4F2870E26337DF000CCEA7D /* SoqlParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F4F2870A26337DEF00CCEA7D /* SoqlParser.m */; };
+		F4F2E7282640633F005C49B9 /* order_by.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4F2E7252640633F005C49B9 /* order_by.txt */; };
+		F4F2E7292640633F005C49B9 /* where.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4F2E7262640633F005C49B9 /* where.txt */; };
+		F4F2E72A2640633F005C49B9 /* select_exprs.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4F2E7272640633F005C49B9 /* select_exprs.txt */; };
 		F4F75D940D4EFCEE00608927 /* QueryTextListView.m in Sources */ = {isa = PBXBuildFile; fileRef = F4F75D930D4EFCEE00608927 /* QueryTextListView.m */; };
 		F4F897B4134CD84C00699880 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F4F897B3134CD84C00699880 /* libxml2.2.dylib */; };
 		F4FAFB660F68CAFD00ECC9BB /* HighlightTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F4FAFB650F68CAFD00ECC9BB /* HighlightTextFieldCell.m */; };
@@ -229,8 +258,15 @@
 		F413C6520AACABD5000A8CDC /* DataSources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataSources.h; sourceTree = "<group>"; };
 		F413C6530AACABD5000A8CDC /* DataSources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataSources.m; sourceTree = "<group>"; };
 		F413C7250AACB9B4000A8CDC /* sf.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = sf.icns; sourceTree = "<group>"; };
+		F424A81B262B595C00AD4F42 /* SoqlTokenizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SoqlTokenizer.h; sourceTree = "<group>"; };
+		F424A81C262B595C00AD4F42 /* SoqlTokenizer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SoqlTokenizer.m; sourceTree = "<group>"; };
+		F424A835262BCF1B00AD4F42 /* ColorizerStyle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorizerStyle.h; sourceTree = "<group>"; };
+		F424A836262BCF1B00AD4F42 /* ColorizerStyle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ColorizerStyle.m; sourceTree = "<group>"; };
 		F428A2D10F677BC3007BD862 /* BlueView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlueView.h; sourceTree = "<group>"; };
 		F428A2D20F677BC3007BD862 /* BlueView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlueView.m; sourceTree = "<group>"; };
+		F4394F9B264981C000ABFA2B /* describes.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = describes.xml; sourceTree = "<group>"; };
+		F4394FA72649E3A400ABFA2B /* ZKLayoutManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZKLayoutManager.h; sourceTree = "<group>"; };
+		F4394FA82649E3A400ABFA2B /* ZKLayoutManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZKLayoutManager.m; sourceTree = "<group>"; };
 		F4408FED2562F4C1005E8BB7 /* QueryColumns.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QueryColumns.h; sourceTree = "<group>"; };
 		F4408FEE2562F4C1005E8BB7 /* QueryColumns.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QueryColumns.m; sourceTree = "<group>"; };
 		F44DAD4623418A6800EF8C44 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -293,6 +329,15 @@
 		F4B8DFF50B61F4B900DDD00A /* key_r.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = key_r.png; path = templates/key_r.png; sourceTree = "<group>"; };
 		F4BAD5740AF717D200E335DF /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		F4BBAA142186C3E100647C27 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
+		F4BD5DBC2641B10600ACBBAB /* with.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = with.txt; sourceTree = "<group>"; };
+		F4BD5DC92641B3EA00ACBBAB /* limit_offset.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = limit_offset.txt; sourceTree = "<group>"; };
+		F4BD5DCD2641B59A00ACBBAB /* group_by.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = group_by.txt; sourceTree = "<group>"; };
+		F4BD5DD12641B91900ACBBAB /* using_scope.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = using_scope.txt; sourceTree = "<group>"; };
+		F4BD5DD5264457DA00ACBBAB /* literals.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = literals.txt; sourceTree = "<group>"; };
+		F4BD5DDB264760A000ACBBAB /* DescribeExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DescribeExtras.h; sourceTree = "<group>"; };
+		F4BD5DDC264760A000ACBBAB /* DescribeExtras.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DescribeExtras.m; sourceTree = "<group>"; };
+		F4BD5DE0264762F900ACBBAB /* Completion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Completion.h; sourceTree = "<group>"; };
+		F4BD5DE1264762F900ACBBAB /* Completion.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Completion.m; sourceTree = "<group>"; };
 		F4BF72A50F79E58C0089F459 /* NSWindow_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSWindow_additions.h; path = ../common/NSWindow_additions.h; sourceTree = SOURCE_ROOT; };
 		F4BF72A60F79E58C0089F459 /* NSWindow_additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSWindow_additions.m; path = ../common/NSWindow_additions.m; sourceTree = SOURCE_ROOT; };
 		F4C440C815DB50BC00590A1E /* SearchQueryResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchQueryResult.h; sourceTree = "<group>"; };
@@ -301,6 +346,7 @@
 		F4C877F90F395DB4000075D4 /* ProgressController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProgressController.m; sourceTree = "<group>"; };
 		F4C878B60F3964BD000075D4 /* BulkDelete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BulkDelete.h; sourceTree = "<group>"; };
 		F4C878B70F3964BD000075D4 /* BulkDelete.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BulkDelete.m; sourceTree = "<group>"; };
+		F4C889D12624F272006D606A /* SoqlTokenizerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SoqlTokenizerTests.m; sourceTree = "<group>"; };
 		F4C8BF322197C5740000E312 /* Credits.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		F4C8BF342197CD820000E312 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		F4C8BF352197CD820000E312 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Explorer.xib; sourceTree = "<group>"; };
@@ -335,6 +381,7 @@
 		F4D8DC782569CFF7002C9FC1 /* SObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SObject.m; sourceTree = "<group>"; };
 		F4D8DC85256AD4E2002C9FC1 /* SObjectSortDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SObjectSortDescriptor.h; sourceTree = "<group>"; };
 		F4D8DC86256AD4E2002C9FC1 /* SObjectSortDescriptor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SObjectSortDescriptor.m; sourceTree = "<group>"; };
+		F4DD806A2650406400CFB641 /* sosl.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sosl.txt; sourceTree = "<group>"; };
 		F4DD94480AFEEC9400B0E3AC /* SchemaView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchemaView.h; sourceTree = "<group>"; };
 		F4DD94490AFEEC9400B0E3AC /* SchemaView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SchemaView.m; sourceTree = "<group>"; };
 		F4DD94510AFEED9500B0E3AC /* SchemaController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SchemaController.h; sourceTree = "<group>"; };
@@ -343,6 +390,9 @@
 		F4DE4053256205D300FBA200 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F4DE40642562079100FBA200 /* QueryColumnsTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QueryColumnsTest.m; sourceTree = "<group>"; };
 		F4DE40682562088B00FBA200 /* ZKSforce.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ZKSforce.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F4DF0B4D26388CFF00B3A1A9 /* SoqlFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SoqlFunction.h; sourceTree = "<group>"; };
+		F4DF0B4E26388CFF00B3A1A9 /* SoqlFunction.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SoqlFunction.m; sourceTree = "<group>"; };
+		F4DF0B6A263902E300B3A1A9 /* funcs.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = funcs.txt; sourceTree = "<group>"; };
 		F4E0F2AC256F115E00446C2B /* SObjectTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SObjectTest.m; sourceTree = "<group>"; };
 		F4E0F2BB256F15A500446C2B /* QRWrapperTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QRWrapperTest.m; sourceTree = "<group>"; };
 		F4E319442198ECE3009B8C4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/querySavePanel.xib; sourceTree = "<group>"; };
@@ -350,6 +400,13 @@
 		F4E3194D2198EF4E009B8C4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ProgressWindow.xib; sourceTree = "<group>"; };
 		F4E8BB0E184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZKDescribeThemeItem+ZKFindResource.h"; sourceTree = "<group>"; };
 		F4E8BB0F184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ZKDescribeThemeItem+ZKFindResource.m"; sourceTree = "<group>"; };
+		F4F286F3263372FE00CCEA7D /* SoqlToken.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SoqlToken.h; sourceTree = "<group>"; };
+		F4F286F4263372FE00CCEA7D /* SoqlToken.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SoqlToken.m; sourceTree = "<group>"; };
+		F4F2870A26337DEF00CCEA7D /* SoqlParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SoqlParser.m; sourceTree = "<group>"; };
+		F4F2870B26337DEF00CCEA7D /* SoqlParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoqlParser.h; sourceTree = "<group>"; };
+		F4F2E7252640633F005C49B9 /* order_by.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = order_by.txt; sourceTree = "<group>"; };
+		F4F2E7262640633F005C49B9 /* where.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = where.txt; sourceTree = "<group>"; };
+		F4F2E7272640633F005C49B9 /* select_exprs.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = select_exprs.txt; sourceTree = "<group>"; };
 		F4F75D920D4EFCEE00608927 /* QueryTextListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueryTextListView.h; sourceTree = "<group>"; };
 		F4F75D930D4EFCEE00608927 /* QueryTextListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QueryTextListView.m; sourceTree = "<group>"; };
 		F4F897B3134CD84C00699880 /* libxml2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.2.dylib; path = ../../../../../usr/lib/libxml2.2.dylib; sourceTree = "<group>"; };
@@ -392,6 +449,7 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				F4F2870926337DCC00CCEA7D /* SoqlSyntax */,
 				F454D161126785EA00DC16D9 /* ApexController.h */,
 				F454D162126785EA00DC16D9 /* ApexController.m */,
 				F4D7831C15D49F7B00D00BB9 /* AppDelegate.h */,
@@ -576,6 +634,8 @@
 				F4B461FE0F79EB850099C434 /* FieldResizer.m */,
 				F4B58B451D31D21200D62683 /* ZKTextView.h */,
 				F4B58B461D31D21200D62683 /* ZKTextView.m */,
+				F4394FA72649E3A400ABFA2B /* ZKLayoutManager.h */,
+				F4394FA82649E3A400ABFA2B /* ZKLayoutManager.m */,
 			);
 			name = "UI Widgets";
 			sourceTree = "<group>";
@@ -655,13 +715,46 @@
 		F4DE4050256205D300FBA200 /* SoqlXplorerTests */ = {
 			isa = PBXGroup;
 			children = (
+				F4DD806A2650406400CFB641 /* sosl.txt */,
+				F4BD5DD5264457DA00ACBBAB /* literals.txt */,
+				F4BD5DD12641B91900ACBBAB /* using_scope.txt */,
+				F4BD5DCD2641B59A00ACBBAB /* group_by.txt */,
+				F4BD5DC92641B3EA00ACBBAB /* limit_offset.txt */,
+				F4BD5DBC2641B10600ACBBAB /* with.txt */,
+				F4F2E7252640633F005C49B9 /* order_by.txt */,
+				F4F2E7272640633F005C49B9 /* select_exprs.txt */,
+				F4F2E7262640633F005C49B9 /* where.txt */,
+				F4DF0B6A263902E300B3A1A9 /* funcs.txt */,
 				F4DE40642562079100FBA200 /* QueryColumnsTest.m */,
 				F4DE4053256205D300FBA200 /* Info.plist */,
 				F4E0F2AC256F115E00446C2B /* SObjectTest.m */,
 				F4E0F2BB256F15A500446C2B /* QRWrapperTest.m */,
 				F48804DC2592BE57001D56F6 /* CaseInsensitiveKeyTest.m */,
+				F4C889D12624F272006D606A /* SoqlTokenizerTests.m */,
+				F4394F9B264981C000ABFA2B /* describes.xml */,
 			);
 			path = SoqlXplorerTests;
+			sourceTree = "<group>";
+		};
+		F4F2870926337DCC00CCEA7D /* SoqlSyntax */ = {
+			isa = PBXGroup;
+			children = (
+				F4F2870B26337DEF00CCEA7D /* SoqlParser.h */,
+				F4F2870A26337DEF00CCEA7D /* SoqlParser.m */,
+				F4F286F3263372FE00CCEA7D /* SoqlToken.h */,
+				F4F286F4263372FE00CCEA7D /* SoqlToken.m */,
+				F4BD5DE0264762F900ACBBAB /* Completion.h */,
+				F4BD5DE1264762F900ACBBAB /* Completion.m */,
+				F4DF0B4D26388CFF00B3A1A9 /* SoqlFunction.h */,
+				F4DF0B4E26388CFF00B3A1A9 /* SoqlFunction.m */,
+				F424A81B262B595C00AD4F42 /* SoqlTokenizer.h */,
+				F424A81C262B595C00AD4F42 /* SoqlTokenizer.m */,
+				F424A835262BCF1B00AD4F42 /* ColorizerStyle.h */,
+				F424A836262BCF1B00AD4F42 /* ColorizerStyle.m */,
+				F4BD5DDB264760A000ACBBAB /* DescribeExtras.h */,
+				F4BD5DDC264760A000ACBBAB /* DescribeExtras.m */,
+			);
+			name = SoqlSyntax;
 			sourceTree = "<group>";
 		};
 		F4FDA6CA0B39162300A541E5 /* SchemaReportClasses */ = {
@@ -855,6 +948,18 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F4BD5DCA2641B3EA00ACBBAB /* limit_offset.txt in Resources */,
+				F4BD5DCE2641B59A00ACBBAB /* group_by.txt in Resources */,
+				F4394F9C264981C000ABFA2B /* describes.xml in Resources */,
+				F4BD5DD6264457DA00ACBBAB /* literals.txt in Resources */,
+				F4BD5DD22641B91900ACBBAB /* using_scope.txt in Resources */,
+				F4F2E72A2640633F005C49B9 /* select_exprs.txt in Resources */,
+				F4C889F12624FC75006D606A /* Media.xcassets in Resources */,
+				F4DD80742650406400CFB641 /* sosl.txt in Resources */,
+				F4F2E7282640633F005C49B9 /* order_by.txt in Resources */,
+				F4F2E7292640633F005C49B9 /* where.txt in Resources */,
+				F4BD5DC62641B10600ACBBAB /* with.txt in Resources */,
+				F4DF0B6B263902E300B3A1A9 /* funcs.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -950,6 +1055,7 @@
 				F45DDFDD0AABBA6100ED0BA0 /* Explorer.m in Sources */,
 				F413C6540AACABD5000A8CDC /* DataSources.m in Sources */,
 				F4DD944B0AFEEC9400B0E3AC /* SchemaView.m in Sources */,
+				F424A81D262B595C00AD4F42 /* SoqlTokenizer.m in Sources */,
 				F48804D92592BB33001D56F6 /* CaseInsensitiveStringKey.m in Sources */,
 				F4DD94540AFEED9500B0E3AC /* SchemaController.m in Sources */,
 				F458CEB20AFF2442008A20A9 /* SObjectBox.m in Sources */,
@@ -957,6 +1063,7 @@
 				F4CD511B0B0C342100345D9E /* PlusMinusWidget.m in Sources */,
 				F4CD51200B0C350300345D9E /* FieldImportance.m in Sources */,
 				F46D91070B33DFC800913AD2 /* StandAloneTableHeaderView.m in Sources */,
+				F4BD5DE2264762F900ACBBAB /* Completion.m in Sources */,
 				F4FDA6DA0B3916DE00A541E5 /* ReportDocument.m in Sources */,
 				F45C7EDD0B5FDA5200F93DD7 /* SchemaProtocol.m in Sources */,
 				F4D8DC792569CFF7002C9FC1 /* SObject.m in Sources */,
@@ -984,14 +1091,19 @@
 				F494FA490F7EFE22001216EC /* RRGlossCausticShader.m in Sources */,
 				F494FA4A0F7EFE22001216EC /* RRLuminanceFromRGBComponents.m in Sources */,
 				F454D163126785EA00DC16D9 /* ApexController.m in Sources */,
+				F4394FA92649E3A400ABFA2B /* ZKLayoutManager.m in Sources */,
 				F4D8DC87256AD4E2002C9FC1 /* SObjectSortDescriptor.m in Sources */,
 				F4AC556715996D8500F5CA45 /* zkApexClient.m in Sources */,
 				F4AC556815996D8500F5CA45 /* ZKCodeCoverageResult.m in Sources */,
 				F4AC556915996D8500F5CA45 /* ZKCodeLocation.m in Sources */,
+				F4BD5DDD264760A000ACBBAB /* DescribeExtras.m in Sources */,
+				F4F286F5263372FE00CCEA7D /* SoqlToken.m in Sources */,
 				F4AC556A15996D8500F5CA45 /* ZKCompileResult.m in Sources */,
+				F4F2870E26337DF000CCEA7D /* SoqlParser.m in Sources */,
 				F4AC556B15996D8500F5CA45 /* zkExecuteAnonResult.m in Sources */,
 				F4AC556C15996D8500F5CA45 /* ZKRunTestFailure.m in Sources */,
 				F4AC556D15996D8500F5CA45 /* zkRunTestResult.m in Sources */,
+				F4DF0B4F26388CFF00B3A1A9 /* SoqlFunction.m in Sources */,
 				F4D7831E15D49F7B00D00BB9 /* AppDelegate.m in Sources */,
 				F4D7833415D5F46600D00BB9 /* BaseUserBasedController.m in Sources */,
 				F4D7836B15D8814C00D00BB9 /* ZKDescribe_Reporting.m in Sources */,
@@ -1000,6 +1112,7 @@
 				F4CD2AB71B76881500BDD68D /* NSTableView_additions.m in Sources */,
 				F4E8BB10184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m in Sources */,
 				F4B58B471D31D21200D62683 /* ZKTextView.m in Sources */,
+				F424A837262BCF1B00AD4F42 /* ColorizerStyle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1007,15 +1120,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F4DF0B5F2638BDA100B3A1A9 /* SoqlFunction.m in Sources */,
 				F4408FF02562F4C1005E8BB7 /* QueryColumns.m in Sources */,
+				F4BD5DD926470C8800ACBBAB /* Prefs.m in Sources */,
 				F48804DD2592BE57001D56F6 /* CaseInsensitiveKeyTest.m in Sources */,
+				F4DF0B632638BDB300B3A1A9 /* SoqlParser.m in Sources */,
 				F4DE40652562079100FBA200 /* QueryColumnsTest.m in Sources */,
 				F4E0F2B9256F127B00446C2B /* SObject.m in Sources */,
 				F48804DF2592BE63001D56F6 /* CaseInsensitiveStringKey.m in Sources */,
 				F4E0F2B7256F123A00446C2B /* SObjectTest.m in Sources */,
+				F4DF0B612638BDA700B3A1A9 /* SoqlToken.m in Sources */,
+				F4BD5DDE264760A000ACBBAB /* DescribeExtras.m in Sources */,
+				F4C889D22624F272006D606A /* SoqlTokenizerTests.m in Sources */,
+				F424A81E262B595C00AD4F42 /* SoqlTokenizer.m in Sources */,
 				F4E0F2C0256F183E00446C2B /* QueryResultCell.m in Sources */,
 				F4E0F2BC256F15A500446C2B /* QRWrapperTest.m in Sources */,
+				F4BD5DE3264762F900ACBBAB /* Completion.m in Sources */,
 				F4E0F2BE256F17DF00446C2B /* EditableQueryResultWrapper.m in Sources */,
+				F424A838262BCF1B00AD4F42 /* ColorizerStyle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

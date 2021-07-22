@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2014,2016,2018,2019,2020 Simon Fell
+// Copyright (c) 2021 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -20,28 +20,22 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <ZKSforce/ZKDescribeSObject.h>
 
-NS_ASSUME_NONNULL_BEGIN
+@class CaseInsensitiveStringKey;
+@class ZKDescribeField;
+@class ZKChildRelationship;
+@class Completion;
 
-@class ZKDescribeSObject;
-
-@protocol DescriberDelegate
--(void)described:(NSArray<ZKDescribeSObject*> *)sobjects;
--(void)describe:(NSString *)sobject failed:(NSError *)err;
+@interface ZKDescribeSObject (Relationships)
+-(NSDictionary<CaseInsensitiveStringKey*,ZKDescribeField*>*)parentRelationshipsByName;
+-(NSDictionary<CaseInsensitiveStringKey*,ZKChildRelationship*>*)childRelationshipsByName;
 @end
 
-@interface Describer : NSObject
-
-@property (weak) NSObject<DescriberDelegate> *delegate;
-
--(void)describe:(ZKDescribeGlobalTheme*)theme withClient:(ZKSforceClient*)c andDelegate:(NSObject<DescriberDelegate> *)delegate;
--(void)prioritize:(NSString *)name;
--(void)stop;
-
+@interface ZKDescribeSObject (Completions)
+-(NSArray<Completion*>*)parentRelCompletions;
 @end
 
-@interface DescriberDelegates : NSObject<DescriberDelegate>
--(void)addDelegate:(NSObject<DescriberDelegate>*)d;
+@interface ZKDescribeField (Completion)
+-(Completion*)completion;
 @end
-
-NS_ASSUME_NONNULL_END
