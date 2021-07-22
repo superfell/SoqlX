@@ -50,6 +50,7 @@
     defaults[PREF_QUIT_ON_LAST_WINDOW_CLOSE] = @YES;
     defaults[PREF_MAX_RECENT_QUERIES] = @10;
     defaults[PREF_FILTER_EMPY_PROPS] = @YES;
+    defaults[PREF_BRACES_MISMATCH_BEEP] = @YES;
     
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
     [defs registerDefaults:defaults];
