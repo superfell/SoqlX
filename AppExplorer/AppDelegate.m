@@ -52,6 +52,7 @@
     defaults[PREF_FILTER_EMPY_PROPS] = @YES;
     defaults[PREF_SOQL_SYNTAX_HIGHLIGHTING] = @YES;
     defaults[PREF_SOQL_UPPERCASE_KEYWORDS] = @YES;
+    defaults[PREF_BRACES_MISMATCH_BEEP] = @YES;
     
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
     [defs registerDefaults:defaults];

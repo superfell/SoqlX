@@ -105,6 +105,12 @@
     [self.apexTextField setSyntaxDefinitionName:@"Apex"];
     self.apexTextField.lineHeightMultiple = 1.1;
     self.apexTextField.textFont = [(AppDelegate *)[NSApp delegate] editFont];
+    [self.apexTextField setBraces:@{@'{':@'}', @'[':@']', @'(':@')'}];
+    [self.apexTextField bind:@"beepOnMissingBrace"
+                    toObject:[NSUserDefaults standardUserDefaults]
+                 withKeyPath:PREF_BRACES_MISMATCH_BEEP
+                     options:nil];
+                                    
     NSTextView *tv = self.apexTextField.textView;
     tv.menu = self.apexTextField.menu;
     tv.richText = NO;
@@ -123,6 +129,7 @@
 
 -(void)dealloc {
     [self.apexTextField unbind:@"string"];
+    [self.apexTextField unbind:@"beepOnMissingBrace"];
 }
 
 -(void)changeEditFont:(id)sender {

@@ -27,9 +27,7 @@
     schemaView.describesDataSource = desc;
 }
 
--(void)setSchemaViewToSObject:(ZKDescribeSObject *)sobject;
-{
-    [schemaWindow makeFirstResponder:schemaView];
+-(void)setSchemaViewToSObject:(ZKDescribeSObject *)sobject {
     [schemaView setCentralSObject:sobject];
 }
 

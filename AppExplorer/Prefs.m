@@ -30,3 +30,4 @@ NSString *PREF_MAX_RECENT_QUERIES = @"MaxRecentQueries";
 NSString *PREF_FILTER_EMPY_PROPS = @"DetailsFilterEmptyProps";
 NSString *PREF_SOQL_SYNTAX_HIGHLIGHTING = @"SoqlColoring";
 NSString *PREF_SOQL_UPPERCASE_KEYWORDS = @"SoqlUppercaseKeywords";
+NSString *PREF_BRACES_MISMATCH_BEEP = @"BracesMismatchBeep";

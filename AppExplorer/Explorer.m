@@ -243,6 +243,10 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     DescribeListDataSource *dds = [[DescribeListDataSource alloc] init];
     descDataSource = dds;
     [descDataSource addDelegate:self];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(selectedSObjectChanged:)
+                                                 name:NSOutlineViewSelectionDidChangeNotification
+                                               object:describeList];
     self.rootResults.describer = ^ZKDescribeSObject *(NSString *type) {
         ZKDescribeSObject *o = [dds cachedDescribe:type];
         if (o == nil) {
