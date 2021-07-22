@@ -42,3 +42,6 @@ extern NSString *PREF_MAX_RECENT_QUERIES;
 
 // In the details window should we filter out empty property values?
 extern NSString *PREF_FILTER_EMPY_PROPS;
+
+// Should the apex editor beep when it determines there's a brace character mismatch?
+extern NSString *PREF_BRACES_MISMATCH_BEEP;
