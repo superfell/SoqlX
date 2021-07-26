@@ -464,6 +464,8 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
         if ([qr size] > 0) {
             if ([qr records].count == 0) {
                 self.statusText = [NSString stringWithFormat:@"Count query result is %ld rows %@", (long)[qr size], time];
+                [self.rootResults setQueryResult:nil];
+                [self.childResults setQueryResult:nil];
             } else {
                 self.rootResults.queryResult = qr;
                 [self.childResults setQueryResult:nil];
