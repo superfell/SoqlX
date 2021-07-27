@@ -118,7 +118,7 @@ double ticksToMilliseconds;
         if ([key length] == 1) {
             unichar keyChar = [key characterAtIndex:0];
             BOOL isFinal = NO;
-            NSTextMovement movement;
+            NSTextMovement movement = NSTextMovementOther;
             NSInteger pageAmount = 8;
             switch (keyChar) {
                 case NSPageUpFunctionKey:
