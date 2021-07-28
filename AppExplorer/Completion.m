@@ -71,6 +71,7 @@ static Icons *iconInstance;
         NSSize sz = [txt sizeWithAttributes:txtStyle];
         NSRect txtRect = NSMakeRect((dstRect.size.width-ceil(sz.width))/2, ((dstRect.size.height-ceil(sz.height))/2)+1, ceil(sz.width), ceil(sz.height));
         [txt drawInRect:txtRect withAttributes:txtStyle];
+        CGPathRelease(box);
         return YES;
     };
 }
