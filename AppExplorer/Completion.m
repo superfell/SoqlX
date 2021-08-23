@@ -98,6 +98,7 @@ static Icons *iconInstance;
 
 +(instancetype)display:(NSString*)d insert:(NSString*)i finalInsertion:(NSString*)fi type:(TokenType)t {
     Completion *c = [self new];
+    NSAssert(d != nil, @"displayText for completion can't be nil");
     c.displayText = d;
     c.nonFinalInsertionText = i;
     c.finalInsertionText = fi;
