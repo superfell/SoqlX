@@ -150,6 +150,7 @@ double ticksToMilliseconds;
                     [self.completionsPopover performClose:self];
                     return;
                 case ' ':
+                case '.':
                     [self.completionsPopover performClose:self];
                     // fallthrough
                 default:
@@ -283,8 +284,11 @@ double ticksToMilliseconds;
    viewForTableColumn:(NSTableColumn *)tableColumn
                   row:(NSInteger)row {
  
-    NSTableCellView *v = [tableView makeViewWithIdentifier:@"MainCell" owner:self];
     id<ZKTextViewCompletion> c = self.completions[row];
+    if (c == nil) {
+        return nil;
+    }
+    NSTableCellView *v = [tableView makeViewWithIdentifier:@"MainCell" owner:self];
     v.textField.stringValue = c.displayText;
     v.imageView.image = c.icon;
     return v;
