@@ -105,12 +105,22 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     [detailsController addObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE options:NSKeyValueObservingOptionNew context:nil];
     
     [self setSoqlString:[[NSUserDefaults standardUserDefaults] stringForKey:@"soql"]];
+    [[NSUserDefaults standardUserDefaults] addObserver:self
+                                                forKeyPath:PREF_SOQL_SYNTAX_HIGHLIGHTING
+                                                options:0
+                                               context:nil];
+    [[NSUserDefaults standardUserDefaults] addObserver:self
+                                                forKeyPath:PREF_SOQL_UPPERCASE_KEYWORDS
+                                                options:0
+                                               context:nil];
 }
 
 - (void)dealloc {
     [detailsController removeObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE];
     [queryListController removeObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:PREF_SOQL_SYNTAX_HIGHLIGHTING];
+    [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:PREF_SOQL_UPPERCASE_KEYWORDS];
 }
 
 - (void)windowWillClose:(NSNotification *)notification {
@@ -675,6 +685,8 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
         [self.detailsRecentSelector setSelected:[change[NSKeyValueChangeNewKey] boolValue] forSegment:0];
     } else if (object == queryListController) {
         [self.detailsRecentSelector setSelected:[change[NSKeyValueChangeNewKey] boolValue] forSegment:1];
+    } else if (object == [NSUserDefaults standardUserDefaults]) {
+        [self colorize];
     }
 }
 
