@@ -328,27 +328,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     return soql.textStorage.string;
 }
 
-- (void)enumerateWordsInString:(NSString *)s withBlock:(void(^)(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop)) block {
-    [s enumerateSubstringsInRange:NSMakeRange(0, s.length)
-                          options:NSStringEnumerationByWords | NSStringEnumerationLocalized
-                       usingBlock:block];
-}
-
-- (NSString *)parseEntityName:(NSString *)soqlText {
-    __block NSString *entity = nil;
-    __block BOOL atFrom = NO;
-    [self enumerateWordsInString:soqlText withBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
-        if (atFrom) {
-            entity = substring;
-            *stop = YES;
-            
-        } else if (NSOrderedSame == [substring caseInsensitiveCompare:@"from"]) {
-            atFrom = YES;
-        }
-    }];
-    return entity;
-}
-
 - (void)described:(nonnull NSArray<ZKDescribeSObject *> *)sobjects {
     NSString *msg = [NSString stringWithFormat:@"Described %lu/%lu SObjects",
                      (unsigned long)descDataSource.describedCount,
