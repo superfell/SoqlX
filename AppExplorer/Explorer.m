@@ -58,9 +58,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 @property (strong) NSMutableArray *selectedFields;
 @property (strong) NSString *selectedObjectName;
 
-@property (strong) NSString *previouslyColorized;
-@property (strong) ZKDescribeGlobalSObject *previousColorizedDescribe;
-
 @property (strong) ZKSforceClient *sforce;
 @property (strong) SoqlTokenizer *colorizer;
 @end
@@ -69,7 +66,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 @implementation Explorer
 
 @synthesize sforce, statusText, schemaViewIsActive, apiCallCountText;
-@synthesize selectedObjectName, selectedFields, previouslyColorized, previousColorizedDescribe;
+@synthesize selectedObjectName, selectedFields;
 @synthesize isQuerying, isEditing;
 
 +(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
@@ -108,12 +105,22 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     [detailsController addObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE options:NSKeyValueObservingOptionNew context:nil];
     
     [self setSoqlString:[[NSUserDefaults standardUserDefaults] stringForKey:@"soql"]];
+    [[NSUserDefaults standardUserDefaults] addObserver:self
+                                                forKeyPath:PREF_SOQL_SYNTAX_HIGHLIGHTING
+                                                options:0
+                                               context:nil];
+    [[NSUserDefaults standardUserDefaults] addObserver:self
+                                                forKeyPath:PREF_SOQL_UPPERCASE_KEYWORDS
+                                                options:0
+                                               context:nil];
 }
 
 - (void)dealloc {
     [detailsController removeObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE];
     [queryListController removeObserver:self forKeyPath:KEYPATH_WINDOW_VISIBLE];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:PREF_SOQL_SYNTAX_HIGHLIGHTING];
+    [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:PREF_SOQL_UPPERCASE_KEYWORDS];
 }
 
 - (void)windowWillClose:(NSNotification *)notification {
@@ -313,8 +320,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
                                                                          }];
     [soql.textStorage setAttributedString:s];
     soql.textStorage.font = [(AppDelegate*)[NSApp delegate] editFont];
-    self.previouslyColorized = nil;
-    self.previousColorizedDescribe = nil;
     [self colorize];
 }
 
@@ -326,27 +331,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
 - (NSString *)soqlString {
     return soql.textStorage.string;
-}
-
-- (void)enumerateWordsInString:(NSString *)s withBlock:(void(^)(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop)) block {
-    [s enumerateSubstringsInRange:NSMakeRange(0, s.length)
-                          options:NSStringEnumerationByWords | NSStringEnumerationLocalized
-                       usingBlock:block];
-}
-
-- (NSString *)parseEntityName:(NSString *)soqlText {
-    __block NSString *entity = nil;
-    __block BOOL atFrom = NO;
-    [self enumerateWordsInString:soqlText withBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
-        if (atFrom) {
-            entity = substring;
-            *stop = YES;
-            
-        } else if (NSOrderedSame == [substring caseInsensitiveCompare:@"from"]) {
-            atFrom = YES;
-        }
-    }];
-    return entity;
 }
 
 - (void)described:(nonnull NSArray<ZKDescribeSObject *> *)sobjects {
@@ -701,6 +685,8 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
         [self.detailsRecentSelector setSelected:[change[NSKeyValueChangeNewKey] boolValue] forSegment:0];
     } else if (object == queryListController) {
         [self.detailsRecentSelector setSelected:[change[NSKeyValueChangeNewKey] boolValue] forSegment:1];
+    } else if (object == [NSUserDefaults standardUserDefaults]) {
+        [self colorize];
     }
 }
 
