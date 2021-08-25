@@ -58,9 +58,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 @property (strong) NSMutableArray *selectedFields;
 @property (strong) NSString *selectedObjectName;
 
-@property (strong) NSString *previouslyColorized;
-@property (strong) ZKDescribeGlobalSObject *previousColorizedDescribe;
-
 @property (strong) ZKSforceClient *sforce;
 @property (strong) SoqlTokenizer *colorizer;
 @end
@@ -69,7 +66,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 @implementation Explorer
 
 @synthesize sforce, statusText, schemaViewIsActive, apiCallCountText;
-@synthesize selectedObjectName, selectedFields, previouslyColorized, previousColorizedDescribe;
+@synthesize selectedObjectName, selectedFields;
 @synthesize isQuerying, isEditing;
 
 +(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
@@ -313,8 +310,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
                                                                          }];
     [soql.textStorage setAttributedString:s];
     soql.textStorage.font = [(AppDelegate*)[NSApp delegate] editFont];
-    self.previouslyColorized = nil;
-    self.previousColorizedDescribe = nil;
     [self colorize];
 }
 
