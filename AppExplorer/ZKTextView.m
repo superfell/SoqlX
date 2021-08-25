@@ -140,7 +140,7 @@ double ticksToMilliseconds;
                     isFinal = YES;
                     movement = NSTextMovementTab;
                     break;
-                case NSCarriageReturnCharacter: {
+                case NSCarriageReturnCharacter:
                     isFinal = YES;
                     movement = NSTextMovementReturn;
                     break;
@@ -151,13 +151,13 @@ double ticksToMilliseconds;
                     return;
                 case ' ':
                 case '.':
+                case NSDeleteFunctionKey:
                     [self.completionsPopover performClose:self];
                     // fallthrough
                 default:
                     hasTyped = TRUE;
                     [super keyDown:event];
                     return;
-                }
             }
             NSInteger row = [self.table selectedRow];
             if (row >= 0) {
