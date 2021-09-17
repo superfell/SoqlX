@@ -25,6 +25,7 @@
 
 int DEFAULT_API_VERSION = 53;
 
+static int nextControllerId = 42;
 
 @interface ZKLoginController ()
 @property (strong) Credential *selectedCredential;
@@ -34,7 +35,7 @@ int DEFAULT_API_VERSION = 53;
 @implementation ZKLoginController
 
 @synthesize clientId, urlOfNewServer, statusText, password, preferedApiVersion, delegate, selectedCredential;
-@synthesize tokenWindow, apiSecurityToken;
+@synthesize tokenWindow, apiSecurityToken, controllerId;
 
 static NSString *login_lastUsernameKey = @"login_lastUserName";
 static NSString *prod = @"https://www.salesforce.com";
@@ -65,6 +66,7 @@ static NSString *test = @"https://test.salesforce.com";
     server = [[[NSUserDefaults standardUserDefaults] objectForKey:@"server"] copy];
     [self setUsername:[[NSUserDefaults standardUserDefaults] objectForKey:login_lastUsernameKey]];
     preferedApiVersion = DEFAULT_API_VERSION;
+    self.controllerId = [NSString stringWithFormat:@"c%d", nextControllerId++];
     return self;
 }
 
@@ -261,6 +263,49 @@ static NSString *test = @"https://test.salesforce.com";
         [self closeLoginUi];
         [self.delegate loginController:self loginCompleted:self->sforce];
     }];
+}
+
+static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoHQhmqzBxALj8UBnhjzntUVXdcdZFXATXCdevs";
+
+- (IBAction)startOAuthLogin:(id)sender {
+    NSString *cb = @"soqlx://oauth/";
+    // build the URL to the oauth page with our client_id & callback URL set.
+    NSString *login = [NSString stringWithFormat:@"%@/services/oauth2/authorize?response_type=token&client_id=%@&redirect_uri=%@&state=%@",
+                       server,
+                       [OAUTH_CID stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]],
+                       [cb stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]],
+                       self.controllerId];
+    NSURL *url = [NSURL URLWithString:login];
+
+    // ask the OS to open browser to the URL
+    [[NSWorkspace sharedWorkspace] openURL:url];
+}
+
+-(void)openOAuthResponse:(NSURL *)url apiVersion:(int)apiVersion {
+    ZKSforceClient *c = [[ZKSforceClient alloc] init];
+    [c setClientId:[ZKLoginController appClientId]];
+    c.preferedApiVersion = apiVersion;
+    NSError *err = [c loginFromOAuthCallbackUrl:url.absoluteString oAuthConsumerKey:OAUTH_CID];
+    if (err != nil) {
+        [[NSAlert alertWithError:err] runModal];
+        return;
+    }
+    // This call is used to validate that we were given a valid client, and that the auth info is usable.
+    [c currentUserInfoWithFailBlock:^(NSError *result) {
+        if ([result.userInfo[ZKSoapFaultCodeKey] hasSuffix:@":UNSUPPORTED_API_VERSION"]) {
+            [self openOAuthResponse:url apiVersion:apiVersion-1];
+            return;
+        }
+        [[NSAlert alertWithError:result] runModal];
+        
+    } completeBlock:^(ZKUserInfo *result) {
+        [self closeLoginUi];
+        [self.delegate loginController:self loginCompleted:c];
+    }];
+}
+
+- (void)completeOAuthLogin:(NSURL *)oauthCallbackUrl {
+    [self openOAuthResponse:oauthCallbackUrl apiVersion:DEFAULT_API_VERSION];
 }
 
 - (NSArray *)credentials {

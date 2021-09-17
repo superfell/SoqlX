@@ -58,7 +58,6 @@
 
     CGFloat                         uncollapsedDividerPosition;
     
-    ZKLoginController               *loginController;
     IBOutlet SchemaController       *schemaController;
     IBOutlet DetailsController      *detailsController;
     IBOutlet QueryListController    *queryListController;
@@ -108,8 +107,11 @@
 @property (strong) IBOutlet NSSegmentedControl *soqlSchemaApexSelector;
 @property (strong) IBOutlet NSSegmentedControl *detailsRecentSelector;
 
+@property (readonly) ZKLoginController *loginController;
+-(void)completeOAuthLogin:(NSURL *)oauthCallbackUrl;
 @property (readonly) BOOL loginSheetIsOpen;
 @property (getter=isLoggedIn, readonly) BOOL loggedIn;
+
 @property (readonly) BOOL hasSelectedForDelete;
 @property (readonly) BOOL canQueryMore;
 @property (readonly, copy) NSArray *SObjects;

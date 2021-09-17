@@ -46,7 +46,9 @@
 
 -(void)showWindowForClient:(ZKSforceClient*)client;
 -(void)closeLoginPanelIfOpen:(id)sender;
+-(void)completeOAuthLogin:(NSURL*)url;
 
 @property (strong) IBOutlet Explorer *explorer;
+@property (readonly) NSString *controllerId;
 
 @end

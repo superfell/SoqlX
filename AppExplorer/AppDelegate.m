@@ -28,6 +28,10 @@
 #import "ZKUserInfo.h"
 #import "SessionIdAuthInfo.h"
 
+@interface ZKOAuthInfo(params)
++(NSDictionary*)decodeParams:(NSString*)fragment error:(NSError **)err;
+@end
+
 
 @implementation AppDelegate
 
@@ -121,6 +125,35 @@
     [self openWithSession:sid host:url.host andVersion:DEFAULT_API_VERSION];
 }
 
+-(void)openOAuthResponse:(NSURL *)url {
+    NSError *err = nil;
+    NSDictionary *params = nil;
+    if (url.fragment.length == 0) {
+        // https://help.salesforce.com/s/articleView?id=sf.remoteaccess_oauth_flow_errors.htm&type=5
+        // says an error callback for the user-agent flow should use the fragment, but it in practice
+        // it appears to send a query string (but does use a fragment in the success case)
+        params = [ZKOAuthInfo decodeParams:url.query error:&err];
+    } else {
+        params = [ZKOAuthInfo decodeParams:url.fragment error:&err];
+    }
+    if (err != nil) {
+        [[NSAlert alertWithError:err] runModal];
+        return;
+    }
+    NSString *controllerId = params[@"state"];
+    if (controllerId != nil) {
+        for (SoqlXWindowController *wc in windowControllers) {
+            if ([controllerId isEqualToString:wc.controllerId]) {
+                [wc completeOAuthLogin:url];
+                return;
+            }
+        }
+    }
+    NSLog(@"Unable to find window controller with id %@ in oauth callback", controllerId);
+    SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self->windowControllers];
+    [controller completeOAuthLogin:url];
+}
+
 -(void)openWithSession:(NSString *)sid host:(NSString *)host andVersion:(int)apiVersion {
     NSURL *instanceUrl = [NSURL URLWithString:[NSString stringWithFormat:@"https://%@/services/Soap/u/%d.0", host, apiVersion]];
     SessionIdAuthInfo *auth = [[SessionIdAuthInfo alloc] initWithUrl:instanceUrl sessionId:sid];
@@ -199,10 +232,14 @@
 
 -(void)application:(NSApplication *)application openURLs:(NSArray<NSURL *> *)urls {
     for (NSURL *url in urls) {
-        if ([url.scheme isEqualToString:@"soqlx"]) {
+        if ([url.absoluteString hasPrefix:@"soqlx://oauth/"]) {
+            [self openOAuthResponse:url];
+        } else if ([url.scheme isEqualToString:@"soqlx"]) {
             [self openSoqlXURL:url];
         } else if ([url.scheme isEqualToString:@"file"]) {
             [self openFileURL:url];
+        } else {
+            NSLog(@"Unexpected URL received %@", url.absoluteString);
         }
     }
 }
@@ -273,6 +310,14 @@
     [self showWindow:self];
 }
 
+-(void)completeOAuthLogin:(NSURL *)url {
+    if (self.explorer == nil) {
+        [self window];    // forces Nib to be loaded, which'll set the explorer outlet/property
+        [self showWindow:self];
+    }
+    [self.explorer completeOAuthLogin:url];
+}
+
 -(void)closeLoginPanelIfOpen:(id)sender {
     [self.explorer closeLoginPanelIfOpen:sender];
 }
@@ -285,6 +330,10 @@
     // when the window gets closed, remove ourselves from the list of window controllers.
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [controllers removeObject:self];
+}
+
+-(NSString *)controllerId {
+    return self.explorer.loginController.controllerId;
 }
 
 @end

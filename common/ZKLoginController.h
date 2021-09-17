@@ -67,6 +67,7 @@ extern int DEFAULT_API_VERSION;
 
 - (IBAction)cancelLogin:(id)sender;
 - (IBAction)login:(id)sender;
+- (IBAction)startOAuthLogin:(id)sender;
 - (IBAction)showAddNewServer:(id)sender;
 - (IBAction)closeAddNewServer:(id)sender;
 - (IBAction)addNewServer:(id)sender;
@@ -87,6 +88,8 @@ extern int DEFAULT_API_VERSION;
 @property (strong) NSString *statusText;
 @property (strong) NSString *clientId;
 @property (assign) int preferedApiVersion;
+@property (strong) NSString *controllerId;
+
 @property (weak) NSObject<ZKLoginControllerDelegate> *delegate;
 
 - (NSArray *)credentials;
@@ -94,5 +97,6 @@ extern int DEFAULT_API_VERSION;
 - (void)setClientIdFromInfoPlist;
 - (void)startLogin:(ZKFailWithErrorBlock)failBlock completeBlock:(void(^)(ZKSforceClient *client))completeBlock;
 
+- (void)completeOAuthLogin:(NSURL *)oauthCallbackUrl;
 
 @end

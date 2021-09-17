@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -22,14 +22,14 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="748" y="1013" width="473" height="209"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1577"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <value key="minSize" type="size" width="473" height="209"/>
             <value key="maxSize" type="size" width="700" height="210"/>
             <view key="contentView" id="8">
                 <rect key="frame" x="0.0" y="0.0" width="473" height="209"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <button verticalHuggingPriority="750" id="21">
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="21">
                         <rect key="frame" x="384" y="12" width="75" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES"/>
                         <buttonCell key="cell" type="push" title="Login" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="99">
@@ -43,7 +43,7 @@ DQ
                             <action selector="login:" target="-2" id="25"/>
                         </connections>
                     </button>
-                    <button verticalHuggingPriority="750" id="12">
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="12">
                         <rect key="frame" x="309" y="12" width="75" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="96">
@@ -57,29 +57,25 @@ Gw
                             <action selector="cancelLogin:" target="-2" id="26"/>
                         </connections>
                     </button>
-                    <textField verticalHuggingPriority="750" id="22">
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="22">
                         <rect key="frame" x="17" y="144" width="73" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
-                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" id="100">
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="Username" id="100">
                             <font key="font" metaFont="system"/>
-                            <string key="title">Username
-</string>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <textField verticalHuggingPriority="750" id="11">
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="11">
                         <rect key="frame" x="17" y="112" width="73" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
-                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" id="95">
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="Password" id="95">
                             <font key="font" metaFont="system"/>
-                            <string key="title">Password
-</string>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <textField verticalHuggingPriority="750" id="9" customClass="NSSecureTextField">
+                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9" customClass="NSSecureTextField">
                         <rect key="frame" x="103" y="110" width="350" height="22"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="93">
@@ -95,7 +91,7 @@ Gw
                             </binding>
                         </connections>
                     </textField>
-                    <textField verticalHuggingPriority="750" id="13">
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="13">
                         <rect key="frame" x="17" y="172" width="439" height="17"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="Login to Salesforce.com" id="97">
@@ -104,11 +100,11 @@ Gw
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <progressIndicator hidden="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" minValue="-100" maxValue="100" doubleValue="-100" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" id="20">
+                    <progressIndicator hidden="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" minValue="-100" maxValue="100" doubleValue="-100" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="20">
                         <rect key="frame" x="291" y="21" width="16" height="16"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </progressIndicator>
-                    <popUpButton verticalHuggingPriority="750" id="15">
+                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="15">
                         <rect key="frame" x="100" y="78" width="308" height="26"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                         <popUpButtonCell key="cell" type="push" title="Item3" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="18" id="98">
@@ -127,18 +123,7 @@ Gw
                             <binding destination="33" name="contentValues" keyPath="values.servers" id="34"/>
                         </connections>
                     </popUpButton>
-                    <textField verticalHuggingPriority="750" id="10">
-                        <rect key="frame" x="17" y="84" width="73" height="17"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
-                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" id="94">
-                            <font key="font" metaFont="system"/>
-                            <string key="title">Server
-</string>
-                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                    </textField>
-                    <button verticalHuggingPriority="750" id="23">
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="23">
                         <rect key="frame" x="433" y="82" width="20" height="20"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES"/>
                         <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSAddTemplate" imagePosition="only" alignment="center" controlSize="small" borderStyle="border" id="101">
@@ -149,7 +134,7 @@ Gw
                             <action selector="showAddNewServer:" target="-2" id="78"/>
                         </connections>
                     </button>
-                    <comboBox verticalHuggingPriority="750" textCompletion="NO" id="24">
+                    <comboBox verticalHuggingPriority="750" fixedFrame="YES" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="24">
                         <rect key="frame" x="103" y="140" width="353" height="26"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" numberOfVisibleItems="5" id="102">
@@ -163,7 +148,7 @@ Gw
                             <binding destination="-2" name="value" keyPath="username" previousBinding="60" id="62"/>
                         </connections>
                     </comboBox>
-                    <textField verticalHuggingPriority="750" id="81">
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="81">
                         <rect key="frame" x="17" y="52" width="439" height="14"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Small System Font Text" id="103">
@@ -180,7 +165,7 @@ Gw
                             </binding>
                         </connections>
                     </textField>
-                    <button verticalHuggingPriority="750" id="87">
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="87">
                         <rect key="frame" x="413" y="82" width="20" height="20"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES"/>
                         <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSRemoveTemplate" imagePosition="only" alignment="center" controlSize="small" borderStyle="border" id="104">
@@ -192,8 +177,32 @@ Gw
                             <binding destination="-2" name="enabled" keyPath="canDeleteServer" id="91"/>
                         </connections>
                     </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zlM-cu-jbJ">
+                        <rect key="frame" x="14" y="12" width="153" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="PQh-hc-55y">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <string key="title" base64-UTF8="YES">
+T0F1dGggLxAgU1NPIExvZ2luA
+</string>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="startOAuthLogin:" target="-2" id="WQh-V7-aAO"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="10">
+                        <rect key="frame" x="46" y="85" width="44" height="16"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="Server" id="94">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
             </view>
+            <point key="canvasLocation" x="-177" y="147"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="33" userLabel="Shared Defaults"/>
         <arrayController objectClassName="Credential" editable="NO" avoidsEmptySelection="NO" id="38" userLabel="Credentials">
@@ -208,26 +217,14 @@ Gw
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="1128" y="857" width="457" height="127"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1577"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <value key="minSize" type="size" width="457" height="127"/>
             <value key="maxSize" type="size" width="700" height="128"/>
             <view key="contentView" id="66">
                 <rect key="frame" x="0.0" y="0.0" width="457" height="127"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <textField verticalHuggingPriority="750" id="68">
-                        <rect key="frame" x="17" y="90" width="423" height="17"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
-                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="106">
-                            <font key="font" metaFont="system"/>
-                            <string key="title">Enter new Login URL (e.g. https://prerel.salesforce.com/)
-
-</string>
-                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                    </textField>
-                    <textField verticalHuggingPriority="750" id="69">
+                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="69">
                         <rect key="frame" x="20" y="60" width="417" height="22"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="https://" drawsBackground="YES" id="107">
@@ -243,7 +240,7 @@ Gw
                             </binding>
                         </connections>
                     </textField>
-                    <button verticalHuggingPriority="750" id="67">
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="67">
                         <rect key="frame" x="361" y="12" width="82" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES"/>
                         <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="105">
@@ -257,7 +254,7 @@ DQ
                             <action selector="addNewServer:" target="-2" id="76"/>
                         </connections>
                     </button>
-                    <button verticalHuggingPriority="750" id="70">
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="70">
                         <rect key="frame" x="279" y="12" width="82" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="108">
@@ -271,19 +268,29 @@ Gw
                             <action selector="closeAddNewServer:" target="-2" id="79"/>
                         </connections>
                     </button>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="68">
+                        <rect key="frame" x="18" y="90" width="423" height="17"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Enter new Login URL (e.g. https://prerel.salesforce.com/)" id="106">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
             </view>
+            <point key="canvasLocation" x="-266" y="413"/>
         </window>
         <window title="Enter API Security Token" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="110">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="283" y="348" width="480" height="139"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1577"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="111">
                 <rect key="frame" x="0.0" y="0.0" width="480" height="139"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="112">
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="112">
                         <rect key="frame" x="30" y="77" width="427" height="17"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Please enter your Salesforce.com API Security Token" id="113">
@@ -292,7 +299,7 @@ Gw
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <textField verticalHuggingPriority="750" id="114">
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="114">
                         <rect key="frame" x="18" y="102" width="439" height="17"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="Login to Salesforce.com" id="115">
@@ -301,7 +308,7 @@ Gw
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <button verticalHuggingPriority="750" id="116">
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="116">
                         <rect key="frame" x="388" y="11" width="75" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Login" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="117">
@@ -316,7 +323,7 @@ DQ
                             <binding destination="-2" name="enabled" keyPath="hasEnteredToken" id="133"/>
                         </connections>
                     </button>
-                    <button verticalHuggingPriority="750" id="118">
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="118">
                         <rect key="frame" x="306" y="11" width="83" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="119">
@@ -330,7 +337,7 @@ Gw
                             <action selector="cancelToken:" target="-2" id="126"/>
                         </connections>
                     </button>
-                    <textField verticalHuggingPriority="750" id="120" customClass="NSSecureTextField">
+                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="120" customClass="NSSecureTextField">
                         <rect key="frame" x="32" y="47" width="428" height="22"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="121">
@@ -346,7 +353,7 @@ Gw
                             </binding>
                         </connections>
                     </textField>
-                    <button horizontalHuggingPriority="750" verticalHuggingPriority="750" id="123">
+                    <button horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="123">
                         <rect key="frame" x="30" y="17" width="25" height="25"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="124">

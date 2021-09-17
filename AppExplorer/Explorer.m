@@ -60,6 +60,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
 @property (strong) ZKSforceClient *sforce;
 @property (strong) SoqlTokenizer *colorizer;
+@property (strong) ZKLoginController *loginController;
 @end
 
 
@@ -157,15 +158,26 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     }
 }
 
-- (IBAction)showLogin:(id)sender {
-    loginController = [[ZKLoginController alloc] init];
-    [loginController setClientIdFromInfoPlist];
-    loginController.delegate = self;
-    NSNumber *apiVersion = [[NSUserDefaults standardUserDefaults] objectForKey:@"zkApiVersion"];
-    if (apiVersion != nil) {
-        loginController.preferedApiVersion = apiVersion.intValue;
+-(void)initLoginController {
+    if (self.loginController == nil) {
+        self.loginController = [[ZKLoginController alloc] init];
+        [self.loginController setClientIdFromInfoPlist];
+        self.loginController.delegate = self;
+        NSNumber *apiVersion = [[NSUserDefaults standardUserDefaults] objectForKey:@"zkApiVersion"];
+        if (apiVersion != nil) {
+            self.loginController.preferedApiVersion = apiVersion.intValue;
+        }
     }
-    [loginController showLoginSheet:myWindow];
+}
+
+-(void)completeOAuthLogin:(NSURL *)oauthCallbackUrl {
+    [self initLoginController];
+    [self.loginController completeOAuthLogin:oauthCallbackUrl];
+}
+
+- (IBAction)showLogin:(id)sender {
+    [self initLoginController];
+    [self.loginController showLoginSheet:myWindow];
 }
 
 -(void)loginControllerLoginCancelled:(ZKLoginController *)controller {
@@ -173,7 +185,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 }
 
 -(void)loginController:(ZKLoginController *)controller loginCompleted:(ZKSforceClient *)client {
-    loginController = nil;
+    self.loginController = nil;
     [self useClient:client];
 }
 
@@ -181,16 +193,16 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     [self closeLoginPanelIfOpen:self];
     self.sforce = client;
     self.sforce.delegate = self;
-    loginController = nil;
+    self.loginController = nil;
     [self postLogin:self];
 }
 
 -(void)closeLoginPanelIfOpen:(id)sender {
-    [loginController cancelLogin:sender];
+    [self.loginController cancelLogin:sender];
 }
 
 -(BOOL)loginSheetIsOpen {
-    return loginController != nil;
+    return self.loginController != nil;
 }
 
 -(BOOL)isLoggedIn {
