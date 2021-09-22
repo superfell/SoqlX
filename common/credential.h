@@ -26,7 +26,7 @@
 @interface Credential : NSObject {
     NSString            *server;
     NSString            *username;
-    SecKeychainItemRef    keychainItem;
+    SecKeychainItemRef   keychainItem;
 }
 
 + (NSArray *)credentialsForServer:(NSString *)protocolAndServer;
@@ -42,11 +42,8 @@
 @property (copy) NSString *username;
 @property (copy) NSString *password;
 @property (copy) NSString *comment;
-@property (copy) NSString *creator;
-@property (readonly) BOOL canReadPasswordWithoutPrompt;
 
 
-- (void)removeFromKeychain;
 - (OSStatus)update:(NSString *)username password:(NSString *)password;
 @end
 

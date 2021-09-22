@@ -137,74 +137,6 @@
     return pwd;
 }
 
-- (void)removeFromKeychain {
-    SecKeychainItemDelete(keychainItem);
-}
-
-BOOL checkAccessToAcl(SecACLRef acl, NSData *thisAppHash) {
-    NSArray *apps;
-    NSString *desc;
-    SecKeychainPromptSelector ps;
-    OSStatus err = SecACLCopyContents(acl, (void *)&apps, (void *)&desc, &ps);
-    BOOL res = NO;
-    if (err == noErr) {
-        if (apps == nil) {
-            res = YES;    // from the docs, if the app list is null, anyone can access the entry
-        } else {
-            // see if we're in the list of apps
-            NSData *aData;
-            SecTrustedApplicationRef a;
-            NSEnumerator *e = [apps objectEnumerator];
-            while ((a = (__bridge SecTrustedApplicationRef)[e nextObject])) {
-                SecTrustedApplicationCopyData(a, (void *)&aData);
-                if ([aData isEqualToData:thisAppHash]) res = YES;
-                CFRelease((__bridge CFTypeRef)(aData));
-                if (res) break;
-            }
-            CFRelease((__bridge CFTypeRef)(apps));
-        }
-        CFRelease((__bridge CFTypeRef)(desc));
-    } else {
-        NSLog(@"SecACLCopySimpleContents failed with error %ld", (long)err);
-    }
-    return res;
-}
-
-- (BOOL)canReadPasswordWithoutPrompt {
-    SecTrustedApplicationRef app;
-    OSStatus err = SecTrustedApplicationCreateFromPath(NULL, &app);
-    if (noErr != err) {
-        NSLog(@"SecTrustedApplicationCreateFromPath failed with error %ld", (long)err);
-        return NO;
-    }
-    NSData *thisAppHash;
-    BOOL res = NO;
-    err = SecTrustedApplicationCopyData(app, (void *)&thisAppHash);
-    if (err == noErr) {
-        SecAccessRef access;
-        err = SecKeychainItemCopyAccess(keychainItem, &access);
-        if (noErr == err) {
-            NSArray *acls = (NSArray *)CFBridgingRelease(SecAccessCopyMatchingACLList(access, kSecACLAuthorizationDecrypt));
-            if (acls != NULL) {
-                SecACLRef acl;
-                NSEnumerator *e = [acls objectEnumerator];
-                while ((acl = (__bridge SecACLRef)[e nextObject])) {
-                    res = checkAccessToAcl(acl, thisAppHash);
-                    if (res) break;
-                }
-            }
-            CFRelease(access);
-        } else {
-            NSLog(@"SecKeychainItemCopyAccess failed with error %ld", (long)err);
-        }
-        CFRelease((__bridge CFTypeRef)(thisAppHash));
-    } else {
-        NSLog(@"SecTrustedApplicationCopyData failed with error %ld", (long)err);
-    }
-    CFRelease(app);
-    return res;
-}
-
 - (OSStatus)setKeychainAttribute:(SecItemAttr)attribute newValue:(NSString *)val newPassword:(NSString *)password {
     // Set up attribute vector (each attribute consists of {tag, length, pointer}):
     SecKeychainAttribute attrs[] = {
@@ -272,16 +204,7 @@ BOOL checkAccessToAcl(SecACLRef acl, NSData *thisAppHash) {
     return [self stringAttribute:kSecCommentItemAttr];
 }
 
-- (NSString *)creator {
-    return [self stringAttribute:kSecCreatorItemAttr];
-}
-
 - (void)setComment:(NSString *)newComment {
-    NSAssert(noErr == [self setKeychainAttribute:kSecCommentItemAttr newValue:newComment newPassword:nil], @"Unable to set comment attribute in keychain entry");
-}
-
-- (void)setCreator:(NSString *)newCreator {
-    NSAssert(noErr == [self setKeychainAttribute:kSecCreatorItemAttr newValue:newCreator newPassword:nil], @"Unable to set creator attribute in keychain entry"); 
 }
 
 @end
