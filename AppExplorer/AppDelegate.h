@@ -24,24 +24,23 @@
 
 @class Explorer;
 @class ZKSforceClient;
+@class SoqlXWindowController;
 
-@interface AppDelegate : NSObject<NSApplicationDelegate, SUUpdaterDelegate> {
-    NSMutableArray *windowControllers;
-}
+@interface AppDelegate : NSObject<NSApplicationDelegate, SUUpdaterDelegate>
 
 - (IBAction)launchHelp:(id)sender;
 - (IBAction)openNewWindow:(id)sender;
 - (IBAction)showFontPrefs:(id)sender;
 
+@property (strong) NSMutableArray<SoqlXWindowController*>* windowControllers;
 @property (strong) NSString *editFontLabel;
 @property (strong) NSFont *editFont;
 @property (assign) BOOL isOpeningFromUrl;
+
 @end
 
-@interface SoqlXWindowController : NSWindowController {
-    NSMutableArray  *controllers;
-    id              observer;
-}
+@interface SoqlXWindowController : NSWindowController
+
 -(instancetype)initWithWindowControllers:(NSMutableArray *)controllers;
 
 -(void)showWindowForClient:(ZKSforceClient*)client;
@@ -49,6 +48,7 @@
 -(void)completeOAuthLogin:(NSURL*)url;
 
 @property (strong) IBOutlet Explorer *explorer;
+@property (strong) NSMutableArray<SoqlXWindowController*> *controllers;
 @property (readonly) NSString *controllerId;
 
 @end

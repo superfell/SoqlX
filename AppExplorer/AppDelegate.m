@@ -79,7 +79,7 @@
 -(instancetype)init {
     self = [super init];
     self.isOpeningFromUrl = NO;
-    windowControllers = [[NSMutableArray alloc] init];
+    self.windowControllers = [[NSMutableArray alloc] init];
     [self setEditFontLabelFrom:[NSFont userFixedPitchFontOfSize:0]];
     return self;
 }
@@ -142,7 +142,7 @@
     }
     NSString *controllerId = params[@"state"];
     if (controllerId != nil) {
-        for (SoqlXWindowController *wc in windowControllers) {
+        for (SoqlXWindowController *wc in self.windowControllers) {
             if ([controllerId isEqualToString:wc.controllerId]) {
                 [wc completeOAuthLogin:url];
                 return;
@@ -150,7 +150,7 @@
         }
     }
     NSLog(@"Unable to find window controller with id %@ in oauth callback", controllerId);
-    SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self->windowControllers];
+    SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self.windowControllers];
     [controller completeOAuthLogin:url];
 }
 
@@ -179,10 +179,9 @@
         [alert runModal];
         
     } completeBlock:^(ZKUserInfo *result) {
-        
-        SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self->windowControllers];
+        SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self.windowControllers];
         [controller showWindowForClient:c];
-        [self->windowControllers makeObjectsPerformSelector:@selector(closeLoginPanelIfOpen:) withObject:self];
+        [self.windowControllers makeObjectsPerformSelector:@selector(closeLoginPanelIfOpen:) withObject:self];
     }];
 }
 
@@ -193,7 +192,7 @@
     
     // If all the logged in windows are for the same userID, open a new window with the same userID.
     ZKSforceClient *user = nil;
-    for (SoqlXWindowController *c in windowControllers) {
+    for (SoqlXWindowController *c in self.windowControllers) {
         if ([c isWindowLoaded] && c.explorer.isLoggedIn) {
             ZKUserInfo *t = c.explorer.sforce.cachedUserInfo;
             ZKUserInfo *p = [user cachedUserInfo];
@@ -208,7 +207,7 @@
     }
     if (user != nil) {
         NSLog(@"Will open new window for %@", user.cachedUserInfo.userName);
-        SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:windowControllers];
+        SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self.windowControllers];
         [controller window];
         [controller showWindowForClient:user];
         [controller.explorer load:url];
@@ -216,7 +215,7 @@
     }
     // If there's an existing window that has the login sheet showing, and no asscoicated URL
     // we'll update that one instead of opening a new one.
-    for (SoqlXWindowController *c in windowControllers) {
+    for (SoqlXWindowController *c in self.windowControllers) {
         if ([c isWindowLoaded] && c.explorer.loginSheetIsOpen && c.explorer.queryFilename == nil) {
             NSLog(@"Will update existing window at login state");
             [c.explorer load:url];
@@ -224,7 +223,7 @@
         }
     }
     NSLog(@"Will open new default window");
-    SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:windowControllers];
+    SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self.windowControllers];
     [controller showWindow:self];
     [controller.explorer load:url];
     [controller.explorer showLogin:self];
@@ -246,8 +245,8 @@
 
 -(void)applicationDidFinishLaunching:(NSNotification *)notification {
     [self resetApiVersionOverrideIfAppVersionChanged];
-    if (windowControllers.count == 0 && !self.isOpeningFromUrl) {
-        SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:windowControllers];
+    if (self.windowControllers.count == 0 && !self.isOpeningFromUrl) {
+        SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self.windowControllers];
         [controller showWindow:self];
         // if the oauth token refresh fails, or there isn't one, this automatically
         // falls back to showing the login sheet.
@@ -259,14 +258,14 @@
 }
 
 -(void)openNewWindow:(id)sender {
-    SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:windowControllers];
+    SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self.windowControllers];
     [controller showWindow:sender];
     [controller.explorer showLogin:sender];
 }
 
 // Sparkle : SUUpdaterDelegate - Called immediately before relaunching.
 - (void)updaterWillRelaunchApplication:(SUUpdater *)updater {
-    [windowControllers makeObjectsPerformSelector:@selector(closeLoginPanelIfOpen:) withObject:updater];
+    [self.windowControllers makeObjectsPerformSelector:@selector(closeLoginPanelIfOpen:) withObject:updater];
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender {
@@ -283,7 +282,7 @@
 - (void)changeFont:(nullable NSFontManager *)sender {
     NSFont *newFont = [sender convertFont:self.editFont];
     [self setEditFontLabelFrom:newFont];
-    [[windowControllers valueForKey:@"explorer"] makeObjectsPerformSelector:@selector(changeEditFont:) withObject:sender];
+    [[self.windowControllers valueForKey:@"explorer"] makeObjectsPerformSelector:@selector(changeEditFont:) withObject:sender];
 }
 
 -(void)setEditFontLabelFrom:(NSFont *)f {
@@ -299,11 +298,11 @@
 
 @implementation SoqlXWindowController
 
-@synthesize explorer;
+@synthesize explorer, controllers;
 
 -(instancetype)initWithWindowControllers:(NSMutableArray *)c {
     self = [super initWithWindowNibName:@"Explorer"];
-    controllers = c;
+    self.controllers = c;
     [c addObject:self];
     return self;
 }
@@ -333,7 +332,7 @@
 -(void)windowWillClose:(id)sender {
     // when the window gets closed, remove ourselves from the list of window controllers.
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [controllers removeObject:self];
+    [self.controllers removeObject:self];
 }
 
 -(NSString *)controllerId {
