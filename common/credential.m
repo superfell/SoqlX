@@ -33,6 +33,15 @@
 
 @implementation Credential
 
+// Server + Account Name is the key for keychain entries, so to deal with the case where we want to store
+// separate password & refresh token for the same username/server, we need to mangle one of them to make the
+// key unique. OAuth credentials will have @OAUTH appended to the username in the keychain. Usernames like
+// simon@OAUTH are not valid in salesforce, it requires it to have a . in the host side, so there's no chance
+// this can conflict. This is absracted away from users of this class, e.g. they'll see the de-mangled username
+// and the relevant type flag. As there are existing keychain entries in the wild for passwords we won't mangle
+// those at all.
+NSString *OAUTH_TRAILER = @"@OAUTH";
+
 + (NSArray *)credentialsForServer:(NSString *)protocolAndServer {
     NSURL *url = [NSURL URLWithString:protocolAndServer];
     NSString *server = [url host];
@@ -61,18 +70,11 @@
     return results;
 }
 
-+ (NSArray *)sortedCredentialsForServer:(NSString *)protocolAndServer {
-    NSArray *credentials = [Credential credentialsForServer:protocolAndServer];
-    NSSortDescriptor *sortDesc = [[NSSortDescriptor alloc] initWithKey:@"username" ascending:YES];
-    NSArray *sorted = [credentials sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortDesc]];
-    return sorted;
-}
-
 + (id)forServer:(NSString *)server username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem {
     return [[Credential alloc] initForServer:server username:un keychainItem:kcItem];
 }
 
-+ (id)createCredentialForServer:(NSString *)protocolAndServer username:(NSString *)un password:(NSString *)pwd {
++ (id)createCredential:(NSString *)protocolAndServer username:(NSString *)un password:(NSString *)pwd {
     NSURL *url = [NSURL URLWithString:protocolAndServer];
     NSString *server = [url host];
     SecKeychainItemRef itemRef;
@@ -99,6 +101,17 @@
     return result;
 }
 
++ (id)createOAuthCredential:(NSString *)protocolAndServer username:(NSString *)un refreshToken:(NSString *)tkn {
+    NSString *mangledUsername = [un stringByAppendingString:OAUTH_TRAILER];
+    Credential *c = [self createCredential:protocolAndServer username:mangledUsername password:tkn];
+    c.comment = @"OAuth token";
+    return c;
+}
+
++ (id)createCredentialForServer:(NSString *)protocolAndServer username:(NSString *)un password:(NSString *)pwd {
+    return [self createCredential:protocolAndServer username:un password:pwd];
+}
+
 - (id)initForServer:(NSString *)s username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem {
     self = [super init];
     server = [s copy];
@@ -113,7 +126,7 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@ at %@", username, server];
+    return [NSString stringWithFormat:@"%@ at %@", self.username, server];
 }
 
 - (NSString *)server {
@@ -121,7 +134,14 @@
 }
 
 - (NSString *)username {
+    if ([username hasSuffix:OAUTH_TRAILER]) {
+        return [username substringToIndex:username.length-OAUTH_TRAILER.length];
+    }
     return username;
+}
+
+- (CredentialType) type {
+    return [username hasSuffix:OAUTH_TRAILER] ? ctRefreshToken : ctPassword;
 }
 
 - (NSString *)password {
@@ -147,45 +167,14 @@
                                     &attributes,    // no change to attributes
                                     (UInt32)[password lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
                                     [password UTF8String] );
-    if (status != noErr) 
+    if (status != noErr) {
         NSLog(@"SecKeychainItemModifyAttributesAndData returned %ld", (long)status);
+    }
     return status;
 }
 
-- (void)setServer:(NSString *)protocolAndServer {
-    NSURL *url = [NSURL URLWithString:protocolAndServer];
-    NSString *host = [url host];
-    SecProtocolType protocol = [url SecProtocolType];
-    
-    // Set up attribute vector (each attribute consists of {tag, length, pointer}):
-    SecKeychainAttribute attrs[] = { {kSecServerItemAttr, (UInt32)[host lengthOfBytesUsingEncoding:NSUTF8StringEncoding], (char *)[host UTF8String] }, 
-                                       {kSecProtocolItemAttr, sizeof(SecProtocolType), &protocol } };
-                                
-    const SecKeychainAttributeList attributes = { sizeof(attrs) / sizeof(attrs[0]),  attrs };
-    OSStatus status = SecKeychainItemModifyAttributesAndData (
-                            keychainItem,   // the item reference
-                            &attributes,    // no change to attributes
-                            0,
-                            nil );
-    if (status == noErr) {
-        server = [protocolAndServer copy];
-    }
-    NSAssert(noErr == status, @"Unable to set server name in keychain entry");
-}
-
-- (void)setUsername:(NSString *)newUsername {
-    NSAssert(noErr == [self update:newUsername password:nil], @"Unable to set username attribute in keychain entry");
-}
-
-- (void)setPassword:(NSString *)newPassword {
-    NSAssert(noErr == [self update:username password:newPassword], @"Unable to set password attribute in keychain entry");
-}
-
-- (OSStatus)update:(NSString *)newUsername password:(NSString *)newPassword {
-    OSStatus status = [self setKeychainAttribute:kSecAccountItemAttr newValue:newUsername newPassword:newPassword];
-    if (status == noErr)  {
-        username = [newUsername copy];
-    }    
+- (OSStatus)updatePassword:(NSString *)newPassword {
+    OSStatus status = [self setKeychainAttribute:kSecAccountItemAttr newValue:username newPassword:newPassword];
     return status;
 }
 
@@ -205,6 +194,9 @@
 }
 
 - (void)setComment:(NSString *)newComment {
+    NSAssert(noErr == [self setKeychainAttribute:kSecCommentItemAttr
+                                        newValue:newComment
+                                     newPassword:nil], @"Unable to set comment attribute in keychain entry");
 }
 
 @end

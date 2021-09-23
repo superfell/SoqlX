@@ -22,6 +22,10 @@
 #import <Cocoa/Cocoa.h>
 #include <Security/Security.h>
 
+typedef CF_ENUM(UInt32, CredentialType) {
+    ctPassword        = 1,
+    ctRefreshToken    = 2,
+};
 
 @interface Credential : NSObject {
     NSString            *server;
@@ -30,21 +34,24 @@
 }
 
 + (NSArray *)credentialsForServer:(NSString *)protocolAndServer;
-+ (NSArray *)sortedCredentialsForServer:(NSString *)protocolAndServer;
 
 + (id)forServer:(NSString *)server username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem;
+
 + (id)createCredentialForServer:(NSString *)protocolAndServer username:(NSString *)un password:(NSString *)pwd;
++ (id)createOAuthCredential:(NSString *)protocolAndServer username:(NSString *)un refreshToken:(NSString *)tkn;
 
 - (instancetype)initForServer:(NSString *)server username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
-@property (copy) NSString *server;
-@property (copy) NSString *username;
-@property (copy) NSString *password;
+@property (readonly) NSString *server;
+@property (readonly) NSString *username;
+@property (readonly) NSString *password;
+@property (readonly) CredentialType type;
+
 @property (copy) NSString *comment;
 
+-(OSStatus)updatePassword:(NSString *)password;
 
-- (OSStatus)update:(NSString *)username password:(NSString *)password;
 @end
 
 @interface NSURL (ZKKeychain)

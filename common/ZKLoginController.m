@@ -196,7 +196,7 @@ static NSString *test = @"https://test.salesforce.com";
                 altButton:@"No thanks"
                 completionHandler:^(NSModalResponse returnCode) {
                     if (NSAlertFirstButtonReturn == returnCode) {
-                         [[self selectedCredential] update:self->username password:self->password];
+                         [[self selectedCredential] updatePassword:self->password];
                     }
                     [self closeLoginUi];
                     [self.delegate loginController:self loginCompleted:self->sforce];
@@ -296,6 +296,7 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
         return;
     }
     // This call is used to validate that we were given a valid client, and that the auth info is usable.
+    // This also ensures that the userInfo is cached, which subsequent code relies on.
     [c currentUserInfoWithFailBlock:^(NSError *result) {
         if ([result.userInfo[ZKSoapFaultCodeKey] hasSuffix:@":UNSUPPORTED_API_VERSION"]) {
             [self openOAuthResponse:url apiVersion:apiVersion-1];
@@ -304,15 +305,40 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
         [[NSAlert alertWithError:result] runModal];
         
     } completeBlock:^(ZKUserInfo *result) {
-        [self closeLoginUi];
-        [self.delegate loginController:self loginCompleted:c];
+        // Success, see if there's an existing keychain entry for this oauth token
+        ZKOAuthInfo *auth = (ZKOAuthInfo*)c.authenticationInfo;
+        NSArray<Credential*> *creds = [Credential credentialsForServer:auth.authHostUrl.absoluteString];
+        for (Credential *cred in creds) {
+            if ((cred.type == ctRefreshToken) && ([cred.username isEqualToString:result.userName])) {
+                // update the keychain entry with the new refresh token
+                [cred updatePassword:auth.refreshToken];
+                // and we're done
+                [self closeLoginUi];
+                [self.delegate loginController:self loginCompleted:c];
+                return;
+            }
+        }
+        // no keychain entry, ask user if they want one.
+        [self showAlertSheetWithMessageText:@"Create Keychain entry with access token?"
+                    defaultButton:@"Create Keychain Entry"
+                    altButton:@"No thanks"
+                    completionHandler:^(NSModalResponse returnCode) {
+                        if (NSAlertFirstButtonReturn == returnCode) {
+                            [Credential createOAuthCredential:auth.authHostUrl.absoluteString
+                                                     username:result.userName
+                                                 refreshToken:auth.refreshToken];
+                        }
+                        [self closeLoginUi];
+                        [self.delegate loginController:self loginCompleted:c];
+                    }];
     }];
 }
 
 - (void)completeOAuthLogin:(NSURL *)oauthCallbackUrl {
-    [self openOAuthResponse:oauthCallbackUrl apiVersion:DEFAULT_API_VERSION];
+    [self openOAuthResponse:oauthCallbackUrl apiVersion:preferedApiVersion];
 }
 
+// Note this explictly filters out the oauth tokens, this are just password based credentials
 - (NSArray *)credentials {
     if (credentials == nil) {
         // NSComboBox doesn't really bind to an object, its value is always the display string
@@ -322,8 +348,9 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
         NSMutableArray * filtered = [NSMutableArray arrayWithCapacity:[allCredentials count]];
         NSMutableSet *usernames = [NSMutableSet set];
         for (Credential *c in allCredentials) {
-            if ([[c username] length] == 0) continue;
-            NSString *lowerUsername = [[c username] lowercaseString];
+            if (c.username.length == 0) continue;
+            if (c.type != ctPassword) continue;
+            NSString *lowerUsername = [c.username lowercaseString];
             if ([usernames containsObject:lowerUsername]) continue;
             [usernames addObject:lowerUsername];
             [filtered addObject:c];
