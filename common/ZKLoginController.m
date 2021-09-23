@@ -268,14 +268,19 @@ static NSString *test = @"https://test.salesforce.com";
 static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoHQhmqzBxALj8UBnhjzntUVXdcdZFXATXCdevs";
 
 - (IBAction)startOAuthLogin:(id)sender {
+    // for legacy reasons the server drop down says www.salesforce.com, and we manually map it to login.salesforce.com
+    NSString *www = @"://www.salesforce.com";
+    NSString *login = @"://login.salesforce.com";
+    NSString *loginHost = [server stringByReplacingOccurrencesOfString:www withString:login options:NSCaseInsensitiveSearch range:NSMakeRange(0, server.length)];
+    
     NSString *cb = @"soqlx://oauth/";
     // build the URL to the oauth page with our client_id & callback URL set.
-    NSString *login = [NSString stringWithFormat:@"%@/services/oauth2/authorize?response_type=token&client_id=%@&redirect_uri=%@&state=%@",
-                       server,
+    NSString *oauth = [NSString stringWithFormat:@"%@/services/oauth2/authorize?response_type=token&client_id=%@&redirect_uri=%@&state=%@",
+                       loginHost,
                        [OAUTH_CID stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]],
                        [cb stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]],
                        self.controllerId];
-    NSURL *url = [NSURL URLWithString:login];
+    NSURL *url = [NSURL URLWithString:oauth];
 
     // ask the OS to open browser to the URL
     [[NSWorkspace sharedWorkspace] openURL:url];
