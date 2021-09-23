@@ -170,6 +170,11 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     }
 }
 
+-(void)loginWithLastOAuthToken {
+    [self initLoginController];
+    [self.loginController loginWithLastOAuthToken:myWindow];
+}
+
 -(void)completeOAuthLogin:(NSURL *)oauthCallbackUrl {
     [self initLoginController];
     [self.loginController completeOAuthLogin:oauthCallbackUrl];

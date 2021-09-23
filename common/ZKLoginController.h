@@ -64,6 +64,7 @@ extern int DEFAULT_API_VERSION;
 + (NSString*)appClientId;
 
 - (void)showLoginSheet:(NSWindow *)modalForWindow;
+- (void)loginWithLastOAuthToken:(NSWindow *)modalForWindow;
 
 - (IBAction)cancelLogin:(id)sender;
 - (IBAction)login:(id)sender;

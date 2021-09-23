@@ -38,6 +38,10 @@ static int nextControllerId = 42;
 @synthesize tokenWindow, apiSecurityToken, controllerId;
 
 static NSString *login_lastUsernameKey = @"login_lastUserName";
+static NSString *login_lastOAuthUsernameKey = @"login_lastOAuthUserName";
+static NSString *login_lastOAuthServer = @"login_lastOAuthServer";
+static NSString *login_lastLoginType = @"login_lastType";
+
 static NSString *prod = @"https://www.salesforce.com";
 static NSString *test = @"https://test.salesforce.com";
 
@@ -203,16 +207,23 @@ static NSString *test = @"https://test.salesforce.com";
                 }];
 }
 
+- (ZKSforceClient*)newClient:(int)version {
+    ZKSforceClient *c = [[ZKSforceClient alloc] init];
+    c.preferedApiVersion = version;
+    if ([clientId length] > 0) {
+        [c setClientId:clientId];
+    }
+    return c;
+}
+
 - (void)startLoginWithApiVersion:(int)version
                        failBlock:(ZKFailWithErrorBlock)failBlock
                    completeBlock:(void(^)(ZKSforceClient *client))completeBlock {
     
-    ZKSforceClient *newClient = [[ZKSforceClient alloc] init];
+    ZKSforceClient *newClient = [self newClient:version];
     sforce = newClient;
     [newClient setLoginProtocolAndHost:server andVersion:version];
-    if ([clientId length] > 0) {
-        [newClient setClientId:clientId];
-    }
+    
     [newClient login:username password:password failBlock:^(NSError *result) {
         if ([result.userInfo[ZKSoapFaultCodeKey] hasSuffix:@":UNSUPPORTED_API_VERSION"]) {
             NSLog(@"Login failed with %@ on API Version %d, retrying with version %d", result, version, version-1);
@@ -221,8 +232,10 @@ static NSString *test = @"https://test.salesforce.com";
             failBlock(result);
         }
     } completeBlock:^(ZKLoginResult *result) {
-        [[NSUserDefaults standardUserDefaults] setObject:self.server forKey:@"server"];
-        [[NSUserDefaults standardUserDefaults] setObject:self.username forKey:login_lastUsernameKey];
+        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+        [def setObject:self.server forKey:@"server"];
+        [def setObject:self.username forKey:login_lastUsernameKey];
+        [def setObject:@"SOAP" forKey:login_lastLoginType];
         completeBlock(newClient);
     }];
 }
@@ -287,9 +300,7 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
 }
 
 -(void)openOAuthResponse:(NSURL *)url apiVersion:(int)apiVersion {
-    ZKSforceClient *c = [[ZKSforceClient alloc] init];
-    [c setClientId:[ZKLoginController appClientId]];
-    c.preferedApiVersion = apiVersion;
+    ZKSforceClient *c = [self newClient:apiVersion];
     NSError *err = [c loginFromOAuthCallbackUrl:url.absoluteString oAuthConsumerKey:OAUTH_CID];
     if (err != nil) {
         [[NSAlert alertWithError:err] runModal];
@@ -297,16 +308,18 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
     }
     // This call is used to validate that we were given a valid client, and that the auth info is usable.
     // This also ensures that the userInfo is cached, which subsequent code relies on.
-    [c currentUserInfoWithFailBlock:^(NSError *result) {
-        if ([result.userInfo[ZKSoapFaultCodeKey] hasSuffix:@":UNSUPPORTED_API_VERSION"]) {
-            [self openOAuthResponse:url apiVersion:apiVersion-1];
-            return;
-        }
+    [self oauthCurrentUserInfoWithDowngrade:c
+                                  failBlock:^(NSError *result) {
         [[NSAlert alertWithError:result] runModal];
-        
+
     } completeBlock:^(ZKUserInfo *result) {
-        // Success, see if there's an existing keychain entry for this oauth token
         ZKOAuthInfo *auth = (ZKOAuthInfo*)c.authenticationInfo;
+        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+        [def setObject:result.userName forKey:login_lastOAuthUsernameKey];
+        [def setObject:auth.authHostUrl.absoluteString forKey:login_lastOAuthServer];
+        [def setObject:@"OAUTH" forKey:login_lastLoginType];
+        
+        // Success, see if there's an existing keychain entry for this oauth token
         NSArray<Credential*> *creds = [Credential credentialsForServer:auth.authHostUrl.absoluteString];
         for (Credential *cred in creds) {
             if ((cred.type == ctRefreshToken) && ([cred.username isEqualToString:result.userName])) {
@@ -336,6 +349,78 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
 
 - (void)completeOAuthLogin:(NSURL *)oauthCallbackUrl {
     [self openOAuthResponse:oauthCallbackUrl apiVersion:preferedApiVersion];
+}
+
+// returns the keychain entry for the most recent oauth login
+// if the most recent login was oauth, and the user opted to
+// create the keychain entry for the refresh token. Otherwise
+// returns nil.
+- (Credential*)lastOAuthCredential {
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    if (![[def objectForKey:login_lastLoginType] isEqualToString:@"OAUTH"]) {
+        return nil;
+    }
+    NSString *server = [def objectForKey:login_lastOAuthServer];
+    NSString *username = [def objectForKey:login_lastOAuthUsernameKey];
+    if (server == nil || username == nil) {
+        // Should never happen
+        return nil;
+    }
+    NSArray<Credential*> *creds = [Credential credentialsForServer:server];
+    for (Credential *c in creds) {
+        if ((c.type == ctRefreshToken) && [c.username isEqualToString:username]) {
+            return c;
+        }
+    }
+    return nil;
+}
+
+-(void)oauthCurrentUserInfoWithDowngrade:(ZKSforceClient*)c
+                               failBlock:(ZKFailWithErrorBlock)failBlock
+                           completeBlock:(ZKCompleteUserInfoBlock)completeBlock {
+    
+    [c currentUserInfoWithFailBlock:^(NSError *result) {
+        if ([result.userInfo[ZKSoapFaultCodeKey] hasSuffix:@":UNSUPPORTED_API_VERSION"]) {
+            // not ideal
+            ZKOAuthInfo *auth = (ZKOAuthInfo*)c.authenticationInfo;
+            NSAssert([auth isKindOfClass:[ZKOAuthInfo class]], @"AuthInfo should be for OAuth");
+            auth.apiVersion = auth.apiVersion-1;
+            c.authenticationInfo = auth;
+            NSLog(@"Downgrading API version to %d due to error %@", auth.apiVersion, result);
+            [self oauthCurrentUserInfoWithDowngrade:c failBlock:failBlock completeBlock:completeBlock];
+            return;
+        }
+        failBlock(result);
+    } completeBlock:completeBlock];
+}
+
+-(void)loginWithLastOAuthToken:(NSWindow *)modalForWindow {
+    [self showLoginSheet:modalForWindow];
+    Credential *cred = [self lastOAuthCredential];
+    if (cred != nil) {
+        [self setStatusText:@"Logging in from saved OAuth token"];
+        [loginProgress setHidden:NO];
+        [loginProgress display];
+        ZKFailWithErrorBlock failBlock = ^(NSError *err) {
+            [self setStatusText:[NSString stringWithFormat:@"Refresh token no longer valid: %@", err.localizedDescription]];
+            [self->loginProgress setHidden:YES];
+            [self->loginProgress display];
+        };
+
+        ZKSforceClient *c = [self newClient:preferedApiVersion];
+        [c loginWithRefreshToken:cred.password
+                         authUrl:[NSURL URLWithString:cred.server]
+                oAuthConsumerKey:OAUTH_CID
+                       failBlock:failBlock
+                   completeBlock:^{
+            [self oauthCurrentUserInfoWithDowngrade:c
+                                          failBlock:failBlock
+                                      completeBlock:^(ZKUserInfo *result) {
+                [self closeLoginUi];
+                [self.delegate loginController:self loginCompleted:c];
+            }];
+        }];
+    }
 }
 
 // Note this explictly filters out the oauth tokens, this are just password based credentials

@@ -247,7 +247,11 @@
 -(void)applicationDidFinishLaunching:(NSNotification *)notification {
     [self resetApiVersionOverrideIfAppVersionChanged];
     if (windowControllers.count == 0 && !self.isOpeningFromUrl) {
-        [self openNewWindow:self];
+        SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:windowControllers];
+        [controller showWindow:self];
+        // if the oauth token refresh fails, or there isn't one, this automatically
+        // falls back to showing the login sheet.
+        [controller.explorer loginWithLastOAuthToken];
     }
     
     // If the updater is going to restart the app, we need to close the login sheet if its currently open.
@@ -257,7 +261,7 @@
 -(void)openNewWindow:(id)sender {
     SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:windowControllers];
     [controller showWindow:sender];
-    [controller.explorer performSelector:@selector(showLogin:) withObject:self afterDelay:0];
+    [controller.explorer showLogin:sender];
 }
 
 // Sparkle : SUUpdaterDelegate - Called immediately before relaunching.
