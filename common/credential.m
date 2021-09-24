@@ -64,8 +64,10 @@ NSString *OAUTH_TRAILER = @"@OAUTH";
             SecKeychainItemRef itemRef = (__bridge SecKeychainItemRef)item[(__bridge NSString*)kSecValueRef];
             [results addObject:[Credential forServer:protocolAndServer username:username keychainItem:itemRef]];
         }
+    } else if (status == errSecItemNotFound) {
+        NSLog(@"No keychain items for server %@", server);
     } else {
-        NSLog(@"SecItemCopyMatching returned error %ld", (long)status);
+        NSLog(@"SecItemCopyMatching returned error %ld for server %@", (long)status, server);
     }
     return results;
 }

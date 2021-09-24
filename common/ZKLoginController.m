@@ -393,34 +393,39 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
         failBlock(result);
     } completeBlock:completeBlock];
 }
-
 -(void)loginWithLastOAuthToken:(NSWindow *)modalForWindow {
-    [self showLoginSheet:modalForWindow];
     Credential *cred = [self lastOAuthCredential];
     if (cred != nil) {
-        [self setStatusText:@"Logging in from saved OAuth token"];
-        [loginProgress setHidden:NO];
-        [loginProgress display];
-        ZKFailWithErrorBlock failBlock = ^(NSError *err) {
-            [self setStatusText:[NSString stringWithFormat:@"Refresh token no longer valid: %@", err.localizedDescription]];
-            [self->loginProgress setHidden:YES];
-            [self->loginProgress display];
-        };
-
-        ZKSforceClient *c = [self newClient:preferedApiVersion];
-        [c loginWithRefreshToken:cred.password
-                         authUrl:[NSURL URLWithString:cred.server]
-                oAuthConsumerKey:OAUTH_CID
-                       failBlock:failBlock
-                   completeBlock:^{
-            [self oauthCurrentUserInfoWithDowngrade:c
-                                          failBlock:failBlock
-                                      completeBlock:^(ZKUserInfo *result) {
-                [self closeLoginUi];
-                [self.delegate loginController:self loginCompleted:c];
-            }];
-        }];
+        [self loginWithOAuthToken:cred window:modalForWindow];
+    } else {
+        [self showLoginSheet:modalForWindow];
     }
+}
+
+- (void)loginWithOAuthToken:(Credential*)cred window:(NSWindow*)modalForWindow {
+    [self showLoginSheet:modalForWindow];
+    [self setStatusText:@"Logging in from saved OAuth token"];
+    [loginProgress setHidden:NO];
+    [loginProgress display];
+    ZKFailWithErrorBlock failBlock = ^(NSError *err) {
+        [self setStatusText:[NSString stringWithFormat:@"Refresh token no longer valid: %@", err.localizedDescription]];
+        [self->loginProgress setHidden:YES];
+        [self->loginProgress display];
+    };
+
+    ZKSforceClient *c = [self newClient:preferedApiVersion];
+    [c loginWithRefreshToken:cred.password
+                     authUrl:[NSURL URLWithString:cred.server]
+            oAuthConsumerKey:OAUTH_CID
+                   failBlock:failBlock
+               completeBlock:^{
+        [self oauthCurrentUserInfoWithDowngrade:c
+                                      failBlock:failBlock
+                                  completeBlock:^(ZKUserInfo *result) {
+            [self closeLoginUi];
+            [self.delegate loginController:self loginCompleted:c];
+        }];
+    }];
 }
 
 // Note this explictly filters out the oauth tokens, this are just password based credentials

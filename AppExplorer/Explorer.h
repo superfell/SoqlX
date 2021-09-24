@@ -110,6 +110,8 @@
 @property (readonly) ZKLoginController *loginController;
 -(void)completeOAuthLogin:(NSURL *)oauthCallbackUrl;
 -(void)loginWithLastOAuthToken;
+-(void)loginWithOAuthToken:(Credential*)cred;
+
 @property (readonly) BOOL loginSheetIsOpen;
 @property (getter=isLoggedIn, readonly) BOOL loggedIn;
 

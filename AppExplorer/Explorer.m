@@ -170,6 +170,11 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     }
 }
 
+-(void)loginWithOAuthToken:(Credential*)cred {
+    [self initLoginController];
+    [self.loginController loginWithOAuthToken:cred window:myWindow];
+}
+
 -(void)loginWithLastOAuthToken {
     [self initLoginController];
     [self.loginController loginWithLastOAuthToken:myWindow];

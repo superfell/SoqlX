@@ -71,6 +71,16 @@
                 <menuItem title="File" id="83">
                     <menu key="submenu" title="File" id="81">
                         <items>
+                            <menuItem title="Saved OAuth Logins" id="qiJ-Ab-pR7">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Saved OAuth Logins" id="fg8-7E-H4W">
+                                    <items>
+                                        <menuItem title="Item" id="LpT-QN-qVh">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
                             <menuItem title="Login" keyEquivalent="l" id="249">
                                 <connections>
                                     <action selector="openNewWindow:" target="1677" id="1682"/>
@@ -289,7 +299,7 @@
                     </menu>
                 </menuItem>
             </items>
-            <point key="canvasLocation" x="-303" y="-34"/>
+            <point key="canvasLocation" x="-1076" y="-230"/>
         </menu>
         <customObject id="340" userLabel="SUUpdater" customClass="SUUpdater"/>
         <window title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="prefs" animationBehavior="default" id="343" userLabel="Preferences">
@@ -619,5 +629,10 @@ Gw
         </window>
         <userDefaultsController representsSharedInstance="YES" id="354" userLabel="Shared Defaults"/>
         <customObject id="1677" userLabel="App Delegate" customClass="AppDelegate"/>
+        <customObject id="iTj-eg-Czi" userLabel="OAuthManager" customClass="OAuthMenuManager">
+            <connections>
+                <outlet property="menu" destination="qiJ-Ab-pR7" id="28L-b6-Cdj"/>
+            </connections>
+        </customObject>
     </objects>
 </document>

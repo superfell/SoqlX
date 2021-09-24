@@ -39,6 +39,7 @@
 		F45C7EEB0B5FDB5F00F93DD7 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F45C7EEA0B5FDB5F00F93DD7 /* WebKit.framework */; };
 		F45DDFDD0AABBA6100ED0BA0 /* Explorer.m in Sources */ = {isa = PBXBuildFile; fileRef = F45DDFDB0AABBA6100ED0BA0 /* Explorer.m */; };
 		F46D91070B33DFC800913AD2 /* StandAloneTableHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F46D91010B33DFC800913AD2 /* StandAloneTableHeaderView.m */; };
+		F4805DE326FD4D9F005B1C24 /* OAuthMenuManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F4805DE226FD4D9F005B1C24 /* OAuthMenuManager.m */; };
 		F48804CB2592ADE7001D56F6 /* Describer.m in Sources */ = {isa = PBXBuildFile; fileRef = F48804CA2592ADE7001D56F6 /* Describer.m */; };
 		F48804D92592BB33001D56F6 /* CaseInsensitiveStringKey.m in Sources */ = {isa = PBXBuildFile; fileRef = F48804D82592BB33001D56F6 /* CaseInsensitiveStringKey.m */; };
 		F48804DD2592BE57001D56F6 /* CaseInsensitiveKeyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F48804DC2592BE57001D56F6 /* CaseInsensitiveKeyTest.m */; };
@@ -286,6 +287,8 @@
 		F45DDFDC0AABBA6100ED0BA0 /* Explorer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Explorer.h; sourceTree = "<group>"; };
 		F46D91000B33DFC800913AD2 /* StandAloneTableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = StandAloneTableHeaderView.h; path = ../common/StandAloneTableHeaderView.h; sourceTree = SOURCE_ROOT; };
 		F46D91010B33DFC800913AD2 /* StandAloneTableHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = StandAloneTableHeaderView.m; path = ../common/StandAloneTableHeaderView.m; sourceTree = SOURCE_ROOT; };
+		F4805DE126FD4D9F005B1C24 /* OAuthMenuManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OAuthMenuManager.h; sourceTree = "<group>"; };
+		F4805DE226FD4D9F005B1C24 /* OAuthMenuManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OAuthMenuManager.m; sourceTree = "<group>"; };
 		F48804C92592ADE7001D56F6 /* Describer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Describer.h; sourceTree = "<group>"; };
 		F48804CA2592ADE7001D56F6 /* Describer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Describer.m; sourceTree = "<group>"; };
 		F48804D72592BB33001D56F6 /* CaseInsensitiveStringKey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CaseInsensitiveStringKey.h; sourceTree = "<group>"; };
@@ -501,6 +504,8 @@
 				F4E8BB0F184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m */,
 				F4CD3DAA0B85701100084479 /* ZKLoginController.h */,
 				F4CD3DAB0B85701100084479 /* ZKLoginController.m */,
+				F4805DE126FD4D9F005B1C24 /* OAuthMenuManager.h */,
+				F4805DE226FD4D9F005B1C24 /* OAuthMenuManager.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -1107,6 +1112,7 @@
 				F4D7831E15D49F7B00D00BB9 /* AppDelegate.m in Sources */,
 				F4D7833415D5F46600D00BB9 /* BaseUserBasedController.m in Sources */,
 				F4D7836B15D8814C00D00BB9 /* ZKDescribe_Reporting.m in Sources */,
+				F4805DE326FD4D9F005B1C24 /* OAuthMenuManager.m in Sources */,
 				F412DE1721B341D300D8889F /* SessionIdAuthInfo.m in Sources */,
 				F4C440CA15DB50BC00590A1E /* SearchQueryResult.m in Sources */,
 				F4CD2AB71B76881500BDD68D /* NSTableView_additions.m in Sources */,

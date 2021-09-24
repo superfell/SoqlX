@@ -263,6 +263,13 @@
     [controller.explorer showLogin:sender];
 }
 
+- (void)openNewWindowForOAuthCredential:(id)sender {
+    Credential *c = [sender representedObject];
+    SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self.windowControllers];
+    [controller showWindow:sender];
+    [controller.explorer loginWithOAuthToken:c];
+}
+
 // Sparkle : SUUpdaterDelegate - Called immediately before relaunching.
 - (void)updaterWillRelaunchApplication:(SUUpdater *)updater {
     [self.windowControllers makeObjectsPerformSelector:@selector(closeLoginPanelIfOpen:) withObject:updater];
