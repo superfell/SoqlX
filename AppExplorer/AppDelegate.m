@@ -27,6 +27,7 @@
 #import "ZKLoginController.h"
 #import "ZKUserInfo.h"
 #import "SessionIdAuthInfo.h"
+#import "Defaults.h"
 
 @interface ZKOAuthInfo(params)
 +(NSDictionary*)decodeParams:(NSString*)fragment error:(NSError **)err;
@@ -42,11 +43,8 @@
     defaults[@"details"] = @NO;
     defaults[@"soql"] = @"select id, firstname, lastname from contact";
     
-    NSString *prod = @"https://www.salesforce.com";
-    NSString *test = @"https://test.salesforce.com";
-    
-    defaults[@"servers"] = @[prod, test];
-    defaults[@"server"] = prod;
+    defaults[DEF_SERVERS] = @[LOGIN_LOGIN, LOGIN_TEST];
+    defaults[@"server"] = LOGIN_WWW; // should go?
     defaults[PREF_QUERY_SORT_FIELDS] = @YES;
     defaults[PREF_SKIP_ADDRESS_FIELDS] = @NO;
     defaults[PREF_TEXT_SIZE] = @11;

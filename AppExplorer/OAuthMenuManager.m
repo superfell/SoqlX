@@ -60,6 +60,8 @@ OSStatus keychainCallback (SecKeychainEvent keychainEvent, SecKeychainCallbackIn
 
 -(void)updateCredentialList {
     NSMutableArray<NSString*> *servers = [[NSMutableArray alloc] initWithCapacity:4];
+    NSMutableArray<Credential*>* allCreds = [NSMutableArray arrayWithCapacity:4];
+    
     // Because we've been siliently mapping www -> login, login.salesforce.com might not appear
     // in the prefs list of servers, but could have oauth tokens for it. So we manually add that
     // in to the list to check.
@@ -93,8 +95,10 @@ OSStatus keychainCallback (SecKeychainEvent keychainEvent, SecKeychainCallbackIn
             [item setAction:@selector(openNewWindowForOAuthCredential:)];
             [menu addItem:item];
         }
+        [allCreds addObjectsFromArray:credentials];
         addSeparator = TRUE;
     }
+    self.all = allCreds;
 }
 
 @end

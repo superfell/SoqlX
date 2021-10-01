@@ -19,17 +19,10 @@
 // THE SOFTWARE.
 //
 
-#import <Cocoa/Cocoa.h>
+#import "Defaults.h"
 
-NS_ASSUME_NONNULL_BEGIN
+NSString *LOGIN_LOGIN= @"https://login.salesforce.com";
+NSString *LOGIN_TEST = @"https://test.salesforce.com";
+NSString *LOGIN_WWW  = @"https://www.salesforce.com";
 
-@class Credential;
-
-@interface OAuthMenuManager : NSObject
-
-@property (strong) IBOutlet NSMenuItem *menu;
-@property (strong) NSArray<Credential*>* all;
-
-@end
-
-NS_ASSUME_NONNULL_END
+NSString *DEF_SERVERS = @"servers";

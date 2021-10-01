@@ -19,17 +19,25 @@
 // THE SOFTWARE.
 //
 
-#import <Cocoa/Cocoa.h>
+#import "LoginRowViewItem.h"
+#import "credential.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
-@class Credential;
-
-@interface OAuthMenuManager : NSObject
-
-@property (strong) IBOutlet NSMenuItem *menu;
-@property (strong) NSArray<Credential*>* all;
-
+@interface LoginRowViewItem ()
+@property (strong) IBOutlet NSButton *button;
 @end
 
-NS_ASSUME_NONNULL_END
+@implementation LoginRowViewItem
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.button.target = self;
+    self.button.action = @selector(login:);
+}
+
+-(void)login:(id)sender {
+    if (self.delegate) {
+        [self.delegate credentialSelected:self.credential];
+    }
+}
+
+@end

@@ -25,10 +25,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class Credential;
 
-@interface OAuthMenuManager : NSObject
+@protocol LoginRowViewItemDelegate<NSObject>
+@required
+-(void)credentialSelected:(Credential*)c;
+@end
 
-@property (strong) IBOutlet NSMenuItem *menu;
-@property (strong) NSArray<Credential*>* all;
+@interface LoginRowViewItem : NSCollectionViewItem
+
+@property (strong) Credential *credential;
+@property (weak) NSObject<LoginRowViewItemDelegate> *delegate;
 
 @end
 

@@ -19,17 +19,47 @@
 // THE SOFTWARE.
 //
 
-#import <Cocoa/Cocoa.h>
+#import "LoginTargetViewItem.h"
 
-NS_ASSUME_NONNULL_BEGIN
 
-@class Credential;
+@implementation LoginTargetItem
 
-@interface OAuthMenuManager : NSObject
++(instancetype)itemWithName:(NSString *)n url:(NSURL*)u {
+    LoginTargetItem *x = [[LoginTargetItem alloc] init];
+    x.name = n;
+    x.url = u;
+    return x;
+}
 
-@property (strong) IBOutlet NSMenuItem *menu;
-@property (strong) NSArray<Credential*>* all;
++(instancetype)itemWithUrl:(NSURL*)u {
+    return [self itemWithName:u.host url:u];
+}
+
+-(NSString*)description {
+    return self.name;
+}
 
 @end
 
-NS_ASSUME_NONNULL_END
+@interface LoginTargetViewItem ()
+@property (strong) IBOutlet NSButton *button;
+@end
+
+@implementation LoginTargetViewItem
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+}
+
+-(IBAction)onClick:(id)sender {
+    if (self.delegate) {
+        [self.delegate loginTargetSelected:self.target];
+    }
+}
+-(IBAction)onDelete:(id)sender {
+    if (self.delegate) {
+        [self.delegate loginTargetDeleted:self.target];
+    }
+}
+
+@end

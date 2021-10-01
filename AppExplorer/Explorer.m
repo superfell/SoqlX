@@ -161,7 +161,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 -(void)initLoginController {
     if (self.loginController == nil) {
         self.loginController = [[ZKLoginController alloc] init];
-        [self.loginController setClientIdFromInfoPlist];
         self.loginController.delegate = self;
         NSNumber *apiVersion = [[NSUserDefaults standardUserDefaults] objectForKey:@"zkApiVersion"];
         if (apiVersion != nil) {

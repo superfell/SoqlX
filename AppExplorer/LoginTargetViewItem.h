@@ -18,17 +18,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-
 #import <Cocoa/Cocoa.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class Credential;
+@interface LoginTargetItem : NSObject
 
-@interface OAuthMenuManager : NSObject
++(instancetype)itemWithName:(NSString *)n url:(NSURL*)u;
++(instancetype)itemWithUrl:(NSURL*)u;
 
-@property (strong) IBOutlet NSMenuItem *menu;
-@property (strong) NSArray<Credential*>* all;
+@property (strong) NSString *name;
+@property (strong) NSURL    *url;
+@property (assign) BOOL     deletable;
+
+@end
+
+@protocol LoginTargetItemDelegate <NSObject>
+@required
+-(void)loginTargetSelected:(LoginTargetItem*)item;
+-(void)loginTargetDeleted:(LoginTargetItem*)item;
+@end
+
+@interface LoginTargetViewItem : NSCollectionViewItem
+
+@property (weak) NSObject<LoginTargetItemDelegate> *delegate;
+@property (strong) LoginTargetItem *target;
+
+-(IBAction)onClick:(id)sender;
+-(IBAction)onDelete:(id)sender;
 
 @end
 
