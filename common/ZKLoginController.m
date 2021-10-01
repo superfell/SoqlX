@@ -131,6 +131,7 @@ static NSString *login_lastLoginType = @"login_lastType";
 
 -(void)closeLoginUi {
     self.busy = FALSE;
+    self.statusText = @"";
     if (self.modalWindow != nil) {
         [NSApp endSheet:self.loginSheet];
         [self.loginSheet orderOut:self];
@@ -185,6 +186,7 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
 
     // ask the OS to open browser to the URL
     [[NSWorkspace sharedWorkspace] openURL:url];
+    self.statusText = @"Complete the login/authorization in the browser";
     // close the login target popup
     [self.loginDest performClose:self];
 }
@@ -203,6 +205,7 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
     // This call is used to validate that we were given a valid client, and that the auth info is usable.
     // This also ensures that the userInfo is cached, which subsequent code relies on.
     self.busy = TRUE;
+    self.statusText = @"Verifying OAuth tokens";
     [self oauthCurrentUserInfoWithDowngrade:c
                                   failBlock:^(NSError *result) {
         self.busy = FALSE;
@@ -289,21 +292,23 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
         failBlock(result);
     } completeBlock:completeBlock];
 }
+
 -(void)loginWithLastOAuthToken:(NSWindow *)modalForWindow {
-    Credential *cred = nil; // [self lastOAuthCredential];
+    [self showLoginSheet:modalForWindow];
+    Credential *cred = [self lastOAuthCredential];
     if (cred != nil) {
         [self loginWithOAuthToken:cred window:modalForWindow];
-    } else {
-        [self showLoginSheet:modalForWindow];
     }
 }
 
-- (void)loginWithOAuthToken:(Credential*)cred window:(NSWindow*)modalForWindow {
-    //[self showLoginSheet:modalForWindow];
+-(void)loginWithOAuthToken:(Credential*)cred window:(NSWindow*)modalForWindow {
+    if (self.modalWindow == nil) {
+        [self showLoginSheet:modalForWindow];
+    }
     [self setStatusText:@"Logging in from saved OAuth token"];
     self.busy = TRUE;
     ZKFailWithErrorBlock failBlock = ^(NSError *err) {
-        [self setStatusText:[NSString stringWithFormat:@"Refresh token no longer valid: %@", err.localizedDescription]];
+        self.statusText = [NSString stringWithFormat:@"Refresh token no longer valid: %@", err.localizedDescription];
         self.busy = FALSE;
     };
 

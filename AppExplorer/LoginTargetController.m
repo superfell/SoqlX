@@ -59,14 +59,12 @@
     NSRect f = self.containerView.frame;
     f.size.height = self.items.count * 70 + 50;
     self.containerView.frame = f;
+    // TODO, no doubt I'll be made to regret this at some point.
     [[self.containerView.window valueForKey:@"_popover"] setContentSize:f.size];
 }
 
 -(void)setDefaultsFromItems {
-    NSMutableArray<NSString*> *servers = [NSMutableArray arrayWithCapacity:self.items.count];
-    for (LoginTargetItem *i in self.items) {
-        [servers addObject:i.url.absoluteString];
-    }
+    NSArray *servers = [self.items valueForKeyPath:@"url.absoluteString"];
     [[NSUserDefaults standardUserDefaults] setObject:servers forKey:DEF_SERVERS];
 }
 
