@@ -126,6 +126,11 @@ static NSString *login_lastLoginType = @"login_lastType";
 - (void)showLoginSheet:(NSWindow *)modalForWindow {
     [self loadNib];
     self.modalWindow = modalForWindow;
+    if (self.credDataSource.items.count > 2) {
+        NSRect f = self.loginSheet.frame;
+        f.size.height = self.credDataSource.items.count * 60 + 270 - 120;
+        [self.loginSheet setContentSize:f.size];
+    }
     [modalForWindow beginSheet:self.loginSheet completionHandler:nil];
 }
 
@@ -209,6 +214,7 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
     [self oauthCurrentUserInfoWithDowngrade:c
                                   failBlock:^(NSError *result) {
         self.busy = FALSE;
+        self.statusText = result.localizedDescription;
         [[NSAlert alertWithError:result] runModal];
 
     } completeBlock:^(ZKUserInfo *result) {
