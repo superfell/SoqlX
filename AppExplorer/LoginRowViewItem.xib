@@ -21,7 +21,7 @@
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="whE-rG-E9J">
                     <rect key="frame" x="20" y="7" width="390" height="35"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="smallSquare" title="Button" bezelStyle="smallSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="LlW-v7-dP9">
+                    <buttonCell key="cell" type="smallSquare" title="Button" bezelStyle="smallSquare" alignment="left" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="LlW-v7-dP9">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
@@ -30,6 +30,18 @@
                         <binding destination="30h-ST-WnZ" name="title" keyPath="credential.username" id="byb-Fl-gKA"/>
                     </connections>
                 </button>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yTF-ZN-O2i">
+                    <rect key="frame" x="164" y="25" width="245" height="16"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Label" id="1NE-g3-bVq">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <binding destination="30h-ST-WnZ" name="value" keyPath="serverLabel" id="a5c-wM-4nS"/>
+                    </connections>
+                </textField>
             </subviews>
             <point key="canvasLocation" x="-175" y="153"/>
         </customView>
@@ -39,5 +51,6 @@
                 <outlet property="view" destination="Hz6-mo-xeY" id="NXX-pQ-vV6"/>
             </connections>
         </collectionViewItem>
+        <userDefaultsController representsSharedInstance="YES" id="bAN-VN-rTQ"/>
     </objects>
 </document>

@@ -21,6 +21,7 @@
 
 #import "LoginRowViewItem.h"
 #import "credential.h"
+#import "Defaults.h"
 
 @interface LoginRowViewItem ()
 @property (strong) IBOutlet NSButton *button;
@@ -38,6 +39,18 @@
     if (self.delegate) {
         [self.delegate credentialSelected:self.credential];
     }
+}
+
+-(NSString*)serverLabel {
+    NSString *host = self.credential.server;
+    if ([host caseInsensitiveCompare:LOGIN_LOGIN] == NSOrderedSame) {
+        return @"Prod";
+    }
+    if ([host caseInsensitiveCompare:LOGIN_TEST] == NSOrderedSame) {
+        return @"Sandbox";
+    }
+    NSURL *u = [NSURL URLWithString:host];
+    return u.host;
 }
 
 @end
