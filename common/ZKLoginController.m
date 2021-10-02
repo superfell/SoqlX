@@ -24,51 +24,16 @@
 #import "credential.h"
 #import "AppDelegate.h"
 #import "OAuthMenuManager.h"
-#import "LoginRowViewItem.h"
+#import "CredentialsDataSource.h"
 
 int DEFAULT_API_VERSION = 53;
 
 static int nextControllerId = 42;
 
-@interface CredDataSource : NSObject<NSCollectionViewDataSource>
--(id)initWithCreds:(NSArray<Credential*>*)creds;
-@property (strong) NSArray<Credential*>             *items;
-@property (weak) NSObject<LoginRowViewItemDelegate> *delegate;
-@end
-
-
-@interface ZKLoginController ()
-@property (strong) Credential *selectedCredential;
-@property (strong) CredDataSource *credDataSource;
--(void)closeLoginUi;
-@end
-
-@implementation CredDataSource
-
--(id)initWithCreds:(NSArray<Credential *> *)creds {
-    self = [super init];
-    self.items = creds;
-    return self;
-}
-
--(NSInteger)collectionView:(nonnull NSCollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return self.items.count;
-}
-
--(nonnull NSCollectionViewItem *)collectionView:(nonnull NSCollectionView *)collectionView
-            itemForRepresentedObjectAtIndexPath:(nonnull NSIndexPath *)indexPath {
-    Credential *c = self.items[indexPath.item];
-    LoginRowViewItem *i = [collectionView makeItemWithIdentifier:@"row" forIndexPath:indexPath];
-    i.credential = c;
-    i.delegate = self.delegate;
-    return i;
-}
-
-@end
-
 @interface ZKLoginController()
 
 -(IBAction)startOAuthLogin:(id)sender;
+-(void)closeLoginUi;
 
 @property (strong) NSString *statusText;
 @property (assign) BOOL busy;
@@ -79,6 +44,9 @@ static int nextControllerId = 42;
 @property (strong) IBOutlet NSPopover *loginDest;
 @property (strong) IBOutlet NSButton *loginButton;
 @property (strong) IBOutlet LoginTargetController *targetController;
+
+@property (strong) Credential *selectedCredential;
+@property (strong) CredentialsDataSource *credDataSource;
 
 @end
 
@@ -103,8 +71,11 @@ static NSString *login_lastLoginType = @"login_lastType";
 
 - (void)awakeFromNib {
     [self.savedLogins registerNib:[[NSNib alloc] initWithNibNamed:@"LoginRowViewItem" bundle:nil] forItemWithIdentifier:@"row"];
+    [self.savedLogins registerNib:[[NSNib alloc] initWithNibNamed:@"LoginHeaderRowViewItem" bundle:nil]
+         forSupplementaryViewOfKind:NSCollectionElementKindSectionHeader
+                     withIdentifier:@"h"];
     AppDelegate *d = (AppDelegate*) [NSApp delegate];
-    self.credDataSource = [[CredDataSource alloc] initWithCreds:d.oauthManager.all];
+    self.credDataSource = [[CredentialsDataSource alloc] initWithCreds:d.oauthManager.all];
     self.credDataSource.delegate = self;
     self.savedLogins.dataSource = self.credDataSource;
     self.targetController.delegate = self;
@@ -126,11 +97,14 @@ static NSString *login_lastLoginType = @"login_lastType";
 - (void)showLoginSheet:(NSWindow *)modalForWindow {
     [self loadNib];
     self.modalWindow = modalForWindow;
-    if (self.credDataSource.items.count > 2) {
-        NSRect f = self.loginSheet.frame;
-        f.size.height = self.credDataSource.items.count * 60 + 270 - 120;
-        [self.loginSheet setContentSize:f.size];
-    }
+    NSSize fr = self.loginSheet.contentView.frame.size;
+    NSSize visSize = self.savedLogins.frame.size;
+    NSSize allItems = self.savedLogins.collectionViewLayout.collectionViewContentSize;
+    NSSize newSize = NSMakeSize(fr.width, fr.height - visSize.height + allItems.height);
+    [self.loginSheet setContentSize:newSize];
+    // This reloadData shouldn't be needed, but without it, the section header sometimes
+    // get placed over the first item, not above it.
+    [self.savedLogins reloadData];
     [modalForWindow beginSheet:self.loginSheet completionHandler:nil];
 }
 
@@ -303,7 +277,7 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
     [self showLoginSheet:modalForWindow];
     Credential *cred = [self lastOAuthCredential];
     if (cred != nil) {
-        [self loginWithOAuthToken:cred window:modalForWindow];
+//        [self loginWithOAuthToken:cred window:modalForWindow];
     }
 }
 

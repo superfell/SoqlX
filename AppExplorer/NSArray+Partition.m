@@ -19,26 +19,26 @@
 // THE SOFTWARE.
 //
 
-#import "LoginRowViewItem.h"
-#import "credential.h"
-#import "Defaults.h"
 
-@interface LoginRowViewItem ()
-@property (strong) IBOutlet NSButton *button;
-@end
+#import "NSArray+Partition.h"
 
-@implementation LoginRowViewItem
+@implementation NSArray(Partition)
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.button.target = self;
-    self.button.action = @selector(login:);
-}
-
--(void)login:(id)sender {
-    if (self.delegate) {
-        [self.delegate credentialSelected:self.credential];
+-(NSArray*)partitionByKeyPath:(NSString*)path {
+    NSMutableArray *results = [NSMutableArray array];
+    NSMutableDictionary<id, NSMutableArray*> *keys = [NSMutableDictionary dictionary];
+    for (id item in self) {
+        id key = [item valueForKeyPath:path];
+        NSMutableArray *partition = keys[key];
+        if (partition == nil) {
+            partition = [NSMutableArray arrayWithObject:item];
+            keys[key] = partition;
+            [results addObject:partition];
+        } else {
+            [partition addObject:item];
+        }
     }
+    return results;
 }
 
 @end

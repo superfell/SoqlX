@@ -34,7 +34,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (strong) Credential *credential;
 @property (weak) NSObject<LoginRowViewItemDelegate> *delegate;
-@property (readonly) NSString *serverLabel;
 
 @end
 

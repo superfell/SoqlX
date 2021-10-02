@@ -19,26 +19,15 @@
 // THE SOFTWARE.
 //
 
-#import "LoginRowViewItem.h"
-#import "credential.h"
-#import "Defaults.h"
+#import <Foundation/Foundation.h>
 
-@interface LoginRowViewItem ()
-@property (strong) IBOutlet NSButton *button;
-@end
+@class Credential;
+@protocol LoginRowViewItemDelegate;
 
-@implementation LoginRowViewItem
+@interface CredentialsDataSource : NSObject<NSCollectionViewDataSource>
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.button.target = self;
-    self.button.action = @selector(login:);
-}
-
--(void)login:(id)sender {
-    if (self.delegate) {
-        [self.delegate credentialSelected:self.credential];
-    }
-}
+-(id)initWithCreds:(NSArray<Credential*>*)creds;
+@property (strong) NSArray<NSArray<Credential*>*>   *items;
+@property (weak) NSObject<LoginRowViewItemDelegate> *delegate;
 
 @end

@@ -20,6 +20,7 @@
 //
 
 #import "credential.h"
+#import "Defaults.h"
 
 @implementation NSURL (ZKKeychain)
 - (SecProtocolType)SecProtocolType {
@@ -144,6 +145,17 @@ NSString *OAUTH_TRAILER = @"@OAUTH";
 
 - (CredentialType) type {
     return [username hasSuffix:OAUTH_TRAILER] ? ctRefreshToken : ctPassword;
+}
+
+-(NSString*)serverLabel {
+    if ([server caseInsensitiveCompare:LOGIN_LOGIN] == NSOrderedSame) {
+        return @"Production";
+    }
+    if ([server caseInsensitiveCompare:LOGIN_TEST] == NSOrderedSame) {
+        return @"Sandbox";
+    }
+    NSURL *u = [NSURL URLWithString:server];
+    return u.host;
 }
 
 - (NSString *)password {

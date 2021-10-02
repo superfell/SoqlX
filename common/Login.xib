@@ -11,7 +11,6 @@
                 <outlet property="loginButton" destination="Vbe-FN-HRY" id="XG8-lq-pEj"/>
                 <outlet property="loginDest" destination="A62-aq-VwG" id="oTg-WI-VsY"/>
                 <outlet property="loginSheet" destination="lpo-xH-vTX" id="px1-is-EtC"/>
-                <outlet property="progress" destination="Om8-X4-spf" id="Djb-9r-JLr"/>
                 <outlet property="savedLogins" destination="3rR-I4-met" id="kgL-sc-GQn"/>
                 <outlet property="targetController" destination="JHy-iV-NBO" id="A1m-Fm-kW3"/>
             </connections>
@@ -24,26 +23,15 @@
                 <string>username</string>
             </declaredKeys>
         </arrayController>
-        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="lpo-xH-vTX" userLabel="OAuth">
-            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="lpo-xH-vTX" userLabel="OAuth">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="283" y="305" width="480" height="270"/>
+            <rect key="contentRect" x="283" y="305" width="363" height="300"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="888-mM-JRU">
-                <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                <rect key="frame" x="0.0" y="0.0" width="363" height="300"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vbe-FN-HRY">
-                        <rect key="frame" x="362" y="13" width="104" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <buttonCell key="cell" type="push" title="New Login" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jnQ-be-ebi">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="startOAuthLogin:" target="-2" id="5ju-Ob-8fq"/>
-                        </connections>
-                    </button>
                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="asF-Da-Ocp">
                         <rect key="frame" x="18" y="16" width="25" height="25"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -53,15 +41,15 @@
                         </buttonCell>
                     </button>
                     <progressIndicator fixedFrame="YES" maxValue="100" doubleValue="22" displayedWhenStopped="NO" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="Om8-X4-spf">
-                        <rect key="frame" x="20" y="46" width="440" height="20"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <rect key="frame" x="20" y="46" width="323" height="20"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                         <connections>
                             <binding destination="-2" name="animate" keyPath="busy" id="V7P-7q-OZA"/>
                         </connections>
                     </progressIndicator>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hMH-fc-soS">
-                        <rect key="frame" x="18" y="234" width="444" height="16"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <rect key="frame" x="18" y="280" width="327" height="16"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Saved Logins" id="t4e-2X-Gfd">
                             <font key="font" metaFont="systemBold"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -69,8 +57,8 @@
                         </textFieldCell>
                     </textField>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fI5-x6-t8E">
-                        <rect key="frame" x="280" y="13" width="82" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <rect key="frame" x="163" y="13" width="82" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="WuK-1g-s2y">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -82,18 +70,20 @@ Gw
                             <action selector="cancelLogin:" target="-2" id="Xbb-3y-g4S"/>
                         </connections>
                     </button>
-                    <scrollView wantsLayer="YES" fixedFrame="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k0s-ri-EW0">
-                        <rect key="frame" x="20" y="87" width="440" height="139"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES"/>
+                    <scrollView wantsLayer="YES" fixedFrame="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k0s-ri-EW0">
+                        <rect key="frame" x="20" y="87" width="331" height="185"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="AJI-Hf-Hm0">
-                            <rect key="frame" x="0.0" y="0.0" width="425" height="139"/>
+                            <rect key="frame" x="0.0" y="0.0" width="331" height="185"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <collectionView id="3rR-I4-met">
-                                    <rect key="frame" x="0.0" y="0.0" width="425" height="158"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="331" height="185"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
-                                    <collectionViewFlowLayout key="collectionViewLayout" minimumInteritemSpacing="10" minimumLineSpacing="10" id="XsY-iQ-gAU">
-                                        <size key="itemSize" width="430" height="50"/>
+                                    <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="3" id="XsY-iQ-gAU">
+                                        <size key="itemSize" width="300" height="35"/>
+                                        <size key="headerReferenceSize" width="300" height="25"/>
+                                        <edgeInsets key="sectionInset" left="3" right="0.0" top="0.0" bottom="0.0"/>
                                     </collectionViewFlowLayout>
                                     <color key="primaryBackgroundColor" white="1" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </collectionView>
@@ -101,17 +91,17 @@ Gw
                             <color key="backgroundColor" red="0.33067432733654667" green="1" blue="0.22570001864742317" alpha="0.0" colorSpace="custom" customColorSpace="displayP3"/>
                         </clipView>
                         <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="5Jd-ti-hbI">
-                            <rect key="frame" x="1" y="144" width="233" height="15"/>
+                            <rect key="frame" x="-100" y="-100" width="233" height="15"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
-                        <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="CpM-XZ-4dj">
+                        <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="CpM-XZ-4dj">
                             <rect key="frame" x="425" y="0.0" width="15" height="139"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                     </scrollView>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bva-Er-Nym">
-                        <rect key="frame" x="18" y="63" width="444" height="16"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <rect key="frame" x="18" y="63" width="327" height="16"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="m63-d4-Fzy">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -121,9 +111,20 @@ Gw
                             <binding destination="-2" name="value" keyPath="statusText" id="Y5r-jM-IxK"/>
                         </connections>
                     </textField>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vbe-FN-HRY">
+                        <rect key="frame" x="245" y="13" width="104" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="push" title="New Login" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jnQ-be-ebi">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="startOAuthLogin:" target="-2" id="5ju-Ob-8fq"/>
+                        </connections>
+                    </button>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="-352" y="-201"/>
+            <point key="canvasLocation" x="-410.5" y="-188"/>
         </window>
         <viewController id="PQK-UD-2uk" userLabel="Popover View Controller">
             <connections>

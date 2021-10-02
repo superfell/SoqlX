@@ -19,26 +19,13 @@
 // THE SOFTWARE.
 //
 
-#import "LoginRowViewItem.h"
-#import "credential.h"
-#import "Defaults.h"
 
-@interface LoginRowViewItem ()
-@property (strong) IBOutlet NSButton *button;
+#import <Foundation/Foundation.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface NSArray (Partition)
+-(NSArray*)partitionByKeyPath:(NSString*)path;
 @end
 
-@implementation LoginRowViewItem
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.button.target = self;
-    self.button.action = @selector(login:);
-}
-
--(void)login:(id)sender {
-    if (self.delegate) {
-        [self.delegate credentialSelected:self.credential];
-    }
-}
-
-@end
+NS_ASSUME_NONNULL_END
