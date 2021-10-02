@@ -45,4 +45,5 @@
 
 @interface NSURL (ZKKeychain)
 @property (readonly) NSString *friendlyHostLabel;
+@property (readonly) BOOL isStandardEndpoint;
 @end

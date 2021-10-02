@@ -32,6 +32,10 @@
     }
     return self.host;
 }
+-(BOOL)isStandardEndpoint {
+    return  ([self.host caseInsensitiveCompare:@"login.salesforce.com"] == NSOrderedSame) ||
+            ([self.host caseInsensitiveCompare:@"test.salesforce.com"] == NSOrderedSame);
+}
 @end
 
 @implementation Credential

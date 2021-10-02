@@ -21,6 +21,7 @@
 
 #import "LoginTargetController.h"
 #import "Defaults.h"
+#import "credential.h"
 
 @interface LoginTargetController()
 @property (strong) NSArray<LoginTargetItem*>*items;
@@ -42,7 +43,6 @@
             continue;
         }
         LoginTargetItem *i = [LoginTargetItem itemWithUrl:[NSURL URLWithString:s]];
-        i.deletable = TRUE;
         [items addObject:i];
     }
     self.items = items;
@@ -71,11 +71,23 @@
     [[NSUserDefaults standardUserDefaults] setObject:servers forKey:DEF_SERVERS];
 }
 
+-(IBAction)toggleEditing:(id)sender {
+    self.isEditing = !self.isEditing;
+    if (!self.isEditing) {
+        for (LoginTargetItem *i in self.items) {
+            i.deletable = FALSE;
+        }
+    } else {
+        for (LoginTargetItem *i in self.items) {
+            i.deletable = !i.url.isStandardEndpoint;
+        }
+    }
+}
+
 -(IBAction)addNewUrl:(id)sender {
     NSString *u = self.url.stringValue;
-    NSString *lc = [u lowercaseString];
-    if ([lc hasPrefix:@"https://"] && [lc hasSuffix:@".my.salesforce.com"]) {
-        NSURL *url = [NSURL URLWithString:u];
+    if (u.length > 0) {
+        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://%@.my.salesforce.com", u]];
         NSArray *existing = [self.items filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"url=%@", url]];
         if (existing.count > 0) {
             NSAlert *a = [[NSAlert alloc] init];
@@ -95,7 +107,7 @@
         NSAlert *a = [[NSAlert alloc] init];
         a.alertStyle = NSAlertStyleWarning;
         a.messageText = @"Invalid URL";
-        a.informativeText = @"The url must start with 'https://' and end with '.my.salesforce.com'";
+        a.informativeText = @"Please enter the name of the organizations custom domain name.";
         [a runModal];
     }
 }

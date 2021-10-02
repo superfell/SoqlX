@@ -32,6 +32,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong) IBOutlet NSTextField *url;
 
 -(IBAction)addNewUrl:(id)sender;
+-(IBAction)toggleEditing:(id)sender;
+
+@property (assign) BOOL isEditing;
 
 @end
 
