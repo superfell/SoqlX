@@ -28,7 +28,7 @@
                     <color key="contentTintColor" name="systemBlueColor" catalog="System" colorSpace="catalog"/>
                     <connections>
                         <action selector="onClick:" target="tlb-Yy-7iN" id="sUQ-bB-0gR"/>
-                        <binding destination="tlb-Yy-7iN" name="title" keyPath="target.name" id="QQm-ng-cSo"/>
+                        <binding destination="tlb-Yy-7iN" name="title" keyPath="target.url.friendlyHostLabel" id="ZPr-Dp-5ET"/>
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lu1-Pi-IOh">

@@ -31,8 +31,8 @@
 -(instancetype)init {
     self = [super init];
     NSMutableArray *items = [NSMutableArray arrayWithObjects:
-                         [LoginTargetItem itemWithName:@"Production" url:[NSURL URLWithString:LOGIN_LOGIN]],
-                         [LoginTargetItem itemWithName:@"Sandbox" url:[NSURL URLWithString:LOGIN_TEST]],
+                         [LoginTargetItem itemWithUrl:[NSURL URLWithString:LOGIN_LOGIN]],
+                         [LoginTargetItem itemWithUrl:[NSURL URLWithString:LOGIN_TEST]],
                          nil];
     NSArray *servers = [[NSUserDefaults standardUserDefaults] arrayForKey:DEF_SERVERS];
     for (NSString *s in servers) {

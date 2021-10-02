@@ -44,7 +44,7 @@
               atIndexPath:(NSIndexPath *)indexPath {
     
     NSView *header = [collectionView makeSupplementaryViewOfKind:kind withIdentifier:@"h" forIndexPath:indexPath];
-    [header.subviews[0] setStringValue:self.items[indexPath.section][0].serverLabel];
+    [header.subviews[0] setStringValue:self.items[indexPath.section][0].server.friendlyHostLabel];
     return header;
 }
 

@@ -20,23 +20,18 @@
 //
 
 #import "LoginTargetViewItem.h"
-
+#import "credential.h"
 
 @implementation LoginTargetItem
 
-+(instancetype)itemWithName:(NSString *)n url:(NSURL*)u {
++(instancetype)itemWithUrl:(NSURL*)u {
     LoginTargetItem *x = [[LoginTargetItem alloc] init];
-    x.name = n;
     x.url = u;
     return x;
 }
 
-+(instancetype)itemWithUrl:(NSURL*)u {
-    return [self itemWithName:u.host url:u];
-}
-
 -(NSString*)description {
-    return self.name;
+    return self.url.friendlyHostLabel;
 }
 
 @end

@@ -29,7 +29,15 @@
 - (CFTypeRef)SecAttrProtocol {
     return [[[self scheme] lowercaseString] isEqualToString:@"http"] ? kSecAttrProtocolHTTP : kSecAttrProtocolHTTPS;
 }
-
+-(NSString*)friendlyHostLabel {
+    if ([self.host caseInsensitiveCompare:@"login.salesforce.com"] == NSOrderedSame) {
+        return @"Production";
+    }
+    if ([self.host caseInsensitiveCompare:@"test.salesforce.com"] == NSOrderedSame) {
+        return @"Sandbox";
+    }
+    return self.host;
+}
 @end
 
 @implementation Credential
@@ -143,16 +151,6 @@ NSString *OAUTH_TRAILER = @"@OAUTH";
 
 - (CredentialType) type {
     return [username hasSuffix:OAUTH_TRAILER] ? ctRefreshToken : ctPassword;
-}
-
--(NSString*)serverLabel {
-    if ([server.host caseInsensitiveCompare:@"login.salesforce.com"] == NSOrderedSame) {
-        return @"Production";
-    }
-    if ([server.host caseInsensitiveCompare:@"test.salesforce.com"] == NSOrderedSame) {
-        return @"Sandbox";
-    }
-    return server.host;
 }
 
 - (NSString *)password {

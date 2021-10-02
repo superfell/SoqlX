@@ -47,7 +47,6 @@ typedef CF_ENUM(UInt32, CredentialType) {
 @property (readonly) NSString *username;
 @property (readonly) NSString *password;
 @property (readonly) CredentialType type;
-@property (readonly) NSString *serverLabel;
 
 @property (copy) NSString *comment;
 
@@ -58,4 +57,5 @@ typedef CF_ENUM(UInt32, CredentialType) {
 @interface NSURL (ZKKeychain)
 @property (readonly) SecProtocolType SecProtocolType;
 @property (readonly) CFTypeRef SecAttrProtocol;
+@property (readonly) NSString *friendlyHostLabel;
 @end

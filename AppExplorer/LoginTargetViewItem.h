@@ -24,10 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LoginTargetItem : NSObject
 
-+(instancetype)itemWithName:(NSString *)n url:(NSURL*)u;
 +(instancetype)itemWithUrl:(NSURL*)u;
 
-@property (strong) NSString *name;
 @property (strong) NSURL    *url;
 @property (assign) BOOL     deletable;
 
