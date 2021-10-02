@@ -28,22 +28,22 @@ typedef CF_ENUM(UInt32, CredentialType) {
 };
 
 @interface Credential : NSObject {
-    NSString            *server;
+    NSURL               *server;
     NSString            *username;
     SecKeychainItemRef   keychainItem;
 }
 
-+ (NSArray *)credentialsForServer:(NSString *)protocolAndServer;
++ (NSArray *)credentialsForServer:(NSURL *)protocolAndServer;
 
-+ (id)forServer:(NSString *)server username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem;
++ (id)forServer:(NSURL *)server username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem;
 
-+ (id)createCredentialForServer:(NSString *)protocolAndServer username:(NSString *)un password:(NSString *)pwd;
-+ (id)createOAuthCredential:(NSString *)protocolAndServer username:(NSString *)un refreshToken:(NSString *)tkn;
++ (id)createCredentialForServer:(NSURL *)protocolAndServer username:(NSString *)un password:(NSString *)pwd;
++ (id)createOAuthCredential:(NSURL *)protocolAndServer username:(NSString *)un refreshToken:(NSString *)tkn;
 
-- (instancetype)initForServer:(NSString *)server username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem NS_DESIGNATED_INITIALIZER;
+- (instancetype)initForServer:(NSURL *)server username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
-@property (readonly) NSString *server;
+@property (readonly) NSURL *server;
 @property (readonly) NSString *username;
 @property (readonly) NSString *password;
 @property (readonly) CredentialType type;

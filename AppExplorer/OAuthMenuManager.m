@@ -78,7 +78,7 @@ OSStatus keychainCallback (SecKeychainEvent keychainEvent, SecKeychainCallbackIn
     NSMenu *menu = self.menu.submenu;
     [menu removeAllItems];
     for (NSString *server in servers) {
-        NSArray<Credential*> *credentials = [Credential credentialsForServer:server];
+        NSArray<Credential*> *credentials = [Credential credentialsForServer:[NSURL URLWithString:server]];
         credentials = [credentials filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type=%d", ctRefreshToken]];
         if (credentials.count == 0) {
             continue;

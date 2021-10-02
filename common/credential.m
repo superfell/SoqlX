@@ -43,9 +43,8 @@
 // those at all.
 NSString *OAUTH_TRAILER = @"@OAUTH";
 
-+ (NSArray *)credentialsForServer:(NSString *)protocolAndServer {
-    NSURL *url = [NSURL URLWithString:protocolAndServer];
-    NSString *server = [url host];
++ (NSArray *)credentialsForServer:(NSURL *)url {
+    NSString *server = url.host;
     
     NSMutableArray *results = [NSMutableArray array];
     NSArray *queryResults = nil;
@@ -63,7 +62,7 @@ NSString *OAUTH_TRAILER = @"@OAUTH";
         for (NSDictionary *item in queryResults) {
             NSString *username = item[(__bridge NSString*)kSecAttrAccount];
             SecKeychainItemRef itemRef = (__bridge SecKeychainItemRef)item[(__bridge NSString*)kSecValueRef];
-            [results addObject:[Credential forServer:protocolAndServer username:username keychainItem:itemRef]];
+            [results addObject:[Credential forServer:url username:username keychainItem:itemRef]];
         }
     } else if (status == errSecItemNotFound) {
         NSLog(@"No keychain items for server %@", server);
@@ -73,12 +72,11 @@ NSString *OAUTH_TRAILER = @"@OAUTH";
     return results;
 }
 
-+ (id)forServer:(NSString *)server username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem {
++ (id)forServer:(NSURL *)server username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem {
     return [[Credential alloc] initForServer:server username:un keychainItem:kcItem];
 }
 
-+ (id)createCredential:(NSString *)protocolAndServer username:(NSString *)un password:(NSString *)pwd {
-    NSURL *url = [NSURL URLWithString:protocolAndServer];
++ (id)createCredential:(NSURL *)url username:(NSString *)un password:(NSString *)pwd {
     NSString *server = [url host];
     SecKeychainItemRef itemRef;
     OSStatus status = SecKeychainAddInternetPassword (
@@ -99,23 +97,23 @@ NSString *OAUTH_TRAILER = @"@OAUTH";
         NSLog(@"SecKeychainAddInternetPassword returned error %ld", (long)status);
         return nil;
     }
-    Credential *result = [Credential forServer:protocolAndServer username:un keychainItem:itemRef];
+    Credential *result = [Credential forServer:url username:un keychainItem:itemRef];
     CFRelease(itemRef);
     return result;
 }
 
-+ (id)createOAuthCredential:(NSString *)protocolAndServer username:(NSString *)un refreshToken:(NSString *)tkn {
++ (id)createOAuthCredential:(NSURL *)protocolAndServer username:(NSString *)un refreshToken:(NSString *)tkn {
     NSString *mangledUsername = [un stringByAppendingString:OAUTH_TRAILER];
     Credential *c = [self createCredential:protocolAndServer username:mangledUsername password:tkn];
     c.comment = @"OAuth token";
     return c;
 }
 
-+ (id)createCredentialForServer:(NSString *)protocolAndServer username:(NSString *)un password:(NSString *)pwd {
++ (id)createCredentialForServer:(NSURL *)protocolAndServer username:(NSString *)un password:(NSString *)pwd {
     return [self createCredential:protocolAndServer username:un password:pwd];
 }
 
-- (id)initForServer:(NSString *)s username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem {
+- (id)initForServer:(NSURL *)s username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem {
     self = [super init];
     server = [s copy];
     username = [un copy];
@@ -132,7 +130,7 @@ NSString *OAUTH_TRAILER = @"@OAUTH";
     return [NSString stringWithFormat:@"%@ at %@", self.username, server];
 }
 
-- (NSString *)server {
+- (NSURL *)server {
     return server;
 }
 
@@ -148,14 +146,13 @@ NSString *OAUTH_TRAILER = @"@OAUTH";
 }
 
 -(NSString*)serverLabel {
-    if ([server caseInsensitiveCompare:LOGIN_LOGIN] == NSOrderedSame) {
+    if ([server.host caseInsensitiveCompare:@"login.salesforce.com"] == NSOrderedSame) {
         return @"Production";
     }
-    if ([server caseInsensitiveCompare:LOGIN_TEST] == NSOrderedSame) {
+    if ([server.host caseInsensitiveCompare:@"test.salesforce.com"] == NSOrderedSame) {
         return @"Sandbox";
     }
-    NSURL *u = [NSURL URLWithString:server];
-    return u.host;
+    return server.host;
 }
 
 - (NSString *)password {

@@ -199,7 +199,7 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
         [def setObject:@"OAUTH" forKey:login_lastLoginType];
         
         // Success, see if there's an existing keychain entry for this oauth token
-        NSArray<Credential*> *creds = [Credential credentialsForServer:auth.authHostUrl.absoluteString];
+        NSArray<Credential*> *creds = [Credential credentialsForServer:auth.authHostUrl];
         for (Credential *cred in creds) {
             if ((cred.type == ctRefreshToken) && ([cred.username isEqualToString:result.userName])) {
                 // update the keychain entry with the new refresh token
@@ -216,7 +216,7 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
                     altButton:@"No thanks"
                     completionHandler:^(NSModalResponse returnCode) {
                         if (NSAlertFirstButtonReturn == returnCode) {
-                            [Credential createOAuthCredential:auth.authHostUrl.absoluteString
+                            [Credential createOAuthCredential:auth.authHostUrl
                                                      username:result.userName
                                                  refreshToken:auth.refreshToken];
                         }
@@ -245,7 +245,7 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
         // Should never happen
         return nil;
     }
-    NSArray<Credential*> *creds = [Credential credentialsForServer:server];
+    NSArray<Credential*> *creds = [Credential credentialsForServer:[NSURL URLWithString:server]];
     for (Credential *c in creds) {
         if ((c.type == ctRefreshToken) && [c.username isEqualToString:username]) {
             return c;
@@ -294,7 +294,7 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
 
     ZKSforceClient *c = [self newClient:self.preferedApiVersion];
     [c loginWithRefreshToken:cred.password
-                     authUrl:[NSURL URLWithString:cred.server]
+                     authUrl:cred.server
             oAuthConsumerKey:OAUTH_CID
                    failBlock:failBlock
                completeBlock:^{
