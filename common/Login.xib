@@ -71,14 +71,14 @@ Gw
                         </connections>
                     </button>
                     <scrollView wantsLayer="YES" fixedFrame="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k0s-ri-EW0">
-                        <rect key="frame" x="20" y="87" width="331" height="185"/>
+                        <rect key="frame" x="20" y="109" width="331" height="163"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="AJI-Hf-Hm0">
-                            <rect key="frame" x="0.0" y="0.0" width="331" height="185"/>
+                            <rect key="frame" x="0.0" y="0.0" width="331" height="163"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <collectionView id="3rR-I4-met">
-                                    <rect key="frame" x="0.0" y="0.0" width="331" height="185"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="331" height="163"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                                     <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="3" id="XsY-iQ-gAU">
                                         <size key="itemSize" width="300" height="35"/>
@@ -100,9 +100,9 @@ Gw
                         </scroller>
                     </scrollView>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bva-Er-Nym">
-                        <rect key="frame" x="18" y="63" width="327" height="16"/>
+                        <rect key="frame" x="18" y="63" width="327" height="38"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                        <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="m63-d4-Fzy">
+                        <textFieldCell key="cell" alignment="center" title="Label" id="m63-d4-Fzy">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2008,2013 Simon Fell
+// Copyright (c) 2006-2008,2013,2021 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -22,40 +22,27 @@
 #import <Cocoa/Cocoa.h>
 #include <Security/Security.h>
 
-typedef CF_ENUM(UInt32, CredentialType) {
-    ctPassword        = 1,
-    ctRefreshToken    = 2,
-};
-
 @interface Credential : NSObject {
     NSURL               *server;
     NSString            *username;
     SecKeychainItemRef   keychainItem;
 }
 
-+ (NSArray *)credentialsForServer:(NSURL *)protocolAndServer;
-
-+ (id)forServer:(NSURL *)server username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem;
-
-+ (id)createCredentialForServer:(NSURL *)protocolAndServer username:(NSString *)un password:(NSString *)pwd;
-+ (id)createOAuthCredential:(NSURL *)protocolAndServer username:(NSString *)un refreshToken:(NSString *)tkn;
++ (NSArray<Credential*> *)credentials;
++ (instancetype)createCredential:(NSURL *)server username:(NSString *)un refreshToken:(NSString *)tkn;
 
 - (instancetype)initForServer:(NSURL *)server username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
-@property (readonly) NSURL *server;
+@property (readonly) NSURL    *server;
 @property (readonly) NSString *username;
-@property (readonly) NSString *password;
-@property (readonly) CredentialType type;
+@property (readonly) NSString *token;
 
-@property (copy) NSString *comment;
-
--(OSStatus)updatePassword:(NSString *)password;
+-(OSStatus)updateToken:(NSString *)token;
+// TODO delete
 
 @end
 
 @interface NSURL (ZKKeychain)
-@property (readonly) SecProtocolType SecProtocolType;
-@property (readonly) CFTypeRef SecAttrProtocol;
 @property (readonly) NSString *friendlyHostLabel;
 @end

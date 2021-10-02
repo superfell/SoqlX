@@ -199,11 +199,11 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
         [def setObject:@"OAUTH" forKey:login_lastLoginType];
         
         // Success, see if there's an existing keychain entry for this oauth token
-        NSArray<Credential*> *creds = [Credential credentialsForServer:auth.authHostUrl];
+        NSArray<Credential*> *creds = [Credential credentials];
         for (Credential *cred in creds) {
-            if ((cred.type == ctRefreshToken) && ([cred.username isEqualToString:result.userName])) {
+            if ([cred.username isEqualToString:result.userName] && [cred.server.host isEqualToString:auth.authHostUrl.host]) {
                 // update the keychain entry with the new refresh token
-                [cred updatePassword:auth.refreshToken];
+                [cred updateToken:auth.refreshToken];
                 // and we're done
                 [self closeLoginUi];
                 [self.delegate loginController:self loginCompleted:c];
@@ -216,9 +216,9 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
                     altButton:@"No thanks"
                     completionHandler:^(NSModalResponse returnCode) {
                         if (NSAlertFirstButtonReturn == returnCode) {
-                            [Credential createOAuthCredential:auth.authHostUrl
-                                                     username:result.userName
-                                                 refreshToken:auth.refreshToken];
+                            [Credential createCredential:auth.authHostUrl
+                                                username:result.userName
+                                            refreshToken:auth.refreshToken];
                         }
                         [self closeLoginUi];
                         [self.delegate loginController:self loginCompleted:c];
@@ -236,18 +236,15 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
 // returns nil.
 - (Credential*)lastOAuthCredential {
     NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
-    if (![[def objectForKey:login_lastLoginType] isEqualToString:@"OAUTH"]) {
-        return nil;
-    }
     NSString *server = [def objectForKey:login_lastOAuthServer];
     NSString *username = [def objectForKey:login_lastOAuthUsernameKey];
     if (server == nil || username == nil) {
-        // Should never happen
         return nil;
     }
-    NSArray<Credential*> *creds = [Credential credentialsForServer:[NSURL URLWithString:server]];
+    NSArray<Credential*> *creds = [Credential credentials];
+    NSString *host = [NSURL URLWithString:server].host;
     for (Credential *c in creds) {
-        if ((c.type == ctRefreshToken) && [c.username isEqualToString:username]) {
+        if ([c.username isEqualToString:username] && [host isEqualToString:c.server.host]) {
             return c;
         }
     }
@@ -293,7 +290,7 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
     };
 
     ZKSforceClient *c = [self newClient:self.preferedApiVersion];
-    [c loginWithRefreshToken:cred.password
+    [c loginWithRefreshToken:cred.token
                      authUrl:cred.server
             oAuthConsumerKey:OAUTH_CID
                    failBlock:failBlock

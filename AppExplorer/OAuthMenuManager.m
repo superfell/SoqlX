@@ -22,6 +22,7 @@
 #import "OAuthMenuManager.h"
 #import "credential.h"
 #import "AppDelegate.h"
+#import "NSArray+Partition.h"
 
 @interface OAuthMenuManager()
 -(void)updateCredentialList;
@@ -35,58 +36,30 @@ OSStatus keychainCallback (SecKeychainEvent keychainEvent, SecKeychainCallbackIn
     return noErr;
 }
 
-- (void)dealloc {
-    [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:@"servers"];
+-(void)dealloc {
     SecKeychainRemoveCallback(keychainCallback);
 }
 
-- (void)awakeFromNib {
+-(void)awakeFromNib {
     OSStatus s = SecKeychainAddCallback(keychainCallback, kSecAddEventMask | kSecDeleteEventMask | kSecUpdateEventMask, (__bridge void * _Nullable)(self));
     if (s != noErr) {
         NSLog(@"Unable to register for keychain changes, got error %ld", (long)s);
     }
-    [[NSUserDefaults standardUserDefaults] addObserver:self
-                                            forKeyPath:@"servers"
-                                               options:NSKeyValueObservingOptionInitial
-                                               context:nil];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath
-                      ofObject:(id)object
-                        change:(NSDictionary<NSKeyValueChangeKey, id> *)change
-                       context:(void *)context {
     [self updateCredentialList];
 }
 
 -(void)updateCredentialList {
-    NSMutableArray<NSString*> *servers = [[NSMutableArray alloc] initWithCapacity:4];
-    NSMutableArray<Credential*>* allCreds = [NSMutableArray arrayWithCapacity:4];
-    
-    // Because we've been siliently mapping www -> login, login.salesforce.com might not appear
-    // in the prefs list of servers, but could have oauth tokens for it. So we manually add that
-    // in to the list to check.
-    [servers addObject:@"https://login.salesforce.com"];
-    [[[NSUserDefaults standardUserDefaults] objectForKey:@"servers"] enumerateObjectsUsingBlock:^(NSString *  _Nonnull server, NSUInteger idx, BOOL * _Nonnull stop) {
-        for (NSString *existing in servers) {
-            if ([existing caseInsensitiveCompare:server] == NSOrderedSame) {
-                return;
-            }
-        }
-        [servers addObject:server];
-    }];
+    NSArray<Credential*>* all = [Credential credentials];
+    NSArray<NSArray<Credential*>*> *byServer = [all partitionByKeyPath:@"server.host"];
+
     BOOL addSeparator = FALSE;
     NSMenu *menu = self.menu.submenu;
     [menu removeAllItems];
-    for (NSString *server in servers) {
-        NSArray<Credential*> *credentials = [Credential credentialsForServer:[NSURL URLWithString:server]];
-        credentials = [credentials filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type=%d", ctRefreshToken]];
-        if (credentials.count == 0) {
-            continue;
-        }
+    for (NSArray<Credential*> *credentials in byServer) {
         if (addSeparator) {
             [menu addItem:[NSMenuItem separatorItem]];
         }
-        NSMenuItem *s = [[NSMenuItem alloc] initWithTitle:server action:nil keyEquivalent:@""];
+        NSMenuItem *s = [[NSMenuItem alloc] initWithTitle:credentials[0].server.friendlyHostLabel action:nil keyEquivalent:@""];
         [menu addItem:s];
         for (Credential *c in credentials) {
             NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:c.username action:nil keyEquivalent:@""];
@@ -95,10 +68,9 @@ OSStatus keychainCallback (SecKeychainEvent keychainEvent, SecKeychainCallbackIn
             [item setAction:@selector(openNewWindowForOAuthCredential:)];
             [menu addItem:item];
         }
-        [allCreds addObjectsFromArray:credentials];
         addSeparator = TRUE;
     }
-    self.all = allCreds;
+    self.all = all;
 }
 
 @end
