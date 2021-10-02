@@ -57,10 +57,13 @@
 
 -(void)setPopupHeight {
     NSRect f = self.containerView.frame;
-    f.size.height = self.items.count * 70 + 50;
-    self.containerView.frame = f;
+    NSSize vis = self.targets.frame.size;
+    NSSize all = self.targets.collectionViewLayout.collectionViewContentSize;
+    NSRect new = f;
+    new.size.height = f.size.height - vis.height + all.height;
+    self.containerView.frame = new;
     // TODO, no doubt I'll be made to regret this at some point.
-    [[self.containerView.window valueForKey:@"_popover"] setContentSize:f.size];
+    [[self.containerView.window valueForKey:@"_popover"] setContentSize:new.size];
 }
 
 -(void)setDefaultsFromItems {
@@ -86,8 +89,8 @@
         i.deletable = TRUE;
         self.items = [self.items arrayByAddingObject:i];
         [self setDefaultsFromItems];
+        [self.targets reloadData];
         [self setPopupHeight];
-        [self.targets insertItemsAtIndexPaths:[NSSet setWithObject:[NSIndexPath indexPathForItem:self.items.count-1 inSection:0]]];
     } else {
         NSAlert *a = [[NSAlert alloc] init];
         a.alertStyle = NSAlertStyleWarning;
