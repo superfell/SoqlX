@@ -49,7 +49,7 @@ OSStatus keychainCallback (SecKeychainEvent keychainEvent, SecKeychainCallbackIn
 }
 
 -(void)updateCredentialList {
-    NSArray<Credential*>* all = [Credential credentials];
+    NSArray<Credential*>* all = [Credential credentialsInMruOrder];
     NSArray<NSArray<Credential*>*> *byServer = [all partitionByKeyPath:@"server.host"];
 
     BOOL addSeparator = FALSE;
@@ -70,7 +70,6 @@ OSStatus keychainCallback (SecKeychainEvent keychainEvent, SecKeychainCallbackIn
         }
         addSeparator = TRUE;
     }
-    self.all = all;
 }
 
 @end

@@ -22,7 +22,6 @@
 #import "ZKLoginController.h"
 #import <ZKSforce/ZKSforce.h>
 #import "credential.h"
-#import "AppDelegate.h"
 #import "OAuthMenuManager.h"
 #import "CredentialsDataSource.h"
 #import "Defaults.h"
@@ -53,10 +52,6 @@ static int nextControllerId = 42;
 
 @implementation ZKLoginController
 
-// keys for items in the mru entries
-NSString *KEY_HOST = @"host";
-NSString *KEY_USERNAME = @"userName";
-
 +(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
     NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
     if ([key isEqualToString:@"canEdit"]) {
@@ -78,13 +73,13 @@ NSString *KEY_USERNAME = @"userName";
     return self;
 }
 
+
 - (void)awakeFromNib {
     [self.savedLogins registerNib:[[NSNib alloc] initWithNibNamed:@"LoginRowViewItem" bundle:nil] forItemWithIdentifier:@"row"];
     [self.savedLogins registerNib:[[NSNib alloc] initWithNibNamed:@"LoginHeaderRowViewItem" bundle:nil]
          forSupplementaryViewOfKind:NSCollectionElementKindSectionHeader
                      withIdentifier:@"h"];
-    AppDelegate *d = (AppDelegate*) [NSApp delegate];
-    self.credDataSource = [[CredentialsDataSource alloc] initWithCreds:d.oauthManager.all];
+    self.credDataSource = [[CredentialsDataSource alloc] initWithCreds:[Credential credentialsInMruOrder]];
     self.credDataSource.delegate = self;
     self.savedLogins.dataSource = self.credDataSource;
     self.targetController.delegate = self;
@@ -202,8 +197,8 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
 -(void)addUserToMru:(NSString*)username host:(NSString*)hostname {
     NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
     NSDictionary *mruEntry = @{
-        KEY_USERNAME : username,
-        KEY_HOST     : hostname,
+        LOGIN_MRU_USERNAME : username,
+        LOGIN_MRU_HOST     : hostname,
     };
     NSMutableArray *mru = [[def arrayForKey:DEF_LOGIN_MRU] mutableCopy];
     [mru removeObject:mruEntry];
@@ -275,8 +270,8 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
         return nil;
     }
     NSDictionary *latest = mru[0];
-    NSString *host = latest[KEY_HOST];
-    NSString *username = latest[KEY_USERNAME];
+    NSString *host = latest[LOGIN_MRU_HOST];
+    NSString *username = latest[LOGIN_MRU_USERNAME];
     if (username == nil || host == nil) {
         // shouldn't happen
         return nil;

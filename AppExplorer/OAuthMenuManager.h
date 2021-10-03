@@ -28,7 +28,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface OAuthMenuManager : NSObject
 
 @property (strong) IBOutlet NSMenuItem *menu;
-@property (strong) NSArray<Credential*>* all;
 
 @end
 

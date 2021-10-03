@@ -27,3 +27,7 @@ NSString *LOGIN_WWW  = @"https://www.salesforce.com";
 
 NSString *DEF_SERVERS   = @"servers";
 NSString *DEF_LOGIN_MRU = @"login_MRU";
+// keys for items in the mru entries
+NSString *LOGIN_MRU_HOST = @"host";
+NSString *LOGIN_MRU_USERNAME = @"userName";
+

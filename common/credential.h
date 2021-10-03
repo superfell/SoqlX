@@ -29,6 +29,8 @@
 }
 
 + (NSArray<Credential*> *)credentials;
++ (NSArray<Credential*> *)credentialsInMruOrder;
+
 + (instancetype)createCredential:(NSURL *)server username:(NSString *)un refreshToken:(NSString *)tkn;
 
 - (instancetype)initForServer:(NSURL *)server username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem NS_DESIGNATED_INITIALIZER;

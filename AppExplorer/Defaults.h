@@ -28,3 +28,7 @@ extern NSString *LOGIN_WWW;
 extern NSString *DEF_SERVERS;
 
 extern NSString *DEF_LOGIN_MRU;
+// keys for items in the mru entries
+extern NSString *LOGIN_MRU_HOST;
+extern NSString *LOGIN_MRU_USERNAME;
+

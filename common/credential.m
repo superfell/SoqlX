@@ -69,6 +69,29 @@ NSString *AUTH_SVC_NAME = @"com.pocketsoap.osx.soqlx.auth";
     return results;
 }
 
++(NSArray<Credential*>*)credentialsInMruOrder {
+    NSMutableArray<Credential*>* creds = [[self credentials] mutableCopy];
+    NSInteger __block targetIdx = 0;
+    NSArray *mru = [[NSUserDefaults standardUserDefaults] arrayForKey:DEF_LOGIN_MRU];
+    [mru enumerateObjectsUsingBlock:^(id  _Nonnull mruEntry, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSString *username = mruEntry[LOGIN_MRU_USERNAME];
+        NSString *host = mruEntry[LOGIN_MRU_HOST];
+        NSInteger matchIdx = [creds indexOfObjectPassingTest:^BOOL(Credential * _Nonnull c, NSUInteger idx, BOOL * _Nonnull stop) {
+            return [c.username isEqual:username] && [c.server.host caseInsensitiveCompare:host] == NSOrderedSame;
+        }];
+        if (matchIdx != NSNotFound) {
+            if (matchIdx != targetIdx) {
+                Credential *c = creds[matchIdx];
+                [creds removeObjectAtIndex:matchIdx];
+                [creds insertObject:c atIndex:targetIdx];
+            }
+            targetIdx++;
+            *stop = targetIdx == creds.count;
+        }
+    }];
+    return creds;
+}
+
 +(id)createCredential:(NSURL *)url username:(NSString *)un refreshToken:(NSString *)tkn {
     NSDictionary* item = @{
         (__bridge NSString*)kSecClass:          (__bridge NSString*)kSecClassGenericPassword,
