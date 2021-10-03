@@ -26,3 +26,5 @@ extern NSString *LOGIN_TEST;
 extern NSString *LOGIN_WWW;
 
 extern NSString *DEF_SERVERS;
+
+extern NSString *DEF_LOGIN_MRU;

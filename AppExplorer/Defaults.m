@@ -25,4 +25,5 @@ NSString *LOGIN_LOGIN= @"https://login.salesforce.com";
 NSString *LOGIN_TEST = @"https://test.salesforce.com";
 NSString *LOGIN_WWW  = @"https://www.salesforce.com";
 
-NSString *DEF_SERVERS = @"servers";
+NSString *DEF_SERVERS   = @"servers";
+NSString *DEF_LOGIN_MRU = @"login_MRU";

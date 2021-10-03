@@ -25,6 +25,7 @@
 #import "AppDelegate.h"
 #import "OAuthMenuManager.h"
 #import "CredentialsDataSource.h"
+#import "Defaults.h"
 
 int DEFAULT_API_VERSION = 53;
 
@@ -52,9 +53,9 @@ static int nextControllerId = 42;
 
 @implementation ZKLoginController
 
-static NSString *login_lastOAuthUsernameKey = @"login_lastOAuthUserName";
-static NSString *login_lastOAuthServer = @"login_lastOAuthServer";
-static NSString *login_lastLoginType = @"login_lastType";
+// keys for items in the mru entries
+NSString *KEY_HOST = @"host";
+NSString *KEY_USERNAME = @"userName";
 
 +(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
     NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
@@ -198,6 +199,18 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
     // we don't care
 }
 
+-(void)addUserToMru:(NSString*)username host:(NSString*)hostname {
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    NSDictionary *mruEntry = @{
+        KEY_USERNAME : username,
+        KEY_HOST     : hostname,
+    };
+    NSMutableArray *mru = [[def arrayForKey:DEF_LOGIN_MRU] mutableCopy];
+    [mru removeObject:mruEntry];
+    [mru insertObject:mruEntry atIndex:0];
+    [def setValue:mru forKey:DEF_LOGIN_MRU];
+}
+
 -(void)openOAuthResponse:(NSURL *)url apiVersion:(int)apiVersion {
     ZKSforceClient *c = [self newClient:apiVersion];
     NSError *err = [c loginFromOAuthCallbackUrl:url.absoluteString oAuthConsumerKey:OAUTH_CID];
@@ -217,10 +230,7 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
 
     } completeBlock:^(ZKUserInfo *result) {
         ZKOAuthInfo *auth = (ZKOAuthInfo*)c.authenticationInfo;
-        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
-        [def setObject:result.userName forKey:login_lastOAuthUsernameKey];
-        [def setObject:auth.authHostUrl.absoluteString forKey:login_lastOAuthServer];
-        [def setObject:@"OAUTH" forKey:login_lastLoginType];
+        [self addUserToMru:result.userName host:auth.authHostUrl.host];
         
         // Success, see if there's an existing keychain entry for this oauth token
         NSArray<Credential*> *creds = [Credential credentials];
@@ -260,13 +270,18 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
 // returns nil.
 - (Credential*)lastOAuthCredential {
     NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
-    NSString *server = [def objectForKey:login_lastOAuthServer];
-    NSString *username = [def objectForKey:login_lastOAuthUsernameKey];
-    if (server == nil || username == nil) {
+    NSArray *mru = [def arrayForKey:DEF_LOGIN_MRU];
+    if (mru.count == 0) {
+        return nil;
+    }
+    NSDictionary *latest = mru[0];
+    NSString *host = latest[KEY_HOST];
+    NSString *username = latest[KEY_USERNAME];
+    if (username == nil || host == nil) {
+        // shouldn't happen
         return nil;
     }
     NSArray<Credential*> *creds = [Credential credentials];
-    NSString *host = [NSURL URLWithString:server].host;
     for (Credential *c in creds) {
         if ([c.username isEqualToString:username] && [host isEqualToString:c.server.host]) {
             return c;
@@ -323,6 +338,7 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
                                       failBlock:failBlock
                                   completeBlock:^(ZKUserInfo *result) {
             [self closeLoginUi];
+            [self addUserToMru:result.userName host:cred.server.host];
             [self.delegate loginController:self loginCompleted:c];
         }];
     }];
