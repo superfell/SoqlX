@@ -8,7 +8,6 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="LoginRowViewItem">
             <connections>
-                <outlet property="button" destination="whE-rG-E9J" id="1r7-Tt-kCe"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
         </customObject>
