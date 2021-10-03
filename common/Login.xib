@@ -18,11 +18,6 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <userDefaultsController representsSharedInstance="YES" id="33" userLabel="Shared Defaults"/>
-        <arrayController objectClassName="Credential" editable="NO" avoidsEmptySelection="NO" id="38" userLabel="Credentials">
-            <declaredKeys>
-                <string>username</string>
-            </declaredKeys>
-        </arrayController>
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="lpo-xH-vTX" userLabel="OAuth">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
@@ -48,7 +43,7 @@
                         </connections>
                     </progressIndicator>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hMH-fc-soS">
-                        <rect key="frame" x="18" y="280" width="327" height="16"/>
+                        <rect key="frame" x="18" y="276" width="327" height="16"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Saved Logins" id="t4e-2X-Gfd">
                             <font key="font" metaFont="systemBold"/>
@@ -71,14 +66,14 @@ Gw
                         </connections>
                     </button>
                     <scrollView wantsLayer="YES" fixedFrame="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k0s-ri-EW0">
-                        <rect key="frame" x="20" y="109" width="331" height="163"/>
+                        <rect key="frame" x="20" y="109" width="331" height="150"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="AJI-Hf-Hm0">
-                            <rect key="frame" x="0.0" y="0.0" width="331" height="163"/>
+                            <rect key="frame" x="0.0" y="0.0" width="331" height="150"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <collectionView id="3rR-I4-met">
-                                    <rect key="frame" x="0.0" y="0.0" width="331" height="163"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="331" height="150"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                                     <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="3" id="XsY-iQ-gAU">
                                         <size key="itemSize" width="300" height="35"/>
@@ -120,6 +115,22 @@ Gw
                         </buttonCell>
                         <connections>
                             <action selector="startOAuthLogin:" target="-2" id="5ju-Ob-8fq"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ee1-Im-VJT">
+                        <rect key="frame" x="327" y="267" width="24" height="24"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSAdvanced" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" imageScaling="proportionallyDown" inset="2" id="uZq-KP-mZY">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="toggleEditing:" target="-2" id="Kjq-Iy-2Ea"/>
+                            <binding destination="-2" name="hidden" keyPath="canEdit" id="IgP-gg-EQM">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
                         </connections>
                     </button>
                 </subviews>

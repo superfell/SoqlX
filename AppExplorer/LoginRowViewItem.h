@@ -28,12 +28,14 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol LoginRowViewItemDelegate<NSObject>
 @required
 -(void)credentialSelected:(Credential*)c;
+-(void)deleteCredential:(Credential*)c;
 @end
 
 @interface LoginRowViewItem : NSCollectionViewItem
 
 @property (strong) Credential *credential;
 @property (weak) NSObject<LoginRowViewItemDelegate> *delegate;
+@property (assign) BOOL deletable;
 
 @end
 

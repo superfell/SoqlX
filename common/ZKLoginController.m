@@ -56,6 +56,14 @@ static NSString *login_lastOAuthUsernameKey = @"login_lastOAuthUserName";
 static NSString *login_lastOAuthServer = @"login_lastOAuthServer";
 static NSString *login_lastLoginType = @"login_lastType";
 
++(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
+    NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
+    if ([key isEqualToString:@"canEdit"]) {
+        return [paths setByAddingObject:@"credDataSource"];
+    }
+    return paths;
+}
+
 +(NSString*)appClientId {
     NSDictionary *plist = [[NSBundle mainBundle] infoDictionary];
     NSString *cid = [NSString stringWithFormat:@"%@/%@", [plist objectForKey:@"CFBundleName"], [plist objectForKey:@"CFBundleVersion"]];
@@ -81,15 +89,31 @@ static NSString *login_lastLoginType = @"login_lastType";
     self.targetController.delegate = self;
 }
 
+-(BOOL)canEdit {
+    return self.credDataSource.items.count > 0;
+}
+
+-(IBAction)toggleEditing:(id)sender {
+    self.isEditing = !self.isEditing;
+    self.credDataSource.isEditing = self.isEditing;
+    [self.savedLogins reloadData];
+}
+
 -(void)credentialSelected:(Credential*)c {
     [self loginWithOAuthToken:c window:self.modalWindow];
 }
 
-- (void)loadNib {
+- (void)deleteCredential:(nonnull Credential *)c {
+    [self.credDataSource removeItem:c];
+    [self.savedLogins reloadData];
+    [c deleteEntry];
+}
+
+-(void)loadNib {
     [[NSBundle mainBundle] loadNibNamed:@"Login" owner:self topLevelObjects:nil];
 }
 
-- (void)endModalWindow:(id)sforce {
+-(void)endModalWindow:(id)sforce {
     [NSApp stopModal];
 }
 

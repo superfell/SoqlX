@@ -39,7 +39,7 @@
 @property (readonly) NSString *token;
 
 -(OSStatus)updateToken:(NSString *)token;
-// TODO delete
+-(OSStatus)deleteEntry;
 
 @end
 

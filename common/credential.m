@@ -139,4 +139,8 @@ NSString *AUTH_SVC_NAME = @"com.pocketsoap.osx.soqlx.auth";
     return status;
 }
 
+-(OSStatus)deleteEntry {
+    return SecKeychainItemDelete(keychainItem);
+}
+
 @end

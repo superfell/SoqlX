@@ -26,7 +26,24 @@
                         <font key="font" metaFont="systemSemibold" size="13"/>
                     </buttonCell>
                     <connections>
+                        <action selector="login:" target="30h-ST-WnZ" id="sCs-WE-ZGZ"/>
                         <binding destination="30h-ST-WnZ" name="title" keyPath="credential.username" id="byb-Fl-gKA"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wPn-Ln-xpk">
+                    <rect key="frame" x="268" y="5" width="24" height="24"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="delete" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="fLu-xx-ZTi">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="deleteItem:" target="30h-ST-WnZ" id="Tmx-TJ-UGA"/>
+                        <binding destination="30h-ST-WnZ" name="hidden" keyPath="deletable" id="nfV-yQ-nXJ">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                            </dictionary>
+                        </binding>
                     </connections>
                 </button>
             </subviews>
@@ -34,10 +51,12 @@
         </customView>
         <collectionViewItem id="30h-ST-WnZ" customClass="LoginRowViewItem">
             <connections>
-                <outlet property="button" destination="whE-rG-E9J" id="2B8-P1-WEm"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="NXX-pQ-vV6"/>
             </connections>
         </collectionViewItem>
         <userDefaultsController representsSharedInstance="YES" id="bAN-VN-rTQ"/>
     </objects>
+    <resources>
+        <image name="delete" width="128" height="128"/>
+    </resources>
 </document>

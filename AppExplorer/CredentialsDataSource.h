@@ -30,4 +30,7 @@
 @property (strong) NSArray<NSArray<Credential*>*>   *items;
 @property (weak) NSObject<LoginRowViewItemDelegate> *delegate;
 
+@property (assign) BOOL isEditing;
+-(void)removeItem:(Credential*)c;
+
 @end

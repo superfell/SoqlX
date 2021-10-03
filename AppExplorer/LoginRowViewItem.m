@@ -24,20 +24,21 @@
 #import "Defaults.h"
 
 @interface LoginRowViewItem ()
-@property (strong) IBOutlet NSButton *button;
+-(IBAction)deleteItem:(id)sender;
+-(IBAction)login:(id)sender;
 @end
 
 @implementation LoginRowViewItem
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.button.target = self;
-    self.button.action = @selector(login:);
-}
-
 -(void)login:(id)sender {
     if (self.delegate) {
         [self.delegate credentialSelected:self.credential];
+    }
+}
+
+-(void)deleteItem:(id)sender {
+    if (self.delegate) {
+        [self.delegate deleteCredential:self.credential];
     }
 }
 

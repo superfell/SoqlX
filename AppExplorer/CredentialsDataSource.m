@@ -24,10 +24,15 @@
 #import "NSArray+Partition.h"
 #import "LoginRowViewItem.h"
 
+@interface CredentialsDataSource()
+@property (strong) NSArray<Credential*>* creds;
+@end
+
 @implementation CredentialsDataSource
 
 -(id)initWithCreds:(NSArray<Credential *> *)creds {
     self = [super init];
+    self.creds = creds;
     self.items = [creds partitionByKeyPath:@"server"];
     return self;
 }
@@ -54,8 +59,17 @@
     Credential *c = self.items[indexPath.section][indexPath.item];
     LoginRowViewItem *i = [collectionView makeItemWithIdentifier:@"row" forIndexPath:indexPath];
     i.credential = c;
+    i.deletable = self.isEditing;
     i.delegate = self.delegate;
     return i;
+}
+
+-(void)removeItem:(Credential*)c {
+    NSPredicate *p = [NSPredicate predicateWithBlock:^BOOL(id  _Nullable evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
+        return evaluatedObject != c;
+    }];
+    self.creds = [self.creds filteredArrayUsingPredicate:p];
+    self.items = [self.creds partitionByKeyPath:@"server"];
 }
 
 @end

@@ -49,4 +49,9 @@ extern int DEFAULT_API_VERSION;
 
 @property (weak) NSObject<ZKLoginControllerDelegate> *delegate;
 
+@property (readonly) BOOL canEdit;
+@property (assign) BOOL isEditing;
+-(IBAction)toggleEditing:(id)sender;
+
+
 @end
