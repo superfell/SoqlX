@@ -110,11 +110,6 @@
                                     <action selector="saveQueryResults:" target="-1" id="1683"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Open Browser" keyEquivalent="b" id="1684">
-                                <connections>
-                                    <action selector="showInBrowser:" target="-1" id="1685"/>
-                                </connections>
-                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="1341">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>

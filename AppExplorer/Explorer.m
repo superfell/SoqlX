@@ -218,18 +218,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     return [sforce loggedIn];
 }
 
--(void)launchSfdcBrowser:(NSString *)retUrl {
-    NSString *returnUrl = retUrl == nil ? @"" : [NSString stringWithFormat:@"&retURL=%@", retUrl];
-    NSURL *fd = [NSURL URLWithString:[NSString stringWithFormat:@"/secur/frontdoor.jsp?sid=%@%@", [self.sforce sessionId], returnUrl]
-                       relativeToURL:self.sforce.serverUrl];
-    [[NSWorkspace sharedWorkspace] openURL:fd];
-}
-
-- (IBAction)showInBrowser:(id)sender {
-    [self launchSfdcBrowser:nil];
-}
-
-- (void)updateProgress:(BOOL)show {
+-(void)updateProgress:(BOOL)show {
     progress.doubleValue = show ? 50 : 0;
     if (show)
         [progress startAnimation:self];
@@ -859,21 +848,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
         }
     }
     return nil;
-}
-
-- (IBAction)showSelectedIdInBrowser:(NSTableView *)tv {
-    NSString *theId = [self idOfSelectedRowInTableVew:tv primaryIdOnly:NO];
-    if (theId == nil) return;
-    NSString *retUrl = [NSString stringWithFormat:@"/%@", theId];
-    [self launchSfdcBrowser:retUrl];
-}
-
-- (IBAction)showSelectedIdFronRootInBrowser:(id)sender {
-    [self showSelectedIdInBrowser:rootTableView];
-}
-
-- (IBAction)showSelectedIdFronChildInBrowser:(id)sender {
-    [self showSelectedIdInBrowser:childTableView];
 }
 
 // NSTabView delegate

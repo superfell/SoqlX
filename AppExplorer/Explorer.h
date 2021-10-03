@@ -75,7 +75,6 @@
 
 - (IBAction)showLogin:(id)sender;
 - (IBAction)closeLoginPanelIfOpen:(id)sender;
-- (IBAction)showInBrowser:(id)sender;
 - (IBAction)executeQuery:(id)sender;
 - (IBAction)executeQueryAll:(id)sender;
 - (IBAction)queryMore:(id)sender;
@@ -83,8 +82,6 @@
 - (IBAction)describeItemClicked:(id)sender;
 - (IBAction)generateReportForSelection:(id)sender;
 - (IBAction)queryResultDoubleClicked:(id)sender;
-- (IBAction)showSelectedIdFronRootInBrowser:(id)sender;
-- (IBAction)showSelectedIdFronChildInBrowser:(id)sender;
 - (IBAction)deleteCheckedRows:(id)sender;
 - (IBAction)filterSObjectListView:(id)sender;
 - (IBAction)updateDetailsRecentSelection:(id)sender;
