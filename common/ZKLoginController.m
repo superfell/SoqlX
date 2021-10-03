@@ -200,10 +200,15 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
         LOGIN_MRU_USERNAME : username,
         LOGIN_MRU_HOST     : hostname,
     };
-    NSMutableArray *mru = [[def arrayForKey:DEF_LOGIN_MRU] mutableCopy];
-    [mru removeObject:mruEntry];
-    [mru insertObject:mruEntry atIndex:0];
-    [def setValue:mru forKey:DEF_LOGIN_MRU];
+    NSUInteger existingIdx = [[def arrayForKey:DEF_LOGIN_MRU] indexOfObject:mruEntry];
+    if (existingIdx != 0) {
+        NSMutableArray *mru = [[def arrayForKey:DEF_LOGIN_MRU] mutableCopy];
+        if (existingIdx != NSNotFound) {
+            [mru removeObjectAtIndex:existingIdx];
+        }
+        [mru insertObject:mruEntry atIndex:0];
+        [def setValue:mru forKey:DEF_LOGIN_MRU];
+    }
 }
 
 -(void)openOAuthResponse:(NSURL *)url apiVersion:(int)apiVersion {
