@@ -34,6 +34,9 @@
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <connections>
+                            <action selector="showLoginHelp:" target="-2" id="Ckt-za-75y"/>
+                        </connections>
                     </button>
                     <progressIndicator fixedFrame="YES" maxValue="100" doubleValue="22" displayedWhenStopped="NO" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="Om8-X4-spf">
                         <rect key="frame" x="20" y="46" width="323" height="20"/>
@@ -93,6 +96,13 @@ Gw
                             <rect key="frame" x="425" y="0.0" width="15" height="139"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
+                        <connections>
+                            <binding destination="-2" name="hidden" keyPath="hasSavedCredentials" id="RxB-Eh-7em">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
+                        </connections>
                     </scrollView>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bva-Er-Nym">
                         <rect key="frame" x="18" y="63" width="327" height="38"/>
@@ -126,13 +136,26 @@ Gw
                         </buttonCell>
                         <connections>
                             <action selector="toggleEditing:" target="-2" id="Kjq-Iy-2Ea"/>
-                            <binding destination="-2" name="hidden" keyPath="canEdit" id="IgP-gg-EQM">
+                            <binding destination="-2" name="hidden" keyPath="hasSavedCredentials" id="ABl-VA-7XX">
                                 <dictionary key="options">
                                     <string key="NSValueTransformerName">NSNegateBoolean</string>
                                 </dictionary>
                             </binding>
                         </connections>
                     </button>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lqV-X5-Y5Q">
+                        <rect key="frame" x="20" y="109" width="325" height="150"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <textFieldCell key="cell" alignment="left" title="Label" id="Q3J-Ni-Y4q">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="-2" name="hidden" keyPath="hasSavedCredentials" id="VP0-Ob-Qae"/>
+                            <binding destination="-2" name="value" keyPath="welcomeText" id="0HZ-u5-45j"/>
+                        </connections>
+                    </textField>
                 </subviews>
             </view>
             <point key="canvasLocation" x="-410.5" y="-188"/>

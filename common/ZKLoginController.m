@@ -54,7 +54,7 @@ static int nextControllerId = 42;
 
 +(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
     NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
-    if ([key isEqualToString:@"canEdit"]) {
+    if ([key isEqualToString:@"hasSavedCredentials"]) {
         return [paths setByAddingObject:@"credDataSource"];
     }
     return paths;
@@ -85,7 +85,7 @@ static int nextControllerId = 42;
     self.targetController.delegate = self;
 }
 
--(BOOL)canEdit {
+-(BOOL)hasSavedCredentials {
     return self.credDataSource.items.count > 0;
 }
 
@@ -120,8 +120,8 @@ static int nextControllerId = 42;
     NSSize fr = self.loginSheet.contentView.frame.size;
     NSSize visSize = self.savedLogins.frame.size;
     NSSize allItems = self.savedLogins.collectionViewLayout.collectionViewContentSize;
-    NSSize newSize = NSMakeSize(fr.width, fr.height - visSize.height + allItems.height);
-    [self.loginSheet setContentSize:newSize];
+    CGFloat newHeight = MAX(260.0, fr.height - visSize.height + allItems.height);
+    [self.loginSheet setContentSize:NSMakeSize(fr.width, newHeight)];
     // This reloadData shouldn't be needed, but without it, the section header sometimes
     // get placed over the first item, not above it.
     [self.savedLogins reloadData];
@@ -344,4 +344,12 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
     }];
 }
 
+-(NSString*)welcomeText {
+    return NSLocalizedString(@"WelcomeText", @"text shown in the login sheet when there's no saved credentials");
+}
+-(IBAction)showLoginHelp:(id)sender {
+    NSString *help = [NSBundle mainBundle].infoDictionary[@"ZKHelpLoginUrl"];
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:help]];
+
+}
 @end

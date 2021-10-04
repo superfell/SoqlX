@@ -1,0 +1,2 @@
+/* text shown in the login sheet when there's no saved credentials */
+"WelcomeText" = "Welcome to SoqlX!\n\nClick the 'New Login' button below to start the login/authorization process.";

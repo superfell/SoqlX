@@ -127,6 +127,8 @@
 			</dict>
 		</dict>
 	</array>
+	<key>ZKHelpLoginUrl</key>
+	<string>https://www.pocketsoap.com/osx/soqlx/help/</string>
 	<key>ZKHelpUrl</key>
 	<string>https://www.pocketsoap.com/osx/soqlx/help/</string>
 </dict>

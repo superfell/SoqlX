@@ -106,7 +106,6 @@
 		F4D7831B15D48C8500D00BB9 /* Explorer.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4D7831915D48C8500D00BB9 /* Explorer.xib */; };
 		F4D7831E15D49F7B00D00BB9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D7831D15D49F7B00D00BB9 /* AppDelegate.m */; };
 		F4D7833415D5F46600D00BB9 /* BaseUserBasedController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D7833315D5F46600D00BB9 /* BaseUserBasedController.m */; };
-		F4D7834615D82C8200D00BB9 /* Login.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4D7834515D82C8200D00BB9 /* Login.xib */; };
 		F4D7836B15D8814C00D00BB9 /* ZKDescribe_Reporting.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D7836A15D8814C00D00BB9 /* ZKDescribe_Reporting.m */; };
 		F4D8DC792569CFF7002C9FC1 /* SObject.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D8DC782569CFF7002C9FC1 /* SObject.m */; };
 		F4D8DC87256AD4E2002C9FC1 /* SObjectSortDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D8DC86256AD4E2002C9FC1 /* SObjectSortDescriptor.m */; };
@@ -129,6 +128,8 @@
 		F4E3194B2198ECE3009B8C4F /* ReportDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4E319472198ECE3009B8C4F /* ReportDocument.xib */; };
 		F4E3194E2198EF4E009B8C4F /* ProgressWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4E3194C2198EF4E009B8C4F /* ProgressWindow.xib */; };
 		F4E8BB10184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E8BB0F184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m */; };
+		F4F0D5D0270A719B00C53B0C /* Login.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4F0D5D2270A719B00C53B0C /* Login.xib */; };
+		F4F0D5E1270A740B00C53B0C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F4F0D5E0270A740B00C53B0C /* Localizable.strings */; };
 		F4F286F5263372FE00CCEA7D /* SoqlToken.m in Sources */ = {isa = PBXBuildFile; fileRef = F4F286F4263372FE00CCEA7D /* SoqlToken.m */; };
 		F4F2870E26337DF000CCEA7D /* SoqlParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F4F2870A26337DEF00CCEA7D /* SoqlParser.m */; };
 		F4F2E7282640633F005C49B9 /* order_by.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4F2E7252640633F005C49B9 /* order_by.txt */; };
@@ -403,7 +404,6 @@
 		F4D7831D15D49F7B00D00BB9 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		F4D7833215D5F46600D00BB9 /* BaseUserBasedController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseUserBasedController.h; sourceTree = "<group>"; };
 		F4D7833315D5F46600D00BB9 /* BaseUserBasedController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseUserBasedController.m; sourceTree = "<group>"; };
-		F4D7834515D82C8200D00BB9 /* Login.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = Login.xib; path = ../common/Login.xib; sourceTree = "<group>"; };
 		F4D7836915D8814C00D00BB9 /* ZKDescribe_Reporting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKDescribe_Reporting.h; sourceTree = "<group>"; };
 		F4D7836A15D8814C00D00BB9 /* ZKDescribe_Reporting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZKDescribe_Reporting.m; sourceTree = "<group>"; };
 		F4D8DC772569CFF7002C9FC1 /* SObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SObject.h; sourceTree = "<group>"; };
@@ -429,6 +429,8 @@
 		F4E3194D2198EF4E009B8C4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ProgressWindow.xib; sourceTree = "<group>"; };
 		F4E8BB0E184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZKDescribeThemeItem+ZKFindResource.h"; sourceTree = "<group>"; };
 		F4E8BB0F184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ZKDescribeThemeItem+ZKFindResource.m"; sourceTree = "<group>"; };
+		F4F0D5D1270A719B00C53B0C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Login.xib; sourceTree = "<group>"; };
+		F4F0D5E0270A740B00C53B0C /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		F4F286F3263372FE00CCEA7D /* SoqlToken.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SoqlToken.h; sourceTree = "<group>"; };
 		F4F286F4263372FE00CCEA7D /* SoqlToken.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SoqlToken.m; sourceTree = "<group>"; };
 		F4F2870A26337DEF00CCEA7D /* SoqlParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SoqlParser.m; sourceTree = "<group>"; };
@@ -611,6 +613,7 @@
 				F413C7250AACB9B4000A8CDC /* sf.icns */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
+				F4F0D5E0270A740B00C53B0C /* Localizable.strings */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -694,7 +697,7 @@
 			children = (
 				F4CD3DAA0B85701100084479 /* ZKLoginController.h */,
 				F4CD3DAB0B85701100084479 /* ZKLoginController.m */,
-				F4D7834515D82C8200D00BB9 /* Login.xib */,
+				F4F0D5D2270A719B00C53B0C /* Login.xib */,
 				F406D2AC27081C0D008A0CCC /* CredentialsDataSource.h */,
 				F406D2AD27081C0D008A0CCC /* CredentialsDataSource.m */,
 				F4805E0127063B1B005B1C24 /* LoginRowViewItem.h */,
@@ -990,6 +993,7 @@
 				F406D2A92708083D008A0CCC /* LoginHeaderRowViewItem.xib in Resources */,
 				F4E3194E2198EF4E009B8C4F /* ProgressWindow.xib in Resources */,
 				F4B8DFE80B61EB8900DDD00A /* report.css in Resources */,
+				F4F0D5E1270A740B00C53B0C /* Localizable.strings in Resources */,
 				F4B8DFF60B61F4B900DDD00A /* key_b.png in Resources */,
 				F4805E0527063B1B005B1C24 /* LoginRowViewItem.xib in Resources */,
 				F4B8DFF70B61F4B900DDD00A /* key_r.png in Resources */,
@@ -998,7 +1002,7 @@
 				F4D7831815D489B800D00BB9 /* MainMenu.xib in Resources */,
 				F4D7831B15D48C8500D00BB9 /* Explorer.xib in Resources */,
 				F4D1B522270685D100EEE8BD /* delete.png in Resources */,
-				F4D7834615D82C8200D00BB9 /* Login.xib in Resources */,
+				F4F0D5D0270A719B00C53B0C /* Login.xib in Resources */,
 				F4D4F5AB1623CD5D009CF3D4 /* dsa_pub.pem in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1277,6 +1281,15 @@
 				F4E3194D2198EF4E009B8C4F /* Base */,
 			);
 			name = ProgressWindow.xib;
+			sourceTree = "<group>";
+		};
+		F4F0D5D2270A719B00C53B0C /* Login.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F4F0D5D1270A719B00C53B0C /* Base */,
+			);
+			name = Login.xib;
+			path = ../common;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
