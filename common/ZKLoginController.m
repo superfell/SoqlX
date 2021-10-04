@@ -54,7 +54,8 @@ static int nextControllerId = 42;
 
 +(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
     NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
-    if ([key isEqualToString:@"hasSavedCredentials"]) {
+    if ([key isEqualToString:@"hasSavedCredentials"]
+        || [key isEqualToString:@"sheetHeaderText"]) {
         return [paths setByAddingObject:@"credDataSource"];
     }
     return paths;
@@ -352,4 +353,10 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:help]];
 
 }
+-(NSString*)sheetHeaderText {
+    return self.hasSavedCredentials ?
+        NSLocalizedString(@"SheetHeaderLogins", @"show on the login sheet when there are saved logins") :
+        NSLocalizedString(@"SheetHeaderWelcome", @"shown on the login sheet when there are no saved logins");
+}
+
 @end

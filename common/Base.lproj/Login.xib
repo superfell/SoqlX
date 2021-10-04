@@ -52,7 +52,13 @@
                             <font key="font" metaFont="systemBold"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                            <connections>
+                                <binding destination="-2" name="value" keyPath="sheetHeaderText" id="Ojr-KF-4Fh"/>
+                            </connections>
                         </textFieldCell>
+                        <connections>
+                            <binding destination="-2" name="value" keyPath="sheetHeaderText" id="0wx-hb-KwH"/>
+                        </connections>
                     </textField>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fI5-x6-t8E">
                         <rect key="frame" x="163" y="13" width="82" height="32"/>

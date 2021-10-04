@@ -53,6 +53,7 @@ extern int DEFAULT_API_VERSION;
 @property (assign) BOOL isEditing;
 -(IBAction)toggleEditing:(id)sender;
 
+-(NSString*)sheetHeaderText;
 -(NSString*)welcomeText;
 -(IBAction)showLoginHelp:(id)sender;
 
