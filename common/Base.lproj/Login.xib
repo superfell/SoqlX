@@ -208,7 +208,7 @@ Gw
                 <outlet property="view" destination="xea-gf-PsZ" id="tLp-BV-LYq"/>
             </connections>
         </viewController>
-        <popover id="A62-aq-VwG">
+        <popover behavior="t" id="A62-aq-VwG">
             <connections>
                 <outlet property="contentViewController" destination="PQK-UD-2uk" id="7oE-ng-BqG"/>
             </connections>
