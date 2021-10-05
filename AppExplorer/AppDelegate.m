@@ -44,7 +44,6 @@
     defaults[@"soql"] = @"select id, firstname, lastname from contact";
     
     defaults[DEF_SERVERS] = @[LOGIN_LOGIN, LOGIN_TEST];
-    defaults[@"server"] = LOGIN_WWW; // should go?
     defaults[PREF_QUERY_SORT_FIELDS] = @YES;
     defaults[PREF_SKIP_ADDRESS_FIELDS] = @NO;
     defaults[PREF_TEXT_SIZE] = @11;
@@ -247,9 +246,7 @@
     if (self.windowControllers.count == 0 && !self.isOpeningFromUrl) {
         SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self.windowControllers];
         [controller showWindow:self];
-        // if the oauth token refresh fails, or there isn't one, this automatically
-        // falls back to showing the login sheet.
-        [controller.explorer loginWithLastOAuthToken];
+        [controller.explorer showLogin:self];
     }
     
     // If the updater is going to restart the app, we need to close the login sheet if its currently open.

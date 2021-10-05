@@ -42,10 +42,6 @@
 
 @implementation LoginTargetViewItem
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-}
-
 -(IBAction)onClick:(id)sender {
     if (self.delegate) {
         [self.delegate loginTargetSelected:self.target];

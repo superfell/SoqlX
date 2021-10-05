@@ -39,7 +39,6 @@ extern int DEFAULT_API_VERSION;
 +(NSString*)appClientId;
 
 -(void)showLoginSheet:(NSWindow *)modalForWindow;
--(void)loginWithLastOAuthToken:(NSWindow *)modalForWindow;
 -(void)loginWithOAuthToken:(Credential*)cred window:(NSWindow*)modalForWindow;
 -(void)completeOAuthLogin:(NSURL *)oauthCallbackUrl;
 -(IBAction)cancelLogin:(id)sender;
@@ -48,13 +47,5 @@ extern int DEFAULT_API_VERSION;
 @property (strong) NSString *controllerId;
 
 @property (weak) NSObject<ZKLoginControllerDelegate> *delegate;
-
-@property (readonly) BOOL hasSavedCredentials;
-@property (assign) BOOL isEditing;
--(IBAction)toggleEditing:(id)sender;
-
--(NSString*)sheetHeaderText;
--(NSString*)welcomeText;
--(IBAction)showLoginHelp:(id)sender;
 
 @end

@@ -22,7 +22,6 @@
 #import "ZKLoginController.h"
 #import <ZKSforce/ZKSforce.h>
 #import "credential.h"
-#import "OAuthMenuManager.h"
 #import "CredentialsDataSource.h"
 #import "Defaults.h"
 
@@ -32,11 +31,16 @@ static int nextControllerId = 42;
 
 @interface ZKLoginController()
 
--(IBAction)startOAuthLogin:(id)sender;
--(void)closeLoginUi;
-
+// items in the UI using bindings read these and drive the UI
 @property (strong) NSString *statusText;
 @property (assign) BOOL busy;
+@property (readonly) BOOL hasSavedCredentials;
+@property (assign) BOOL isEditing;
+-(NSString*)sheetHeaderText;
+-(NSString*)welcomeText;
+-(IBAction)toggleEditing:(id)sender;
+-(IBAction)showLoginHelp:(id)sender;
+
 
 @property (strong) NSWindow *modalWindow;
 @property (strong) IBOutlet NSWindow *loginSheet;
@@ -44,6 +48,9 @@ static int nextControllerId = 42;
 @property (strong) IBOutlet NSPopover *loginDest;
 @property (strong) IBOutlet NSButton *loginButton;
 @property (strong) IBOutlet LoginTargetController *targetController;
+-(IBAction)startOAuthLogin:(id)sender;
+-(void)closeLoginUi;
+
 
 @property (strong) Credential *selectedCredential;
 @property (strong) CredentialsDataSource *credDataSource;
@@ -74,8 +81,7 @@ static int nextControllerId = 42;
     return self;
 }
 
-
-- (void)awakeFromNib {
+-(void)awakeFromNib {
     [self.savedLogins registerNib:[[NSNib alloc] initWithNibNamed:@"LoginRowViewItem" bundle:nil] forItemWithIdentifier:@"row"];
     [self.savedLogins registerNib:[[NSNib alloc] initWithNibNamed:@"LoginHeaderRowViewItem" bundle:nil]
          forSupplementaryViewOfKind:NSCollectionElementKindSectionHeader
@@ -118,11 +124,13 @@ static int nextControllerId = 42;
 - (void)showLoginSheet:(NSWindow *)modalForWindow {
     [self loadNib];
     self.modalWindow = modalForWindow;
+    // TODO: can auto layout handle this now?
     NSSize fr = self.loginSheet.contentView.frame.size;
     NSSize visSize = self.savedLogins.frame.size;
     NSSize allItems = self.savedLogins.collectionViewLayout.collectionViewContentSize;
     CGFloat newHeight = MAX(260.0, fr.height - visSize.height + allItems.height);
     [self.loginSheet setContentSize:NSMakeSize(fr.width, newHeight)];
+ 
     // This reloadData shouldn't be needed, but without it, the section header sometimes
     // get placed over the first item, not above it.
     [self.savedLogins reloadData];
@@ -170,7 +178,7 @@ static int nextControllerId = 42;
 
 static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoHQhmqzBxALj8UBnhjzntUVXdcdZFXATXCdevs";
 
-- (IBAction)startOAuthLogin:(id)sender {
+-(IBAction)startOAuthLogin:(id)sender {
     NSRect btnRect = self.loginButton.bounds;
     [self.loginDest showRelativeToRect:btnRect ofView:self.loginButton preferredEdge:NSRectEdgeMaxX];
 }
@@ -265,32 +273,6 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
     [self openOAuthResponse:oauthCallbackUrl apiVersion:self.preferedApiVersion];
 }
 
-// returns the keychain entry for the most recent oauth login
-// if the most recent login was oauth, and the user opted to
-// create the keychain entry for the refresh token. Otherwise
-// returns nil.
-- (Credential*)lastOAuthCredential {
-    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
-    NSArray *mru = [def arrayForKey:DEF_LOGIN_MRU];
-    if (mru.count == 0) {
-        return nil;
-    }
-    NSDictionary *latest = mru[0];
-    NSString *host = latest[LOGIN_MRU_HOST];
-    NSString *username = latest[LOGIN_MRU_USERNAME];
-    if (username == nil || host == nil) {
-        // shouldn't happen
-        return nil;
-    }
-    NSArray<Credential*> *creds = [Credential credentials];
-    for (Credential *c in creds) {
-        if ([c.username isEqualToString:username] && [host isEqualToString:c.server.host]) {
-            return c;
-        }
-    }
-    return nil;
-}
-
 -(void)oauthCurrentUserInfoWithDowngrade:(ZKSforceClient*)c
                                failBlock:(ZKFailWithErrorBlock)failBlock
                            completeBlock:(ZKCompleteUserInfoBlock)completeBlock {
@@ -302,20 +284,12 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
             NSAssert([auth isKindOfClass:[ZKOAuthInfo class]], @"AuthInfo should be for OAuth");
             auth.apiVersion = auth.apiVersion-1;
             c.authenticationInfo = auth;
-            NSLog(@"Downgrading API version to %d due to error %@", auth.apiVersion, result);
+            //NSLog(@"Downgrading API version to %d due to error %@", auth.apiVersion, result);
             [self oauthCurrentUserInfoWithDowngrade:c failBlock:failBlock completeBlock:completeBlock];
             return;
         }
         failBlock(result);
     } completeBlock:completeBlock];
-}
-
--(void)loginWithLastOAuthToken:(NSWindow *)modalForWindow {
-    [self showLoginSheet:modalForWindow];
-    Credential *cred = [self lastOAuthCredential];
-    if (cred != nil) {
-//        [self loginWithOAuthToken:cred window:modalForWindow];
-    }
 }
 
 -(void)loginWithOAuthToken:(Credential*)cred window:(NSWindow*)modalForWindow {
@@ -348,11 +322,12 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
 -(NSString*)welcomeText {
     return NSLocalizedString(@"WelcomeText", @"text shown in the login sheet when there's no saved credentials");
 }
+
 -(IBAction)showLoginHelp:(id)sender {
     NSString *help = [NSBundle mainBundle].infoDictionary[@"ZKHelpLoginUrl"];
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:help]];
-
 }
+
 -(NSString*)sheetHeaderText {
     return self.hasSavedCredentials ?
         NSLocalizedString(@"SheetHeaderLogins", @"show on the login sheet when there are saved logins") :
