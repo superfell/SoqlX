@@ -623,11 +623,7 @@ Gw
             <point key="canvasLocation" x="-756.5" y="102"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="354" userLabel="Shared Defaults"/>
-        <customObject id="1677" userLabel="App Delegate" customClass="AppDelegate">
-            <connections>
-                <outlet property="oauthManager" destination="iTj-eg-Czi" id="FTA-92-zZ9"/>
-            </connections>
-        </customObject>
+        <customObject id="1677" userLabel="App Delegate" customClass="AppDelegate"/>
         <customObject id="iTj-eg-Czi" userLabel="OAuthManager" customClass="OAuthMenuManager">
             <connections>
                 <outlet property="menu" destination="qiJ-Ab-pR7" id="28L-b6-Cdj"/>

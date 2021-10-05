@@ -39,8 +39,6 @@
 @property (strong) NSFont *editFont;
 @property (assign) BOOL isOpeningFromUrl;
 
-@property (strong) IBOutlet OAuthMenuManager *oauthManager;
-
 @end
 
 @interface SoqlXWindowController : NSWindowController
