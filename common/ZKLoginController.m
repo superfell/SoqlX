@@ -27,8 +27,6 @@
 
 int DEFAULT_API_VERSION = 53;
 
-static int nextControllerId = 42;
-
 @interface ZKLoginController()
 
 // items in the UI using bindings read these and drive the UI
@@ -77,7 +75,7 @@ static int nextControllerId = 42;
 -(id)init {
     self = [super init];
     self.preferedApiVersion = DEFAULT_API_VERSION;
-    self.controllerId = [NSString stringWithFormat:@"c%d", nextControllerId++];
+    self.controllerId = [[NSUUID UUID] UUIDString];
     return self;
 }
 
@@ -186,10 +184,11 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
 -(void)loginTargetSelected:(LoginTargetItem*)item {
     NSString *cb = @"soqlx://oauth/";
     // build the URL to the oauth page with our client_id & callback URL set.
+    NSCharacterSet *urlcs = [NSCharacterSet URLQueryAllowedCharacterSet];
     NSString *path = [NSString stringWithFormat:@"/services/oauth2/authorize?response_type=token&client_id=%@&redirect_uri=%@&state=%@",
-                       [OAUTH_CID stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]],
-                       [cb stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]],
-                       self.controllerId];
+                       [OAUTH_CID stringByAddingPercentEncodingWithAllowedCharacters:urlcs],
+                       [cb stringByAddingPercentEncodingWithAllowedCharacters:urlcs],
+                       [self.controllerId stringByAddingPercentEncodingWithAllowedCharacters:urlcs]];
     NSURL *url = [NSURL URLWithString:path relativeToURL:item.url];
 
     // ask the OS to open browser to the URL
