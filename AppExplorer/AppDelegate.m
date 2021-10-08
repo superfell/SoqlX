@@ -101,6 +101,19 @@
     }
 }
 
+// will return the first window that has a login sheet showing, or will create a new one.
+-(SoqlXWindowController*)findOrOpenWindowAtLogin {
+    for (SoqlXWindowController *c in self.windowControllers) {
+        if ([c isWindowLoaded] && c.explorer.loginSheetIsOpen && c.explorer.queryFilename == nil) {
+            return c;
+        }
+    }
+    SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self.windowControllers];
+    [controller showWindow:self];
+    [controller.explorer showLogin:self];
+    return controller;
+}
+
 -(void)openSoqlXURL:(NSURL *)url {
     NSString *server = [url.host lowercaseString];
     if (!([server hasSuffix:@".salesforce.com"] || [server hasSuffix:@".force.com"])) {
@@ -148,8 +161,7 @@
         }
     }
     NSLog(@"Unable to find window controller with id %@ in oauth callback", controllerId);
-    SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self.windowControllers];
-    [controller completeOAuthLogin:url];
+    [[self findOrOpenWindowAtLogin] completeOAuthLogin:url];
 }
 
 -(void)openWithSession:(NSString *)sid host:(NSString *)host andVersion:(int)apiVersion {
@@ -213,18 +225,7 @@
     }
     // If there's an existing window that has the login sheet showing, and no asscoicated URL
     // we'll update that one instead of opening a new one.
-    for (SoqlXWindowController *c in self.windowControllers) {
-        if ([c isWindowLoaded] && c.explorer.loginSheetIsOpen && c.explorer.queryFilename == nil) {
-            NSLog(@"Will update existing window at login state");
-            [c.explorer load:url];
-            return;
-        }
-    }
-    NSLog(@"Will open new default window");
-    SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self.windowControllers];
-    [controller showWindow:self];
-    [controller.explorer load:url];
-    [controller.explorer showLogin:self];
+    [[self findOrOpenWindowAtLogin].explorer load:url];
 }
 
 -(void)application:(NSApplication *)application openURLs:(NSArray<NSURL *> *)urls {
@@ -244,9 +245,7 @@
 -(void)applicationDidFinishLaunching:(NSNotification *)notification {
     [self resetApiVersionOverrideIfAppVersionChanged];
     if (self.windowControllers.count == 0 && !self.isOpeningFromUrl) {
-        SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self.windowControllers];
-        [controller showWindow:self];
-        [controller.explorer showLogin:self];
+        [self openNewWindow:self];
     }
     
     // If the updater is going to restart the app, we need to close the login sheet if its currently open.
