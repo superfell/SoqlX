@@ -1,4 +1,4 @@
-// Copyright (c) 2012,2018,2019 Simon Fell
+// Copyright (c) 2021 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -20,37 +20,22 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <Sparkle/Sparkle.h>
+#import "LoginTargetViewItem.h"
 
-@class Explorer;
-@class ZKSforceClient;
-@class SoqlXWindowController;
-@class OAuthMenuManager;
+NS_ASSUME_NONNULL_BEGIN
 
-@interface AppDelegate : NSObject<NSApplicationDelegate, SUUpdaterDelegate>
+@interface LoginTargetController : NSObject<NSCollectionViewDataSource,LoginTargetItemDelegate>
 
-- (IBAction)launchHelp:(id)sender;
-- (IBAction)openNewWindow:(id)sender;
-- (IBAction)showFontPrefs:(id)sender;
-- (void)openNewWindowForOAuthCredential:(id)sender;
+@property (weak) NSObject<LoginTargetItemDelegate> *delegate;
+@property (strong) IBOutlet NSCollectionView *targets;
+@property (strong) IBOutlet NSView *containerView;
+@property (strong) IBOutlet NSTextField *url;
 
-@property (strong) NSMutableArray<SoqlXWindowController*>* windowControllers;
-@property (strong) NSString *editFontLabel;
-@property (strong) NSFont *editFont;
-@property (assign) BOOL isOpeningFromUrl;
+-(IBAction)addNewUrl:(id)sender;
+-(IBAction)toggleEditing:(id)sender;
+
+@property (assign) BOOL isEditing;
 
 @end
 
-@interface SoqlXWindowController : NSWindowController
-
--(instancetype)initWithWindowControllers:(NSMutableArray *)controllers;
-
--(void)showWindowForClient:(ZKSforceClient*)client;
--(void)closeLoginPanelIfOpen:(id)sender;
--(void)completeOAuthLogin:(NSURL*)url;
-
-@property (strong) IBOutlet Explorer *explorer;
-@property (strong) NSMutableArray<SoqlXWindowController*> *controllers;
-@property (readonly) NSString *controllerId;
-
-@end
+NS_ASSUME_NONNULL_END

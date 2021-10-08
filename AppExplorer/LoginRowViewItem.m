@@ -1,4 +1,4 @@
-// Copyright (c) 2012,2018,2019 Simon Fell
+// Copyright (c) 2021 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -19,38 +19,27 @@
 // THE SOFTWARE.
 //
 
-#import <Foundation/Foundation.h>
-#import <Sparkle/Sparkle.h>
+#import "LoginRowViewItem.h"
+#import "credential.h"
+#import "Defaults.h"
 
-@class Explorer;
-@class ZKSforceClient;
-@class SoqlXWindowController;
-@class OAuthMenuManager;
-
-@interface AppDelegate : NSObject<NSApplicationDelegate, SUUpdaterDelegate>
-
-- (IBAction)launchHelp:(id)sender;
-- (IBAction)openNewWindow:(id)sender;
-- (IBAction)showFontPrefs:(id)sender;
-- (void)openNewWindowForOAuthCredential:(id)sender;
-
-@property (strong) NSMutableArray<SoqlXWindowController*>* windowControllers;
-@property (strong) NSString *editFontLabel;
-@property (strong) NSFont *editFont;
-@property (assign) BOOL isOpeningFromUrl;
-
+@interface LoginRowViewItem ()
+-(IBAction)deleteItem:(id)sender;
+-(IBAction)login:(id)sender;
 @end
 
-@interface SoqlXWindowController : NSWindowController
+@implementation LoginRowViewItem
 
--(instancetype)initWithWindowControllers:(NSMutableArray *)controllers;
+-(void)login:(id)sender {
+    if (self.delegate) {
+        [self.delegate credentialSelected:self.credential];
+    }
+}
 
--(void)showWindowForClient:(ZKSforceClient*)client;
--(void)closeLoginPanelIfOpen:(id)sender;
--(void)completeOAuthLogin:(NSURL*)url;
-
-@property (strong) IBOutlet Explorer *explorer;
-@property (strong) NSMutableArray<SoqlXWindowController*> *controllers;
-@property (readonly) NSString *controllerId;
+-(void)deleteItem:(id)sender {
+    if (self.delegate) {
+        [self.delegate deleteCredential:self.credential];
+    }
+}
 
 @end

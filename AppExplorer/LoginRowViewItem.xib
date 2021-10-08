@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="LoginRowViewItem">
+            <connections>
+                <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="Hz6-mo-xeY">
+            <rect key="frame" x="0.0" y="0.0" width="299" height="34"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="whE-rG-E9J">
+                    <rect key="frame" x="0.0" y="1" width="299" height="32"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="square" title="Button" bezelStyle="shadowlessSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="LlW-v7-dP9">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="systemSemibold" size="13"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="login:" target="30h-ST-WnZ" id="sCs-WE-ZGZ"/>
+                        <binding destination="30h-ST-WnZ" name="title" keyPath="credential.username" id="byb-Fl-gKA"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wPn-Ln-xpk">
+                    <rect key="frame" x="268" y="5" width="24" height="24"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="delete" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="fLu-xx-ZTi">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="deleteItem:" target="30h-ST-WnZ" id="Tmx-TJ-UGA"/>
+                        <binding destination="30h-ST-WnZ" name="hidden" keyPath="deletable" id="nfV-yQ-nXJ">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </button>
+            </subviews>
+            <point key="canvasLocation" x="-240" y="135"/>
+        </customView>
+        <collectionViewItem id="30h-ST-WnZ" customClass="LoginRowViewItem">
+            <connections>
+                <outlet property="view" destination="Hz6-mo-xeY" id="NXX-pQ-vV6"/>
+            </connections>
+        </collectionViewItem>
+        <userDefaultsController representsSharedInstance="YES" id="bAN-VN-rTQ"/>
+    </objects>
+    <resources>
+        <image name="delete" width="128" height="128"/>
+    </resources>
+</document>

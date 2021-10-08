@@ -1,4 +1,4 @@
-// Copyright (c) 2012,2018,2019 Simon Fell
+// Copyright (c) 2021 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -20,37 +20,15 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <Sparkle/Sparkle.h>
 
-@class Explorer;
-@class ZKSforceClient;
-@class SoqlXWindowController;
-@class OAuthMenuManager;
+extern NSString *LOGIN_LOGIN;
+extern NSString *LOGIN_TEST;
+extern NSString *LOGIN_WWW;
 
-@interface AppDelegate : NSObject<NSApplicationDelegate, SUUpdaterDelegate>
+extern NSString *DEF_SERVERS;
 
-- (IBAction)launchHelp:(id)sender;
-- (IBAction)openNewWindow:(id)sender;
-- (IBAction)showFontPrefs:(id)sender;
-- (void)openNewWindowForOAuthCredential:(id)sender;
+extern NSString *DEF_LOGIN_MRU;
+// keys for items in the mru entries
+extern NSString *LOGIN_MRU_HOST;
+extern NSString *LOGIN_MRU_USERNAME;
 
-@property (strong) NSMutableArray<SoqlXWindowController*>* windowControllers;
-@property (strong) NSString *editFontLabel;
-@property (strong) NSFont *editFont;
-@property (assign) BOOL isOpeningFromUrl;
-
-@end
-
-@interface SoqlXWindowController : NSWindowController
-
--(instancetype)initWithWindowControllers:(NSMutableArray *)controllers;
-
--(void)showWindowForClient:(ZKSforceClient*)client;
--(void)closeLoginPanelIfOpen:(id)sender;
--(void)completeOAuthLogin:(NSURL*)url;
-
-@property (strong) IBOutlet Explorer *explorer;
-@property (strong) NSMutableArray<SoqlXWindowController*> *controllers;
-@property (readonly) NSString *controllerId;
-
-@end

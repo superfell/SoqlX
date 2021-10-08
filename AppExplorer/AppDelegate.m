@@ -27,6 +27,11 @@
 #import "ZKLoginController.h"
 #import "ZKUserInfo.h"
 #import "SessionIdAuthInfo.h"
+#import "Defaults.h"
+
+@interface ZKOAuthInfo(params)
++(NSDictionary*)decodeParams:(NSString*)fragment error:(NSError **)err;
+@end
 
 
 @implementation AppDelegate
@@ -38,11 +43,7 @@
     defaults[@"details"] = @NO;
     defaults[@"soql"] = @"select id, firstname, lastname from contact";
     
-    NSString *prod = @"https://www.salesforce.com";
-    NSString *test = @"https://test.salesforce.com";
-    
-    defaults[@"servers"] = @[prod, test];
-    defaults[@"server"] = prod;
+    defaults[DEF_SERVERS] = @[LOGIN_LOGIN, LOGIN_TEST];
     defaults[PREF_QUERY_SORT_FIELDS] = @YES;
     defaults[PREF_SKIP_ADDRESS_FIELDS] = @NO;
     defaults[PREF_TEXT_SIZE] = @11;
@@ -53,6 +54,7 @@
     defaults[PREF_SOQL_SYNTAX_HIGHLIGHTING] = @YES;
     defaults[PREF_SOQL_UPPERCASE_KEYWORDS] = @YES;
     defaults[PREF_BRACES_MISMATCH_BEEP] = @YES;
+    defaults[DEF_LOGIN_MRU] = @[];
     
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
     [defs registerDefaults:defaults];
@@ -75,7 +77,7 @@
 -(instancetype)init {
     self = [super init];
     self.isOpeningFromUrl = NO;
-    windowControllers = [[NSMutableArray alloc] init];
+    self.windowControllers = [[NSMutableArray alloc] init];
     [self setEditFontLabelFrom:[NSFont userFixedPitchFontOfSize:0]];
     return self;
 }
@@ -99,6 +101,19 @@
     }
 }
 
+// will return the first window that has a login sheet showing, or will create a new one.
+-(SoqlXWindowController*)findOrOpenWindowAtLogin {
+    for (SoqlXWindowController *c in self.windowControllers) {
+        if ([c isWindowLoaded] && c.explorer.loginSheetIsOpen && c.explorer.queryFilename == nil) {
+            return c;
+        }
+    }
+    SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self.windowControllers];
+    [controller showWindow:self];
+    [controller.explorer showLogin:self];
+    return controller;
+}
+
 -(void)openSoqlXURL:(NSURL *)url {
     NSString *server = [url.host lowercaseString];
     if (!([server hasSuffix:@".salesforce.com"] || [server hasSuffix:@".force.com"])) {
@@ -119,6 +134,34 @@
     }
     NSString *sid = [url.path substringFromIndex:6]; // remove /sid/ prefix
     [self openWithSession:sid host:url.host andVersion:DEFAULT_API_VERSION];
+}
+
+-(void)openOAuthResponse:(NSURL *)url {
+    NSError *err = nil;
+    NSDictionary *params = nil;
+    if (url.fragment.length == 0) {
+        // https://help.salesforce.com/s/articleView?id=sf.remoteaccess_oauth_flow_errors.htm&type=5
+        // says an error callback for the user-agent flow should use the fragment, but it in practice
+        // it appears to send a query string (but does use a fragment in the success case)
+        params = [ZKOAuthInfo decodeParams:url.query error:&err];
+    } else {
+        params = [ZKOAuthInfo decodeParams:url.fragment error:&err];
+    }
+    if (err != nil) {
+        [[NSAlert alertWithError:err] runModal];
+        return;
+    }
+    NSString *controllerId = params[@"state"];
+    if (controllerId != nil) {
+        for (SoqlXWindowController *wc in self.windowControllers) {
+            if ([controllerId isEqualToString:wc.controllerId]) {
+                [wc completeOAuthLogin:url];
+                return;
+            }
+        }
+    }
+    NSLog(@"Unable to find window controller with id %@ in oauth callback", controllerId);
+    [[self findOrOpenWindowAtLogin] completeOAuthLogin:url];
 }
 
 -(void)openWithSession:(NSString *)sid host:(NSString *)host andVersion:(int)apiVersion {
@@ -146,10 +189,9 @@
         [alert runModal];
         
     } completeBlock:^(ZKUserInfo *result) {
-        
-        SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self->windowControllers];
+        SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self.windowControllers];
         [controller showWindowForClient:c];
-        [self->windowControllers makeObjectsPerformSelector:@selector(closeLoginPanelIfOpen:) withObject:self];
+        [self.windowControllers makeObjectsPerformSelector:@selector(closeLoginPanelIfOpen:) withObject:self];
     }];
 }
 
@@ -160,7 +202,7 @@
     
     // If all the logged in windows are for the same userID, open a new window with the same userID.
     ZKSforceClient *user = nil;
-    for (SoqlXWindowController *c in windowControllers) {
+    for (SoqlXWindowController *c in self.windowControllers) {
         if ([c isWindowLoaded] && c.explorer.isLoggedIn) {
             ZKUserInfo *t = c.explorer.sforce.cachedUserInfo;
             ZKUserInfo *p = [user cachedUserInfo];
@@ -175,7 +217,7 @@
     }
     if (user != nil) {
         NSLog(@"Will open new window for %@", user.cachedUserInfo.userName);
-        SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:windowControllers];
+        SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self.windowControllers];
         [controller window];
         [controller showWindowForClient:user];
         [controller.explorer load:url];
@@ -183,33 +225,26 @@
     }
     // If there's an existing window that has the login sheet showing, and no asscoicated URL
     // we'll update that one instead of opening a new one.
-    for (SoqlXWindowController *c in windowControllers) {
-        if ([c isWindowLoaded] && c.explorer.loginSheetIsOpen && c.explorer.queryFilename == nil) {
-            NSLog(@"Will update existing window at login state");
-            [c.explorer load:url];
-            return;
-        }
-    }
-    NSLog(@"Will open new default window");
-    SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:windowControllers];
-    [controller showWindow:self];
-    [controller.explorer load:url];
-    [controller.explorer showLogin:self];
+    [[self findOrOpenWindowAtLogin].explorer load:url];
 }
 
 -(void)application:(NSApplication *)application openURLs:(NSArray<NSURL *> *)urls {
     for (NSURL *url in urls) {
-        if ([url.scheme isEqualToString:@"soqlx"]) {
+        if ([url.absoluteString hasPrefix:@"soqlx://oauth/"]) {
+            [self openOAuthResponse:url];
+        } else if ([url.scheme isEqualToString:@"soqlx"]) {
             [self openSoqlXURL:url];
         } else if ([url.scheme isEqualToString:@"file"]) {
             [self openFileURL:url];
+        } else {
+            NSLog(@"Unexpected URL received %@", url.absoluteString);
         }
     }
 }
 
 -(void)applicationDidFinishLaunching:(NSNotification *)notification {
     [self resetApiVersionOverrideIfAppVersionChanged];
-    if (windowControllers.count == 0 && !self.isOpeningFromUrl) {
+    if (self.windowControllers.count == 0 && !self.isOpeningFromUrl) {
         [self openNewWindow:self];
     }
     
@@ -218,14 +253,21 @@
 }
 
 -(void)openNewWindow:(id)sender {
-    SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:windowControllers];
+    SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self.windowControllers];
     [controller showWindow:sender];
-    [controller.explorer performSelector:@selector(showLogin:) withObject:self afterDelay:0];
+    [controller.explorer showLogin:sender];
+}
+
+- (void)openNewWindowForOAuthCredential:(id)sender {
+    Credential *c = [sender representedObject];
+    SoqlXWindowController *controller = [[SoqlXWindowController alloc] initWithWindowControllers:self.windowControllers];
+    [controller showWindow:sender];
+    [controller.explorer loginWithOAuthToken:c];
 }
 
 // Sparkle : SUUpdaterDelegate - Called immediately before relaunching.
 - (void)updaterWillRelaunchApplication:(SUUpdater *)updater {
-    [windowControllers makeObjectsPerformSelector:@selector(closeLoginPanelIfOpen:) withObject:updater];
+    [self.windowControllers makeObjectsPerformSelector:@selector(closeLoginPanelIfOpen:) withObject:updater];
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender {
@@ -242,7 +284,7 @@
 - (void)changeFont:(nullable NSFontManager *)sender {
     NSFont *newFont = [sender convertFont:self.editFont];
     [self setEditFontLabelFrom:newFont];
-    [[windowControllers valueForKey:@"explorer"] makeObjectsPerformSelector:@selector(changeEditFont:) withObject:sender];
+    [[self.windowControllers valueForKey:@"explorer"] makeObjectsPerformSelector:@selector(changeEditFont:) withObject:sender];
 }
 
 -(void)setEditFontLabelFrom:(NSFont *)f {
@@ -258,11 +300,11 @@
 
 @implementation SoqlXWindowController
 
-@synthesize explorer;
+@synthesize explorer, controllers;
 
 -(instancetype)initWithWindowControllers:(NSMutableArray *)c {
     self = [super initWithWindowNibName:@"Explorer"];
-    controllers = c;
+    self.controllers = c;
     [c addObject:self];
     return self;
 }
@@ -271,6 +313,14 @@
     [self window];    // forces Nib to be loaded, which'll set the explorer outlet/property
     [self.explorer useClient:client];
     [self showWindow:self];
+}
+
+-(void)completeOAuthLogin:(NSURL *)url {
+    if (self.explorer == nil) {
+        [self window];    // forces Nib to be loaded, which'll set the explorer outlet/property
+        [self showWindow:self];
+    }
+    [self.explorer completeOAuthLogin:url];
 }
 
 -(void)closeLoginPanelIfOpen:(id)sender {
@@ -284,7 +334,11 @@
 -(void)windowWillClose:(id)sender {
     // when the window gets closed, remove ourselves from the list of window controllers.
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [controllers removeObject:self];
+    [self.controllers removeObject:self];
+}
+
+-(NSString *)controllerId {
+    return self.explorer.loginController.controllerId;
 }
 
 @end

@@ -11,6 +11,9 @@
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		DFE42AEE94210F1BB1E1DFCD /* Pods_SoqlXplorerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D5A96B45D611A7235D41491 /* Pods_SoqlXplorerTests.framework */; };
+		F406D29A27080424008A0CCC /* NSArray+Partition.m in Sources */ = {isa = PBXBuildFile; fileRef = F406D29927080424008A0CCC /* NSArray+Partition.m */; };
+		F406D2A92708083D008A0CCC /* LoginHeaderRowViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = F406D2A72708083D008A0CCC /* LoginHeaderRowViewItem.xib */; };
+		F406D2AE27081C0D008A0CCC /* CredentialsDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = F406D2AD27081C0D008A0CCC /* CredentialsDataSource.m */; };
 		F412575D0B098593001622AC /* WeightedSObject.m in Sources */ = {isa = PBXBuildFile; fileRef = F412575B0B098593001622AC /* WeightedSObject.m */; };
 		F412DE1721B341D300D8889F /* SessionIdAuthInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F412DE1621B341D300D8889F /* SessionIdAuthInfo.m */; };
 		F413C6540AACABD5000A8CDC /* DataSources.m in Sources */ = {isa = PBXBuildFile; fileRef = F413C6530AACABD5000A8CDC /* DataSources.m */; };
@@ -39,6 +42,12 @@
 		F45C7EEB0B5FDB5F00F93DD7 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F45C7EEA0B5FDB5F00F93DD7 /* WebKit.framework */; };
 		F45DDFDD0AABBA6100ED0BA0 /* Explorer.m in Sources */ = {isa = PBXBuildFile; fileRef = F45DDFDB0AABBA6100ED0BA0 /* Explorer.m */; };
 		F46D91070B33DFC800913AD2 /* StandAloneTableHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F46D91010B33DFC800913AD2 /* StandAloneTableHeaderView.m */; };
+		F4805DE326FD4D9F005B1C24 /* OAuthMenuManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F4805DE226FD4D9F005B1C24 /* OAuthMenuManager.m */; };
+		F4805E0427063B1B005B1C24 /* LoginRowViewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = F4805E0227063B1B005B1C24 /* LoginRowViewItem.m */; };
+		F4805E0527063B1B005B1C24 /* LoginRowViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4805E0327063B1B005B1C24 /* LoginRowViewItem.xib */; };
+		F4805E0D27066606005B1C24 /* LoginTargetController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4805E0C27066606005B1C24 /* LoginTargetController.m */; };
+		F4805E1327066742005B1C24 /* LoginTargetViewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = F4805E1127066742005B1C24 /* LoginTargetViewItem.m */; };
+		F4805E1427066742005B1C24 /* LoginTargetViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4805E1227066742005B1C24 /* LoginTargetViewItem.xib */; };
 		F48804CB2592ADE7001D56F6 /* Describer.m in Sources */ = {isa = PBXBuildFile; fileRef = F48804CA2592ADE7001D56F6 /* Describer.m */; };
 		F48804D92592BB33001D56F6 /* CaseInsensitiveStringKey.m in Sources */ = {isa = PBXBuildFile; fileRef = F48804D82592BB33001D56F6 /* CaseInsensitiveStringKey.m */; };
 		F48804DD2592BE57001D56F6 /* CaseInsensitiveKeyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F48804DC2592BE57001D56F6 /* CaseInsensitiveKeyTest.m */; };
@@ -89,13 +98,14 @@
 		F4CD51200B0C350300345D9E /* FieldImportance.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CD511E0B0C350300345D9E /* FieldImportance.m */; };
 		F4CF71F40D4704EE001001F2 /* QueryResultTable.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CF71F30D4704EE001001F2 /* QueryResultTable.m */; };
 		F4CF73E80D49BDDB001001F2 /* QueryResultCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CF73E70D49BDDB001001F2 /* QueryResultCell.m */; };
+		F4D1B5142706729800EEE8BD /* Defaults.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D1B5132706729800EEE8BD /* Defaults.m */; };
+		F4D1B522270685D100EEE8BD /* delete.png in Resources */ = {isa = PBXBuildFile; fileRef = F4D1B520270685D100EEE8BD /* delete.png */; };
 		F4D4F5AB1623CD5D009CF3D4 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = F4D4F5AA1623CD5D009CF3D4 /* dsa_pub.pem */; };
 		F4D6E18A0BD70DA200813881 /* EditableQueryResultWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D6E1880BD70DA200813881 /* EditableQueryResultWrapper.m */; };
 		F4D7831815D489B800D00BB9 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4D7831615D489B800D00BB9 /* MainMenu.xib */; };
 		F4D7831B15D48C8500D00BB9 /* Explorer.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4D7831915D48C8500D00BB9 /* Explorer.xib */; };
 		F4D7831E15D49F7B00D00BB9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D7831D15D49F7B00D00BB9 /* AppDelegate.m */; };
 		F4D7833415D5F46600D00BB9 /* BaseUserBasedController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D7833315D5F46600D00BB9 /* BaseUserBasedController.m */; };
-		F4D7834615D82C8200D00BB9 /* Login.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4D7834515D82C8200D00BB9 /* Login.xib */; };
 		F4D7836B15D8814C00D00BB9 /* ZKDescribe_Reporting.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D7836A15D8814C00D00BB9 /* ZKDescribe_Reporting.m */; };
 		F4D8DC792569CFF7002C9FC1 /* SObject.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D8DC782569CFF7002C9FC1 /* SObject.m */; };
 		F4D8DC87256AD4E2002C9FC1 /* SObjectSortDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D8DC86256AD4E2002C9FC1 /* SObjectSortDescriptor.m */; };
@@ -118,6 +128,8 @@
 		F4E3194B2198ECE3009B8C4F /* ReportDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4E319472198ECE3009B8C4F /* ReportDocument.xib */; };
 		F4E3194E2198EF4E009B8C4F /* ProgressWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4E3194C2198EF4E009B8C4F /* ProgressWindow.xib */; };
 		F4E8BB10184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E8BB0F184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m */; };
+		F4F0D5D0270A719B00C53B0C /* Login.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4F0D5D2270A719B00C53B0C /* Login.xib */; };
+		F4F0D5E1270A740B00C53B0C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F4F0D5E0270A740B00C53B0C /* Localizable.strings */; };
 		F4F286F5263372FE00CCEA7D /* SoqlToken.m in Sources */ = {isa = PBXBuildFile; fileRef = F4F286F4263372FE00CCEA7D /* SoqlToken.m */; };
 		F4F2870E26337DF000CCEA7D /* SoqlParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F4F2870A26337DEF00CCEA7D /* SoqlParser.m */; };
 		F4F2E7282640633F005C49B9 /* order_by.txt in Resources */ = {isa = PBXBuildFile; fileRef = F4F2E7252640633F005C49B9 /* order_by.txt */; };
@@ -250,6 +262,11 @@
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* SoqlXplorer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SoqlXplorer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9545AAB5647FCCF37DF52D4 /* Pods-SoqlXplorerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SoqlXplorerTests.debug.xcconfig"; path = "Target Support Files/Pods-SoqlXplorerTests/Pods-SoqlXplorerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		F406D29827080424008A0CCC /* NSArray+Partition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSArray+Partition.h"; sourceTree = "<group>"; };
+		F406D29927080424008A0CCC /* NSArray+Partition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSArray+Partition.m"; sourceTree = "<group>"; };
+		F406D2A72708083D008A0CCC /* LoginHeaderRowViewItem.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LoginHeaderRowViewItem.xib; sourceTree = "<group>"; };
+		F406D2AC27081C0D008A0CCC /* CredentialsDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CredentialsDataSource.h; sourceTree = "<group>"; };
+		F406D2AD27081C0D008A0CCC /* CredentialsDataSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CredentialsDataSource.m; sourceTree = "<group>"; };
 		F4119DAC237BCED0003E3134 /* SoqlXplorer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SoqlXplorer.entitlements; sourceTree = "<group>"; };
 		F412575A0B098593001622AC /* WeightedSObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WeightedSObject.h; sourceTree = "<group>"; };
 		F412575B0B098593001622AC /* WeightedSObject.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WeightedSObject.m; sourceTree = "<group>"; };
@@ -286,6 +303,16 @@
 		F45DDFDC0AABBA6100ED0BA0 /* Explorer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Explorer.h; sourceTree = "<group>"; };
 		F46D91000B33DFC800913AD2 /* StandAloneTableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = StandAloneTableHeaderView.h; path = ../common/StandAloneTableHeaderView.h; sourceTree = SOURCE_ROOT; };
 		F46D91010B33DFC800913AD2 /* StandAloneTableHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = StandAloneTableHeaderView.m; path = ../common/StandAloneTableHeaderView.m; sourceTree = SOURCE_ROOT; };
+		F4805DE126FD4D9F005B1C24 /* OAuthMenuManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OAuthMenuManager.h; sourceTree = "<group>"; };
+		F4805DE226FD4D9F005B1C24 /* OAuthMenuManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OAuthMenuManager.m; sourceTree = "<group>"; };
+		F4805E0127063B1B005B1C24 /* LoginRowViewItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoginRowViewItem.h; sourceTree = "<group>"; };
+		F4805E0227063B1B005B1C24 /* LoginRowViewItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoginRowViewItem.m; sourceTree = "<group>"; };
+		F4805E0327063B1B005B1C24 /* LoginRowViewItem.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LoginRowViewItem.xib; sourceTree = "<group>"; };
+		F4805E0B27066606005B1C24 /* LoginTargetController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoginTargetController.h; sourceTree = "<group>"; };
+		F4805E0C27066606005B1C24 /* LoginTargetController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoginTargetController.m; sourceTree = "<group>"; };
+		F4805E1027066742005B1C24 /* LoginTargetViewItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoginTargetViewItem.h; sourceTree = "<group>"; };
+		F4805E1127066742005B1C24 /* LoginTargetViewItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoginTargetViewItem.m; sourceTree = "<group>"; };
+		F4805E1227066742005B1C24 /* LoginTargetViewItem.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LoginTargetViewItem.xib; sourceTree = "<group>"; };
 		F48804C92592ADE7001D56F6 /* Describer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Describer.h; sourceTree = "<group>"; };
 		F48804CA2592ADE7001D56F6 /* Describer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Describer.m; sourceTree = "<group>"; };
 		F48804D72592BB33001D56F6 /* CaseInsensitiveStringKey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CaseInsensitiveStringKey.h; sourceTree = "<group>"; };
@@ -367,6 +394,9 @@
 		F4CF71F30D4704EE001001F2 /* QueryResultTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QueryResultTable.m; sourceTree = "<group>"; };
 		F4CF73E60D49BDDB001001F2 /* QueryResultCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueryResultCell.h; sourceTree = "<group>"; };
 		F4CF73E70D49BDDB001001F2 /* QueryResultCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QueryResultCell.m; sourceTree = "<group>"; };
+		F4D1B5122706729800EEE8BD /* Defaults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Defaults.h; sourceTree = "<group>"; };
+		F4D1B5132706729800EEE8BD /* Defaults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Defaults.m; sourceTree = "<group>"; };
+		F4D1B521270685D100EEE8BD /* Base */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Base; path = Base.lproj/delete.png; sourceTree = "<group>"; };
 		F4D4F5AA1623CD5D009CF3D4 /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		F4D6E1870BD70DA200813881 /* EditableQueryResultWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditableQueryResultWrapper.h; sourceTree = "<group>"; };
 		F4D6E1880BD70DA200813881 /* EditableQueryResultWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditableQueryResultWrapper.m; sourceTree = "<group>"; };
@@ -374,7 +404,6 @@
 		F4D7831D15D49F7B00D00BB9 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		F4D7833215D5F46600D00BB9 /* BaseUserBasedController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseUserBasedController.h; sourceTree = "<group>"; };
 		F4D7833315D5F46600D00BB9 /* BaseUserBasedController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseUserBasedController.m; sourceTree = "<group>"; };
-		F4D7834515D82C8200D00BB9 /* Login.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = Login.xib; path = ../common/Login.xib; sourceTree = "<group>"; };
 		F4D7836915D8814C00D00BB9 /* ZKDescribe_Reporting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKDescribe_Reporting.h; sourceTree = "<group>"; };
 		F4D7836A15D8814C00D00BB9 /* ZKDescribe_Reporting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZKDescribe_Reporting.m; sourceTree = "<group>"; };
 		F4D8DC772569CFF7002C9FC1 /* SObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SObject.h; sourceTree = "<group>"; };
@@ -400,6 +429,8 @@
 		F4E3194D2198EF4E009B8C4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ProgressWindow.xib; sourceTree = "<group>"; };
 		F4E8BB0E184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZKDescribeThemeItem+ZKFindResource.h"; sourceTree = "<group>"; };
 		F4E8BB0F184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ZKDescribeThemeItem+ZKFindResource.m"; sourceTree = "<group>"; };
+		F4F0D5D1270A719B00C53B0C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Login.xib; sourceTree = "<group>"; };
+		F4F0D5E0270A740B00C53B0C /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		F4F286F3263372FE00CCEA7D /* SoqlToken.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SoqlToken.h; sourceTree = "<group>"; };
 		F4F286F4263372FE00CCEA7D /* SoqlToken.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SoqlToken.m; sourceTree = "<group>"; };
 		F4F2870A26337DEF00CCEA7D /* SoqlParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SoqlParser.m; sourceTree = "<group>"; };
@@ -449,6 +480,7 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				F4805E0927065EAD005B1C24 /* Login */,
 				F4F2870926337DCC00CCEA7D /* SoqlSyntax */,
 				F454D161126785EA00DC16D9 /* ApexController.h */,
 				F454D162126785EA00DC16D9 /* ApexController.m */,
@@ -458,8 +490,6 @@
 				F4D7833315D5F46600D00BB9 /* BaseUserBasedController.m */,
 				F4C878B60F3964BD000075D4 /* BulkDelete.h */,
 				F4C878B70F3964BD000075D4 /* BulkDelete.m */,
-				F4CD3DB70B8572DB00084479 /* credential.h */,
-				F4CD3DB80B8572DB00084479 /* credential.m */,
 				F413C6520AACABD5000A8CDC /* DataSources.h */,
 				F413C6530AACABD5000A8CDC /* DataSources.m */,
 				F48804C92592ADE7001D56F6 /* Describer.h */,
@@ -484,6 +514,8 @@
 				F4B8AFC518A8540800FE114F /* IconProvider.h */,
 				F48B6B8A1969E68700496C82 /* Prefs.h */,
 				F48B6B8B1969E68700496C82 /* Prefs.m */,
+				F4D1B5122706729800EEE8BD /* Defaults.h */,
+				F4D1B5132706729800EEE8BD /* Defaults.m */,
 				F4C877F80F395DB4000075D4 /* ProgressController.h */,
 				F4C877F90F395DB4000075D4 /* ProgressController.m */,
 				F49741EE0D554DB500DD77F4 /* QueryListController.h */,
@@ -494,13 +526,11 @@
 				F4D034D20F3AB99900D0A7EA /* schemaView */,
 				F4C440C815DB50BC00590A1E /* SearchQueryResult.h */,
 				F4C440C915DB50BC00590A1E /* SearchQueryResult.m */,
-				F412DE1521B341D300D8889F /* SessionIdAuthInfo.h */,
-				F412DE1621B341D300D8889F /* SessionIdAuthInfo.m */,
 				F41257530B0981AB001622AC /* UI Widgets */,
 				F4E8BB0E184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.h */,
 				F4E8BB0F184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m */,
-				F4CD3DAA0B85701100084479 /* ZKLoginController.h */,
-				F4CD3DAB0B85701100084479 /* ZKLoginController.m */,
+				F406D29827080424008A0CCC /* NSArray+Partition.h */,
+				F406D29927080424008A0CCC /* NSArray+Partition.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -566,6 +596,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				F4D1B520270685D100EEE8BD /* delete.png */,
 				F4E3194C2198EF4E009B8C4F /* ProgressWindow.xib */,
 				F4E319432198ECE3009B8C4F /* querySavePanel.xib */,
 				F4E319472198ECE3009B8C4F /* ReportDocument.xib */,
@@ -576,13 +607,13 @@
 				F4D4F5AA1623CD5D009CF3D4 /* dsa_pub.pem */,
 				F454D2DE1267E0AF00DC16D9 /* redLight.png */,
 				F454D2DF1267E0AF00DC16D9 /* greenLight.png */,
-				F4D7834515D82C8200D00BB9 /* Login.xib */,
 				F4B8DFF40B61F4B900DDD00A /* key_b.png */,
 				F4B8DFF50B61F4B900DDD00A /* key_r.png */,
 				F4B8DFE70B61EB8900DDD00A /* report.css */,
 				F413C7250AACB9B4000A8CDC /* sf.icns */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
+				F4F0D5E0270A740B00C53B0C /* Localizable.strings */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -659,6 +690,33 @@
 				F4AC556615996D8500F5CA45 /* zkRunTestResult.m */,
 			);
 			name = "sforce apex";
+			sourceTree = "<group>";
+		};
+		F4805E0927065EAD005B1C24 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				F4CD3DAA0B85701100084479 /* ZKLoginController.h */,
+				F4CD3DAB0B85701100084479 /* ZKLoginController.m */,
+				F4F0D5D2270A719B00C53B0C /* Login.xib */,
+				F406D2AC27081C0D008A0CCC /* CredentialsDataSource.h */,
+				F406D2AD27081C0D008A0CCC /* CredentialsDataSource.m */,
+				F4805E0127063B1B005B1C24 /* LoginRowViewItem.h */,
+				F4805E0227063B1B005B1C24 /* LoginRowViewItem.m */,
+				F4805E0327063B1B005B1C24 /* LoginRowViewItem.xib */,
+				F406D2A72708083D008A0CCC /* LoginHeaderRowViewItem.xib */,
+				F4805DE126FD4D9F005B1C24 /* OAuthMenuManager.h */,
+				F4805DE226FD4D9F005B1C24 /* OAuthMenuManager.m */,
+				F4CD3DB70B8572DB00084479 /* credential.h */,
+				F4CD3DB80B8572DB00084479 /* credential.m */,
+				F412DE1521B341D300D8889F /* SessionIdAuthInfo.h */,
+				F412DE1621B341D300D8889F /* SessionIdAuthInfo.m */,
+				F4805E0B27066606005B1C24 /* LoginTargetController.h */,
+				F4805E0C27066606005B1C24 /* LoginTargetController.m */,
+				F4805E1027066742005B1C24 /* LoginTargetViewItem.h */,
+				F4805E1127066742005B1C24 /* LoginTargetViewItem.m */,
+				F4805E1227066742005B1C24 /* LoginTargetViewItem.xib */,
+			);
+			name = Login;
 			sourceTree = "<group>";
 		};
 		F494FA3C0F7EFDD2001216EC /* GlossShader */ = {
@@ -925,21 +983,26 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F4805E1427066742005B1C24 /* LoginTargetViewItem.xib in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				F4C8BF332197C5740000E312 /* Credits.rtf in Resources */,
 				F413C7260AACB9B4000A8CDC /* sf.icns in Resources */,
 				F4BBAA152186C3E100647C27 /* Media.xcassets in Resources */,
 				F4E319492198ECE3009B8C4F /* querySavePanel.xib in Resources */,
 				F4E3194B2198ECE3009B8C4F /* ReportDocument.xib in Resources */,
+				F406D2A92708083D008A0CCC /* LoginHeaderRowViewItem.xib in Resources */,
 				F4E3194E2198EF4E009B8C4F /* ProgressWindow.xib in Resources */,
 				F4B8DFE80B61EB8900DDD00A /* report.css in Resources */,
+				F4F0D5E1270A740B00C53B0C /* Localizable.strings in Resources */,
 				F4B8DFF60B61F4B900DDD00A /* key_b.png in Resources */,
+				F4805E0527063B1B005B1C24 /* LoginRowViewItem.xib in Resources */,
 				F4B8DFF70B61F4B900DDD00A /* key_r.png in Resources */,
 				F454D2E01267E0AF00DC16D9 /* redLight.png in Resources */,
 				F454D2E11267E0AF00DC16D9 /* greenLight.png in Resources */,
 				F4D7831815D489B800D00BB9 /* MainMenu.xib in Resources */,
 				F4D7831B15D48C8500D00BB9 /* Explorer.xib in Resources */,
-				F4D7834615D82C8200D00BB9 /* Login.xib in Resources */,
+				F4D1B522270685D100EEE8BD /* delete.png in Resources */,
+				F4F0D5D0270A719B00C53B0C /* Login.xib in Resources */,
 				F4D4F5AB1623CD5D009CF3D4 /* dsa_pub.pem in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1054,11 +1117,15 @@
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				F45DDFDD0AABBA6100ED0BA0 /* Explorer.m in Sources */,
 				F413C6540AACABD5000A8CDC /* DataSources.m in Sources */,
+				F406D29A27080424008A0CCC /* NSArray+Partition.m in Sources */,
 				F4DD944B0AFEEC9400B0E3AC /* SchemaView.m in Sources */,
 				F424A81D262B595C00AD4F42 /* SoqlTokenizer.m in Sources */,
 				F48804D92592BB33001D56F6 /* CaseInsensitiveStringKey.m in Sources */,
+				F4805E1327066742005B1C24 /* LoginTargetViewItem.m in Sources */,
 				F4DD94540AFEED9500B0E3AC /* SchemaController.m in Sources */,
 				F458CEB20AFF2442008A20A9 /* SObjectBox.m in Sources */,
+				F4805E0427063B1B005B1C24 /* LoginRowViewItem.m in Sources */,
+				F4805E0D27066606005B1C24 /* LoginTargetController.m in Sources */,
 				F412575D0B098593001622AC /* WeightedSObject.m in Sources */,
 				F4CD511B0B0C342100345D9E /* PlusMinusWidget.m in Sources */,
 				F4CD51200B0C350300345D9E /* FieldImportance.m in Sources */,
@@ -1072,6 +1139,7 @@
 				F4CD3DBA0B8572DB00084479 /* credential.m in Sources */,
 				F4D6E18A0BD70DA200813881 /* EditableQueryResultWrapper.m in Sources */,
 				F4408FEF2562F4C1005E8BB7 /* QueryColumns.m in Sources */,
+				F4D1B5142706729800EEE8BD /* Defaults.m in Sources */,
 				F4A62E2F0D31AC6300D7EACA /* NSView_additions.m in Sources */,
 				F4CF71F40D4704EE001001F2 /* QueryResultTable.m in Sources */,
 				F4CF73E80D49BDDB001001F2 /* QueryResultCell.m in Sources */,
@@ -1085,6 +1153,7 @@
 				F4FAFB660F68CAFD00ECC9BB /* HighlightTextFieldCell.m in Sources */,
 				F4BF72A70F79E58C0089F459 /* NSWindow_additions.m in Sources */,
 				F48804CB2592ADE7001D56F6 /* Describer.m in Sources */,
+				F406D2AE27081C0D008A0CCC /* CredentialsDataSource.m in Sources */,
 				F4B461FF0F79EB850099C434 /* FieldResizer.m in Sources */,
 				F494FA470F7EFE22001216EC /* RRCausticColorMatcher.m in Sources */,
 				F494FA480F7EFE22001216EC /* RRExponentialFunction.m in Sources */,
@@ -1107,6 +1176,7 @@
 				F4D7831E15D49F7B00D00BB9 /* AppDelegate.m in Sources */,
 				F4D7833415D5F46600D00BB9 /* BaseUserBasedController.m in Sources */,
 				F4D7836B15D8814C00D00BB9 /* ZKDescribe_Reporting.m in Sources */,
+				F4805DE326FD4D9F005B1C24 /* OAuthMenuManager.m in Sources */,
 				F412DE1721B341D300D8889F /* SessionIdAuthInfo.m in Sources */,
 				F4C440CA15DB50BC00590A1E /* SearchQueryResult.m in Sources */,
 				F4CD2AB71B76881500BDD68D /* NSTableView_additions.m in Sources */,
@@ -1165,6 +1235,14 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
+		F4D1B520270685D100EEE8BD /* delete.png */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F4D1B521270685D100EEE8BD /* Base */,
+			);
+			name = delete.png;
+			sourceTree = "<group>";
+		};
 		F4D7831615D489B800D00BB9 /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1203,6 +1281,15 @@
 				F4E3194D2198EF4E009B8C4F /* Base */,
 			);
 			name = ProgressWindow.xib;
+			sourceTree = "<group>";
+		};
+		F4F0D5D2270A719B00C53B0C /* Login.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F4F0D5D1270A719B00C53B0C /* Base */,
+			);
+			name = Login.xib;
+			path = ../common;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

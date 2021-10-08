@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2016,2018 Simon Fell
+// Copyright (c) 2006-2016,2018,2021 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -20,143 +20,135 @@
 //
 
 #import "ZKLoginController.h"
+#import <ZKSforce/ZKSforce.h>
 #import "credential.h"
-
+#import "CredentialsDataSource.h"
+#import "Defaults.h"
 
 int DEFAULT_API_VERSION = 53;
 
+@interface ZKLoginController()
 
-@interface ZKLoginController ()
-@property (strong) Credential *selectedCredential;
+// items in the UI using bindings read these and drive the UI
+@property (strong) NSString *statusText;
+@property (assign) BOOL busy;
+@property (readonly) BOOL hasSavedCredentials;
+@property (assign) BOOL isEditing;
+-(NSString*)sheetHeaderText;
+-(NSString*)welcomeText;
+-(IBAction)toggleEditing:(id)sender;
+-(IBAction)showLoginHelp:(id)sender;
+
+
+@property (strong) NSWindow *modalWindow;
+@property (strong) IBOutlet NSWindow *loginSheet;
+@property (strong) IBOutlet NSCollectionView *savedLogins;
+@property (strong) IBOutlet NSPopover *loginDest;
+@property (strong) IBOutlet NSButton *loginButton;
+@property (strong) IBOutlet LoginTargetController *targetController;
+-(IBAction)startOAuthLogin:(id)sender;
 -(void)closeLoginUi;
+
+
+@property (strong) Credential *selectedCredential;
+@property (strong) CredentialsDataSource *credDataSource;
+
 @end
 
 @implementation ZKLoginController
 
-@synthesize clientId, urlOfNewServer, statusText, password, preferedApiVersion, delegate, selectedCredential;
-@synthesize tokenWindow, apiSecurityToken;
-
-static NSString *login_lastUsernameKey = @"login_lastUserName";
-static NSString *prod = @"https://www.salesforce.com";
-static NSString *test = @"https://test.salesforce.com";
-
-
 +(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
     NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
-    if ([key isEqualToString:@"password"]) 
-        return [paths setByAddingObject:@"username"];
-    if ([key isEqualToString:@"credentials"] || [key isEqualToString:@"canDeleteServer"])
-        return [paths setByAddingObject:@"server"];
+    if ([key isEqualToString:@"hasSavedCredentials"]
+        || [key isEqualToString:@"sheetHeaderText"]) {
+        return [paths setByAddingObject:@"credDataSource"];
+    }
     return paths;
 }
 
-+ (NSSet *)keyPathsForValuesAffectingHasEnteredToken {
-    return [NSSet setWithObject:@"apiSecurityToken"];
-}
-
-+ (NSString*)appClientId {
++(NSString*)appClientId {
     NSDictionary *plist = [[NSBundle mainBundle] infoDictionary];
     NSString *cid = [NSString stringWithFormat:@"%@/%@", [plist objectForKey:@"CFBundleName"], [plist objectForKey:@"CFBundleVersion"]];
     return cid;
 }
 
-- (id)init {
+-(id)init {
     self = [super init];
-    server = [[[NSUserDefaults standardUserDefaults] objectForKey:@"server"] copy];
-    [self setUsername:[[NSUserDefaults standardUserDefaults] objectForKey:login_lastUsernameKey]];
-    preferedApiVersion = DEFAULT_API_VERSION;
+    self.preferedApiVersion = DEFAULT_API_VERSION;
+    self.controllerId = [[NSUUID UUID] UUIDString];
     return self;
 }
 
-- (void)awakeFromNib {
-    [loginProgress setUsesThreadedAnimation:YES];
-    [loginProgress setHidden:YES];
-    [loginProgress setDoubleValue:22.0];
+-(void)awakeFromNib {
+    [self.savedLogins registerNib:[[NSNib alloc] initWithNibNamed:@"LoginRowViewItem" bundle:nil] forItemWithIdentifier:@"row"];
+    [self.savedLogins registerNib:[[NSNib alloc] initWithNibNamed:@"LoginHeaderRowViewItem" bundle:nil]
+         forSupplementaryViewOfKind:NSCollectionElementKindSectionHeader
+                     withIdentifier:@"h"];
+    self.credDataSource = [[CredentialsDataSource alloc] initWithCreds:[Credential credentialsInMruOrder]];
+    self.credDataSource.delegate = self;
+    self.savedLogins.dataSource = self.credDataSource;
+    self.targetController.delegate = self;
 }
 
-- (void)loadNib {
-    NSArray *top = nibTopLevelObjects;
-    [[NSBundle mainBundle] loadNibNamed:@"Login" owner:self topLevelObjects:&top];
-    nibTopLevelObjects = top;
+-(BOOL)hasSavedCredentials {
+    return self.credDataSource.items.count > 0;
 }
 
-- (void)setClientIdFromInfoPlist {
-    [self setClientId:[ZKLoginController appClientId]];
+-(IBAction)toggleEditing:(id)sender {
+    self.isEditing = !self.isEditing;
+    self.credDataSource.isEditing = self.isEditing;
+    [self.savedLogins reloadData];
 }
 
-- (void)endModalWindow:(id)sforce {
+-(void)credentialSelected:(Credential*)c {
+    [self loginWithOAuthToken:c window:self.modalWindow];
+}
+
+- (void)deleteCredential:(nonnull Credential *)c {
+    [self.credDataSource removeItem:c];
+    [self.savedLogins reloadData];
+    [c deleteEntry];
+}
+
+-(void)loadNib {
+    [[NSBundle mainBundle] loadNibNamed:@"Login" owner:self topLevelObjects:nil];
+}
+
+-(void)endModalWindow:(id)sforce {
     [NSApp stopModal];
 }
 
 // the delegate will get a callback with the outcome
 - (void)showLoginSheet:(NSWindow *)modalForWindow {
     [self loadNib];
-    modalWindow = modalForWindow;
-    [modalForWindow beginSheet:window completionHandler:nil];
-}
-
-- (BOOL)canDeleteServer {
-    return ([server caseInsensitiveCompare:prod] != NSOrderedSame) && ([server caseInsensitiveCompare:test] != NSOrderedSame);
-}
-
-- (IBAction)showAddNewServer:(id)sender {
-    [self setUrlOfNewServer:@"https://"];
-    [NSApp endSheet:window];
-    [window orderOut:sender];
-    [modalWindow beginSheet:newUrlWindow completionHandler:^(NSModalResponse returnCode) {
-        [self->window orderOut:self];
-        [self->modalWindow beginSheet:self->window completionHandler:nil];
-    }];
-}
-
-- (IBAction)closeAddNewServer:(id)sender {
-    [NSApp endSheet:newUrlWindow];    
-    [newUrlWindow orderOut:sender];
-}
-
-- (IBAction)deleteServer:(id)sender {
-    if (![self canDeleteServer]) return;
-    NSString *removedServer = [self server];
-    NSArray *servers = [[NSUserDefaults standardUserDefaults] objectForKey:@"servers"];
-    NSMutableArray *newServers = [NSMutableArray arrayWithCapacity:[servers count]];
-    for (NSString *s in servers) {
-        if ([s caseInsensitiveCompare:removedServer] == NSOrderedSame) continue;
-        [newServers addObject:s];
-    }
-    [[NSUserDefaults standardUserDefaults] setObject:newServers forKey:@"servers"];
-    [self setServer:prod];
-    if ([delegate respondsToSelector:@selector(loginController:serverUrlRemoved:)])
-        [delegate loginController:self serverUrlRemoved:[NSURL URLWithString:removedServer]];
-}
-
-- (IBAction)addNewServer:(id)sender {
-    NSString *new = [self urlOfNewServer];
-    if (![new isEqualToString:@"https://"]) {
-        NSArray *servers = [[NSUserDefaults standardUserDefaults] objectForKey:@"servers"];
-        if (![servers containsObject:new]) {
-            NSArray *newServers = [servers arrayByAddingObject:new];
-            [[NSUserDefaults standardUserDefaults] setObject:newServers forKey:@"servers"];
-        }
-        [self setServer:new];
-        [self closeAddNewServer:sender];
-        if ([delegate respondsToSelector:@selector(loginController:serverUrlAdded:)])
-            [delegate loginController:self serverUrlAdded:[NSURL URLWithString:new]];
-    }
+    self.modalWindow = modalForWindow;
+    // TODO: can auto layout handle this now?
+    NSSize fr = self.loginSheet.contentView.frame.size;
+    NSSize visSize = self.savedLogins.frame.size;
+    NSSize allItems = self.savedLogins.collectionViewLayout.collectionViewContentSize;
+    CGFloat newHeight = MAX(260.0, fr.height - visSize.height + allItems.height);
+    [self.loginSheet setContentSize:NSMakeSize(fr.width, newHeight)];
+ 
+    // This reloadData shouldn't be needed, but without it, the section header sometimes
+    // get placed over the first item, not above it.
+    [self.savedLogins reloadData];
+    [modalForWindow beginSheet:self.loginSheet completionHandler:nil];
 }
 
 -(void)closeLoginUi {
-    if (modalWindow != nil) {
-        [NSApp endSheet:window];
-        [window orderOut:self];
+    self.busy = FALSE;
+    self.statusText = @"";
+    if (self.modalWindow != nil) {
+        [NSApp endSheet:self.loginSheet];
+        [self.loginSheet orderOut:self];
     } else {
-        [window close];
+        [self.loginSheet close];
     }
 }
 
 - (IBAction)cancelLogin:(id)sender {
     [self closeLoginUi];
-    if ([delegate respondsToSelector:@selector(loginControllerLoginCancelled:)])
-        [delegate loginControllerLoginCancelled:self];
+    [self.delegate loginControllerLoginCancelled:self];
 }
 
 - (void)showAlertSheetWithMessageText:(NSString *)message 
@@ -169,170 +161,179 @@ static NSString *test = @"https://test.salesforce.com";
     [a addButtonWithTitle:defaultButton];
     [a addButtonWithTitle:altButton];
 
-    [NSApp endSheet:window];
-    [window orderOut:self];
+    [NSApp endSheet:self.loginSheet];
+    [self.loginSheet orderOut:self];
     
-    [a beginSheetModalForWindow:modalWindow completionHandler:handler];
+    [a beginSheetModalForWindow:self.modalWindow completionHandler:handler];
 }
 
-- (void)promptAndAddToKeychain {
-    [self showAlertSheetWithMessageText:@"Create Keychain entry with new username & password?" 
-                defaultButton:@"Create Keychain Entry" 
-                altButton:@"No thanks"
-                completionHandler:^(NSModalResponse returnCode) {
-                    if (NSAlertFirstButtonReturn == returnCode) {
-                         [Credential createCredentialForServer:self->server username:self->username password:self->password];
-                    }
-                    [self closeLoginUi];
-                    [self.delegate loginController:self loginCompleted:self->sforce];
-                }];
+- (ZKSforceClient*)newClient:(int)version {
+    ZKSforceClient *c = [[ZKSforceClient alloc] init];
+    c.preferedApiVersion = version;
+    [c setClientId:[ZKLoginController appClientId]];
+    return c;
 }
 
-- (void)promptAndUpdateKeychain {
-    [self showAlertSheetWithMessageText:@"Update Keychain entry with new password?" 
-                defaultButton:@"Update Keychain" 
-                altButton:@"No thanks"
-                completionHandler:^(NSModalResponse returnCode) {
-                    if (NSAlertFirstButtonReturn == returnCode) {
-                         [[self selectedCredential] update:self->username password:self->password];
-                    }
-                    [self closeLoginUi];
-                    [self.delegate loginController:self loginCompleted:self->sforce];
-                }];
+static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoHQhmqzBxALj8UBnhjzntUVXdcdZFXATXCdevs";
+
+-(IBAction)startOAuthLogin:(id)sender {
+    NSRect btnRect = self.loginButton.bounds;
+    [self.loginDest showRelativeToRect:btnRect ofView:self.loginButton preferredEdge:NSRectEdgeMaxX];
 }
 
-- (void)startLoginWithApiVersion:(int)version
-                       failBlock:(ZKFailWithErrorBlock)failBlock
-                   completeBlock:(void(^)(ZKSforceClient *client))completeBlock {
-    
-    ZKSforceClient *newClient = [[ZKSforceClient alloc] init];
-    sforce = newClient;
-    [newClient setLoginProtocolAndHost:server andVersion:version];
-    if ([clientId length] > 0) {
-        [newClient setClientId:clientId];
-    }
-    [newClient login:username password:password failBlock:^(NSError *result) {
-        if ([result.userInfo[ZKSoapFaultCodeKey] hasSuffix:@":UNSUPPORTED_API_VERSION"]) {
-            NSLog(@"Login failed with %@ on API Version %d, retrying with version %d", result, version, version-1);
-            [self startLoginWithApiVersion:version-1 failBlock:failBlock completeBlock:completeBlock];
-        } else {
-            failBlock(result);
+-(void)loginTargetSelected:(LoginTargetItem*)item {
+    NSString *cb = @"soqlx://oauth/";
+    // build the URL to the oauth page with our client_id & callback URL set.
+    NSCharacterSet *urlcs = [NSCharacterSet URLQueryAllowedCharacterSet];
+    NSString *path = [NSString stringWithFormat:@"/services/oauth2/authorize?response_type=token&client_id=%@&redirect_uri=%@&state=%@",
+                       [OAUTH_CID stringByAddingPercentEncodingWithAllowedCharacters:urlcs],
+                       [cb stringByAddingPercentEncodingWithAllowedCharacters:urlcs],
+                       [self.controllerId stringByAddingPercentEncodingWithAllowedCharacters:urlcs]];
+    NSURL *url = [NSURL URLWithString:path relativeToURL:item.url];
+
+    // ask the OS to open browser to the URL
+    [[NSWorkspace sharedWorkspace] openURL:url];
+    self.statusText = @"Complete the login/authorization in the browser";
+    // close the login target popup
+    [self.loginDest performClose:self];
+}
+
+-(void)loginTargetDeleted:(nonnull LoginTargetItem *)item {
+    // we don't care
+}
+
+-(void)addUserToMru:(NSString*)username host:(NSString*)hostname {
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    NSDictionary *mruEntry = @{
+        LOGIN_MRU_USERNAME : username,
+        LOGIN_MRU_HOST     : hostname,
+    };
+    NSUInteger existingIdx = [[def arrayForKey:DEF_LOGIN_MRU] indexOfObject:mruEntry];
+    if (existingIdx != 0) {
+        NSMutableArray *mru = [[def arrayForKey:DEF_LOGIN_MRU] mutableCopy];
+        if (existingIdx != NSNotFound) {
+            [mru removeObjectAtIndex:existingIdx];
         }
-    } completeBlock:^(ZKLoginResult *result) {
-        [[NSUserDefaults standardUserDefaults] setObject:self.server forKey:@"server"];
-        [[NSUserDefaults standardUserDefaults] setObject:self.username forKey:login_lastUsernameKey];
-        completeBlock(newClient);
-    }];
+        [mru insertObject:mruEntry atIndex:0];
+        [def setValue:mru forKey:DEF_LOGIN_MRU];
+    }
 }
 
--(void)startLogin:(ZKFailWithErrorBlock)failBlock completeBlock:(void(^)(ZKSforceClient *client))completeBlock {
-    [self startLoginWithApiVersion:preferedApiVersion failBlock:failBlock completeBlock:completeBlock];
-}
-            
-- (IBAction)login:(id)sender {
-    [self setStatusText:nil];
-    [loginProgress setHidden:NO];
-    [loginProgress display];
-    [self startLogin:^(NSError *result) {
-        [self->loginProgress setHidden:YES];
-        [self->loginProgress display];
-        [self setStatusText:result.localizedDescription];
-        if ([result.userInfo[ZKSoapFaultCodeKey] hasSuffix:@":LOGIN_MUST_USE_SECURITY_TOKEN"]) {
-            NSInteger mc =[NSApp runModalForWindow:self.tokenWindow];
-            [self.tokenWindow orderOut:self];
-            if (NSModalResponseStop == mc) {
-                [self login:sender];
-            } else {
-                [self->loginProgress setHidden:YES];
-                [self->loginProgress display];
+-(void)openOAuthResponse:(NSURL *)url apiVersion:(int)apiVersion {
+    ZKSforceClient *c = [self newClient:apiVersion];
+    NSError *err = [c loginFromOAuthCallbackUrl:url.absoluteString oAuthConsumerKey:OAUTH_CID];
+    if (err != nil) {
+        [[NSAlert alertWithError:err] runModal];
+        return;
+    }
+    // This call is used to validate that we were given a valid client, and that the auth info is usable.
+    // This also ensures that the userInfo is cached, which subsequent code relies on.
+    self.busy = TRUE;
+    self.statusText = @"Verifying OAuth tokens";
+    [self oauthCurrentUserInfoWithDowngrade:c
+                                  failBlock:^(NSError *result) {
+        self.busy = FALSE;
+        self.statusText = result.localizedDescription;
+        [[NSAlert alertWithError:result] runModal];
+
+    } completeBlock:^(ZKUserInfo *result) {
+        ZKOAuthInfo *auth = (ZKOAuthInfo*)c.authenticationInfo;
+        [self addUserToMru:result.userName host:auth.authHostUrl.host];
+        
+        // Success, see if there's an existing keychain entry for this oauth token
+        NSArray<Credential*> *creds = [Credential credentials];
+        for (Credential *cred in creds) {
+            if ([cred.username isEqualToString:result.userName] && [cred.server.host isEqualToString:auth.authHostUrl.host]) {
+                // update the keychain entry with the new refresh token
+                [cred updateToken:auth.refreshToken];
+                // and we're done
+                [self closeLoginUi];
+                [self.delegate loginController:self loginCompleted:c];
+                return;
             }
         }
-    } completeBlock:^(ZKSforceClient *client) {
-        [self->loginProgress setHidden:YES];
-        [self->loginProgress display];
-        if (self.selectedCredential == nil || (![[[self.selectedCredential username] lowercaseString] isEqualToString:[self.username lowercaseString]])) {
-            [self promptAndAddToKeychain];
-            return;
-        }
-        else if (![[self.selectedCredential password] isEqualToString:self.password]) {
-            [self promptAndUpdateKeychain];
-            return;
-        }
-        [self closeLoginUi];
-        [self.delegate loginController:self loginCompleted:self->sforce];
+        // no keychain entry, ask user if they want one.
+        [self showAlertSheetWithMessageText:@"Create Keychain entry with access token?"
+                    defaultButton:@"Create Keychain Entry"
+                    altButton:@"No thanks"
+                    completionHandler:^(NSModalResponse returnCode) {
+                        if (NSAlertFirstButtonReturn == returnCode) {
+                            [Credential createCredential:auth.authHostUrl
+                                                username:result.userName
+                                            refreshToken:auth.refreshToken];
+                        }
+                        [self closeLoginUi];
+                        [self.delegate loginController:self loginCompleted:c];
+                    }];
     }];
 }
 
-- (NSArray *)credentials {
-    if (credentials == nil) {
-        // NSComboBox doesn't really bind to an object, its value is always the display string
-        // regardless of how many you have with the same name, it doesn't bind the value to 
-        // the underlying object (lame), so we filter out all the duplicate usernames
-        NSArray *allCredentials = [Credential credentialsForServer:server];
-        NSMutableArray * filtered = [NSMutableArray arrayWithCapacity:[allCredentials count]];
-        NSMutableSet *usernames = [NSMutableSet set];
-        for (Credential *c in allCredentials) {
-            if ([[c username] length] == 0) continue;
-            NSString *lowerUsername = [[c username] lowercaseString];
-            if ([usernames containsObject:lowerUsername]) continue;
-            [usernames addObject:lowerUsername];
-            [filtered addObject:c];
-        }
-        credentials = filtered;
+- (void)completeOAuthLogin:(NSURL *)oauthCallbackUrl window:(NSWindow*)modalForWindow {
+    if (self.modalWindow == nil) {
+        [self showLoginSheet:modalForWindow];
     }
-    return credentials;
+    [self openOAuthResponse:oauthCallbackUrl apiVersion:self.preferedApiVersion];
 }
 
-- (NSString *)server {
-    return server;
-}
-
-- (void)setPasswordFromKeychain {
-    // see if there's a matching credential and default the password if so
-    for (Credential *c in [self credentials]) {
-        if ([[c username] caseInsensitiveCompare:username] == NSOrderedSame) {
-            [self setPassword:[c password]];
-            [self setSelectedCredential:c];
+-(void)oauthCurrentUserInfoWithDowngrade:(ZKSforceClient*)c
+                               failBlock:(ZKFailWithErrorBlock)failBlock
+                           completeBlock:(ZKCompleteUserInfoBlock)completeBlock {
+    
+    [c currentUserInfoWithFailBlock:^(NSError *result) {
+        if ([result.userInfo[ZKSoapFaultCodeKey] hasSuffix:@":UNSUPPORTED_API_VERSION"]) {
+            // not ideal
+            ZKOAuthInfo *auth = (ZKOAuthInfo*)c.authenticationInfo;
+            NSAssert([auth isKindOfClass:[ZKOAuthInfo class]], @"AuthInfo should be for OAuth");
+            auth.apiVersion = auth.apiVersion-1;
+            c.authenticationInfo = auth;
+            //NSLog(@"Downgrading API version to %d due to error %@", auth.apiVersion, result);
+            [self oauthCurrentUserInfoWithDowngrade:c failBlock:failBlock completeBlock:completeBlock];
             return;
         }
+        failBlock(result);
+    } completeBlock:completeBlock];
+}
+
+-(void)loginWithOAuthToken:(Credential*)cred window:(NSWindow*)modalForWindow {
+    if (self.modalWindow == nil) {
+        [self showLoginSheet:modalForWindow];
     }
-    [self setSelectedCredential:nil];    
+    [self setStatusText:@"Logging in from saved OAuth token"];
+    self.busy = TRUE;
+    ZKFailWithErrorBlock failBlock = ^(NSError *err) {
+        self.statusText = [NSString stringWithFormat:@"Refresh token no longer valid: %@", err.localizedDescription];
+        self.busy = FALSE;
+    };
+
+    ZKSforceClient *c = [self newClient:self.preferedApiVersion];
+    [c loginWithRefreshToken:cred.token
+                     authUrl:cred.server
+            oAuthConsumerKey:OAUTH_CID
+                   failBlock:failBlock
+               completeBlock:^{
+        [self oauthCurrentUserInfoWithDowngrade:c
+                                      failBlock:failBlock
+                                  completeBlock:^(ZKUserInfo *result) {
+            [self closeLoginUi];
+            [self addUserToMru:result.userName host:cred.server.host];
+            [self.delegate loginController:self loginCompleted:c];
+        }];
+    }];
 }
 
-- (void)setServer:(NSString *)aServer {
-    if ([server isEqualToString:aServer]) return;
-    server = [aServer copy];
-    credentials = nil;
-    [self setSelectedCredential:nil];
-    // we've changed server, so we need to recalc the password
-    [self setPasswordFromKeychain];
+-(NSString*)welcomeText {
+    return NSLocalizedString(@"WelcomeText", @"text shown in the login sheet when there's no saved credentials");
 }
 
-- (NSString *)username {
-    return username;
+-(IBAction)showLoginHelp:(id)sender {
+    NSString *help = [NSBundle mainBundle].infoDictionary[@"ZKHelpLoginUrl"];
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:help]];
 }
 
-- (void)setUsername:(NSString *)aUsername {
-    username = [aUsername copy];
-    [self setPasswordFromKeychain];
-}
-
-- (IBAction)loginWithToken:(id)sender {
-    self.password = [NSString stringWithFormat:@"%@%@", password, apiSecurityToken];
-    [NSApp stopModal];
-}
-
-- (IBAction)cancelToken:(id)sender {
-    [NSApp abortModal];
-}
-
-- (IBAction)showTokenHelp:(id)sender {
-    NSURL *url = [NSURL URLWithString:@"https://help.salesforce.com/apex/HTViewHelpDoc?id=user_security_token.htm"];
-    [[NSWorkspace sharedWorkspace] openURL:url];
-}
-
-- (BOOL)hasEnteredToken {
-    return [apiSecurityToken length] > 0;
+-(NSString*)sheetHeaderText {
+    return self.hasSavedCredentials ?
+        NSLocalizedString(@"SheetHeaderLogins", @"show on the login sheet when there are saved logins") :
+        NSLocalizedString(@"SheetHeaderWelcome", @"shown on the login sheet when there are no saved logins");
 }
 
 @end

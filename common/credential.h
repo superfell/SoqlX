@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2008,2013 Simon Fell
+// Copyright (c) 2006-2008,2013,2021 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -22,35 +22,30 @@
 #import <Cocoa/Cocoa.h>
 #include <Security/Security.h>
 
-
 @interface Credential : NSObject {
-    NSString            *server;
+    NSURL               *server;
     NSString            *username;
-    SecKeychainItemRef    keychainItem;
+    SecKeychainItemRef   keychainItem;
 }
 
-+ (NSArray *)credentialsForServer:(NSString *)protocolAndServer;
-+ (NSArray *)sortedCredentialsForServer:(NSString *)protocolAndServer;
++ (NSArray<Credential*> *)credentials;
++ (NSArray<Credential*> *)credentialsInMruOrder;
 
-+ (id)forServer:(NSString *)server username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem;
-+ (id)createCredentialForServer:(NSString *)protocolAndServer username:(NSString *)un password:(NSString *)pwd;
++ (instancetype)createCredential:(NSURL *)server username:(NSString *)un refreshToken:(NSString *)tkn;
 
-- (instancetype)initForServer:(NSString *)server username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem NS_DESIGNATED_INITIALIZER;
+- (instancetype)initForServer:(NSURL *)server username:(NSString *)un keychainItem:(SecKeychainItemRef)kcItem NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
-@property (copy) NSString *server;
-@property (copy) NSString *username;
-@property (copy) NSString *password;
-@property (copy) NSString *comment;
-@property (copy) NSString *creator;
-@property (readonly) BOOL canReadPasswordWithoutPrompt;
+@property (readonly) NSURL    *server;
+@property (readonly) NSString *username;
+@property (readonly) NSString *token;
 
+-(OSStatus)updateToken:(NSString *)token;
+-(OSStatus)deleteEntry;
 
-- (void)removeFromKeychain;
-- (OSStatus)update:(NSString *)username password:(NSString *)password;
 @end
 
 @interface NSURL (ZKKeychain)
-@property (readonly) SecProtocolType SecProtocolType;
-@property (readonly) CFTypeRef SecAttrProtocol;
+@property (readonly) NSString *friendlyHostLabel;
+@property (readonly) BOOL isStandardEndpoint;
 @end

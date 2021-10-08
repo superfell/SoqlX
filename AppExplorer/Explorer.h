@@ -58,7 +58,6 @@
 
     CGFloat                         uncollapsedDividerPosition;
     
-    ZKLoginController               *loginController;
     IBOutlet SchemaController       *schemaController;
     IBOutlet DetailsController      *detailsController;
     IBOutlet QueryListController    *queryListController;
@@ -76,7 +75,6 @@
 
 - (IBAction)showLogin:(id)sender;
 - (IBAction)closeLoginPanelIfOpen:(id)sender;
-- (IBAction)showInBrowser:(id)sender;
 - (IBAction)executeQuery:(id)sender;
 - (IBAction)executeQueryAll:(id)sender;
 - (IBAction)queryMore:(id)sender;
@@ -84,8 +82,6 @@
 - (IBAction)describeItemClicked:(id)sender;
 - (IBAction)generateReportForSelection:(id)sender;
 - (IBAction)queryResultDoubleClicked:(id)sender;
-- (IBAction)showSelectedIdFronRootInBrowser:(id)sender;
-- (IBAction)showSelectedIdFronChildInBrowser:(id)sender;
 - (IBAction)deleteCheckedRows:(id)sender;
 - (IBAction)filterSObjectListView:(id)sender;
 - (IBAction)updateDetailsRecentSelection:(id)sender;
@@ -108,8 +104,13 @@
 @property (strong) IBOutlet NSSegmentedControl *soqlSchemaApexSelector;
 @property (strong) IBOutlet NSSegmentedControl *detailsRecentSelector;
 
+@property (readonly) ZKLoginController *loginController;
+-(void)completeOAuthLogin:(NSURL *)oauthCallbackUrl;
+-(void)loginWithOAuthToken:(Credential*)cred;
+
 @property (readonly) BOOL loginSheetIsOpen;
 @property (getter=isLoggedIn, readonly) BOOL loggedIn;
+
 @property (readonly) BOOL hasSelectedForDelete;
 @property (readonly) BOOL canQueryMore;
 @property (readonly, copy) NSArray *SObjects;

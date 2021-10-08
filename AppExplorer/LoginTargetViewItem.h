@@ -1,4 +1,4 @@
-// Copyright (c) 2012,2018,2019 Simon Fell
+// Copyright (c) 2021 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -18,39 +18,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+#import <Cocoa/Cocoa.h>
 
-#import <Foundation/Foundation.h>
-#import <Sparkle/Sparkle.h>
+NS_ASSUME_NONNULL_BEGIN
 
-@class Explorer;
-@class ZKSforceClient;
-@class SoqlXWindowController;
-@class OAuthMenuManager;
+@interface LoginTargetItem : NSObject
 
-@interface AppDelegate : NSObject<NSApplicationDelegate, SUUpdaterDelegate>
++(instancetype)itemWithUrl:(NSURL*)u;
 
-- (IBAction)launchHelp:(id)sender;
-- (IBAction)openNewWindow:(id)sender;
-- (IBAction)showFontPrefs:(id)sender;
-- (void)openNewWindowForOAuthCredential:(id)sender;
-
-@property (strong) NSMutableArray<SoqlXWindowController*>* windowControllers;
-@property (strong) NSString *editFontLabel;
-@property (strong) NSFont *editFont;
-@property (assign) BOOL isOpeningFromUrl;
+@property (strong) NSURL    *url;
+@property (assign) BOOL     deletable;
 
 @end
 
-@interface SoqlXWindowController : NSWindowController
+@protocol LoginTargetItemDelegate <NSObject>
+@required
+-(void)loginTargetSelected:(LoginTargetItem*)item;
+-(void)loginTargetDeleted:(LoginTargetItem*)item;
+@end
 
--(instancetype)initWithWindowControllers:(NSMutableArray *)controllers;
+@interface LoginTargetViewItem : NSCollectionViewItem
 
--(void)showWindowForClient:(ZKSforceClient*)client;
--(void)closeLoginPanelIfOpen:(id)sender;
--(void)completeOAuthLogin:(NSURL*)url;
+@property (weak) NSObject<LoginTargetItemDelegate> *delegate;
+@property (strong) LoginTargetItem *target;
 
-@property (strong) IBOutlet Explorer *explorer;
-@property (strong) NSMutableArray<SoqlXWindowController*> *controllers;
-@property (readonly) NSString *controllerId;
+-(IBAction)onClick:(id)sender;
+-(IBAction)onDelete:(id)sender;
 
 @end
+
+NS_ASSUME_NONNULL_END

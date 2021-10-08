@@ -1,4 +1,4 @@
-// Copyright (c) 2012,2018,2019 Simon Fell
+// Copyright (c) 2021 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -19,38 +19,26 @@
 // THE SOFTWARE.
 //
 
-#import <Foundation/Foundation.h>
-#import <Sparkle/Sparkle.h>
 
-@class Explorer;
-@class ZKSforceClient;
-@class SoqlXWindowController;
-@class OAuthMenuManager;
+#import "NSArray+Partition.h"
 
-@interface AppDelegate : NSObject<NSApplicationDelegate, SUUpdaterDelegate>
+@implementation NSArray(Partition)
 
-- (IBAction)launchHelp:(id)sender;
-- (IBAction)openNewWindow:(id)sender;
-- (IBAction)showFontPrefs:(id)sender;
-- (void)openNewWindowForOAuthCredential:(id)sender;
-
-@property (strong) NSMutableArray<SoqlXWindowController*>* windowControllers;
-@property (strong) NSString *editFontLabel;
-@property (strong) NSFont *editFont;
-@property (assign) BOOL isOpeningFromUrl;
-
-@end
-
-@interface SoqlXWindowController : NSWindowController
-
--(instancetype)initWithWindowControllers:(NSMutableArray *)controllers;
-
--(void)showWindowForClient:(ZKSforceClient*)client;
--(void)closeLoginPanelIfOpen:(id)sender;
--(void)completeOAuthLogin:(NSURL*)url;
-
-@property (strong) IBOutlet Explorer *explorer;
-@property (strong) NSMutableArray<SoqlXWindowController*> *controllers;
-@property (readonly) NSString *controllerId;
+-(NSArray*)partitionByKeyPath:(NSString*)path {
+    NSMutableArray *results = [NSMutableArray array];
+    NSMutableDictionary<id, NSMutableArray*> *keys = [NSMutableDictionary dictionary];
+    for (id item in self) {
+        id key = [item valueForKeyPath:path];
+        NSMutableArray *partition = keys[key];
+        if (partition == nil) {
+            partition = [NSMutableArray arrayWithObject:item];
+            keys[key] = partition;
+            [results addObject:partition];
+        } else {
+            [partition addObject:item];
+        }
+    }
+    return results;
+}
 
 @end

@@ -60,6 +60,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
 @property (strong) ZKSforceClient *sforce;
 @property (strong) SoqlTokenizer *colorizer;
+@property (strong) ZKLoginController *loginController;
 @end
 
 
@@ -157,15 +158,30 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     }
 }
 
-- (IBAction)showLogin:(id)sender {
-    loginController = [[ZKLoginController alloc] init];
-    [loginController setClientIdFromInfoPlist];
-    loginController.delegate = self;
-    NSNumber *apiVersion = [[NSUserDefaults standardUserDefaults] objectForKey:@"zkApiVersion"];
-    if (apiVersion != nil) {
-        loginController.preferedApiVersion = apiVersion.intValue;
+-(void)initLoginController {
+    if (self.loginController == nil) {
+        self.loginController = [[ZKLoginController alloc] init];
+        self.loginController.delegate = self;
+        NSNumber *apiVersion = [[NSUserDefaults standardUserDefaults] objectForKey:@"zkApiVersion"];
+        if (apiVersion != nil) {
+            self.loginController.preferedApiVersion = apiVersion.intValue;
+        }
     }
-    [loginController showLoginSheet:myWindow];
+}
+
+-(void)loginWithOAuthToken:(Credential*)cred {
+    [self initLoginController];
+    [self.loginController loginWithOAuthToken:cred window:myWindow];
+}
+
+-(void)completeOAuthLogin:(NSURL *)oauthCallbackUrl {
+    [self initLoginController];
+    [self.loginController completeOAuthLogin:oauthCallbackUrl window:myWindow];
+}
+
+- (IBAction)showLogin:(id)sender {
+    [self initLoginController];
+    [self.loginController showLoginSheet:myWindow];
 }
 
 -(void)loginControllerLoginCancelled:(ZKLoginController *)controller {
@@ -173,7 +189,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 }
 
 -(void)loginController:(ZKLoginController *)controller loginCompleted:(ZKSforceClient *)client {
-    loginController = nil;
+    self.loginController = nil;
     [self useClient:client];
 }
 
@@ -181,34 +197,23 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     [self closeLoginPanelIfOpen:self];
     self.sforce = client;
     self.sforce.delegate = self;
-    loginController = nil;
+    self.loginController = nil;
     [self postLogin:self];
 }
 
 -(void)closeLoginPanelIfOpen:(id)sender {
-    [loginController cancelLogin:sender];
+    [self.loginController cancelLogin:sender];
 }
 
 -(BOOL)loginSheetIsOpen {
-    return loginController != nil;
+    return self.loginController != nil;
 }
 
 -(BOOL)isLoggedIn {
     return [sforce loggedIn];
 }
 
--(void)launchSfdcBrowser:(NSString *)retUrl {
-    NSString *returnUrl = retUrl == nil ? @"" : [NSString stringWithFormat:@"&retURL=%@", retUrl];
-    NSURL *fd = [NSURL URLWithString:[NSString stringWithFormat:@"/secur/frontdoor.jsp?sid=%@%@", [self.sforce sessionId], returnUrl]
-                       relativeToURL:self.sforce.serverUrl];
-    [[NSWorkspace sharedWorkspace] openURL:fd];
-}
-
-- (IBAction)showInBrowser:(id)sender {
-    [self launchSfdcBrowser:nil];
-}
-
-- (void)updateProgress:(BOOL)show {
+-(void)updateProgress:(BOOL)show {
     progress.doubleValue = show ? 50 : 0;
     if (show)
         [progress startAnimation:self];
@@ -838,21 +843,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
         }
     }
     return nil;
-}
-
-- (IBAction)showSelectedIdInBrowser:(NSTableView *)tv {
-    NSString *theId = [self idOfSelectedRowInTableVew:tv primaryIdOnly:NO];
-    if (theId == nil) return;
-    NSString *retUrl = [NSString stringWithFormat:@"/%@", theId];
-    [self launchSfdcBrowser:retUrl];
-}
-
-- (IBAction)showSelectedIdFronRootInBrowser:(id)sender {
-    [self showSelectedIdInBrowser:rootTableView];
-}
-
-- (IBAction)showSelectedIdFronChildInBrowser:(id)sender {
-    [self showSelectedIdInBrowser:childTableView];
 }
 
 // NSTabView delegate
