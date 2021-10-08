@@ -40,7 +40,7 @@ extern int DEFAULT_API_VERSION;
 
 -(void)showLoginSheet:(NSWindow *)modalForWindow;
 -(void)loginWithOAuthToken:(Credential*)cred window:(NSWindow*)modalForWindow;
--(void)completeOAuthLogin:(NSURL *)oauthCallbackUrl;
+-(void)completeOAuthLogin:(NSURL *)oauthCallbackUrl window:(NSWindow*)modalForWindow;
 -(IBAction)cancelLogin:(id)sender;
 
 @property (assign) int preferedApiVersion;

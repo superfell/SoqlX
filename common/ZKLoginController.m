@@ -268,7 +268,10 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
     }];
 }
 
-- (void)completeOAuthLogin:(NSURL *)oauthCallbackUrl {
+- (void)completeOAuthLogin:(NSURL *)oauthCallbackUrl window:(NSWindow*)modalForWindow {
+    if (self.modalWindow == nil) {
+        [self showLoginSheet:modalForWindow];
+    }
     [self openOAuthResponse:oauthCallbackUrl apiVersion:self.preferedApiVersion];
 }
 

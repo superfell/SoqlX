@@ -176,7 +176,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 
 -(void)completeOAuthLogin:(NSURL *)oauthCallbackUrl {
     [self initLoginController];
-    [self.loginController completeOAuthLogin:oauthCallbackUrl];
+    [self.loginController completeOAuthLogin:oauthCallbackUrl window:myWindow];
 }
 
 - (IBAction)showLogin:(id)sender {
