@@ -22,7 +22,6 @@
 		F424A81E262B595C00AD4F42 /* SoqlTokenizer.m in Sources */ = {isa = PBXBuildFile; fileRef = F424A81C262B595C00AD4F42 /* SoqlTokenizer.m */; };
 		F424A837262BCF1B00AD4F42 /* ColorizerStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = F424A836262BCF1B00AD4F42 /* ColorizerStyle.m */; };
 		F424A838262BCF1B00AD4F42 /* ColorizerStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = F424A836262BCF1B00AD4F42 /* ColorizerStyle.m */; };
-		F428A2D30F677BC3007BD862 /* BlueView.m in Sources */ = {isa = PBXBuildFile; fileRef = F428A2D20F677BC3007BD862 /* BlueView.m */; };
 		F4394F9C264981C000ABFA2B /* describes.xml in Resources */ = {isa = PBXBuildFile; fileRef = F4394F9B264981C000ABFA2B /* describes.xml */; };
 		F4394FA92649E3A400ABFA2B /* ZKLayoutManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F4394FA82649E3A400ABFA2B /* ZKLayoutManager.m */; };
 		F4408FEF2562F4C1005E8BB7 /* QueryColumns.m in Sources */ = {isa = PBXBuildFile; fileRef = F4408FEE2562F4C1005E8BB7 /* QueryColumns.m */; };
@@ -279,8 +278,6 @@
 		F424A81C262B595C00AD4F42 /* SoqlTokenizer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SoqlTokenizer.m; sourceTree = "<group>"; };
 		F424A835262BCF1B00AD4F42 /* ColorizerStyle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorizerStyle.h; sourceTree = "<group>"; };
 		F424A836262BCF1B00AD4F42 /* ColorizerStyle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ColorizerStyle.m; sourceTree = "<group>"; };
-		F428A2D10F677BC3007BD862 /* BlueView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlueView.h; sourceTree = "<group>"; };
-		F428A2D20F677BC3007BD862 /* BlueView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlueView.m; sourceTree = "<group>"; };
 		F4394F9B264981C000ABFA2B /* describes.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = describes.xml; sourceTree = "<group>"; };
 		F4394FA72649E3A400ABFA2B /* ZKLayoutManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZKLayoutManager.h; sourceTree = "<group>"; };
 		F4394FA82649E3A400ABFA2B /* ZKLayoutManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZKLayoutManager.m; sourceTree = "<group>"; };
@@ -657,8 +654,6 @@
 				F4CF73E70D49BDDB001001F2 /* QueryResultCell.m */,
 				F4F75D920D4EFCEE00608927 /* QueryTextListView.h */,
 				F4F75D930D4EFCEE00608927 /* QueryTextListView.m */,
-				F428A2D10F677BC3007BD862 /* BlueView.h */,
-				F428A2D20F677BC3007BD862 /* BlueView.m */,
 				F4FAFB640F68CAFD00ECC9BB /* HighlightTextFieldCell.h */,
 				F4FAFB650F68CAFD00ECC9BB /* HighlightTextFieldCell.m */,
 				F4B461FD0F79EB850099C434 /* FieldResizer.h */,
@@ -1149,7 +1144,6 @@
 				F44FC9E10E1EB69D00B5F70C /* ResultsSaver.m in Sources */,
 				F4C877FA0F395DB4000075D4 /* ProgressController.m in Sources */,
 				F4C878B80F3964BD000075D4 /* BulkDelete.m in Sources */,
-				F428A2D30F677BC3007BD862 /* BlueView.m in Sources */,
 				F4FAFB660F68CAFD00ECC9BB /* HighlightTextFieldCell.m in Sources */,
 				F4BF72A70F79E58C0089F459 /* NSWindow_additions.m in Sources */,
 				F48804CB2592ADE7001D56F6 /* Describer.m in Sources */,

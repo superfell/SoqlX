@@ -76,7 +76,7 @@
                         <rect key="frame" x="0.0" y="28" width="1001" height="695"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <customView fixedFrame="YES" id="1371" customClass="BlueView">
+                            <customView fixedFrame="YES" id="1371">
                                 <rect key="frame" x="0.0" y="0.0" width="163" height="695"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <subviews>
@@ -966,7 +966,7 @@ DQ
                 </binding>
                 <outlet property="delegate" destination="218" id="1670"/>
             </connections>
-            <point key="canvasLocation" x="126" y="-570"/>
+            <point key="canvasLocation" x="384" y="-896"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="354" userLabel="Shared Defaults"/>
         <customObject id="560" userLabel="SchemaController" customClass="SchemaController">
