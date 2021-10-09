@@ -28,7 +28,7 @@
     IBOutlet QueryTextListView    *view;
 }
 
-@property (unsafe_unretained) id<QueryTextListViewDelegate> delegate;
+@property (weak) id<QueryTextListViewDelegate> delegate;
 
 -(void)addQuery:(NSString *)soql;
 
