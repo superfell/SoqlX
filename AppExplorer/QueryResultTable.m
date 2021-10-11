@@ -32,6 +32,7 @@
 @property (assign) NSInteger percentile80;
 @property (assign) NSInteger headerWidth;
 @property (retain) NSTableColumn *column;
+@property (assign) NSInteger width;
 @end
 
 @implementation WidthStats
@@ -104,7 +105,6 @@
 - (NSArray *)createTableColumns:(ZKQueryResult *)qr;
 @end
 
-
 @implementation QueryResultTable
 
 @synthesize table, delegate;
@@ -168,6 +168,7 @@
 //        }
 //        [table removeTableColumn:table.tableColumns[idxToDelete]];
 //    }
+    // TODO what about if the primary object type changes, should we reset all columns then?
     [table tableColumnWithIdentifier:ERROR_COLUMN_IDENTIFIER].hidden = TRUE;
     NSArray *cols = [self createTableColumns:qr];
     [wrapper setEditable:[cols containsObject:@"Id"]];
@@ -186,7 +187,7 @@
 
 - (NSTableColumn *)createTableColumnWithIdentifier:(NSString *)identifier label:(NSString *)label {
     NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:identifier];
-    col.headerCell.stringValue = label;
+    col.title = label;
     col.editable = YES;
     col.minWidth = 40;
     col.resizingMask = NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask;
@@ -200,146 +201,165 @@
 - (NSArray *)createTableColumns:(ZKQueryResult *)qr {
     QueryColumns *qcols = [[QueryColumns alloc] initWithResult:qr];
     if (qcols.isSearchResult) {
+        // TODO, should this be added to cols?
         [table addTableColumn:[self createTableColumnWithIdentifier:TYPE_COLUMN_IDENTIFIER label:@"Type"]];
     }
     NSMutableSet<NSString*> *colIds = [[NSMutableSet alloc] initWithCapacity:qcols.names.count+2];
-    NSMutableArray<NSTableColumn*>* newCols = [NSMutableArray array];
-    NSInteger idx = 2;
+    [colIds addObject:DELETE_COLUMN_IDENTIFIER];
+    [colIds addObject:ERROR_COLUMN_IDENTIFIER];
+    NSMutableArray<NSTableColumn*>* cols = [NSMutableArray arrayWithCapacity:qcols.names.count+2];
+    [cols addObject:[table tableColumnWithIdentifier:DELETE_COLUMN_IDENTIFIER]];
+    [cols addObject:[table tableColumnWithIdentifier:ERROR_COLUMN_IDENTIFIER]];
+    
     for (NSString *colName in qcols.names) {
         NSInteger existingIdx = [table columnWithIdentifier:colName];
         if (existingIdx == -1) {
             NSTableColumn *col = [self createTableColumnWithIdentifier:colName label:colName];
-            [table addTableColumn:col];
-            existingIdx = table.numberOfColumns-1;
+            [cols addObject:col];
+        } else {
+            NSTableColumn *c = table.tableColumns[existingIdx];
+            [cols addObject:c];
         }
-        if (existingIdx != idx) {
-            [table moveColumn:existingIdx toColumn:idx];
-        }
-        [newCols addObject:table.tableColumns[idx]];
-        idx++;
         [colIds addObject:colName];
     }
-    [colIds addObject:DELETE_COLUMN_IDENTIFIER];
-    [colIds addObject:ERROR_COLUMN_IDENTIFIER];
-    idx = 0;
-    while (idx < table.tableColumns.count) {
+    // remove any unwanted columns
+    for (NSInteger idx = table.tableColumns.count-1; idx >= 0 ; --idx) {
         NSString *colId = table.tableColumns[idx].identifier;
-        if ([colIds containsObject:colId]) {
-            idx++;
-            continue;
+        if (![colIds containsObject:colId]) {
+            [table removeTableColumn:table.tableColumns[idx]];
         }
-        [table removeTableColumn:table.tableColumns[idx]];
     }
-    // Resize any new columns
-    if (newCols.count > 0) {
-        NSDate *start = [NSDate date];
-        CGFloat totalColWidth = 0;
-        CGFloat colSpacing = table.intercellSpacing.width*2;
-        
-        for (NSTableColumn *c in table.tableColumns) {
-            if (!c.isHidden) {
-                c.width = MIN(165,c.width);
-                totalColWidth += c.width + colSpacing;
-            }
+
+    // set the size of the columns.
+    // This is way more annoying than i thought it'd be.
+    NSDate *start = [NSDate date];
+    CGFloat totalColWidth = 0;
+    CGFloat colSpacing = table.intercellSpacing.width*2;
+    
+    for (NSTableColumn *c in cols) {
+        if (!c.isHidden) {
+            totalColWidth += c.width + colSpacing;
         }
-        CGFloat space = table.visibleRect.size.width - totalColWidth;
-        NSMutableArray<WidthStats*>* expansions = [NSMutableArray array];
-        NSMutableArray<WidthStats*>* shrinks = [NSMutableArray array];
-        
-        NSLog(@"%ld new columns. all columns width %f space left %f", newCols.count, totalColWidth, space);
-        dispatch_queue_t gatherQ = dispatch_queue_create("QueryResultsTable.GatherQ", DISPATCH_QUEUE_SERIAL);
-        dispatch_queue_t workQ = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0);
-        dispatch_group_t group = dispatch_group_create();
-        
-        // Go through all the columns. Shrink any we can and keep track of the ones that should be made larger.
-        NSDate *sizingStart = [NSDate date];
-        for (NSTableColumn *c in newCols) {
-            NSCell *cell = c.dataCell;
-            NSFont *font = cell.font;
-            dispatch_group_async(group, workQ, ^{
-                NSMutableArray<NSString*>* values = [NSMutableArray arrayWithCapacity:qr.records.count+1];
-                [values addObject:c.title];
-                for (int r = 0 ; r < qr.records.count; r++) {
-                    id v = [qr valueForFieldPath:c.identifier row:r];
-                    if (v != nil) {
-                        [values addObject:[v description]];
-                    }
+    }
+    CGFloat space = table.visibleRect.size.width - totalColWidth;
+    NSLog(@"%ld columns. all columns width %f space left %f", cols.count, totalColWidth, space);
+
+    // These 3 arrays are all in an arbitary order.
+    NSMutableArray<WidthStats*>* colWidths = [NSMutableArray arrayWithCapacity:table.tableColumns.count];
+    NSMutableArray<WidthStats*>* expansions = [NSMutableArray array];
+    NSMutableArray<WidthStats*>* shrinks = [NSMutableArray array];
+
+    // Measuring the required space to render a string is suprisingly expensive, and we've got a lot todo.
+    // We use CoreText to do the measuring which is significanly faster than NSString sizeWithAttributes.
+    // We'll process each column individually, and can farm them out to a worker dispatch pool.
+    dispatch_queue_t gatherQ = dispatch_queue_create("QueryResultsTable.GatherQ", DISPATCH_QUEUE_SERIAL);
+    dispatch_queue_t workQ = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0);
+    dispatch_group_t group = dispatch_group_create();
+    
+    // Go through all the columns. Shrink any we can and keep track of the ones that should be made larger.
+    for (NSTableColumn *c in [cols subarrayWithRange:NSMakeRange(2, cols.count-2)]) {
+        NSCell *cell = c.dataCell;
+        NSFont *font = cell.font;
+        dispatch_group_async(group, workQ, ^{
+            NSMutableArray<NSString*>* values = [NSMutableArray arrayWithCapacity:qr.records.count+1];
+            [values addObject:c.title];
+            for (int r = 0 ; r < qr.records.count; r++) {
+                id v = [qr valueForFieldPath:c.identifier row:r];
+                if (v != nil) {
+                    [values addObject:[v description]];
                 }
-                WidthStatsBuilder *stats = [[WidthStatsBuilder alloc] initWithMin:c.minWidth];
-                stats.column = c;
-                [stats addStrings:values font:font];
-                WidthStats *ws = [stats resultsWithOffset:colSpacing];
-                dispatch_sync(gatherQ, ^{
-                    if (ws.max < c.width) {
-                        [shrinks addObject:ws];
-                    }
-                    if (ws.headerWidth > c.width || ws.max > c.width) {
-                        [expansions addObject:ws];
-                    }
-                });
+            }
+            WidthStatsBuilder *stats = [[WidthStatsBuilder alloc] initWithMin:c.minWidth];
+            stats.column = c;
+            [stats addStrings:values font:font];
+            WidthStats *ws = [stats resultsWithOffset:colSpacing];
+            ws.width = c.width;
+            dispatch_sync(gatherQ, ^{
+                [colWidths addObject:ws];
+                if (ws.max < ws.width) {
+                    [shrinks addObject:ws];
+                }
+                if (ws.headerWidth > ws.width || ws.max > ws.width) {
+                    [expansions addObject:ws];
+                }
             });
-        }
-        dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
-        NSDate *widthCalcEnd = [NSDate date];
-        NSLog(@"calculating all column widths took %fms", [widthCalcEnd timeIntervalSinceDate:start] * 1000);
-
-        for (WidthStats *ws in shrinks) {
-            NSTableColumn *c = ws.column;
-            space += c.width - ws.max;
-            c.width = ws.max;
-            // NSLog(@"col %@ shrunk to %f, space now %f", c.title, c.width, space);
-        }
-        NSLog(@"shrinking %ld columns widths took %fms", shrinks.count, [[NSDate date] timeIntervalSinceDate:widthCalcEnd] * 1000);
-        
-        typedef CGFloat(^sizeExtractor)(WidthStats*);
-        CGFloat (^expander)(CGFloat, NSArray<WidthStats*>*, sizeExtractor) = ^CGFloat(CGFloat space, NSArray<WidthStats*>*cols, sizeExtractor sizer) {
-            if (space <= 0) {
-                return space;
-            }
-            NSLog(@"expander starting, space=%f", space);
-            NSMutableArray<WidthStats*> *tosize = [NSMutableArray arrayWithCapacity:cols.count];
-            for (WidthStats *stats in cols) {
-                CGFloat newSize = sizer(stats);
-                if (newSize <= stats.column.width) {
-                    continue;
-                }
-                [tosize addObject:stats];
-            }
-            // Sort the updates by smallest additional amount to largest additional amount
-            [tosize sortUsingComparator:^NSComparisonResult(WidthStats*  _Nonnull obj1, WidthStats*  _Nonnull obj2) {
-                CGFloat a = sizer(obj1) - obj1.column.width;
-                CGFloat b = sizer(obj2) - obj2.column.width;
-                return a < b ? NSOrderedAscending : a == b ? NSOrderedSame : NSOrderedDescending;
-            }];
-            for (WidthStats *s in tosize) {
-                CGFloat newSize = MIN(space + s.column.width, sizer(s));
-                space -= (newSize - s.column.width);
-                s.column.width = newSize;
-                NSLog(@"col %@ grown to %f, space now %f", s.column.title, s.column.width, space);
-                if (space <= 0) {
-                    break;
-                }
-            }
-            return space;
-        };
-        NSDate *expanderStart = [NSDate date];
-        space = expander(space, expansions, ^CGFloat(WidthStats*s) {
-            return s.percentile80;
         });
-        space = expander(space, expansions, ^CGFloat(WidthStats*s) {
-            return s.max - s.percentile80 < 100 ? s.max : s.percentile80;
-        });
-        space = expander(space, expansions, ^CGFloat(WidthStats*s) {
-            return s.headerWidth;
-        });
-        space = expander(space, expansions, ^CGFloat(WidthStats*s) {
-            return s.max;
-        });
-
-        NSLog(@"space remaining %f, table width %f", space, table.visibleRect.size.width);
-        NSLog(@"expanding took %fms", [[NSDate date] timeIntervalSinceDate:expanderStart] * 1000);
-        NSLog(@"sizing took %fms", [[NSDate date] timeIntervalSinceDate:start] * 1000);
     }
+    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+    NSDate *widthCalcEnd = [NSDate date];
+    NSLog(@"calculating all column widths took %fms", [widthCalcEnd timeIntervalSinceDate:start] * 1000);
+    for (WidthStats *ws in shrinks) {
+        space += ws.width - ws.max;
+        ws.width = ws.max;
+    }
+    
+    typedef CGFloat(^sizeExtractor)(WidthStats*);
+    CGFloat (^expander)(CGFloat, NSArray<WidthStats*>*, sizeExtractor) = ^CGFloat(CGFloat space, NSArray<WidthStats*>*cols, sizeExtractor sizer) {
+        if (space <= 0) {
+            return space;
+        }
+        NSLog(@"expander starting, space=%f, %ld potential expansions", space, cols.count);
+        NSMutableArray<WidthStats*> *tosize = [NSMutableArray arrayWithCapacity:cols.count];
+        for (WidthStats *stats in cols) {
+            CGFloat newSize = sizer(stats);
+            if (newSize <= stats.width) {
+                continue;
+            }
+            [tosize addObject:stats];
+        }
+        // Sort the updates by smallest additional amount to largest additional amount
+        [tosize sortUsingComparator:^NSComparisonResult(WidthStats*  _Nonnull obj1, WidthStats*  _Nonnull obj2) {
+            CGFloat a = sizer(obj1) - obj1.width;
+            CGFloat b = sizer(obj2) - obj2.width;
+            return a < b ? NSOrderedAscending : a == b ? NSOrderedSame : NSOrderedDescending;
+        }];
+        for (WidthStats *s in tosize) {
+            CGFloat newSize = MIN(space + s.width, sizer(s));
+            space -= (newSize - s.width);
+            s.width = newSize;
+            NSLog(@"col %@ grown to %ld, space now %f", s.column.title, s.width, space);
+            if (space <= 0) {
+                break;
+            }
+        }
+        return space;
+    };
+    space = expander(space, expansions, ^CGFloat(WidthStats*s) {
+        return s.percentile80;
+    });
+    space = expander(space, expansions, ^CGFloat(WidthStats*s) {
+        return s.max - s.percentile80 < 100 ? s.max : s.percentile80;
+    });
+    space = expander(space, expansions, ^CGFloat(WidthStats*s) {
+        return s.headerWidth;
+    });
+    space = expander(space, expansions, ^CGFloat(WidthStats*s) {
+        return s.max;
+    });
+    NSLog(@"space remaining %f, table width %f", space, table.visibleRect.size.width);
+    NSDate *expEnd = [NSDate date];
+    NSLog(@"expanding took %fms", [expEnd timeIntervalSinceDate:widthCalcEnd] * 1000);
+    
+    for (WidthStats *ws in colWidths) {
+        ws.column.width = ws.width;
+    }
+    NSDate *done = [NSDate date];
+    NSLog(@"applying new sizes took %fms", [done timeIntervalSinceDate:expEnd] * 1000);
+    
+    // finally add/order the columns in the table. We don't add any new columns to the table
+    // earlier because that makes adjusting them expensive.
+    NSInteger idx = 0;
+    for (NSTableColumn *c in cols) {
+        NSInteger existingIdx = [table columnWithIdentifier:c.identifier];
+        if (existingIdx == -1) {
+            [table addTableColumn:c];
+        } else if (existingIdx != idx) {
+            [table moveColumn:existingIdx toColumn:idx];
+        }
+        idx++;
+    }
+    NSLog(@"adding/ordering table columns took %fms", [[NSDate date] timeIntervalSinceDate:done] * 1000);
+    NSLog(@"sizing took %fms", [[NSDate date] timeIntervalSinceDate:start] * 1000);
     return qcols.names;
 }
 
