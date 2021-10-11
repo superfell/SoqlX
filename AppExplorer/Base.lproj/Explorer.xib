@@ -282,7 +282,7 @@
                                                                 <rect key="frame" x="0.0" y="0.0" width="837" height="461"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
-                                                                    <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" multipleSelection="NO" autosaveColumns="NO" headerView="1218" id="934">
+                                                                    <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="none" alternatingRowBackgroundColors="YES" multipleSelection="NO" autosaveColumns="NO" headerView="1218" id="934">
                                                                         <rect key="frame" x="0.0" y="0.0" width="837" height="444"/>
                                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                         <size key="intercellSpacing" width="3" height="2"/>
@@ -684,7 +684,7 @@ DQ
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <clipView key="contentView" drawsBackground="NO" id="Kpl-p7-SPv">
                                                                         <rect key="frame" x="1" y="1" width="834" height="226"/>
-                                                                        <autoresizingMask key="autoresizingMask"/>
+                                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                         <subviews>
                                                                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1644" customClass="MGSFragariaView">
                                                                                 <rect key="frame" x="0.0" y="0.0" width="834" height="225"/>
@@ -726,7 +726,7 @@ DQ
                                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                     <clipView key="contentView" id="8QW-WY-ZbW">
                                                                                         <rect key="frame" x="1" y="0.0" width="211" height="359"/>
-                                                                                        <autoresizingMask key="autoresizingMask"/>
+                                                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                         <subviews>
                                                                                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" headerView="1577" id="1576">
                                                                                                 <rect key="frame" x="0.0" y="0.0" width="211" height="342"/>
@@ -849,7 +849,7 @@ DQ
                                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                     <clipView key="contentView" drawsBackground="NO" id="wiT-5w-VwX">
                                                                                         <rect key="frame" x="1" y="1" width="610" height="329"/>
-                                                                                        <autoresizingMask key="autoresizingMask"/>
+                                                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                         <subviews>
                                                                                             <textView editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" findStyle="panel" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" spellingCorrection="YES" smartInsertDelete="YES" id="1652">
                                                                                                 <rect key="frame" x="0.0" y="0.0" width="610" height="329"/>
