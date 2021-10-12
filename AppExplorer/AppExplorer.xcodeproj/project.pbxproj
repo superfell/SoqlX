@@ -57,6 +57,7 @@
 		F494FA490F7EFE22001216EC /* RRGlossCausticShader.m in Sources */ = {isa = PBXBuildFile; fileRef = F494FA440F7EFE22001216EC /* RRGlossCausticShader.m */; };
 		F494FA4A0F7EFE22001216EC /* RRLuminanceFromRGBComponents.m in Sources */ = {isa = PBXBuildFile; fileRef = F494FA460F7EFE22001216EC /* RRLuminanceFromRGBComponents.m */; };
 		F49741F00D554DB500DD77F4 /* QueryListController.m in Sources */ = {isa = PBXBuildFile; fileRef = F49741EF0D554DB500DD77F4 /* QueryListController.m */; };
+		F4A2B8F22714E80800C20A42 /* TStamp.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A2B8F12714E80800C20A42 /* TStamp.m */; };
 		F4A62E2F0D31AC6300D7EACA /* NSView_additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A62E2E0D31AC6300D7EACA /* NSView_additions.m */; };
 		F4AC556715996D8500F5CA45 /* zkApexClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F4AC555A15996D8500F5CA45 /* zkApexClient.m */; };
 		F4AC556815996D8500F5CA45 /* ZKCodeCoverageResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4AC555C15996D8500F5CA45 /* ZKCodeCoverageResult.m */; };
@@ -327,6 +328,8 @@
 		F494FA460F7EFE22001216EC /* RRLuminanceFromRGBComponents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RRLuminanceFromRGBComponents.m; path = ../common/RRLuminanceFromRGBComponents.m; sourceTree = SOURCE_ROOT; };
 		F49741EE0D554DB500DD77F4 /* QueryListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueryListController.h; sourceTree = "<group>"; };
 		F49741EF0D554DB500DD77F4 /* QueryListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QueryListController.m; sourceTree = "<group>"; };
+		F4A2B8F02714E80800C20A42 /* TStamp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TStamp.h; sourceTree = "<group>"; };
+		F4A2B8F12714E80800C20A42 /* TStamp.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TStamp.m; sourceTree = "<group>"; };
 		F4A62E2D0D31AC6300D7EACA /* NSView_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSView_additions.h; sourceTree = "<group>"; };
 		F4A62E2E0D31AC6300D7EACA /* NSView_additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSView_additions.m; sourceTree = "<group>"; };
 		F4AC555915996D8500F5CA45 /* zkApexClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zkApexClient.h; path = ../apexforce/zkApexClient.h; sourceTree = "<group>"; };
@@ -528,6 +531,8 @@
 				F4E8BB0F184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m */,
 				F406D29827080424008A0CCC /* NSArray+Partition.h */,
 				F406D29927080424008A0CCC /* NSArray+Partition.m */,
+				F4A2B8F02714E80800C20A42 /* TStamp.h */,
+				F4A2B8F12714E80800C20A42 /* TStamp.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -1177,6 +1182,7 @@
 				F4E8BB10184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m in Sources */,
 				F4B58B471D31D21200D62683 /* ZKTextView.m in Sources */,
 				F424A837262BCF1B00AD4F42 /* ColorizerStyle.m in Sources */,
+				F4A2B8F22714E80800C20A42 /* TStamp.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

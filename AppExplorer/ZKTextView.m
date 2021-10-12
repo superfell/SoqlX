@@ -22,8 +22,7 @@
 #import "ZKTextView.h"
 #include <mach/mach_time.h>
 #include "ZKLayoutManager.h"
-
-double ticksToMilliseconds;
+#include "TStamp.h"
 
 @interface ZKTextView()
 @property (strong,nonatomic) NSTimer *idleCheckTimer;
@@ -32,15 +31,6 @@ double ticksToMilliseconds;
 @end
 
 @implementation ZKTextView
-
-+(void)initialize {
-    // The first time we get here, ask the system
-    // how to convert mach time units to nanoseconds
-    mach_timebase_info_data_t timebase;
-    // to be completely pedantic, check the return code of this next call.
-    mach_timebase_info(&timebase);
-    ticksToMilliseconds = (double)timebase.numer / timebase.denom / 1000000;
-}
 
 - (instancetype)initWithFrame:(NSRect)frameRect textContainer:(nullable NSTextContainer *)container {
     self = [super initWithFrame:frameRect textContainer:container];
