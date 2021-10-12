@@ -25,6 +25,7 @@
 #import "SearchQueryResult.h"
 #import "QueryColumns.h"
 #import "SObjectSortDescriptor.h"
+#import "TStamp.h"
 
 @interface WidthStats : NSObject
 @property (assign) NSInteger count;
@@ -222,6 +223,9 @@
 
 - (NSArray *)createTableColumns:(ZKQueryResult *)qr {
     QueryColumns *qcols = [[QueryColumns alloc] initWithResult:qr];
+    
+    TStamp *tstamp = [TStamp start];
+    
     if (qcols.isSearchResult) {
         // TODO, should this be added to cols?
         [table addTableColumn:[self createTableColumnWithIdentifier:TYPE_COLUMN_IDENTIFIER label:@"Type"]];
@@ -251,10 +255,9 @@
             [table removeTableColumn:table.tableColumns[idx]];
         }
     }
-
+    [tstamp mark:@"removed cols"];
     // set the size of the columns.
     // This is way more annoying than i thought it'd be.
-    NSDate *start = [NSDate date];
     CGFloat totalColWidth = 0;
     CGFloat colSpacing = table.intercellSpacing.width*2;
     
@@ -266,14 +269,12 @@
     CGFloat space = table.visibleRect.size.width - totalColWidth;
     NSLog(@"%ld columns. all columns width %f space left %f", cols.count, totalColWidth, space);
 
-    // These 3 arrays are all in an arbitary order.
-    NSMutableArray<WidthStats*>* colWidths = [NSMutableArray arrayWithCapacity:table.tableColumns.count];
+    // These 2 arrays are all in an arbitary order.
+    NSMutableArray<WidthStats*>* colWidths = [NSMutableArray arrayWithCapacity:cols.count];
     NSMutableArray<WidthStats*>* expansions = [NSMutableArray array];
-    NSMutableArray<WidthStats*>* shrinks = [NSMutableArray array];
 
     // Measuring the required space to render a string is suprisingly expensive, and we've got a lot todo.
-    // We use CoreText to do the measuring which is significanly faster than NSString sizeWithAttributes.
-    // We'll process each column individually, and can farm them out to a worker dispatch pool.
+    // We'll farm out each column to a worker pool and gather up all the results.
     dispatch_queue_t gatherQ = dispatch_queue_create("QueryResultsTable.GatherQ", DISPATCH_QUEUE_SERIAL);
     dispatch_queue_t workQ = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0);
     dispatch_group_t group = dispatch_group_create();
@@ -294,21 +295,19 @@
             WidthStats *ws = [stats resultsWithOffset:colSpacing];
             dispatch_sync(gatherQ, ^{
                 [colWidths addObject:ws];
-                if (ws.max < ws.width) {
-                    [shrinks addObject:ws];
-                }
-                if (ws.headerWidth > ws.width || ws.max > ws.width) {
+                if (ws.headerWidth > ws.width || ws.headerWidth > ws.max || ws.max > ws.width) {
                     [expansions addObject:ws];
                 }
             });
         });
     }
     dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
-    NSDate *widthCalcEnd = [NSDate date];
-    NSLog(@"calculating all column widths took %fms", [widthCalcEnd timeIntervalSinceDate:start] * 1000);
-    for (WidthStats *ws in shrinks) {
-        space += ws.width - ws.max;
-        ws.width = ws.max;
+    [tstamp mark:@"calc'd column widths"];
+    for (WidthStats *ws in colWidths) {
+        if (ws.max < ws.width) {
+            space += ws.width - ws.max;
+            ws.width = ws.max;
+        }
     }
     
     typedef CGFloat(^sizeExtractor)(WidthStats*);
@@ -355,29 +354,44 @@
         return s.max;
     });
     NSLog(@"space remaining %f, table width %f", space, table.visibleRect.size.width);
-    NSDate *expEnd = [NSDate date];
-    NSLog(@"expanding took %fms", [expEnd timeIntervalSinceDate:widthCalcEnd] * 1000);
+    [tstamp mark:@"expanding"];
     
     for (WidthStats *ws in colWidths) {
         ws.column.width = ws.width;
     }
-    NSDate *done = [NSDate date];
-    NSLog(@"applying new sizes took %fms", [done timeIntervalSinceDate:expEnd] * 1000);
+    [tstamp mark:@"applying sizes"];
     
     // finally add/order the columns in the table. We don't add any new columns to the table
-    // earlier because that makes adjusting them expensive.
+    // earlier because that makes adjusting them even more expensive.
+    
+    // columnWithIdentifier appears to do a linear scan of the array, making it expensive
+    // on larger number of columns, so we build an identifier index to find them instead.
+    NSMutableDictionary<id, NSNumber*> *existing = [NSMutableDictionary dictionaryWithCapacity:table.tableColumns.count];
+    [table.tableColumns enumerateObjectsUsingBlock:^(NSTableColumn * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        existing[obj.identifier] = @(idx);
+    }];
     NSInteger idx = 0;
     for (NSTableColumn *c in cols) {
-        NSInteger existingIdx = [table columnWithIdentifier:c.identifier];
-        if (existingIdx == -1) {
+        NSNumber *existingIdx = existing[c.identifier];
+        NSInteger eIdx = 0;
+        if (existingIdx == nil) {
             [table addTableColumn:c];
-        } else if (existingIdx != idx) {
-            [table moveColumn:existingIdx toColumn:idx];
+            eIdx = table.tableColumns.count-1;
+        } else {
+            eIdx = existingIdx.integerValue;
+        }
+        if (eIdx != idx) {
+            NSAssert(eIdx > idx, @"should only be moving columns up to nearer the start of the array");
+            [table moveColumn:eIdx toColumn:idx];
+            for (NSInteger i = idx ; i <= eIdx; i++) {
+                NSTableColumn *c = table.tableColumns[i];
+                existing[c.identifier] = @(i);
+            }
         }
         idx++;
     }
-    NSLog(@"adding/ordering table columns took %fms", [[NSDate date] timeIntervalSinceDate:done] * 1000);
-    NSLog(@"sizing took %fms", [[NSDate date] timeIntervalSinceDate:start] * 1000);
+    [tstamp mark:@"adding columns"];
+    [tstamp log];
     return qcols.names;
 }
 

@@ -169,6 +169,28 @@
     XCTAssertEqualObjects(([NSSet setWithArray:@[@"firstName", @"owner.name", @"owner.level"]]), [NSSet setWithArray:qc.names]);
 }
 
+-(void)testColumnWithId {
+    // is [NSTableView columnWithIdentifier:] expensive for columns at the end of the list?
+    // TL:DR yes it is, looks like they are linearly scanned
+    NSTableView *t = [[NSTableView alloc] init];
+    for (int i = 1; i < 1000; i++) {
+        NSString *cid = [NSString stringWithFormat:@"%d",i];
+        NSTableColumn *c = [[NSTableColumn alloc] initWithIdentifier:cid];
+        [t addTableColumn:c];
+    }
+    NSDate *s = [NSDate date];
+    for (int i = 0; i < 1000; i++) {
+        XCTAssertEqual(0, [t columnWithIdentifier:@"1"], @"wrong index returned");
+    }
+    NSDate *s2 = [NSDate date];
+    for (int i = 0; i < 1000; i++) {
+        XCTAssertEqual(998, [t columnWithIdentifier:@"999"], @"wrong index returned");
+    }
+    NSDate *s3 = [NSDate date];
+    NSLog(@"col 1 took %fms", [s2 timeIntervalSinceDate:s] * 1000);
+    NSLog(@"col 999 took %fms", [s3 timeIntervalSinceDate:s2] * 1000);
+}
+
 - (void)setUp {
     // Put setup code here. This method is called before the invocation of each test method in the class.
 }
