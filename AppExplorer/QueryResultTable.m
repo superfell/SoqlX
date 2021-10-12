@@ -39,37 +39,56 @@
 @end
 
 @interface WidthStatsBuilder : NSObject {
-    NSMutableArray<NSNumber*>*  vals;
+    NSMutableString             *buffer;
+    NSMutableArray<NSNumber*>   *vals;
     NSInteger                   minToConsider;
     NSInteger                   minCount;
     NSInteger                   headerWidth;
 }
--(instancetype)initWithMin:(NSInteger)min;
-// the first item in the array is expected to be the column title
--(void)addStrings:(NSArray<NSString*>*)strings font:(NSFont*)f;
+
+-(instancetype)initWithColumn:(NSTableColumn*)c font:(NSFont*)f;
+-(void)addHeader:(NSString *)s;
+-(void)add:(NSString *)s;
 
 -(WidthStats*)resultsWithOffset:(NSInteger)pad;
 @property (retain) NSTableColumn *column;
+@property (retain) NSFont *font;
 @end
 
 @implementation WidthStatsBuilder
 
--(instancetype)initWithMin:(NSInteger)min {
+-(instancetype)initWithColumn:(NSTableColumn*)c font:(NSFont*)f {
     self = [super init];
-    minToConsider = min;
+    minToConsider = c.minWidth;
+    buffer = [NSMutableString stringWithCapacity:1024];
     vals = [NSMutableArray array];
+    self.column = c;
+    self.font = f;
     return self;
 }
 
--(void)addStrings:(NSArray<NSString *> *)strings font:(NSFont *)font {
+-(void)addHeader:(NSString *)s {
+    [self add:s];
+}
+
+-(void)add:(NSString *)s {
+    // for really long strings, just treat them as a fixed amount
+    if (s.length > 75) {
+        [vals addObject:@(600)];
+        return;
+    }
+    [buffer appendString:s];
+    [buffer appendString:@"\n"];
+}
+
+-(NSArray<NSNumber*>*)measureStrings {
     // see https://stackoverflow.com/questions/30537811/performance-of-measuring-text-width-in-appkit
-    NSString *bigString = [strings componentsJoinedByString:@"\n"];
     NSAttributedString *richText = [[NSAttributedString alloc]
-                                        initWithString:bigString
-                                        attributes:@{ NSFontAttributeName: font }];
+                                        initWithString:buffer
+                                        attributes:@{ NSFontAttributeName: self.font }];
     CGPathRef path = CGPathCreateWithRect(CGRectMake(0, 0, CGFLOAT_MAX, CGFLOAT_MAX), NULL);
     CTFramesetterRef setter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)richText);
-    CTFrameRef frame = CTFramesetterCreateFrame(setter, CFRangeMake(0, bigString.length), path, NULL);
+    CTFrameRef frame = CTFramesetterCreateFrame(setter, CFRangeMake(0, buffer.length), path, NULL);
     NSArray *lines = (__bridge NSArray *)CTFrameGetLines(frame);
     [lines enumerateObjectsUsingBlock:^(id  _Nonnull item, NSUInteger idx, BOOL * _Nonnull stop) {
         CTLineRef line = (__bridge CTLineRef)item;
@@ -85,10 +104,12 @@
     CFRelease(frame);
     CFRelease(setter);
     CFRelease(path);
+    [vals sortUsingSelector:@selector(compare:)];
+    return vals;
 }
 
 -(WidthStats*)resultsWithOffset:(NSInteger)pad {
-    [vals sortUsingSelector:@selector(compare:)];
+    NSArray<NSNumber*>* vals = [self measureStrings];
     WidthStats *r = [[WidthStats alloc] init];
     r.max = pad + (vals.count == 0 ? minToConsider : vals.lastObject.integerValue);
     r.count = vals.count + minCount;
@@ -96,6 +117,7 @@
     r.percentile80 = pad + (p80Idx <= minCount ? minToConsider : vals[p80Idx-minCount].integerValue);
     r.headerWidth = pad + headerWidth;
     r.column = self.column;
+    r.width = self.column.width;
     return r;
 }
 
@@ -261,19 +283,15 @@
         NSCell *cell = c.dataCell;
         NSFont *font = cell.font;
         dispatch_group_async(group, workQ, ^{
-            NSMutableArray<NSString*>* values = [NSMutableArray arrayWithCapacity:qr.records.count+1];
-            [values addObject:c.title];
+            WidthStatsBuilder *stats = [[WidthStatsBuilder alloc] initWithColumn:c font:font];
+            [stats addHeader:c.title];
             for (int r = 0 ; r < qr.records.count; r++) {
                 id v = [qr valueForFieldPath:c.identifier row:r];
                 if (v != nil) {
-                    [values addObject:[v description]];
+                    [stats add:[v description]];
                 }
             }
-            WidthStatsBuilder *stats = [[WidthStatsBuilder alloc] initWithMin:c.minWidth];
-            stats.column = c;
-            [stats addStrings:values font:font];
             WidthStats *ws = [stats resultsWithOffset:colSpacing];
-            ws.width = c.width;
             dispatch_sync(gatherQ, ^{
                 [colWidths addObject:ws];
                 if (ws.max < ws.width) {
