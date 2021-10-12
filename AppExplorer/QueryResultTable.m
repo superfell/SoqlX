@@ -38,6 +38,7 @@ const NSInteger DEF_ID_WIDTH = 165;
 @property (assign) NSInteger headerWidth;
 @property (assign) NSInteger width;
 @property (retain) NSString *identifier;
+@property (retain) NSString *label;
 @end
 
 @implementation WidthStats
@@ -52,6 +53,7 @@ const NSInteger DEF_ID_WIDTH = 165;
 }
 @property (retain) NSFont *font;
 @property (retain) NSString *identifier;
+@property (retain) NSString *label;
 @property (assign) NSInteger width;
 
 -(instancetype)initWithId:(NSString*)i font:(NSFont*)f;
@@ -69,6 +71,7 @@ const NSInteger DEF_ID_WIDTH = 165;
     vals = [NSMutableArray array];
     self.width = [i hasSuffix:@"Id"] ? DEF_ID_WIDTH : DEF_WIDTH;
     self.identifier = i;
+    self.label = i;
     self.font = f;
     [self add:i];
     return self;
@@ -121,6 +124,7 @@ const NSInteger DEF_ID_WIDTH = 165;
     r.headerWidth = pad + headerWidth;
     r.width = self.width;
     r.identifier = self.identifier;
+    r.label = self.label;
     return r;
 }
 
@@ -211,21 +215,10 @@ const NSInteger DEF_ID_WIDTH = 165;
     c.sortDescriptorPrototype = [[SObjectSortDescriptor alloc] initWithKey:identifier ascending:YES describer:self.describer];
 }
 
--(NSTableColumn *)createTableColumnWithIdentifier:(NSString *)identifier label:(NSString*)label width:(CGFloat)width {
-    NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:identifier];
-    [self setTableColumn:col toIdentifier:identifier label:label width:width];
-    return col;
-}
-
 - (NSArray<NSString*> *)createTableColumns:(ZKQueryResult *)qr {
-    QueryColumns *qcols = [[QueryColumns alloc] initWithResult:qr];
-    
     TStamp *tstamp = [TStamp start];
-    
-    if (qcols.isSearchResult) {
-        // TODO, should this be added to cols?
-        [table addTableColumn:[self createTableColumnWithIdentifier:TYPE_COLUMN_IDENTIFIER label:@"Type" width:100]];
-    }
+
+    QueryColumns *qcols = [[QueryColumns alloc] initWithResult:qr];
     // TODO prevent re-ordering of delete/error column
     // TODO, better answer to this?
     NSTableColumn *dummy = [[NSTableColumn alloc] init];
@@ -236,15 +229,24 @@ const NSInteger DEF_ID_WIDTH = 165;
     // There's no way to batch these up and do the layout once. So rather than working directly with the
     // tableview columns, we do all our calculations with a separate object, and then apply to the results
     // to the table at the end.
-    
-    NSMutableArray<WidthStatsBuilder*>* cols = [NSMutableArray arrayWithCapacity:qcols.names.count];
-    for (NSString *colName in qcols.names) {
+
+    WidthStatsBuilder*(^newBuilder)(NSString*) = ^WidthStatsBuilder*(NSString*colName) {
         WidthStatsBuilder *b = [[WidthStatsBuilder alloc] initWithId:colName font:font];
-        NSTableColumn *existing = [table tableColumnWithIdentifier:colName];
+        NSTableColumn *existing = [self->table tableColumnWithIdentifier:colName];
         if (existing != nil) {
             b.width = existing.width;
+            b.label = existing.title;
         }
-        [cols addObject:b];
+        return b;
+    };
+    NSMutableArray<WidthStatsBuilder*>* cols = [NSMutableArray arrayWithCapacity:qcols.names.count+1];
+    if (qcols.isSearchResult) {
+        WidthStatsBuilder*c = newBuilder(TYPE_COLUMN_IDENTIFIER);
+        c.label = @"Type";
+        [cols addObject:c];
+    }
+    for (NSString *colName in qcols.names) {
+        [cols addObject:newBuilder(colName)];
     }
 
     // Calculate the best size of the columns. This is way more annoying than i thought it'd be.
@@ -285,7 +287,7 @@ const NSInteger DEF_ID_WIDTH = 165;
     [cols enumerateObjectsUsingBlock:^(WidthStatsBuilder * _Nonnull col, NSUInteger idx, BOOL * _Nonnull stop) {
         dispatch_group_async(group, workQ, ^{
             for (int r = 0 ; r < qr.records.count; r++) {
-                id v = [qr valueForFieldPath:col.identifier row:r];
+                id v = [self->wrapper columnValue:col.identifier atRow:r];
                 if (v != nil) {
                     [col add:[v description]];
                 }
@@ -365,11 +367,14 @@ const NSInteger DEF_ID_WIDTH = 165;
     }
     NSInteger idx = 2;
     for (WidthStats *s in colWidths) {
+        NSTableColumn *dest;
         if (idx < table.tableColumns.count) {
-            NSTableColumn *dest = table.tableColumns[idx];
-            [self setTableColumn:dest toIdentifier:s.identifier label:s.identifier width:s.width];
+            dest = table.tableColumns[idx];
         } else {
-            NSTableColumn *dest = [self createTableColumnWithIdentifier:s.identifier label:s.identifier width:s.width];
+            dest = [[NSTableColumn alloc] initWithIdentifier:s.identifier];
+        }
+        [self setTableColumn:dest toIdentifier:s.identifier label:s.label width:s.width];
+        if (dest.tableView == nil) {
             [table addTableColumn:dest];
         }
         idx++;

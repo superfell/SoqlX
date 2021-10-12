@@ -56,6 +56,9 @@
 @property (readonly, copy) NSString *queryLocator;
 @property (readonly, copy) NSArray  *records;
 
+
+-(id)columnValue:(NSString *)col atRow:(NSUInteger)rowIndex;
+
 @end
 
 @interface EditableQueryResultWrapper (TableColumns)
