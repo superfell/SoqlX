@@ -127,7 +127,7 @@ const NSInteger DEF_ID_WIDTH = 165;
 @end
 
 @interface QueryResultTable ()
-- (NSArray *)createTableColumns:(ZKQueryResult *)qr;
+- (NSArray<NSString*> *)createTableColumns:(ZKQueryResult *)qr;
 @end
 
 @implementation QueryResultTable
@@ -185,9 +185,8 @@ const NSInteger DEF_ID_WIDTH = 165;
     [self didChangeValueForKey:@"hasCheckedRows"];
     [wrapper addObserver:self forKeyPath:@"hasCheckedRows" options:0 context:nil];
 
-    // TODO what about if the primary object type changes, should we reset all columns then?
     [table tableColumnWithIdentifier:ERROR_COLUMN_IDENTIFIER].hidden = TRUE;
-    NSArray *cols = [self createTableColumns:qr];
+    NSArray<NSString*>* cols = [self createTableColumns:qr];
     [wrapper setEditable:[cols containsObject:@"Id"]];
     [self updateTable];
 }
@@ -202,18 +201,23 @@ const NSInteger DEF_ID_WIDTH = 165;
     [self updateTable];
 }
 
+-(void)setTableColumn:(NSTableColumn*)c toIdentifier:(NSString *)identifier label:(NSString*)label width:(CGFloat)width {
+    c.identifier = identifier;
+    c.title = label;
+    c.editable = YES;
+    c.minWidth = MIN_WIDTH;
+    c.width = width;
+    c.resizingMask = NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask;
+    c.sortDescriptorPrototype = [[SObjectSortDescriptor alloc] initWithKey:identifier ascending:YES describer:self.describer];
+}
+
 -(NSTableColumn *)createTableColumnWithIdentifier:(NSString *)identifier label:(NSString*)label width:(CGFloat)width {
     NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:identifier];
-    col.title = label;
-    col.editable = YES;
-    col.minWidth = MIN_WIDTH;
-    col.width = width;
-    col.resizingMask = NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask;
-    col.sortDescriptorPrototype = [[SObjectSortDescriptor alloc] initWithKey:identifier ascending:YES describer:self.describer];
+    [self setTableColumn:col toIdentifier:identifier label:label width:width];
     return col;
 }
 
-- (NSArray *)createTableColumns:(ZKQueryResult *)qr {
+- (NSArray<NSString*> *)createTableColumns:(ZKQueryResult *)qr {
     QueryColumns *qcols = [[QueryColumns alloc] initWithResult:qr];
     
     TStamp *tstamp = [TStamp start];
@@ -228,6 +232,11 @@ const NSInteger DEF_ID_WIDTH = 165;
     NSCell *dummyCell = dummy.dataCell;
     NSFont *font = dummyCell.font;
     
+    // Adding, removing, resizing NSTableView columns cause an expensive relayout calc to be triggered.
+    // There's no way to batch these up and do the layout once. So rather than working directly with the
+    // tableview columns, we do all our calculations with a separate object, and then apply to the results
+    // to the table at the end.
+    
     NSMutableArray<WidthStatsBuilder*>* cols = [NSMutableArray arrayWithCapacity:qcols.names.count];
     for (NSString *colName in qcols.names) {
         WidthStatsBuilder *b = [[WidthStatsBuilder alloc] initWithId:colName font:font];
@@ -238,19 +247,28 @@ const NSInteger DEF_ID_WIDTH = 165;
         [cols addObject:b];
     }
 
-    // Calculate the best size of the columns.
-    // This is way more annoying than i thought it'd be.
+    // Calculate the best size of the columns. This is way more annoying than i thought it'd be.
+    // This take a few steps, the last 4 are the same except different widths are applied.
+    //
+    //  1. calculate the width of the column contents, and separatly the column title.
+    //  2. shrink any columns who's current width is more than needed for the max content width.
+    //  3. if there's space remaining, expand columns to their 80% percentile content width
+    //  4. if there's space remaining, expand columns to their max content width, unless the
+    //          max is a lot larger than the 80% percentile
+    //  5. if there's space remaining, expand columns so that their titles fit fully.
+    //  6. if there's space remaining, expand columns to their max content width.
+    
     CGFloat totalColWidth = [table tableColumnWithIdentifier:DELETE_COLUMN_IDENTIFIER].width;
     CGFloat colSpacing = table.intercellSpacing.width*2;
     for (WidthStatsBuilder *c in cols) {
         totalColWidth += c.width + colSpacing;
     }
     CGFloat space = table.visibleRect.size.width - totalColWidth;
-    NSLog(@"%ld columns. all columns width %f space left %f", cols.count, totalColWidth, space);
+    //NSLog(@"%ld columns. all columns width %f space left %f", cols.count, totalColWidth, space);
 
     // This array once populated will be in the same order as cols. Array contains NSNull | WidthStats*
     NSMutableArray<id>* colWidths = [NSMutableArray arrayWithCapacity:cols.count];
-    // This array is all in an arbitary order.
+    // This array is in an arbitary order.
     NSMutableArray<WidthStats*>* expansions = [NSMutableArray array];
 
     // Measuring the required space to render a string is suprisingly expensive, and we've got a lot todo.
@@ -297,26 +315,27 @@ const NSInteger DEF_ID_WIDTH = 165;
         if (space <= 0) {
             return space;
         }
-        NSLog(@"expander starting, space=%f, %ld potential expansions", space, cols.count);
-        NSMutableArray<WidthStats*> *tosize = [NSMutableArray arrayWithCapacity:cols.count];
+        // NSLog(@"expander starting, space=%f, %ld potential expansions", space, cols.count);
+        NSMutableArray<WidthStats*> *resize = [NSMutableArray arrayWithCapacity:cols.count];
         for (WidthStats *stats in cols) {
             CGFloat newSize = sizer(stats);
             if (newSize <= stats.width) {
                 continue;
             }
-            [tosize addObject:stats];
+            [resize addObject:stats];
         }
         // Sort the updates by smallest additional amount to largest additional amount
-        [tosize sortUsingComparator:^NSComparisonResult(WidthStats*  _Nonnull obj1, WidthStats*  _Nonnull obj2) {
+        // TODO, do we want to try and restrict this to just columns that are visible initially?
+        [resize sortUsingComparator:^NSComparisonResult(WidthStats*  _Nonnull obj1, WidthStats*  _Nonnull obj2) {
             CGFloat a = sizer(obj1) - obj1.width;
             CGFloat b = sizer(obj2) - obj2.width;
             return a < b ? NSOrderedAscending : a == b ? NSOrderedSame : NSOrderedDescending;
         }];
-        for (WidthStats *s in tosize) {
-            CGFloat newSize = MIN(space + s.width, sizer(s));
+        for (WidthStats *s in resize) {
+            CGFloat newSize = fmin(space + s.width, sizer(s));
             space -= (newSize - s.width);
             s.width = newSize;
-            NSLog(@"col %@ grown to %ld, space now %f", s.identifier, s.width, space);
+            //NSLog(@"col %@ grown to %ld, space now %f", s.identifier, s.width, space);
             if (space <= 0) {
                 break;
             }
@@ -335,13 +354,10 @@ const NSInteger DEF_ID_WIDTH = 165;
     space = expander(space, expansions, ^CGFloat(WidthStats*s) {
         return s.max;
     });
-    NSLog(@"space remaining %f, table width %f", space, table.visibleRect.size.width);
+    // NSLog(@"space remaining %f, table width %f", space, table.visibleRect.size.width);
     [tstamp mark:@"calc col widths"];
     
-    // Add/order the columns in the table.
-    
-    // Rather than trying to resize, insert, shuffle the table columns to keep the identifiers
-    // constant, we'll update the columns to match what we want.
+    // Finally add/update the NSTableColumns in the table to reflect the calculated columns/sizes
     
     // remove any unwanted columns
     while (table.tableColumns.count > 2 + cols.count) {
@@ -351,13 +367,7 @@ const NSInteger DEF_ID_WIDTH = 165;
     for (WidthStats *s in colWidths) {
         if (idx < table.tableColumns.count) {
             NSTableColumn *dest = table.tableColumns[idx];
-            dest.minWidth = MIN_WIDTH;
-            dest.width = s.width;
-            dest.title = s.identifier;
-            dest.identifier = s.identifier;
-            dest.sortDescriptorPrototype = [[SObjectSortDescriptor alloc] initWithKey:s.identifier
-                                                                            ascending:YES
-                                                                            describer:self.describer];
+            [self setTableColumn:dest toIdentifier:s.identifier label:s.identifier width:s.width];
         } else {
             NSTableColumn *dest = [self createTableColumnWithIdentifier:s.identifier label:s.identifier width:s.width];
             [table addTableColumn:dest];
