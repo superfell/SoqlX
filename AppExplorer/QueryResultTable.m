@@ -31,7 +31,7 @@ const NSInteger MIN_WIDTH = 40;
 const NSInteger DEF_WIDTH = 100;
 const NSInteger DEF_ID_WIDTH = 165;
 
-@interface WidthStats : NSObject
+@interface ColumnResult : NSObject
 @property (assign) NSInteger count;
 @property (assign) NSInteger max;
 @property (assign) NSInteger percentile80;
@@ -41,10 +41,10 @@ const NSInteger DEF_ID_WIDTH = 165;
 @property (retain) NSString *label;
 @end
 
-@implementation WidthStats
+@implementation ColumnResult
 @end
 
-@interface WidthStatsBuilder : NSObject {
+@interface ColumnBuilder : NSObject {
     NSMutableString             *buffer;
     NSMutableArray<NSNumber*>   *vals;
     NSInteger                   minToConsider;
@@ -58,11 +58,11 @@ const NSInteger DEF_ID_WIDTH = 165;
 
 -(instancetype)initWithId:(NSString*)i font:(NSFont*)f;
 -(void)add:(NSString *)s;
--(WidthStats*)resultsWithOffset:(NSInteger)pad;
+-(ColumnResult*)resultsWithOffset:(NSInteger)pad;
 
 @end
 
-@implementation WidthStatsBuilder
+@implementation ColumnBuilder
 
 -(instancetype)initWithId:(NSString*)i font:(NSFont*)f {
     self = [super init];
@@ -87,7 +87,7 @@ const NSInteger DEF_ID_WIDTH = 165;
     [buffer appendString:@"\n"];
 }
 
--(NSArray<NSNumber*>*)measureStrings {
+-(void)measureStrings {
     // see https://stackoverflow.com/questions/30537811/performance-of-measuring-text-width-in-appkit
     NSAttributedString *richText = [[NSAttributedString alloc]
                                         initWithString:buffer
@@ -111,12 +111,11 @@ const NSInteger DEF_ID_WIDTH = 165;
     CFRelease(setter);
     CFRelease(path);
     [vals sortUsingSelector:@selector(compare:)];
-    return vals;
 }
 
--(WidthStats*)resultsWithOffset:(NSInteger)pad {
+-(ColumnResult*)resultsWithOffset:(NSInteger)pad {
     [self measureStrings];
-    WidthStats *r = [[WidthStats alloc] init];
+    ColumnResult *r = [[ColumnResult alloc] init];
     r.max = pad + (vals.count == 0 ? minToConsider : vals.lastObject.integerValue);
     r.count = vals.count + minCount;
     NSInteger p80Idx = 0.8 * r.count;
@@ -230,8 +229,8 @@ const NSInteger DEF_ID_WIDTH = 165;
     // tableview columns, we do all our calculations with a separate object, and then apply to the results
     // to the table at the end.
 
-    WidthStatsBuilder*(^newBuilder)(NSString*) = ^WidthStatsBuilder*(NSString*colName) {
-        WidthStatsBuilder *b = [[WidthStatsBuilder alloc] initWithId:colName font:font];
+    ColumnBuilder*(^newColumn)(NSString*) = ^ColumnBuilder*(NSString*colName) {
+        ColumnBuilder *b = [[ColumnBuilder alloc] initWithId:colName font:font];
         NSTableColumn *existing = [self->table tableColumnWithIdentifier:colName];
         if (existing != nil) {
             b.width = existing.width;
@@ -239,14 +238,14 @@ const NSInteger DEF_ID_WIDTH = 165;
         }
         return b;
     };
-    NSMutableArray<WidthStatsBuilder*>* cols = [NSMutableArray arrayWithCapacity:qcols.names.count+1];
+    NSMutableArray<ColumnBuilder*>* cols = [NSMutableArray arrayWithCapacity:qcols.names.count+1];
     if (qcols.isSearchResult) {
-        WidthStatsBuilder*c = newBuilder(TYPE_COLUMN_IDENTIFIER);
+        ColumnBuilder *c = newColumn(TYPE_COLUMN_IDENTIFIER);
         c.label = @"Type";
         [cols addObject:c];
     }
     for (NSString *colName in qcols.names) {
-        [cols addObject:newBuilder(colName)];
+        [cols addObject:newColumn(colName)];
     }
 
     // Calculate the best size of the columns. This is way more annoying than i thought it'd be.
@@ -262,16 +261,16 @@ const NSInteger DEF_ID_WIDTH = 165;
     
     CGFloat totalColWidth = [table tableColumnWithIdentifier:DELETE_COLUMN_IDENTIFIER].width;
     CGFloat colSpacing = table.intercellSpacing.width*2;
-    for (WidthStatsBuilder *c in cols) {
+    for (ColumnBuilder *c in cols) {
         totalColWidth += c.width + colSpacing;
     }
     CGFloat space = table.visibleRect.size.width - totalColWidth;
     //NSLog(@"%ld columns. all columns width %f space left %f", cols.count, totalColWidth, space);
 
-    // This array once populated will be in the same order as cols. Array contains NSNull | WidthStats*
-    NSMutableArray<id>* colWidths = [NSMutableArray arrayWithCapacity:cols.count];
-    // This array is in an arbitary order.
-    NSMutableArray<WidthStats*>* expansions = [NSMutableArray array];
+    // This array once populated will be in the same order as cols. Array contains NSNull | ColumnResult*
+    NSMutableArray<id>* colResults = [NSMutableArray arrayWithCapacity:cols.count];
+    // This array is in an arbitary order. It contains columns
+    NSMutableArray<ColumnResult*>* expansions = [NSMutableArray array];
 
     // Measuring the required space to render a string is suprisingly expensive, and we've got a lot todo.
     // We'll farm out each column to a worker pool and gather up all the results.
@@ -279,12 +278,12 @@ const NSInteger DEF_ID_WIDTH = 165;
     dispatch_queue_t workQ = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0);
     dispatch_group_t group = dispatch_group_create();
     
-    // Go through all the columns. Calculate stats about the column values. Collect up the results in colWidths.
+    // Go through all the columns. Calculate stats about the column values. Collect up the results in colResults.
     NSNull *null = [NSNull null];
-    while (colWidths.count < cols.count) {
-        [colWidths addObject:null];
+    while (colResults.count < cols.count) {
+        [colResults addObject:null];
     }
-    [cols enumerateObjectsUsingBlock:^(WidthStatsBuilder * _Nonnull col, NSUInteger idx, BOOL * _Nonnull stop) {
+    [cols enumerateObjectsUsingBlock:^(ColumnBuilder * _Nonnull col, NSUInteger idx, BOOL * _Nonnull stop) {
         dispatch_group_async(group, workQ, ^{
             for (int r = 0 ; r < qr.records.count; r++) {
                 id v = [self->wrapper columnValue:col.identifier atRow:r];
@@ -292,9 +291,9 @@ const NSInteger DEF_ID_WIDTH = 165;
                     [col add:[v description]];
                 }
             }
-            WidthStats *ws = [col resultsWithOffset:colSpacing];
+            ColumnResult *ws = [col resultsWithOffset:colSpacing];
             dispatch_sync(gatherQ, ^{
-                colWidths[idx] = ws;
+                colResults[idx] = ws;
                 if (ws.headerWidth > ws.width || ws.headerWidth > ws.max || ws.max > ws.width) {
                     [expansions addObject:ws];
                 }
@@ -304,36 +303,36 @@ const NSInteger DEF_ID_WIDTH = 165;
     dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
     [tstamp mark:@"calc'd column content widths"];
 
-    for (WidthStats *ws in colWidths) {
+    for (ColumnResult *ws in colResults) {
         if (ws.max < ws.width) {
             space += ws.width - ws.max;
             ws.width = ws.max;
         }
     }
     
-    typedef CGFloat(^sizeExtractorFn)(WidthStats*);
-    typedef CGFloat(^expanderFn)(CGFloat, NSArray<WidthStats*>*, sizeExtractorFn);
-    expanderFn expander = ^CGFloat(CGFloat space, NSArray<WidthStats*>*cols, sizeExtractorFn sizer) {
+    typedef CGFloat(^sizeExtractorFn)(ColumnResult*);
+    typedef CGFloat(^expanderFn)(CGFloat, NSArray<ColumnResult*>*, sizeExtractorFn);
+    expanderFn expander = ^CGFloat(CGFloat space, NSArray<ColumnResult*>*cols, sizeExtractorFn sizer) {
         if (space <= 0) {
             return space;
         }
         // NSLog(@"expander starting, space=%f, %ld potential expansions", space, cols.count);
-        NSMutableArray<WidthStats*> *resize = [NSMutableArray arrayWithCapacity:cols.count];
-        for (WidthStats *stats in cols) {
-            CGFloat newSize = sizer(stats);
-            if (newSize <= stats.width) {
+        NSMutableArray<ColumnResult*> *resize = [NSMutableArray arrayWithCapacity:cols.count];
+        for (ColumnResult *col in cols) {
+            CGFloat newSize = sizer(col);
+            if (newSize <= col.width) {
                 continue;
             }
-            [resize addObject:stats];
+            [resize addObject:col];
         }
         // Sort the updates by smallest additional amount to largest additional amount
         // TODO, do we want to try and restrict this to just columns that are visible initially?
-        [resize sortUsingComparator:^NSComparisonResult(WidthStats*  _Nonnull obj1, WidthStats*  _Nonnull obj2) {
+        [resize sortUsingComparator:^NSComparisonResult(ColumnResult*  _Nonnull obj1, ColumnResult*  _Nonnull obj2) {
             CGFloat a = sizer(obj1) - obj1.width;
             CGFloat b = sizer(obj2) - obj2.width;
             return a < b ? NSOrderedAscending : a == b ? NSOrderedSame : NSOrderedDescending;
         }];
-        for (WidthStats *s in resize) {
+        for (ColumnResult *s in resize) {
             CGFloat newSize = fmin(space + s.width, sizer(s));
             space -= (newSize - s.width);
             s.width = newSize;
@@ -344,16 +343,16 @@ const NSInteger DEF_ID_WIDTH = 165;
         }
         return space;
     };
-    space = expander(space, expansions, ^CGFloat(WidthStats*s) {
+    space = expander(space, expansions, ^CGFloat(ColumnResult*s) {
         return s.percentile80;
     });
-    space = expander(space, expansions, ^CGFloat(WidthStats*s) {
+    space = expander(space, expansions, ^CGFloat(ColumnResult*s) {
         return s.max - s.percentile80 < 100 ? s.max : s.percentile80;
     });
-    space = expander(space, expansions, ^CGFloat(WidthStats*s) {
+    space = expander(space, expansions, ^CGFloat(ColumnResult*s) {
         return s.headerWidth;
     });
-    space = expander(space, expansions, ^CGFloat(WidthStats*s) {
+    space = expander(space, expansions, ^CGFloat(ColumnResult*s) {
         return s.max;
     });
     // NSLog(@"space remaining %f, table width %f", space, table.visibleRect.size.width);
@@ -366,14 +365,14 @@ const NSInteger DEF_ID_WIDTH = 165;
         [table removeTableColumn:table.tableColumns[2]];
     }
     NSInteger idx = 2;
-    for (WidthStats *s in colWidths) {
+    for (ColumnResult *c in colResults) {
         NSTableColumn *dest;
         if (idx < table.tableColumns.count) {
             dest = table.tableColumns[idx];
         } else {
-            dest = [[NSTableColumn alloc] initWithIdentifier:s.identifier];
+            dest = [[NSTableColumn alloc] initWithIdentifier:c.identifier];
         }
-        [self setTableColumn:dest toIdentifier:s.identifier label:s.label width:s.width];
+        [self setTableColumn:dest toIdentifier:c.identifier label:c.label width:c.width];
         if (dest.tableView == nil) {
             [table addTableColumn:dest];
         }
