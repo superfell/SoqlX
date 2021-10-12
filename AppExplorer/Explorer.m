@@ -158,6 +158,8 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     }
 }
 
+// MARK:- Login
+
 -(void)initLoginController {
     if (self.loginController == nil) {
         self.loginController = [[ZKLoginController alloc] init];
@@ -302,9 +304,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     }];
 }
 
--(void)highlightItemInSideBar:(id)sender {
-    NSLog(@"highlight Item in side bar %@", sender);
-}
+// MARK:- Describe/Metadata
 
 - (void)refreshMetadata:(id)sender {
     [sforce describeGlobalThemeWithFailBlock:^(NSError *result) {
@@ -317,25 +317,16 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     }];
 }
 
-- (void)setSoqlString:(NSString *)str {
-    NSAttributedString *s = [[NSAttributedString alloc]
-                             initWithString:str
-                             attributes:@{
-                                          NSForegroundColorAttributeName: [NSColor textColor]
-                                                                         }];
-    [soql.textStorage setAttributedString:s];
-    soql.textStorage.font = [(AppDelegate*)[NSApp delegate] editFont];
-    [self colorize];
+-(void)highlightItemInSideBar:(id)sender {
+    NSLog(@"highlight Item in side bar %@", sender);
 }
 
-- (void)queryTextListView:(QueryTextListView *)listView itemClicked:(QueryTextListViewItem *)item {
-    NSString *t = item.text;
-    if (t == nil || t.length == 0) return;
-    [self setSoqlString:t];
+- (DescribeListDataSource *)describeDataSource {
+    return descDataSource;
 }
 
-- (NSString *)soqlString {
-    return soql.textStorage.string;
+- (NSArray *)SObjects {
+    return [descDataSource SObjects];
 }
 
 - (void)described:(nonnull NSArray<ZKDescribeSObject *> *)sobjects {
@@ -430,6 +421,88 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     [descDataSource setFilter:[sender stringValue]];
 }
 
+// When the user selected an sobject we don't have a describe for, we'll do a describe in the background
+// then re-update the UI/data sources.
+-(void)asyncSelectedSObjectChanged:(NSString *)sobjectType {
+    [self updateProgress:YES];
+    [detailsController setDataSource:nil];
+    NSInteger selectedRow = describeList.selectedRow;
+    [self->descDataSource describe:sobjectType
+                         failBlock:[self errorHandler]
+                     completeBlock:^(ZKDescribeSObject *result) {
+                        [self updateProgress:NO];
+                        // the describe completed, and this item is still selected update it.
+                        if (selectedRow == self->describeList.selectedRow) {
+                            [self selectedSObjectChanged:self];
+                        }
+                     }];
+}
+
+- (IBAction)selectedSObjectChanged:(id)sender {
+    id selectedItem = [describeList itemAtRow:describeList.selectedRow];
+    DetailDataSource *dataSource = nil;
+    if ([selectedItem isKindOfClass:[ZKDescribeGlobalSObject class]]) {
+        // sobject
+        if (![descDataSource hasDescribe:[selectedItem name]]) {
+            [self asyncSelectedSObjectChanged:[selectedItem name]];
+            return;
+        }
+        ZKDescribeSObject *desc = [descDataSource cachedDescribe:[selectedItem name]];
+        dataSource = [[SObjectDataSource alloc] initWithDescribe:desc];
+        [detailsController setIcon:[descDataSource iconForType:[selectedItem name]]];
+        if (self.schemaViewIsActive) {
+            [schemaController setSchemaViewToSObject:desc];
+        }
+    } else {
+        // field
+        dataSource = [[SObjectFieldDataSource alloc] initWithDescribe:selectedItem];
+        [detailsController setIcon:nil];
+    }
+    [detailsController setDataSource:dataSource];
+}
+
+- (NSString *)selectedSObjectName {
+    id selectedItem = [describeList itemAtRow:describeList.selectedRow];
+    if ([selectedItem isKindOfClass:[NSString class]]) {
+        // sobject name
+        return selectedItem;
+        
+    } else if ([selectedItem isKindOfClass:[ZKDescribeGlobalSObject class]]) {
+        // sobject desc
+        return [selectedItem name];
+        
+    } else if ([selectedItem isKindOfClass:[ZKDescribeField class]]) {
+        // field
+        return ((ZKDescribeField *)selectedItem).sobject.name;
+    }
+    // unknown
+    NSLog(@"selected item from describeList of unexpected type %@ %@", selectedItem, [selectedItem class]);
+    return selectedItem;
+}
+
+// MARK:- Query
+
+- (void)setSoqlString:(NSString *)str {
+    NSAttributedString *s = [[NSAttributedString alloc]
+                             initWithString:str
+                             attributes:@{
+                                          NSForegroundColorAttributeName: [NSColor textColor]
+                                                                         }];
+    [soql.textStorage setAttributedString:s];
+    soql.textStorage.font = [(AppDelegate*)[NSApp delegate] editFont];
+    [self colorize];
+}
+
+- (void)queryTextListView:(QueryTextListView *)listView itemClicked:(QueryTextListViewItem *)item {
+    NSString *t = item.text;
+    if (t == nil || t.length == 0) return;
+    [self setSoqlString:t];
+}
+
+- (NSString *)soqlString {
+    return soql.textStorage.string;
+}
+
 - (void)setRowsLoadedStatusText:(ZKQueryResult *)qr timing:(NSString *)time {
     self.statusText = [NSString stringWithFormat:@"loaded %ld of %ld total rows %@", (unsigned long)[qr records].count, (long)[qr size], time];
 }
@@ -478,6 +551,36 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     }
 }
 
+- (IBAction)executeQuery:(id)sender {
+    [self permformQuery:NO];
+}
+
+- (IBAction)executeQueryAll:(id)sender {
+    [self permformQuery:YES];
+}
+
+- (BOOL)canQueryMore {
+    return [self.rootResults.queryResult queryLocator] != nil;
+}
+
+- (IBAction)queryMore:(id)sender {
+    [self updateProgress:YES];
+    self.isQuerying = YES;
+    NSDate *started = [NSDate date];
+    [sforce queryMore:[self.rootResults.queryResult queryLocator]
+            failBlock:[self errorHandler]
+        completeBlock:^(ZKQueryResult *next) {
+            NSString *execTime = [self execTimeSince:started];
+            NSMutableArray *allRecs = [NSMutableArray arrayWithArray:[self.rootResults.queryResult records]];
+            [allRecs addObjectsFromArray:[next records]];
+            ZKQueryResult * total = [[ZKQueryResult alloc] initWithRecords:allRecs size:[next size] done:[next done] queryLocator:[next queryLocator]];
+            self.rootResults.queryResult = total;
+            [self setRowsLoadedStatusText:total timing:execTime];
+            [self updateProgress:NO];
+            self.isQuerying = NO;
+        }];
+}
+
 - (IBAction)queryResultDoubleClicked:(id)sender {
     NSInteger cc = [sender clickedColumn];
     NSInteger cr = [sender clickedRow];
@@ -517,6 +620,8 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     
     return user;
 }
+
+// MARK:- File load/save
 
 -(NSError *)loadQuery:(NSURL *)url {
     NSError *err = nil;
@@ -647,6 +752,8 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     [saver save:myWindow];
 }
 
+// MARK:- Data Edit/Delete
+
 // this is called by the menu to see if items should be enabled. This is an addition to the
 // check that the target implements the selector.
 -(BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)i {
@@ -667,18 +774,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
         return [self canQueryMore];
     }
     return YES;
-}
-
-- (IBAction)executeQuery:(id)sender {
-    [self permformQuery:NO];
-}    
-
-- (IBAction)executeQueryAll:(id)sender {
-    [self permformQuery:YES];
-}
-
-- (BOOL)canQueryMore {
-    return [self.rootResults.queryResult queryLocator] != nil;
 }
 
 - (BOOL)hasSelectedForDelete {    
@@ -732,91 +827,6 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     }];
 }
 
-- (IBAction)queryMore:(id)sender {
-    [self updateProgress:YES];
-    self.isQuerying = YES;
-    NSDate *started = [NSDate date];
-    [sforce queryMore:[self.rootResults.queryResult queryLocator]
-            failBlock:[self errorHandler]
-        completeBlock:^(ZKQueryResult *next) {
-            NSString *execTime = [self execTimeSince:started];
-            NSMutableArray *allRecs = [NSMutableArray arrayWithArray:[self.rootResults.queryResult records]];
-            [allRecs addObjectsFromArray:[next records]];
-            ZKQueryResult * total = [[ZKQueryResult alloc] initWithRecords:allRecs size:[next size] done:[next done] queryLocator:[next queryLocator]];
-            self.rootResults.queryResult = total;
-            [self setRowsLoadedStatusText:total timing:execTime];
-            [self updateProgress:NO];
-            self.isQuerying = NO;
-        }];
-}
-
-- (DescribeListDataSource *)describeDataSource {
-    return descDataSource;
-}
-
-- (NSArray *)SObjects {
-    return [descDataSource SObjects];
-}
-
-// When the user selected an sobject we don't have a describe for, we'll do a describe in the background
-// then re-update the UI/data sources.
--(void)asyncSelectedSObjectChanged:(NSString *)sobjectType {
-    [self updateProgress:YES];
-    [detailsController setDataSource:nil];
-    NSInteger selectedRow = describeList.selectedRow;
-    [self->descDataSource describe:sobjectType
-                         failBlock:[self errorHandler]
-                     completeBlock:^(ZKDescribeSObject *result) {
-                        [self updateProgress:NO];
-                        // the describe completed, and this item is still selected update it.
-                        if (selectedRow == self->describeList.selectedRow) {
-                            [self selectedSObjectChanged:self];
-                        }
-                     }];
-}
-
-- (IBAction)selectedSObjectChanged:(id)sender {
-    id selectedItem = [describeList itemAtRow:describeList.selectedRow];
-    DetailDataSource *dataSource = nil;
-    if ([selectedItem isKindOfClass:[ZKDescribeGlobalSObject class]]) {
-        // sobject
-        if (![descDataSource hasDescribe:[selectedItem name]]) {
-            [self asyncSelectedSObjectChanged:[selectedItem name]];
-            return;
-        }
-        ZKDescribeSObject *desc = [descDataSource cachedDescribe:[selectedItem name]];
-        dataSource = [[SObjectDataSource alloc] initWithDescribe:desc];
-        [detailsController setIcon:[descDataSource iconForType:[selectedItem name]]];
-        if (self.schemaViewIsActive) {
-            [schemaController setSchemaViewToSObject:desc];
-        }
-    } else {
-        // field
-        dataSource = [[SObjectFieldDataSource alloc] initWithDescribe:selectedItem];
-        [detailsController setIcon:nil];
-    }
-    [detailsController setDataSource:dataSource];
-}
-
-- (NSString *)selectedSObjectName {
-    id selectedItem = [describeList itemAtRow:describeList.selectedRow];
-    if ([selectedItem isKindOfClass:[NSString class]]) {
-        // sobject name
-        return selectedItem;
-        
-    } else if ([selectedItem isKindOfClass:[ZKDescribeGlobalSObject class]]) {
-        // sobject desc
-        return [selectedItem name];
-        
-    } else if ([selectedItem isKindOfClass:[ZKDescribeField class]]) {
-        // field
-        return ((ZKDescribeField *)selectedItem).sobject.name;
-    }
-    // unknown
-    NSLog(@"selected item from describeList of unexpected type %@ %@", selectedItem, [selectedItem class]);
-    return selectedItem;
-}
-
 - (IBAction)generateReportForSelection:(id)sender {
     NSString *sobjectName = [self selectedSObjectName];
     if (sobjectName == nil) return;
@@ -844,6 +854,8 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     }
     return nil;
 }
+
+// MARK:- Delegate impls
 
 // NSTabView delegate
 - (void)tabView:(NSTabView *)tab didSelectTabViewItem:(NSTabViewItem *)item {
