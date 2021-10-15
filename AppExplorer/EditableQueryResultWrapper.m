@@ -117,7 +117,7 @@
 }
 
 - (id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(NSInteger)rowIdx {
-    return [self columnValue:tc.identifier atRow:rowIdx];
+    return [self.queryResult columnDisplayValue:tc.identifier atRow:rowIdx];
 }
 
 - (BOOL)allowEdit:(NSTableColumn *)aColumn {
@@ -166,7 +166,7 @@
 
 - (NSCell *)tableView:(NSTableView *)tableView dataCellForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
     if (tableColumn == nil) return nil;
-    id v = [self columnValue:tableColumn.identifier atRow:row];
+    id v = [self.queryResult columnDisplayValue:tableColumn.identifier atRow:row];
     if ([v isKindOfClass:[ZKQueryResult class]])
         return imageCell;
     return [tableColumn dataCellForRow:row];
@@ -178,11 +178,6 @@
     ZKQueryResult *r = [[ZKQueryResult alloc] initWithRecords:sorted size:qr.size done:qr.done queryLocator:qr.queryLocator];
     self.queryResult = r;
     [tableView reloadData];
-}
-
-// TODO: should be able to get rid of this and have the callers call QR directly
--(id)columnValue:(NSString *)col atRow:(NSUInteger)rowIndex {
-    return [self.queryResult columnDisplayValue:col atRow:rowIndex];
 }
 
 @end
