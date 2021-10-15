@@ -21,6 +21,7 @@
 
 #import <XCTest/XCTest.h>
 #import "QueryColumns.h"
+#import "SearchQueryResult.h"
 #import <ZKSforce/ZKQueryResult.h>
 #import <ZKSforce/ZKSObject.h>
 #import <ZKSforce/ZKParser.h>
@@ -151,25 +152,27 @@
     XCTAssertEqualObjects(([NSSet setWithArray:@[@"firstName",@"MailingAddress.street", @"MailingAddress.city", @"MailingAddress.state", @"MailingAddress.stateCode", @"MailingAddress.country", @"MailingAddress.countryCode", @"MailingAddress.postalCode",@"MailingAddress.geocodeAccuracy",@"MailingAddress.longitude", @"MailingAddress.latitude"]]), [NSSet setWithArray:qc.names]);
 }
 
--(void)testTypeOfALot {
+-(void)testSearchResult {
     // with typeof in a query the related objects can have different columns in different rows
-    NSString *qrXml = @"<QueryResult xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>"
-                        "<records><type>Contact</type><Id>123</Id><firstName>Bob</firstName>"
+    NSString *qrXml = @"<SearchResult xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>"
+                        "<queryId>999</queryId>"
+                        "<searchRecords><record><type>Contact</type><Id>123</Id><firstName>Bob</firstName>"
+                        "<owner xsi:nil='true' />"
+                        "</record></searchRecords>"
+                        "<searchRecords><record><type>Contact</type><Id>124</Id><firstName>Bob</firstName>"
                         "<owner xsi:type='sObject'><type>User</type><Id>2</Id><name>Eve</name></owner>"
-                        "</records>"
-                        "<records><type>Contact</type><Id>124</Id><firstName>Eve</firstName>"
+                        "</record></searchRecords>"
+                        "<searchRecords><record><type>Account</type><Id>125</Id><Name>Eve Inc</Name>"
                         "<owner xsi:type='sObject'><type>Group</type><Id>1</Id><level>3</level></owner>"
-                        "</records>"
-                        "<size>2</size><done>true</done></QueryResult>";
+                        "</record></searchRecords>"
+                        "</SearchResult>";
     ZKElement *xml = [ZKParser parseData:[qrXml dataUsingEncoding:NSUTF8StringEncoding]];
     XCTAssertNotNil(xml);
-    ZKQueryResult *qr = [[ZKQueryResult alloc] initWithXmlElement:xml];
-    NSSet *exp = [NSSet setWithArray:@[@"firstName", @"owner.name", @"owner.level"]];
-    for (int i = 0; i < 50000; i++) {
-        QueryColumns *qc = [[QueryColumns alloc] initWithResult:qr];
-        XCTAssertFalse(qc.isSearchResult);
-        XCTAssertEqualObjects(exp, [NSSet setWithArray:qc.names]);
-    }
+    ZKSearchResult *sr = [[ZKSearchResult alloc] initWithXmlElement:xml];
+    SearchQueryResult *qr = [SearchQueryResult searchQueryResults:sr];
+    QueryColumns *qc = [[QueryColumns alloc] initWithResult:qr];
+    XCTAssertTrue(qc.isSearchResult);
+    XCTAssertEqualObjects(([NSSet setWithArray:@[@"firstName", @"owner.name", @"Name", @"owner.level"]]), [NSSet setWithArray:qc.names]);
 }
 
 -(void)testTypeOf {
@@ -188,6 +191,30 @@
     QueryColumns *qc = [[QueryColumns alloc] initWithResult:qr];
     XCTAssertFalse(qc.isSearchResult);
     XCTAssertEqualObjects(([NSSet setWithArray:@[@"firstName", @"owner.name", @"owner.level"]]), [NSSet setWithArray:qc.names]);
+}
+
+// MARK:- These tests are for checking performance.
+
+-(void)testTypeOfALot {
+    // Used for profiling QueryColumns performance
+    // with typeof in a query the related objects can have different columns in different rows
+    NSString *qrXml = @"<QueryResult xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>"
+                        "<records><type>Contact</type><Id>123</Id><firstName>Bob</firstName>"
+                        "<owner xsi:type='sObject'><type>User</type><Id>2</Id><name>Eve</name></owner>"
+                        "</records>"
+                        "<records><type>Contact</type><Id>124</Id><firstName>Eve</firstName>"
+                        "<owner xsi:type='sObject'><type>Group</type><Id>1</Id><level>3</level></owner>"
+                        "</records>"
+                        "<size>2</size><done>true</done></QueryResult>";
+    ZKElement *xml = [ZKParser parseData:[qrXml dataUsingEncoding:NSUTF8StringEncoding]];
+    XCTAssertNotNil(xml);
+    ZKQueryResult *qr = [[ZKQueryResult alloc] initWithXmlElement:xml];
+    NSSet *exp = [NSSet setWithArray:@[@"firstName", @"owner.name", @"owner.level"]];
+    for (int i = 0; i < 50000; i++) {
+        QueryColumns *qc = [[QueryColumns alloc] initWithResult:qr];
+        XCTAssertFalse(qc.isSearchResult);
+        XCTAssertEqualObjects(exp, [NSSet setWithArray:qc.names]);
+    }
 }
 
 -(void)testColumnWithId {

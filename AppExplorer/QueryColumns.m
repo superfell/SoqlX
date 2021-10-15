@@ -20,11 +20,7 @@
 //
 
 #import "QueryColumns.h"
-#import <ZKSforce/ZKSObject.h>
-#import <ZKSforce/ZKLocation.h>
-#import <ZKSforce/ZKAddress.h>
-#import <ZKSforce/ZKQueryResult.h>
-#import <ZKSforce/ZKComplexTypeFieldInfo.h>
+#import <ZKSforce/ZKSforce.h>
 #import "SearchQueryResult.h"
 #import "ZKQueryResult+Display.h"
 
@@ -68,8 +64,8 @@
         return e;
     }
     if (childCols == nil) {
-        childCols = [NSMutableArray array];
-        childrenByName = [NSMutableDictionary dictionary];
+        childCols = [NSMutableArray arrayWithCapacity:4];
+        childrenByName = [NSMutableDictionary dictionaryWithCapacity:4];
     }
     QueryColumn *c = [QueryColumn columnWithName:name];
     [childCols addObject:c];
@@ -101,18 +97,6 @@
 
 -(BOOL)hasChildNames {
     return childCols.count > 0;
-}
-
--(BOOL)allHaveSeenValues {
-    if (childCols.count == 0) {
-        return self.hasSeenValue;
-    }
-    for (QueryColumn *c in childCols) {
-        if (!c.allHaveSeenValues) {
-            return NO;
-        }
-    }
-    return YES;
 }
 
 @end

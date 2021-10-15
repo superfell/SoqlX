@@ -61,6 +61,7 @@
 		F4A2B8FF2718AF3600C20A42 /* ZKQueryResult+Display.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A2B8FE2718AF3600C20A42 /* ZKQueryResult+Display.m */; };
 		F4A2B9032718DD1300C20A42 /* TStamp.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A2B8F12714E80800C20A42 /* TStamp.m */; };
 		F4A2B9052718DD2B00C20A42 /* ZKQueryResult+Display.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A2B8FE2718AF3600C20A42 /* ZKQueryResult+Display.m */; };
+		F4A2B908271A41AD00C20A42 /* SearchQueryResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C440C915DB50BC00590A1E /* SearchQueryResult.m */; };
 		F4A62E2F0D31AC6300D7EACA /* NSView_additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A62E2E0D31AC6300D7EACA /* NSView_additions.m */; };
 		F4AC556715996D8500F5CA45 /* zkApexClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F4AC555A15996D8500F5CA45 /* zkApexClient.m */; };
 		F4AC556815996D8500F5CA45 /* ZKCodeCoverageResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4AC555C15996D8500F5CA45 /* ZKCodeCoverageResult.m */; };
@@ -1203,6 +1204,7 @@
 				F4BD5DD926470C8800ACBBAB /* Prefs.m in Sources */,
 				F48804DD2592BE57001D56F6 /* CaseInsensitiveKeyTest.m in Sources */,
 				F4DF0B632638BDB300B3A1A9 /* SoqlParser.m in Sources */,
+				F4A2B908271A41AD00C20A42 /* SearchQueryResult.m in Sources */,
 				F4DE40652562079100FBA200 /* QueryColumnsTest.m in Sources */,
 				F4E0F2B9256F127B00446C2B /* SObject.m in Sources */,
 				F48804DF2592BE63001D56F6 /* CaseInsensitiveStringKey.m in Sources */,

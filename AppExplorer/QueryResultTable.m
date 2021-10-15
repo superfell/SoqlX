@@ -273,7 +273,7 @@ const NSInteger DEF_ID_WIDTH = 165;
     }
     [tstamp mark:@"added TV Columns"];
     [tstamp log];
-    
+    self.columns = qcols;
     self.wrapper.queryResult = total;
     [self updateTable];
 }
