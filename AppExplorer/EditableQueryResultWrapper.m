@@ -96,6 +96,15 @@
     [self didChangeValueForKey:@"hasErrors"];
 }
 
+- (BOOL)allowEdit:(NSTableColumn *)aColumn {
+    if (!self.editable) return NO;
+    if (self.delegate.isEditing) return NO;
+    if ([aColumn.identifier isEqualToString:ERROR_COLUMN_IDENTIFIER]) return NO;
+    return [aColumn.identifier rangeOfString:@"."].location == NSNotFound;
+}
+
+
+// MARK:- ZKQueryResult passthrough
 - (NSInteger)size {
     return [self.queryResult size];
 }
@@ -112,6 +121,7 @@
     return [self.queryResult records];
 }
 
+// MARK:- NSTableViewDataSource
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)v {
     return [self.queryResult numberOfRowsInTableView:v];
 }
@@ -120,28 +130,12 @@
     return [self.queryResult columnDisplayValue:tc.identifier atRow:rowIdx];
 }
 
-- (BOOL)allowEdit:(NSTableColumn *)aColumn {
-    if (!self.editable) return NO;
-    if (self.delegate.isEditing) return NO;
-    if ([aColumn.identifier isEqualToString:ERROR_COLUMN_IDENTIFIER]) return NO;
-    return [aColumn.identifier rangeOfString:@"."].location == NSNotFound;
-}
-
-- (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor {
-    NSTableView *t = (NSTableView *)control;
-    NSTableColumn *c = t.tableColumns[t.editedColumn];
-    return [self allowEdit:c];
-}
-
-- (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor {
-    return YES;
-}
-
-- (void)tableView:(NSTableView *)tableView didClickTableColumn:(NSTableColumn *)tableColumn {
-    if ([tableColumn.identifier isEqualToString:DELETE_COLUMN_IDENTIFIER]) {
-        [self setChecksOnAllRows:![self hasCheckedRows]];
-        [tableView reloadData];
-    }
+- (void)tableView:(NSTableView *)tableView sortDescriptorsDidChange:(NSArray<NSSortDescriptor *> *)oldDescriptors {
+    ZKQueryResult *qr = self.queryResult;
+    NSArray *sorted = [qr.records sortedArrayUsingDescriptors:tableView.sortDescriptors];
+    ZKQueryResult *r = [[ZKQueryResult alloc] initWithRecords:sorted size:qr.size done:qr.done queryLocator:qr.queryLocator];
+    self.queryResult = r;
+    [tableView reloadData];
 }
 
 - (void)tableView:(NSTableView *)aTableView
@@ -164,6 +158,14 @@
     }
 }
 
+// MARK:- NSTableViewDelegate
+- (void)tableView:(NSTableView *)tableView didClickTableColumn:(NSTableColumn *)tableColumn {
+    if ([tableColumn.identifier isEqualToString:DELETE_COLUMN_IDENTIFIER]) {
+        [self setChecksOnAllRows:![self hasCheckedRows]];
+        [tableView reloadData];
+    }
+}
+
 - (NSCell *)tableView:(NSTableView *)tableView dataCellForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
     if (tableColumn == nil) return nil;
     id v = [self.queryResult columnDisplayValue:tableColumn.identifier atRow:row];
@@ -172,12 +174,15 @@
     return [tableColumn dataCellForRow:row];
 }
 
-- (void)tableView:(NSTableView *)tableView sortDescriptorsDidChange:(NSArray<NSSortDescriptor *> *)oldDescriptors {
-    ZKQueryResult *qr = self.queryResult;
-    NSArray *sorted = [qr.records sortedArrayUsingDescriptors:tableView.sortDescriptors];
-    ZKQueryResult *r = [[ZKQueryResult alloc] initWithRecords:sorted size:qr.size done:qr.done queryLocator:qr.queryLocator];
-    self.queryResult = r;
-    [tableView reloadData];
+// MARK:- NSControlTextEditingDelegate
+- (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor {
+    NSTableView *t = (NSTableView *)control;
+    NSTableColumn *c = t.tableColumns[t.editedColumn];
+    return [self allowEdit:c];
+}
+
+- (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor {
+    return YES;
 }
 
 @end
