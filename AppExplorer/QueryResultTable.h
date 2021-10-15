@@ -48,7 +48,7 @@
 @property (readonly) BOOL hasCheckedRows;
 
 -(void)showHideErrorColumn;
--(void)replaceQueryResult:(ZKQueryResult *)queryResult;    // this is like setQR, except it doesn't reset everything
+-(void)addQueryMoreResults:(ZKQueryResult *)queryResult;
 
 @end
 

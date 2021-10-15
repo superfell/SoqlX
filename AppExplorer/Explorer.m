@@ -571,11 +571,8 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
             failBlock:[self errorHandler]
         completeBlock:^(ZKQueryResult *next) {
             NSString *execTime = [self execTimeSince:started];
-            NSMutableArray *allRecs = [NSMutableArray arrayWithArray:[self.rootResults.queryResult records]];
-            [allRecs addObjectsFromArray:[next records]];
-            ZKQueryResult * total = [[ZKQueryResult alloc] initWithRecords:allRecs size:[next size] done:[next done] queryLocator:[next queryLocator]];
-            self.rootResults.queryResult = total;
-            [self setRowsLoadedStatusText:total timing:execTime];
+            [self.rootResults addQueryMoreResults:next];
+            [self setRowsLoadedStatusText:self.rootResults.queryResult timing:execTime];
             [self updateProgress:NO];
             self.isQuerying = NO;
         }];

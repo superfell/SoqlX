@@ -26,6 +26,8 @@
 #import "QueryColumns.h"
 #import "SObjectSortDescriptor.h"
 #import "TStamp.h"
+#import "ZKQueryResult+Display.h"
+
 
 const NSInteger MIN_WIDTH = 40;
 const NSInteger DEF_WIDTH = 100;
@@ -130,7 +132,12 @@ const NSInteger DEF_ID_WIDTH = 165;
 @end
 
 @interface QueryResultTable ()
-- (NSArray<NSString*> *)createTableColumns:(ZKQueryResult *)qr;
+-(NSArray<NSString*> *)createTableColumns:(ZKQueryResult *)qr;
+-(NSFont *)tableCellFont;
+-(NSArray<ColumnResult*>*)measureColumns:(NSArray<ColumnBuilder*>*) cols spacing:(CGFloat)colSpacing contents:(ZKQueryResult*)qr;
+-(CGFloat)sizeColumnsToBestFit:(NSArray<ColumnResult*>*)cols space:(CGFloat)space;
+
+@property (strong) QueryColumns *columns;
 @end
 
 @implementation QueryResultTable
@@ -194,9 +201,83 @@ const NSInteger DEF_ID_WIDTH = 165;
     [self updateTable];
 }
 
--(void)replaceQueryResult:(ZKQueryResult *)qr {
-    [wrapper setQueryResult:qr];
-    [self showHideErrorColumn];
+-(void)addQueryMoreResults:(ZKQueryResult *)qr {
+    TStamp *tstamp = [TStamp start];
+    NSMutableArray *allRecs = [NSMutableArray arrayWithCapacity:self.queryResult.records.count + qr.records.count];
+    [allRecs addObjectsFromArray:self.queryResult.records];
+    [allRecs addObjectsFromArray:[qr records]];
+    ZKQueryResult * total = [[ZKQueryResult alloc] initWithRecords:allRecs
+                                                              size:qr.size
+                                                              done:qr.done
+                                                      queryLocator:qr.queryLocator];
+    [tstamp mark:@"built new qr"];
+    // Because the columns are derived from the query results, we have to check to see if there are any new
+    // columns. If so, we want to add those to the table, but not recalculate all the existing columns.
+    QueryColumns *qcols = [[QueryColumns alloc] initWithResult:total];
+    [tstamp mark:@"extracted cols from qr"];
+    if (self.columns.count == qcols.count) {
+        [tstamp mark:@"no new cols"];
+        [tstamp log];
+        self.wrapper.queryResult = total;
+        [self updateTable];
+        return;
+    }
+    NSMutableArray<ColumnBuilder*> *newColumns = [NSMutableArray arrayWithCapacity:qcols.count-self.columns.count];
+    NSMutableArray<NSNumber *> *newColIndexes = [NSMutableArray arrayWithCapacity:qcols.count-self.columns.count];
+    NSFont *font = [self tableCellFont];
+    NSArray<NSString*> *existingNames = self.columns.names;
+    NSInteger existingIdx = 0;
+    for (NSString *colName in qcols.names) {
+        if (![colName isEqualToString:existingNames[existingIdx]]) {
+            ColumnBuilder *b = [[ColumnBuilder alloc] initWithId:colName font:font];
+            [newColIndexes addObject:@(existingIdx)];
+            [newColumns addObject:b];
+        } else {
+            existingIdx++;
+        }
+    }
+    [tstamp mark:@"determined new cols"];
+    // We know there are no values for this colum in the rows before the new chunk, so we only
+    // need to measure the new chunk, not the entire results.
+    NSArray<ColumnResult*>* colResults = [self measureColumns:newColumns
+                                                      spacing:self.table.intercellSpacing.width
+                                                     contents:qr];
+    [tstamp mark:@"calc content widths"];
+    CGFloat space = table.visibleRect.size.width;
+    for (NSTableColumn *c in table.tableColumns) {
+        if (!c.isHidden) {
+            space -= c.width;
+        }
+    }
+    space = [self sizeColumnsToBestFit:colResults space:space];
+    [tstamp mark:@"calc'd col widths"];
+    // Annoyingly we can't insert a new table where we want it, we have to add it to the end
+    // then move it. We work backwards otherwise the calculated indexes will be off once a column
+    // is added.
+    [colResults enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(ColumnResult * _Nonnull col, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSTableColumn *tc = [[NSTableColumn alloc] initWithIdentifier:col.identifier];
+        [self setTableColumn:tc toIdentifier:col.identifier label:col.label width:col.width];
+        [table addTableColumn:tc];
+        NSInteger destColIdx = newColIndexes[idx].integerValue + 2;
+        NSInteger currColIdx = table.tableColumns.count-1;
+        NSLog(@"new column for %@ idx=%ld. currIdx=%ld target=%ld", col.identifier, idx, currColIdx, destColIdx);
+        if (destColIdx != currColIdx) {
+            [table moveColumn:currColIdx toColumn:destColIdx];
+        }
+    }];
+    // There are edge cases where an existing column goes away, (e.g. a related object was null and now has data)
+    // so deal with that.
+    NSSet<NSString*>* newColSet = [NSSet setWithArray:qcols.names];
+    for (NSString *oldCol in existingNames) {
+        if (![newColSet containsObject:oldCol]) {
+            [table removeTableColumn:[table tableColumnWithIdentifier:oldCol]];
+        }
+    }
+    [tstamp mark:@"added TV Columns"];
+    [tstamp log];
+    
+    self.wrapper.queryResult = total;
+    [self updateTable];
 }
 
 - (void)removeRowsWithIds:(NSSet<NSString*> *)recordIds {
@@ -217,12 +298,10 @@ const NSInteger DEF_ID_WIDTH = 165;
 - (NSArray<NSString*> *)createTableColumns:(ZKQueryResult *)qr {
     TStamp *tstamp = [TStamp start];
 
-    QueryColumns *qcols = [[QueryColumns alloc] initWithResult:qr];
-    // TODO prevent re-ordering of delete/error column
-    // TODO, better answer to this?
-    NSTableColumn *dummy = [[NSTableColumn alloc] init];
-    NSCell *dummyCell = dummy.dataCell;
-    NSFont *font = dummyCell.font;
+    self.columns = [[QueryColumns alloc] initWithResult:qr];
+    [tstamp mark:@"extracted cols from qr"];
+    // TODO: prevent re-ordering of delete/error column
+    NSFont *font = [self tableCellFont];
     
     // Adding, removing, resizing NSTableView columns cause an expensive relayout calc to be triggered.
     // There's no way to batch these up and do the layout once. So rather than working directly with the
@@ -238,27 +317,16 @@ const NSInteger DEF_ID_WIDTH = 165;
         }
         return b;
     };
-    NSMutableArray<ColumnBuilder*>* cols = [NSMutableArray arrayWithCapacity:qcols.names.count+1];
-    if (qcols.isSearchResult) {
+    NSMutableArray<ColumnBuilder*>* cols = [NSMutableArray arrayWithCapacity:self.columns.names.count+1];
+    if (self.columns.isSearchResult) {
         ColumnBuilder *c = newColumn(TYPE_COLUMN_IDENTIFIER);
         c.label = @"Type";
         [cols addObject:c];
     }
-    for (NSString *colName in qcols.names) {
+    for (NSString *colName in self.columns.names) {
         [cols addObject:newColumn(colName)];
     }
 
-    // Calculate the best size of the columns. This is way more annoying than i thought it'd be.
-    // This take a few steps, the last 4 are the same except different widths are applied.
-    //
-    //  1. calculate the width of the column contents, and separatly the column title.
-    //  2. shrink any columns who's current width is more than needed for the max content width.
-    //  3. if there's space remaining, expand columns to their 80% percentile content width
-    //  4. if there's space remaining, expand columns to their max content width, unless the
-    //          max is a lot larger than the 80% percentile
-    //  5. if there's space remaining, expand columns so that their titles fit fully.
-    //  6. if there's space remaining, expand columns to their max content width.
-    
     CGFloat totalColWidth = [table tableColumnWithIdentifier:DELETE_COLUMN_IDENTIFIER].width;
     CGFloat colSpacing = table.intercellSpacing.width*2;
     for (ColumnBuilder *c in cols) {
@@ -267,26 +335,59 @@ const NSInteger DEF_ID_WIDTH = 165;
     CGFloat space = table.visibleRect.size.width - totalColWidth;
     //NSLog(@"%ld columns. all columns width %f space left %f", cols.count, totalColWidth, space);
 
-    // This array once populated will be in the same order as cols. Array contains NSNull | ColumnResult*
+    // This array is in the same order as cols.
+    NSArray<ColumnResult*>* colResults = [self measureColumns:cols spacing:colSpacing contents:qr];
+    [tstamp mark:@"calc'd column content widths"];
+
+    space = [self sizeColumnsToBestFit:colResults space:space];
+    // NSLog(@"space remaining %f, table width %f", space, table.visibleRect.size.width);
+    [tstamp mark:@"calc col widths"];
+    
+    // Finally add/update the NSTableColumns in the table to reflect the calculated columns/sizes
+    
+    // remove any unwanted columns
+    while (table.tableColumns.count > 2 + cols.count) {
+        [table removeTableColumn:table.tableColumns[2]];
+    }
+    NSInteger idx = 2;
+    for (ColumnResult *c in colResults) {
+        NSTableColumn *dest;
+        if (idx < table.tableColumns.count) {
+            dest = table.tableColumns[idx];
+        } else {
+            dest = [[NSTableColumn alloc] initWithIdentifier:c.identifier];
+        }
+        [self setTableColumn:dest toIdentifier:c.identifier label:c.label width:c.width];
+        if (dest.tableView == nil) {
+            [table addTableColumn:dest];
+        }
+        idx++;
+    }
+    
+    [tstamp mark:@"updating tableView columns"];
+    [tstamp log];
+    return self.columns.names;
+}
+
+// Measures the width of the content of the provided set of columns and returns the results. The results array
+// is in the same order as the input array.
+-(NSArray<ColumnResult*>*)measureColumns:(NSArray<ColumnBuilder*>*) cols spacing:(CGFloat)colSpacing contents:(ZKQueryResult*)qr {
     NSMutableArray<id>* colResults = [NSMutableArray arrayWithCapacity:cols.count];
-    // This array is in an arbitary order. It contains columns
-    NSMutableArray<ColumnResult*>* expansions = [NSMutableArray array];
+    NSNull *null = [NSNull null];
+    while (colResults.count < cols.count) {
+        [colResults addObject:null];
+    }
 
     // Measuring the required space to render a string is suprisingly expensive, and we've got a lot todo.
     // We'll farm out each column to a worker pool and gather up all the results.
     dispatch_queue_t gatherQ = dispatch_queue_create("QueryResultsTable.GatherQ", DISPATCH_QUEUE_SERIAL);
     dispatch_queue_t workQ = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0);
     dispatch_group_t group = dispatch_group_create();
-    
-    // Go through all the columns. Calculate stats about the column values. Collect up the results in colResults.
-    NSNull *null = [NSNull null];
-    while (colResults.count < cols.count) {
-        [colResults addObject:null];
-    }
+
     [cols enumerateObjectsUsingBlock:^(ColumnBuilder * _Nonnull col, NSUInteger idx, BOOL * _Nonnull stop) {
         dispatch_group_async(group, workQ, ^{
             for (int r = 0 ; r < qr.records.count; r++) {
-                id v = [self->wrapper columnValue:col.identifier atRow:r];
+                id v = [qr columnDisplayValue:col.identifier atRow:r];
                 if (v != nil) {
                     [col add:[v description]];
                 }
@@ -294,19 +395,35 @@ const NSInteger DEF_ID_WIDTH = 165;
             ColumnResult *ws = [col resultsWithOffset:colSpacing];
             dispatch_sync(gatherQ, ^{
                 colResults[idx] = ws;
-                if (ws.headerWidth > ws.width || ws.headerWidth > ws.max || ws.max > ws.width) {
-                    [expansions addObject:ws];
-                }
             });
         });
     }];
     dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
-    [tstamp mark:@"calc'd column content widths"];
+    return colResults;
+}
 
-    for (ColumnResult *ws in colResults) {
-        if (ws.max < ws.width) {
-            space += ws.width - ws.max;
-            ws.width = ws.max;
+// Will set the size of the provided columns based on the size of the contents
+// and the available free space. Returns the free space left after the sizes are set.
+-(CGFloat)sizeColumnsToBestFit:(NSArray<ColumnResult*>*)cols space:(CGFloat)space {
+
+    // Calculate the best size of the columns. This is way more annoying than i thought it'd be.
+    // This take a few steps, the last 4 are the same except different widths are applied.
+    //
+    //  1. shrink any columns who's current width is more than needed for the max content width.
+    //  2. if there's space remaining, expand columns to their 80th percentile content width
+    //  3. if there's space remaining, expand columns to their max content width, unless the
+    //          max is a lot larger than the 80th percentile
+    //  4. if there's space remaining, expand columns so that their titles fit fully.
+    //  5. if there's space remaining, expand columns to their max content width.
+
+    NSMutableArray<ColumnResult*>* expansions = [NSMutableArray array];
+    for (ColumnResult *c in cols) {
+        if (c.max < c.width) {
+            space += c.width - c.max;
+            c.width = c.max;
+        }
+        if (c.headerWidth > c.width || c.headerWidth > c.max || c.max > c.width) {
+            [expansions addObject:c];
         }
     }
     
@@ -326,7 +443,7 @@ const NSInteger DEF_ID_WIDTH = 165;
             [resize addObject:col];
         }
         // Sort the updates by smallest additional amount to largest additional amount
-        // TODO, do we want to try and restrict this to just columns that are visible initially?
+        // TODO: do we want to try and restrict this to just columns that are visible initially?
         [resize sortUsingComparator:^NSComparisonResult(ColumnResult*  _Nonnull obj1, ColumnResult*  _Nonnull obj2) {
             CGFloat a = sizer(obj1) - obj1.width;
             CGFloat b = sizer(obj2) - obj2.width;
@@ -356,32 +473,15 @@ const NSInteger DEF_ID_WIDTH = 165;
         return s.max;
     });
     // NSLog(@"space remaining %f, table width %f", space, table.visibleRect.size.width);
-    [tstamp mark:@"calc col widths"];
-    
-    // Finally add/update the NSTableColumns in the table to reflect the calculated columns/sizes
-    
-    // remove any unwanted columns
-    while (table.tableColumns.count > 2 + cols.count) {
-        [table removeTableColumn:table.tableColumns[2]];
-    }
-    NSInteger idx = 2;
-    for (ColumnResult *c in colResults) {
-        NSTableColumn *dest;
-        if (idx < table.tableColumns.count) {
-            dest = table.tableColumns[idx];
-        } else {
-            dest = [[NSTableColumn alloc] initWithIdentifier:c.identifier];
-        }
-        [self setTableColumn:dest toIdentifier:c.identifier label:c.label width:c.width];
-        if (dest.tableView == nil) {
-            [table addTableColumn:dest];
-        }
-        idx++;
-    }
-    
-    [tstamp mark:@"updating tableView columns"];
-    [tstamp log];
-    return qcols.names;
+    return space;
+}
+
+-(NSFont*)tableCellFont {
+    // TODO, better answer to this?
+    NSTableColumn *dummy = [[NSTableColumn alloc] init];
+    NSCell *dummyCell = dummy.dataCell;
+    NSFont *font = dummyCell.font;
+    return font;
 }
 
 @end

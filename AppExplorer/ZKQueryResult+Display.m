@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Simon Fell
+// Copyright 2021 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -17,24 +17,39 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+//
+#import "ZKQueryResult+Display.h"
+#import "SObject.h"
 
-#import <Foundation/Foundation.h>
+@implementation ZKQueryResult(Display)
 
-@class ZKQueryResult;
-
-NS_ASSUME_NONNULL_BEGIN
-
-@interface QueryColumns : NSObject {
+-(id)columnDisplayValue:(NSString *)colName atRow:(NSUInteger)rowIndex {
+    if (rowIndex >= records.count) {
+        return nil;
+    }
+    ZKSObject *row = records[rowIndex];
+    if ([colName isEqualToString:DELETE_COLUMN_IDENTIFIER]) {
+        return @(row.checked);
+    }
+    if ([colName isEqualToString:ERROR_COLUMN_IDENTIFIER]) {
+        return row.errorMsg;
+    }
+    if ([colName isEqualToString:TYPE_COLUMN_IDENTIFIER]) {
+        return row.type;
+    }
+    NSArray *fieldPath = [colName componentsSeparatedByString:@"."];
+    NSObject *val = row;
+    for (NSString *step in fieldPath) {
+        if ([val isKindOfClass:[ZKSObject class]]) {
+            val = [(ZKSObject *)val fieldValue:step];
+        } else {
+            val = [val valueForKey:step];
+        }
+    }
+    if ([[val class] isSubclassOfClass:[ZKXmlDeserializer class]]) {
+        return val.description;
+    }
+    return val;
 }
 
--(instancetype)initWithResult:(ZKQueryResult*)qr NS_DESIGNATED_INITIALIZER;
--(instancetype)init NS_UNAVAILABLE;
-
-@property (assign) BOOL isSearchResult;
-@property (strong) NSArray<NSString*>* names;
-@property (assign) NSUInteger rowsChecked;
-@property (readonly) NSInteger count;
 @end
-
-
-NS_ASSUME_NONNULL_END

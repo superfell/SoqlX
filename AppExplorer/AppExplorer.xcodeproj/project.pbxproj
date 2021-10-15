@@ -58,6 +58,9 @@
 		F494FA4A0F7EFE22001216EC /* RRLuminanceFromRGBComponents.m in Sources */ = {isa = PBXBuildFile; fileRef = F494FA460F7EFE22001216EC /* RRLuminanceFromRGBComponents.m */; };
 		F49741F00D554DB500DD77F4 /* QueryListController.m in Sources */ = {isa = PBXBuildFile; fileRef = F49741EF0D554DB500DD77F4 /* QueryListController.m */; };
 		F4A2B8F22714E80800C20A42 /* TStamp.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A2B8F12714E80800C20A42 /* TStamp.m */; };
+		F4A2B8FF2718AF3600C20A42 /* ZKQueryResult+Display.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A2B8FE2718AF3600C20A42 /* ZKQueryResult+Display.m */; };
+		F4A2B9032718DD1300C20A42 /* TStamp.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A2B8F12714E80800C20A42 /* TStamp.m */; };
+		F4A2B9052718DD2B00C20A42 /* ZKQueryResult+Display.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A2B8FE2718AF3600C20A42 /* ZKQueryResult+Display.m */; };
 		F4A62E2F0D31AC6300D7EACA /* NSView_additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A62E2E0D31AC6300D7EACA /* NSView_additions.m */; };
 		F4AC556715996D8500F5CA45 /* zkApexClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F4AC555A15996D8500F5CA45 /* zkApexClient.m */; };
 		F4AC556815996D8500F5CA45 /* ZKCodeCoverageResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4AC555C15996D8500F5CA45 /* ZKCodeCoverageResult.m */; };
@@ -330,6 +333,8 @@
 		F49741EF0D554DB500DD77F4 /* QueryListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QueryListController.m; sourceTree = "<group>"; };
 		F4A2B8F02714E80800C20A42 /* TStamp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TStamp.h; sourceTree = "<group>"; };
 		F4A2B8F12714E80800C20A42 /* TStamp.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TStamp.m; sourceTree = "<group>"; };
+		F4A2B8FD2718AF3500C20A42 /* ZKQueryResult+Display.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZKQueryResult+Display.h"; sourceTree = "<group>"; };
+		F4A2B8FE2718AF3600C20A42 /* ZKQueryResult+Display.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ZKQueryResult+Display.m"; sourceTree = "<group>"; };
 		F4A62E2D0D31AC6300D7EACA /* NSView_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSView_additions.h; sourceTree = "<group>"; };
 		F4A62E2E0D31AC6300D7EACA /* NSView_additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSView_additions.m; sourceTree = "<group>"; };
 		F4AC555915996D8500F5CA45 /* zkApexClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zkApexClient.h; path = ../apexforce/zkApexClient.h; sourceTree = "<group>"; };
@@ -508,6 +513,8 @@
 				F4408FEE2562F4C1005E8BB7 /* QueryColumns.m */,
 				F4CF71F20D4704EE001001F2 /* QueryResultTable.h */,
 				F4CF71F30D4704EE001001F2 /* QueryResultTable.m */,
+				F4A2B8FD2718AF3500C20A42 /* ZKQueryResult+Display.h */,
+				F4A2B8FE2718AF3600C20A42 /* ZKQueryResult+Display.m */,
 				F45DDFDC0AABBA6100ED0BA0 /* Explorer.h */,
 				F45DDFDB0AABBA6100ED0BA0 /* Explorer.m */,
 				F494FA3C0F7EFDD2001216EC /* GlossShader */,
@@ -1153,6 +1160,7 @@
 				F4BF72A70F79E58C0089F459 /* NSWindow_additions.m in Sources */,
 				F48804CB2592ADE7001D56F6 /* Describer.m in Sources */,
 				F406D2AE27081C0D008A0CCC /* CredentialsDataSource.m in Sources */,
+				F4A2B8FF2718AF3600C20A42 /* ZKQueryResult+Display.m in Sources */,
 				F4B461FF0F79EB850099C434 /* FieldResizer.m in Sources */,
 				F494FA470F7EFE22001216EC /* RRCausticColorMatcher.m in Sources */,
 				F494FA480F7EFE22001216EC /* RRExponentialFunction.m in Sources */,
@@ -1203,7 +1211,9 @@
 				F4BD5DDE264760A000ACBBAB /* DescribeExtras.m in Sources */,
 				F4C889D22624F272006D606A /* SoqlTokenizerTests.m in Sources */,
 				F424A81E262B595C00AD4F42 /* SoqlTokenizer.m in Sources */,
+				F4A2B9052718DD2B00C20A42 /* ZKQueryResult+Display.m in Sources */,
 				F4E0F2C0256F183E00446C2B /* QueryResultCell.m in Sources */,
+				F4A2B9032718DD1300C20A42 /* TStamp.m in Sources */,
 				F4E0F2BC256F15A500446C2B /* QRWrapperTest.m in Sources */,
 				F4BD5DE3264762F900ACBBAB /* Completion.m in Sources */,
 				F4E0F2BE256F17DF00446C2B /* EditableQueryResultWrapper.m in Sources */,

@@ -30,6 +30,7 @@
 @interface QueryColumn : NSObject {
     NSString                     *name;
     NSMutableArray<QueryColumn*> *childCols;
+    NSMutableDictionary<NSString*, QueryColumn*> *childrenByName;
 }
 
 @property (assign) BOOL hasSeenValue;
@@ -38,17 +39,14 @@
 
 @implementation QueryColumn
 
--(instancetype)initWithName:(NSString *)n {
-    self = [super init];
-    name = [n copy];
-    childCols = nil;
-    self.hasSeenValue = NO;
-    return self;
-}
-
-
 +(QueryColumn *)columnWithName:(NSString *)name {
     return [[QueryColumn alloc] initWithName:name];
+}
+
+-(instancetype)initWithName:(NSString *)n {
+    self = [super init];
+    name = n;
+    return self;
 }
 
 -(NSString *)debugDescription {
@@ -64,16 +62,17 @@
 }
 
 -(QueryColumn*)getOrAddQueryColumn:(NSString *)name {
-    for (QueryColumn *c in childCols) {
-        if ([c.name isEqualToString:name]) {
-            return c;
-        }
+    QueryColumn *e = childrenByName[name];
+    if (e != nil) {
+        return e;
     }
     if (childCols == nil) {
         childCols = [NSMutableArray array];
+        childrenByName = [NSMutableDictionary dictionary];
     }
     QueryColumn *c = [QueryColumn columnWithName:name];
     [childCols addObject:c];
+    childrenByName[name] = c;
     return c;
 }
 
@@ -94,7 +93,7 @@
 }
 
 -(NSArray<NSString*> *)allNames {
-    NSMutableArray *n = [NSMutableArray array];
+    NSMutableArray *n = [NSMutableArray arrayWithCapacity:childCols.count * 2];
     [self addNamesTo:n];
     return n;
 }
@@ -117,12 +116,19 @@
 
 @end
 
+@interface QueryColumns()
+@property (retain) QueryColumn *root;
+@end
+
 @implementation QueryColumns
 
 +(void)addColumnsFromSObject:(ZKSObject *)row withPrefix:(NSString *)prefix to:(QueryColumn *)parent {
     for (NSString *fn in [row orderedFieldNames]) {
         NSString *fullName = prefix.length > 0 ? [NSString stringWithFormat:@"%@.%@", prefix, fn] : fn;
         QueryColumn *qc = [parent getOrAddQueryColumn:fullName];
+        if ((!qc.hasChildNames) && (qc.hasSeenValue)) {
+            continue;
+        }
         NSObject *val = [row fieldValue:fn];
         // we have to look at all rows for related sobjects
         if (prefix == nil && (!(val == nil || val == [NSNull null]))) {
@@ -143,9 +149,12 @@
 -(instancetype)initWithResult:(ZKQueryResult*)qr {
     self = [super init];
     
-    QueryColumn *root = [[QueryColumn alloc] initWithName:@""];
+    self.root = [[QueryColumn alloc] initWithName:@""];
     NSMutableSet *processedTypes = [NSMutableSet set];
     BOOL isSearchResult = [qr conformsToProtocol:@protocol(IsSearchQueryResult)];
+    
+    // TODO: rather than processing every column everytime, it should go across columns til it finds
+    // a nil or child object, then go down just that column.
     
     for (ZKSObject *row in [qr records]) {
         // in the case we're looking at search results, we need to get columns for each distinct type.
@@ -153,18 +162,20 @@
         
         // if we didn't see any null columns, then there's no need to look at any further rows.
         self.rowsChecked++;
-        [QueryColumns addColumnsFromSObject:row withPrefix:nil to:root];
-        if (root.allHaveSeenValues) {
+        [QueryColumns addColumnsFromSObject:row withPrefix:nil to:self.root];
+        if (self.root.allHaveSeenValues) {
             if (!isSearchResult) break; // all done.
             [processedTypes addObject:[row type]];
         }
     }
     // now flatten the queryColumns into a set of real columns
-    self.names = [root allNames];
+    self.names = [self.root allNames];
     self.isSearchResult = isSearchResult;
     return self;
 }
 
+-(NSInteger)count {
+    return self.names.count;
+}
+
 @end
-
-

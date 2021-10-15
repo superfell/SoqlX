@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Simon Fell
+// Copyright 2021 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -17,24 +17,15 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+//
 
 #import <Foundation/Foundation.h>
-
-@class ZKQueryResult;
+#import <ZKSforce/ZKQueryResult.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface QueryColumns : NSObject {
-}
-
--(instancetype)initWithResult:(ZKQueryResult*)qr NS_DESIGNATED_INITIALIZER;
--(instancetype)init NS_UNAVAILABLE;
-
-@property (assign) BOOL isSearchResult;
-@property (strong) NSArray<NSString*>* names;
-@property (assign) NSUInteger rowsChecked;
-@property (readonly) NSInteger count;
+@interface ZKQueryResult(Display)
+-(id)columnDisplayValue:(NSString *)colName atRow:(NSUInteger)rowIndex;
 @end
-
 
 NS_ASSUME_NONNULL_END

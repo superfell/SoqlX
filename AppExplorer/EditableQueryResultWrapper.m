@@ -23,6 +23,7 @@
 #import "QueryResultCell.h"
 #import <ZKSforce/ZKSforce.h>
 #import "SObject.h"
+#import "ZKQueryResult+Display.h"
 
 @implementation EditableQueryResultWrapper
 
@@ -179,34 +180,9 @@
     [tableView reloadData];
 }
 
+// TODO: should be able to get rid of this and have the callers call QR directly
 -(id)columnValue:(NSString *)col atRow:(NSUInteger)rowIndex {
-    NSArray *records = self.queryResult.records;
-    if (rowIndex >= records.count) {
-        return nil;
-    }
-    ZKSObject *row = records[rowIndex];
-    if ([col isEqualToString:DELETE_COLUMN_IDENTIFIER]) {
-        return @(row.checked);
-    }
-    if ([col isEqualToString:ERROR_COLUMN_IDENTIFIER]) {
-        return row.errorMsg;
-    }
-    if ([col isEqualToString:TYPE_COLUMN_IDENTIFIER]) {
-        return row.type;
-    }
-    NSArray *fieldPath = [col componentsSeparatedByString:@"."];
-    NSObject *val = row;
-    for (NSString *step in fieldPath) {
-        if ([val isKindOfClass:[ZKSObject class]]) {
-            val = [(ZKSObject *)val fieldValue:step];
-        } else {
-            val = [val valueForKey:step];
-        }
-    }
-    if ([[val class] isSubclassOfClass:[ZKXmlDeserializer class]]) {
-        return val.description;
-    }
-    return val;
+    return [self.queryResult columnDisplayValue:col atRow:rowIndex];
 }
 
 @end
