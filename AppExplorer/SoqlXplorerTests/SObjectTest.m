@@ -41,4 +41,26 @@
     XCTAssertEqualObjects(@"boom", o.errorMsg);
 }
 
+-(void)testValueForFieldPathArray {
+    // acount -> owner -> createdBy
+    ZKSObject *creator = [ZKSObject withType:@"User"];
+    [creator setFieldValue:@"Bob" field:@"FirstName"];
+    [creator setFieldValue:@"Bobson" field:@"LastName"];
+    ZKSObject *owner = [ZKSObject withType:@"User"];
+    [owner setFieldValue:@"Alice" field:@"FirstName"];
+    [owner setFieldValue:creator field:@"CreatedBy"];
+    ZKSObject *acc = [ZKSObject withType:@"Account"];
+    [acc setFieldValue:@"Eve Inc." field:@"Name"];
+    [acc setFieldValue:@"12" field:@"NumberOfEmployees"];
+    [acc setFieldValue:owner field:@"Owner"];
+    
+    XCTAssertEqualObjects(@"Eve Inc.", [acc valueForFieldPathArray:@[@"Name"]]);
+    XCTAssertEqualObjects(@"12", [acc valueForFieldPathArray:@[@"NumberOfEmployees"]]);
+    XCTAssertNil([acc valueForFieldPathArray:@[@"Missing"]]);
+    XCTAssertEqualObjects(@"Alice", ([acc valueForFieldPathArray:@[@"Owner",@"FirstName"]]));
+    XCTAssertEqualObjects(@"Bob", ([acc valueForFieldPathArray:@[@"Owner", @"CreatedBy", @"FirstName"]]));
+    XCTAssertNil(([acc valueForFieldPathArray:@[@"Owner",@"Missing"]]));
+    XCTAssertNil(([acc valueForFieldPathArray:@[@"Missing",@"Owner"]]));
+}
+
 @end
