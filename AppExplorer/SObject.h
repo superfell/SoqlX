@@ -31,4 +31,6 @@ extern NSString *_Nonnull TYPE_COLUMN_IDENTIFIER;
 @property BOOL checked;
 @property NSString *_Nullable errorMsg;
 
+-(NSObject *_Nullable)valueForFieldPathArray:(NSArray<NSString*> *_Nonnull)fieldPath;
+
 @end

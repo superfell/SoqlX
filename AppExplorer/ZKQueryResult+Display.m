@@ -24,22 +24,27 @@
 @implementation ZKQueryResult(Display)
 
 -(id)columnDisplayValue:(NSString *)colName atRow:(NSUInteger)rowIndex {
+    return [self columnPathDisplayValue:[colName componentsSeparatedByString:@"."] atRow:rowIndex];
+}
+
+-(id)columnPathDisplayValue:(NSArray<NSString*>*)colPath atRow:(NSUInteger)rowIndex {
     if (rowIndex >= records.count) {
         return nil;
     }
     ZKSObject *row = records[rowIndex];
-    if ([colName isEqualToString:DELETE_COLUMN_IDENTIFIER]) {
-        return @(row.checked);
+    if (colPath.count == 1) {
+        if ([colPath[0] isEqualToString:DELETE_COLUMN_IDENTIFIER]) {
+            return @(row.checked);
+        }
+        if ([colPath[0] isEqualToString:ERROR_COLUMN_IDENTIFIER]) {
+            return row.errorMsg;
+        }
+        if ([colPath[0] isEqualToString:TYPE_COLUMN_IDENTIFIER]) {
+            return row.type;
+        }
     }
-    if ([colName isEqualToString:ERROR_COLUMN_IDENTIFIER]) {
-        return row.errorMsg;
-    }
-    if ([colName isEqualToString:TYPE_COLUMN_IDENTIFIER]) {
-        return row.type;
-    }
-    NSArray *fieldPath = [colName componentsSeparatedByString:@"."];
     NSObject *val = row;
-    for (NSString *step in fieldPath) {
+    for (NSString *step in colPath) {
         if ([val isKindOfClass:[ZKSObject class]]) {
             val = [(ZKSObject *)val fieldValue:step];
         } else {
@@ -50,6 +55,10 @@
         return val.description;
     }
     return val;
+}
+
+-(NSObject *)valueForFieldPathArray:(NSArray<NSString*> *)fieldPath row:(NSInteger)row {
+    return [records[row] valueForFieldPathArray:fieldPath];
 }
 
 @end

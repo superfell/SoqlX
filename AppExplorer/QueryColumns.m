@@ -26,6 +26,7 @@
 #import <ZKSforce/ZKQueryResult.h>
 #import <ZKSforce/ZKComplexTypeFieldInfo.h>
 #import "SearchQueryResult.h"
+#import "ZKQueryResult+Display.h"
 
 @interface QueryColumn : NSObject {
     NSString                     *name;
@@ -122,27 +123,64 @@
 
 @implementation QueryColumns
 
-+(void)addColumnsFromSObject:(ZKSObject *)row withPrefix:(NSString *)prefix to:(QueryColumn *)parent {
++(void)addColumnsFromSObject:(ZKSObject *)row
+                  withPrefix:(NSString *)prefix
+                        path:(NSMutableArray<NSString*>*)path
+                          to:(QueryColumn *)parent
+                  startAtRow:(NSInteger)startingRowIdx qr:(ZKQueryResult*)qr {
+    
     for (NSString *fn in [row orderedFieldNames]) {
-        NSString *fullName = prefix.length > 0 ? [NSString stringWithFormat:@"%@.%@", prefix, fn] : fn;
+        NSString *fullName = fn;
+        if (prefix.length > 0) {
+            NSMutableString *n = [NSMutableString stringWithCapacity:prefix.length+1+fn.length];
+            [n appendString:prefix];
+            [n appendString:@"."];
+            [n appendString:fn];
+            fullName = [n copy];
+        }
         QueryColumn *qc = [parent getOrAddQueryColumn:fullName];
         if ((!qc.hasChildNames) && (qc.hasSeenValue)) {
             continue;
         }
-        NSObject *val = [row fieldValue:fn];
-        // we have to look at all rows for related sobjects
-        if (prefix == nil && (!(val == nil || val == [NSNull null]))) {
-            qc.hasSeenValue = YES;
-        }
-        if ((![qc hasChildNames]) && [[val class] respondsToSelector:@selector(wsdlSchema)]) {
-            NSArray<ZKComplexTypeFieldInfo*> *fields = [[[val class] wsdlSchema] fieldsIncludingParents];
-            if (fields.count > 1) {
-                NSArray<NSString*> *propertyNames = [fields valueForKey:@"propertyName"];
-                [qc addChildColsWithNames:propertyNames];
+        // Check the rows for this column until we have an answer.
+        [path addObject:fn];
+        for (NSInteger rowIdx = startingRowIdx; rowIdx < qr.records.count; rowIdx++) {
+            //NSLog(@"checking %@ row %ld", fullName, rowIdx);
+            NSObject *val = [qr valueForFieldPathArray:path row:rowIdx];
+            if ((val == nil || val == [NSNull null])) {
+                continue;
             }
-        } else if ([val isKindOfClass:[ZKSObject class]]) {
-            [QueryColumns addColumnsFromSObject:(ZKSObject *)val withPrefix:fullName to:qc];
+            if ([val isKindOfClass:[NSString class]]) {
+                qc.hasSeenValue = YES;
+                break;
+            } else if ([val isKindOfClass:[ZKSObject class]]) {
+                // we have to look at all rows for related sobjects due to typeof expressions
+                // and possible nested related sobjects. But we only need to process each type
+                // once.
+                NSMutableSet *types = [NSMutableSet set];
+                for (NSInteger nestedIdx = rowIdx; nestedIdx < qr.records.count; nestedIdx++) {
+                    ZKSObject *sobj = (ZKSObject*)[qr valueForFieldPathArray:path row:nestedIdx];
+                    if ((sobj != nil) && (![types containsObject:sobj.type])) {
+                        [QueryColumns addColumnsFromSObject:sobj withPrefix:fullName path:path to:qc startAtRow:nestedIdx qr:qr];
+                        [types addObject:sobj.type];
+                    }
+                }
+                break;
+            } else if ([[val class] respondsToSelector:@selector(wsdlSchema)]) {
+                if (![qc hasChildNames]) {
+                    NSArray<ZKComplexTypeFieldInfo*> *fields = [[[val class] wsdlSchema] fieldsIncludingParents];
+                    if (fields.count > 1) {
+                        NSArray<NSString*> *propertyNames = [fields valueForKey:@"propertyName"];
+                        [qc addChildColsWithNames:propertyNames];
+                    }
+                    qc.hasSeenValue = YES;
+                }
+                break;
+            } else {
+                NSLog(@"unexpected type of %@ for %@ at row %ld", [val class], fullName, (long)rowIdx);
+            }
         }
+        [path removeLastObject];
     }
 }
 
@@ -153,20 +191,16 @@
     NSMutableSet *processedTypes = [NSMutableSet set];
     BOOL isSearchResult = [qr conformsToProtocol:@protocol(IsSearchQueryResult)];
     
-    // TODO: rather than processing every column everytime, it should go across columns til it finds
-    // a nil or child object, then go down just that column.
-    
+    NSMutableArray<NSString*>* path = [NSMutableArray arrayWithCapacity:5];
     for (ZKSObject *row in [qr records]) {
         // in the case we're looking at search results, we need to get columns for each distinct type.
         if ([processedTypes containsObject:[row type]]) continue;
         
-        // if we didn't see any null columns, then there's no need to look at any further rows.
         self.rowsChecked++;
-        [QueryColumns addColumnsFromSObject:row withPrefix:nil to:self.root];
-        if (self.root.allHaveSeenValues) {
-            if (!isSearchResult) break; // all done.
-            [processedTypes addObject:[row type]];
-        }
+        [path removeAllObjects];
+        [QueryColumns addColumnsFromSObject:row withPrefix:nil path:path to:self.root startAtRow:0 qr:qr];
+        if (!isSearchResult) break; // all done.
+        [processedTypes addObject:[row type]];
     }
     // now flatten the queryColumns into a set of real columns
     self.names = [self.root allNames];

@@ -26,6 +26,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ZKQueryResult(Display)
 -(id)columnDisplayValue:(NSString *)colName atRow:(NSUInteger)rowIndex;
+-(id)columnPathDisplayValue:(NSArray<NSString*>*)colPath atRow:(NSUInteger)rowIndex;
+
+-(NSObject *)valueForFieldPathArray:(NSArray<NSString*> *)fieldPath row:(NSInteger)row;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -215,29 +215,27 @@ const NSInteger DEF_ID_WIDTH = 165;
     // columns. If so, we want to add those to the table, but not recalculate all the existing columns.
     QueryColumns *qcols = [[QueryColumns alloc] initWithResult:total];
     [tstamp mark:@"extracted cols from qr"];
-    if (self.columns.count == qcols.count) {
-        [tstamp mark:@"no new cols"];
-        [tstamp log];
-        self.wrapper.queryResult = total;
-        [self updateTable];
-        return;
-    }
+    
+    // We can't just compare the lengths to see if they're the same. Queries like
+    // select id,name,foo__r.bar__c from XXXX can have the first batch have null for foo__r
+    // (so resulting columns id,name,foo__r) and then the second batch can have foo__r populated
+    // (so resulting columns id,name,foo__r.bar__c). In both cases we'll think theres
+    // 3 columns
+
     NSMutableArray<ColumnBuilder*> *newColumns = [NSMutableArray arrayWithCapacity:qcols.count-self.columns.count];
     NSMutableArray<NSNumber *> *newColIndexes = [NSMutableArray arrayWithCapacity:qcols.count-self.columns.count];
     NSFont *font = [self tableCellFont];
-    NSArray<NSString*> *existingNames = self.columns.names;
-    NSInteger existingIdx = 0;
-    for (NSString *colName in qcols.names) {
-        if (![colName isEqualToString:existingNames[existingIdx]]) {
+    NSSet<NSString*> *existingNames = [NSSet setWithArray:self.columns.names];
+    [qcols.names enumerateObjectsUsingBlock:^(NSString * _Nonnull colName, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (![existingNames containsObject:colName]) {
             ColumnBuilder *b = [[ColumnBuilder alloc] initWithId:colName font:font];
-            [newColIndexes addObject:@(existingIdx)];
+            [newColIndexes addObject:@(idx)];
             [newColumns addObject:b];
-        } else {
-            existingIdx++;
         }
-    }
+    }];
+
     [tstamp mark:@"determined new cols"];
-    // We know there are no values for this colum in the rows before the new chunk, so we only
+    // We know there are no values for these columns in the rows before the new chunk, so we only
     // need to measure the new chunk, not the entire results.
     NSArray<ColumnResult*>* colResults = [self measureColumns:newColumns
                                                       spacing:self.table.intercellSpacing.width
@@ -372,6 +370,9 @@ const NSInteger DEF_ID_WIDTH = 165;
 // Measures the width of the content of the provided set of columns and returns the results. The results array
 // is in the same order as the input array.
 -(NSArray<ColumnResult*>*)measureColumns:(NSArray<ColumnBuilder*>*) cols spacing:(CGFloat)colSpacing contents:(ZKQueryResult*)qr {
+    if (cols.count == 0) {
+        return [NSArray array];
+    }
     NSMutableArray<id>* colResults = [NSMutableArray arrayWithCapacity:cols.count];
     NSNull *null = [NSNull null];
     while (colResults.count < cols.count) {
@@ -386,8 +387,9 @@ const NSInteger DEF_ID_WIDTH = 165;
 
     [cols enumerateObjectsUsingBlock:^(ColumnBuilder * _Nonnull col, NSUInteger idx, BOOL * _Nonnull stop) {
         dispatch_group_async(group, workQ, ^{
+            NSArray<NSString*>* colPath = [col.identifier componentsSeparatedByString:@"."];
             for (int r = 0 ; r < qr.records.count; r++) {
-                id v = [qr columnDisplayValue:col.identifier atRow:r];
+                id v = [qr columnPathDisplayValue:colPath atRow:r];
                 if (v != nil) {
                     [col add:[v description]];
                 }
@@ -430,7 +432,7 @@ const NSInteger DEF_ID_WIDTH = 165;
     typedef CGFloat(^sizeExtractorFn)(ColumnResult*);
     typedef CGFloat(^expanderFn)(CGFloat, NSArray<ColumnResult*>*, sizeExtractorFn);
     expanderFn expander = ^CGFloat(CGFloat space, NSArray<ColumnResult*>*cols, sizeExtractorFn sizer) {
-        if (space <= 0) {
+        if (space <= 0 || cols.count == 0) {
             return space;
         }
         // NSLog(@"expander starting, space=%f, %ld potential expansions", space, cols.count);

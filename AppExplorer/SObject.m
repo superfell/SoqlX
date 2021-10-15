@@ -42,4 +42,19 @@ NSString *TYPE_COLUMN_IDENTIFIER = @"row__type";
     return objc_getAssociatedObject(self, @selector(setErrorMsg:));
 }
 
+-(NSObject *)valueForFieldPathArray:(NSArray<NSString*> *)fieldPath {
+    if (fieldPath.count == 1) {
+        return [self fieldValue:fieldPath[0]];
+    }
+    id val = self;
+    for (NSString *step in fieldPath) {
+        if ([val isKindOfClass:[ZKSObject class]]) {
+            val = [(ZKSObject *)val fieldValue:step];
+        } else {
+            val = [val valueForKey:step];
+        }
+    }
+    return val;
+}
+
 @end
