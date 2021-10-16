@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Simon Fell
+// Copyright 2021 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -20,17 +20,16 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <ZKSforce/ZKSObject.h>
+#import <ZKSforce/ZKQueryResult.h>
 
-extern NSString *_Nonnull DELETE_COLUMN_IDENTIFIER;
-extern NSString *_Nonnull ERROR_COLUMN_IDENTIFIER;
-extern NSString *_Nonnull TYPE_COLUMN_IDENTIFIER;
+NS_ASSUME_NONNULL_BEGIN
 
-@interface ZKSObject (SoqlX)
+@interface ZKQueryResult(Display)
+-(id)columnDisplayValue:(NSString *)colName atRow:(NSUInteger)rowIndex;
+-(id)columnPathDisplayValue:(NSArray<NSString*>*)colPath atRow:(NSUInteger)rowIndex;
 
-@property BOOL checked;
-@property NSString *_Nullable errorMsg;
-
--(NSObject *_Nullable)valueForFieldPathArray:(NSArray<NSString*> *_Nonnull)fieldPath;
+-(NSObject *)valueForFieldPathArray:(NSArray<NSString*> *)fieldPath row:(NSInteger)row;
 
 @end
+
+NS_ASSUME_NONNULL_END

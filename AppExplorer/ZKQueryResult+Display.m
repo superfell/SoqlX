@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Simon Fell
+// Copyright 2021 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -18,43 +18,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-
-#import <objc/runtime.h>
+#import "ZKQueryResult+Display.h"
 #import "SObject.h"
 
-NSString *DELETE_COLUMN_IDENTIFIER = @"row__delete";
-NSString *ERROR_COLUMN_IDENTIFIER = @"row__error";
-NSString *TYPE_COLUMN_IDENTIFIER = @"row__type";
+@implementation ZKQueryResult(Display)
 
-@implementation ZKSObject (SoqlX)
-
--(void)setChecked:(BOOL)checked {
-    objc_setAssociatedObject(self, @selector(setChecked:), @(checked), OBJC_ASSOCIATION_RETAIN);
-}
--(BOOL)checked {
-    return [objc_getAssociatedObject(self, @selector(setChecked:)) boolValue];
+-(id)columnDisplayValue:(NSString *)colName atRow:(NSUInteger)rowIndex {
+    return [self columnPathDisplayValue:[colName componentsSeparatedByString:@"."] atRow:rowIndex];
 }
 
--(void)setErrorMsg:(NSString*)msg {
-    objc_setAssociatedObject(self, @selector(setErrorMsg:), msg, OBJC_ASSOCIATION_RETAIN);
-}
--(NSString*)errorMsg {
-    return objc_getAssociatedObject(self, @selector(setErrorMsg:));
-}
-
--(NSObject *)valueForFieldPathArray:(NSArray<NSString*> *)fieldPath {
-    if (fieldPath.count == 1) {
-        return [self fieldValue:fieldPath[0]];
+-(id)columnPathDisplayValue:(NSArray<NSString*>*)colPath atRow:(NSUInteger)rowIndex {
+    if (rowIndex >= records.count) {
+        return nil;
     }
-    id val = self;
-    for (NSString *step in fieldPath) {
-        if ([val isKindOfClass:[ZKSObject class]]) {
-            val = [(ZKSObject *)val fieldValue:step];
-        } else {
-            val = [val valueForKey:step];
+    ZKSObject *row = records[rowIndex];
+    if (colPath.count == 1) {
+        if ([colPath[0] isEqualToString:DELETE_COLUMN_IDENTIFIER]) {
+            return @(row.checked);
+        }
+        if ([colPath[0] isEqualToString:ERROR_COLUMN_IDENTIFIER]) {
+            return row.errorMsg;
+        }
+        if ([colPath[0] isEqualToString:TYPE_COLUMN_IDENTIFIER]) {
+            return row.type;
         }
     }
+    NSObject *val = [row valueForFieldPathArray:colPath];
+    if ([[val class] isSubclassOfClass:[ZKXmlDeserializer class]]) {
+        return val.description;
+    }
     return val;
+}
+
+-(NSObject *)valueForFieldPathArray:(NSArray<NSString*> *)fieldPath row:(NSInteger)row {
+    return [records[row] valueForFieldPathArray:fieldPath];
 }
 
 @end

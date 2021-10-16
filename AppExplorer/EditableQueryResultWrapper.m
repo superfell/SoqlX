@@ -23,8 +23,15 @@
 #import "QueryResultCell.h"
 #import <ZKSforce/ZKSforce.h>
 #import "SObject.h"
+#import "ZKQueryResult+Display.h"
 
 @implementation EditableQueryResultWrapper
+
+static NSArray *systemColumnIds;
+
++(void)initialize {
+    systemColumnIds = @[DELETE_COLUMN_IDENTIFIER, ERROR_COLUMN_IDENTIFIER];
+}
 
 +(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
     NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
@@ -57,7 +64,7 @@
 }
 
 -(NSArray *)allSystemColumnIdentifiers {
-    return @[DELETE_COLUMN_IDENTIFIER, ERROR_COLUMN_IDENTIFIER];
+    return systemColumnIds;
 }
 
 - (BOOL)hasCheckedRows {
@@ -95,6 +102,15 @@
     [self didChangeValueForKey:@"hasErrors"];
 }
 
+- (BOOL)allowEdit:(NSTableColumn *)aColumn {
+    if (!self.editable) return NO;
+    if (self.delegate.isEditing) return NO;
+    if ([aColumn.identifier isEqualToString:ERROR_COLUMN_IDENTIFIER]) return NO;
+    return [aColumn.identifier rangeOfString:@"."].location == NSNotFound;
+}
+
+
+// MARK:- ZKQueryResult passthrough
 - (NSInteger)size {
     return [self.queryResult size];
 }
@@ -111,36 +127,21 @@
     return [self.queryResult records];
 }
 
+// MARK:- NSTableViewDataSource
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)v {
     return [self.queryResult numberOfRowsInTableView:v];
 }
 
 - (id)tableView:(NSTableView *)view objectValueForTableColumn:(NSTableColumn *)tc row:(NSInteger)rowIdx {
-    return [self columnValue:tc.identifier atRow:rowIdx];
+    return [self.queryResult columnDisplayValue:tc.identifier atRow:rowIdx];
 }
 
-- (BOOL)allowEdit:(NSTableColumn *)aColumn {
-    if (!self.editable) return NO;
-    if (self.delegate.isEditing) return NO;
-    if ([aColumn.identifier isEqualToString:ERROR_COLUMN_IDENTIFIER]) return NO;
-    return [aColumn.identifier rangeOfString:@"."].location == NSNotFound;
-}
-
-- (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor {
-    NSTableView *t = (NSTableView *)control;
-    NSTableColumn *c = t.tableColumns[t.editedColumn];
-    return [self allowEdit:c];
-}
-
-- (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor {
-    return YES;
-}
-
-- (void)tableView:(NSTableView *)tableView didClickTableColumn:(NSTableColumn *)tableColumn {
-    if ([tableColumn.identifier isEqualToString:DELETE_COLUMN_IDENTIFIER]) {
-        [self setChecksOnAllRows:![self hasCheckedRows]];
-        [tableView reloadData];
-    }
+- (void)tableView:(NSTableView *)tableView sortDescriptorsDidChange:(NSArray<NSSortDescriptor *> *)oldDescriptors {
+    ZKQueryResult *qr = self.queryResult;
+    NSArray *sorted = [qr.records sortedArrayUsingDescriptors:tableView.sortDescriptors];
+    ZKQueryResult *r = [[ZKQueryResult alloc] initWithRecords:sorted size:qr.size done:qr.done queryLocator:qr.queryLocator];
+    self.queryResult = r;
+    [tableView reloadData];
 }
 
 - (void)tableView:(NSTableView *)aTableView
@@ -163,50 +164,44 @@
     }
 }
 
+// MARK:- NSTableViewDelegate
+- (void)tableView:(NSTableView *)tableView didClickTableColumn:(NSTableColumn *)tableColumn {
+    if ([tableColumn.identifier isEqualToString:DELETE_COLUMN_IDENTIFIER]) {
+        [self setChecksOnAllRows:![self hasCheckedRows]];
+        [tableView reloadData];
+    }
+}
+
 - (NSCell *)tableView:(NSTableView *)tableView dataCellForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
     if (tableColumn == nil) return nil;
-    id v = [self columnValue:tableColumn.identifier atRow:row];
+    id v = [self.queryResult columnDisplayValue:tableColumn.identifier atRow:row];
     if ([v isKindOfClass:[ZKQueryResult class]])
         return imageCell;
     return [tableColumn dataCellForRow:row];
 }
 
-- (void)tableView:(NSTableView *)tableView sortDescriptorsDidChange:(NSArray<NSSortDescriptor *> *)oldDescriptors {
-    ZKQueryResult *qr = self.queryResult;
-    NSArray *sorted = [qr.records sortedArrayUsingDescriptors:tableView.sortDescriptors];
-    ZKQueryResult *r = [[ZKQueryResult alloc] initWithRecords:sorted size:qr.size done:qr.done queryLocator:qr.queryLocator];
-    self.queryResult = r;
-    [tableView reloadData];
+- (BOOL)tableView:(NSTableView *)tableView shouldReorderColumn:(NSInteger)columnIndex toColumn:(NSInteger)newColumnIndex {
+    // Don't allow the 2 special columns to be reordered out of the first 2 columns.
+    // Code elsewhere (particularly QueryResultTable) assume those columns are always first.
+    NSTableColumn *c = tableView.tableColumns[columnIndex];
+    if ([systemColumnIds containsObject:c.identifier]) {
+        return NO;
+    }
+    if (newColumnIndex >= 0 && newColumnIndex < systemColumnIds.count) {
+        return NO;
+    }
+    return YES;
 }
 
--(id)columnValue:(NSString *)col atRow:(NSUInteger)rowIndex {
-    NSArray *records = self.queryResult.records;
-    if (rowIndex >= records.count) {
-        return nil;
-    }
-    ZKSObject *row = records[rowIndex];
-    if ([col isEqualToString:DELETE_COLUMN_IDENTIFIER]) {
-        return @(row.checked);
-    }
-    if ([col isEqualToString:ERROR_COLUMN_IDENTIFIER]) {
-        return row.errorMsg;
-    }
-    if ([col isEqualToString:TYPE_COLUMN_IDENTIFIER]) {
-        return row.type;
-    }
-    NSArray *fieldPath = [col componentsSeparatedByString:@"."];
-    NSObject *val = row;
-    for (NSString *step in fieldPath) {
-        if ([val isKindOfClass:[ZKSObject class]]) {
-            val = [(ZKSObject *)val fieldValue:step];
-        } else {
-            val = [val valueForKey:step];
-        }
-    }
-    if ([[val class] isSubclassOfClass:[ZKXmlDeserializer class]]) {
-        return val.description;
-    }
-    return val;
+// MARK:- NSControlTextEditingDelegate
+- (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor {
+    NSTableView *t = (NSTableView *)control;
+    NSTableColumn *c = t.tableColumns[t.editedColumn];
+    return [self allowEdit:c];
+}
+
+- (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor {
+    return YES;
 }
 
 @end

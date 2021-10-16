@@ -19,8 +19,6 @@
 // THE SOFTWARE.
 //
 
-#include <mach/mach_time.h>
-
 #import <objc/runtime.h>
 #import "SoqlTokenizer.h"
 #import "DataSources.h"
@@ -32,6 +30,7 @@
 #import "SoqlFunction.h"
 #import "DescribeExtras.h"
 #import "Prefs.h"
+#import "TStamp.h"
 
 typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasMap;
 
@@ -132,17 +131,6 @@ typedef NSMutableDictionary<NSString *, Completion*> CompletionBySObject;
 
 
 @implementation SoqlTokenizer
-
-static double ticksToMilliseconds;
-
-+(void)initialize {
-    // The first time we get here, ask the system
-    // how to convert mach time units to milliseconds
-    mach_timebase_info_data_t timebase;
-    // to be completely pedantic, check the return code of this next call.
-    mach_timebase_info(&timebase);
-    ticksToMilliseconds = (double)timebase.numer / timebase.denom / 1000000;
-}
 
 -(instancetype)init {
     self = [super init];

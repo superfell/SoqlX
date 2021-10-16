@@ -24,15 +24,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface QueryColumns : NSObject {
-}
+@interface QueryColumns : NSObject
 
 -(instancetype)initWithResult:(ZKQueryResult*)qr NS_DESIGNATED_INITIALIZER;
 -(instancetype)init NS_UNAVAILABLE;
 
-@property (assign) BOOL isSearchResult;
-@property (strong) NSArray<NSString*>* names;
-@property (assign) NSUInteger rowsChecked;
+@property (assign) BOOL                 isSearchResult;
+@property (strong) NSArray<NSString*>*  names;
+@property (assign) NSUInteger           rowsChecked;
+@property (readonly) NSInteger          count;
 @end
 
 

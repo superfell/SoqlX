@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Simon Fell
+// Copyright (c) 2021 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -19,18 +19,21 @@
 // THE SOFTWARE.
 //
 
+
+#include <mach/mach_time.h>
 #import <Foundation/Foundation.h>
-#import <ZKSforce/ZKSObject.h>
 
-extern NSString *_Nonnull DELETE_COLUMN_IDENTIFIER;
-extern NSString *_Nonnull ERROR_COLUMN_IDENTIFIER;
-extern NSString *_Nonnull TYPE_COLUMN_IDENTIFIER;
+NS_ASSUME_NONNULL_BEGIN
 
-@interface ZKSObject (SoqlX)
+extern double ticksToMilliseconds;
 
-@property BOOL checked;
-@property NSString *_Nullable errorMsg;
+@interface TStamp : NSObject
 
--(NSObject *_Nullable)valueForFieldPathArray:(NSArray<NSString*> *_Nonnull)fieldPath;
++(instancetype)start;
+
+-(void)mark:(NSString*)name;
+-(void)log;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -21,6 +21,7 @@
 
 #import <XCTest/XCTest.h>
 #import "QueryColumns.h"
+#import "SearchQueryResult.h"
 #import <ZKSforce/ZKQueryResult.h>
 #import <ZKSforce/ZKSObject.h>
 #import <ZKSforce/ZKParser.h>
@@ -151,6 +152,50 @@
     XCTAssertEqualObjects(([NSSet setWithArray:@[@"firstName",@"MailingAddress.street", @"MailingAddress.city", @"MailingAddress.state", @"MailingAddress.stateCode", @"MailingAddress.country", @"MailingAddress.countryCode", @"MailingAddress.postalCode",@"MailingAddress.geocodeAccuracy",@"MailingAddress.longitude", @"MailingAddress.latitude"]]), [NSSet setWithArray:qc.names]);
 }
 
+-(void)testChildQuery {
+    // a query of the form select name,(select name from contacts) from account
+    NSString *qrXml = @"<QueryResult xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>"
+                            "<records><type>Account</type><Id>123</Id><Name>Bob</Name>"
+                            "<contacts xsi:type='nil' />"
+                            "</records>"
+                            "<records><type>Account</type><Id>123</Id><Name>Bob</Name>"
+                            "<contacts xsi:type='QueryResult'>"
+                                "<records><type>Contact</type><Id>124</Id><firstName>Eve</firstName></records>"
+                                "<size>1</size><done>true</done>"
+                            "</contacts>"
+                            "</records>"
+                            "<size>2</size><done>true</done></QueryResult>";
+    ZKElement *xml = [ZKParser parseData:[qrXml dataUsingEncoding:NSUTF8StringEncoding]];
+    XCTAssertNotNil(xml);
+    ZKQueryResult *qr = [[ZKQueryResult alloc] initWithXmlElement:xml];
+    QueryColumns *qc = [[QueryColumns alloc] initWithResult:qr];
+    XCTAssertFalse(qc.isSearchResult);
+    XCTAssertEqualObjects((@[@"Name", @"contacts"]), qc.names);
+}
+
+-(void)testSearchResult {
+    // with search rows can have different columns in different rows
+    NSString *qrXml = @"<SearchResult xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>"
+                        "<queryId>999</queryId>"
+                        "<searchRecords><record><type>Contact</type><Id>123</Id><firstName>Bob</firstName>"
+                        "<owner xsi:nil='true' />"
+                        "</record></searchRecords>"
+                        "<searchRecords><record><type>Contact</type><Id>124</Id><firstName>Bob</firstName>"
+                        "<owner xsi:type='sObject'><type>User</type><Id>2</Id><name>Eve</name></owner>"
+                        "</record></searchRecords>"
+                        "<searchRecords><record><type>Account</type><Id>125</Id><Name>Eve Inc</Name>"
+                        "<owner xsi:type='sObject'><type>Group</type><Id>1</Id><level>3</level></owner>"
+                        "</record></searchRecords>"
+                        "</SearchResult>";
+    ZKElement *xml = [ZKParser parseData:[qrXml dataUsingEncoding:NSUTF8StringEncoding]];
+    XCTAssertNotNil(xml);
+    ZKSearchResult *sr = [[ZKSearchResult alloc] initWithXmlElement:xml];
+    SearchQueryResult *qr = [SearchQueryResult searchQueryResults:sr];
+    QueryColumns *qc = [[QueryColumns alloc] initWithResult:qr];
+    XCTAssertTrue(qc.isSearchResult);
+    XCTAssertEqualObjects(([NSSet setWithArray:@[@"firstName", @"owner.name", @"Name", @"owner.level"]]), [NSSet setWithArray:qc.names]);
+}
+
 -(void)testTypeOf {
     // with typeof in a query the related objects can have different columns in different rows
     NSString *qrXml = @"<QueryResult xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>"
@@ -167,6 +212,52 @@
     QueryColumns *qc = [[QueryColumns alloc] initWithResult:qr];
     XCTAssertFalse(qc.isSearchResult);
     XCTAssertEqualObjects(([NSSet setWithArray:@[@"firstName", @"owner.name", @"owner.level"]]), [NSSet setWithArray:qc.names]);
+}
+
+// MARK:- These tests are for checking performance.
+
+-(void)testTypeOfALot {
+    // Used for profiling QueryColumns performance
+    // with typeof in a query the related objects can have different columns in different rows
+    NSString *qrXml = @"<QueryResult xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>"
+                        "<records><type>Contact</type><Id>123</Id><firstName>Bob</firstName>"
+                        "<owner xsi:type='sObject'><type>User</type><Id>2</Id><name>Eve</name></owner>"
+                        "</records>"
+                        "<records><type>Contact</type><Id>124</Id><firstName>Eve</firstName>"
+                        "<owner xsi:type='sObject'><type>Group</type><Id>1</Id><level>3</level></owner>"
+                        "</records>"
+                        "<size>2</size><done>true</done></QueryResult>";
+    ZKElement *xml = [ZKParser parseData:[qrXml dataUsingEncoding:NSUTF8StringEncoding]];
+    XCTAssertNotNil(xml);
+    ZKQueryResult *qr = [[ZKQueryResult alloc] initWithXmlElement:xml];
+    NSSet *exp = [NSSet setWithArray:@[@"firstName", @"owner.name", @"owner.level"]];
+    for (int i = 0; i < 50000; i++) {
+        QueryColumns *qc = [[QueryColumns alloc] initWithResult:qr];
+        XCTAssertFalse(qc.isSearchResult);
+        XCTAssertEqualObjects(exp, [NSSet setWithArray:qc.names]);
+    }
+}
+
+-(void)testColumnWithId {
+    // is [NSTableView columnWithIdentifier:] expensive for columns at the end of the list?
+    // TL:DR yes it is, looks like they are linearly scanned
+    NSTableView *t = [[NSTableView alloc] init];
+    for (int i = 1; i < 1000; i++) {
+        NSString *cid = [NSString stringWithFormat:@"%d",i];
+        NSTableColumn *c = [[NSTableColumn alloc] initWithIdentifier:cid];
+        [t addTableColumn:c];
+    }
+    NSDate *s = [NSDate date];
+    for (int i = 0; i < 1000; i++) {
+        XCTAssertEqual(0, [t columnWithIdentifier:@"1"], @"wrong index returned");
+    }
+    NSDate *s2 = [NSDate date];
+    for (int i = 0; i < 1000; i++) {
+        XCTAssertEqual(998, [t columnWithIdentifier:@"999"], @"wrong index returned");
+    }
+    NSDate *s3 = [NSDate date];
+    NSLog(@"col 1 took %fms", [s2 timeIntervalSinceDate:s] * 1000);
+    NSLog(@"col 999 took %fms", [s3 timeIntervalSinceDate:s2] * 1000);
 }
 
 - (void)setUp {

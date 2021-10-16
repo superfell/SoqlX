@@ -28,6 +28,7 @@
 #import "ZKUserInfo.h"
 #import "SessionIdAuthInfo.h"
 #import "Defaults.h"
+#import "TStamp.h"
 
 @interface ZKOAuthInfo(params)
 +(NSDictionary*)decodeParams:(NSString*)fragment error:(NSError **)err;
@@ -39,6 +40,7 @@
 @synthesize editFont, editFontLabel;
 
 + (void)initialize {
+    [TStamp class];
     NSMutableDictionary * defaults = [NSMutableDictionary dictionary];
     defaults[@"details"] = @NO;
     defaults[@"soql"] = @"select id, firstname, lastname from contact";
