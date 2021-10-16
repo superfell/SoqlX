@@ -160,6 +160,9 @@
                     qc.hasSeenValue = YES;
                 }
                 break;
+            } else if ([val isKindOfClass:[ZKQueryResult class]]) {
+                qc.hasSeenValue = YES;
+                break;
             } else {
                 NSLog(@"unexpected type of %@ for %@ at row %ld", [val class], fullName, (long)rowIdx);
             }

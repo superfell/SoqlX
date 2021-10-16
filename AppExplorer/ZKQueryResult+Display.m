@@ -43,14 +43,7 @@
             return row.type;
         }
     }
-    NSObject *val = row;
-    for (NSString *step in colPath) {
-        if ([val isKindOfClass:[ZKSObject class]]) {
-            val = [(ZKSObject *)val fieldValue:step];
-        } else {
-            val = [val valueForKey:step];
-        }
-    }
+    NSObject *val = [row valueForFieldPathArray:colPath];
     if ([[val class] isSubclassOfClass:[ZKXmlDeserializer class]]) {
         return val.description;
     }
