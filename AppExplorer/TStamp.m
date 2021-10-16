@@ -45,7 +45,7 @@ static BOOL enableLogging = YES;
 }
 
 +(instancetype)start {
-    return enableLogging ? [[LoggingTStamp alloc] init] : [[TStamp alloc] init];
+    return enableLogging ? [[LoggingTStamp alloc] init] : nil;
 }
 
 -(void)mark:(NSString*)s {}
