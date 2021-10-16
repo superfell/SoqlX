@@ -152,8 +152,29 @@
     XCTAssertEqualObjects(([NSSet setWithArray:@[@"firstName",@"MailingAddress.street", @"MailingAddress.city", @"MailingAddress.state", @"MailingAddress.stateCode", @"MailingAddress.country", @"MailingAddress.countryCode", @"MailingAddress.postalCode",@"MailingAddress.geocodeAccuracy",@"MailingAddress.longitude", @"MailingAddress.latitude"]]), [NSSet setWithArray:qc.names]);
 }
 
+-(void)testChildQuery {
+    // a query of the form select name,(select name from contacts) from account
+    NSString *qrXml = @"<QueryResult xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>"
+                            "<records><type>Account</type><Id>123</Id><Name>Bob</Name>"
+                            "<contacts xsi:type='nil' />"
+                            "</records>"
+                            "<records><type>Account</type><Id>123</Id><Name>Bob</Name>"
+                            "<contacts xsi:type='QueryResult'>"
+                                "<records><type>Contact</type><Id>124</Id><firstName>Eve</firstName></records>"
+                                "<size>1</size><done>true</done>"
+                            "</contacts>"
+                            "</records>"
+                            "<size>2</size><done>true</done></QueryResult>";
+    ZKElement *xml = [ZKParser parseData:[qrXml dataUsingEncoding:NSUTF8StringEncoding]];
+    XCTAssertNotNil(xml);
+    ZKQueryResult *qr = [[ZKQueryResult alloc] initWithXmlElement:xml];
+    QueryColumns *qc = [[QueryColumns alloc] initWithResult:qr];
+    XCTAssertFalse(qc.isSearchResult);
+    XCTAssertEqualObjects((@[@"Name", @"contacts"]), qc.names);
+}
+
 -(void)testSearchResult {
-    // with typeof in a query the related objects can have different columns in different rows
+    // with search rows can have different columns in different rows
     NSString *qrXml = @"<SearchResult xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>"
                         "<queryId>999</queryId>"
                         "<searchRecords><record><type>Contact</type><Id>123</Id><firstName>Bob</firstName>"

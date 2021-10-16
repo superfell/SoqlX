@@ -52,3 +52,33 @@
 
 @end
 
+// These are exposed just for testing, otherwise they are internal to QueryResultTable
+@interface ColumnResult : NSObject
+@property (assign) NSInteger count;
+@property (assign) NSInteger max;
+@property (assign) NSInteger percentile80;
+@property (assign) NSInteger headerWidth;
+@property (assign) NSInteger width;
+@property (retain) NSString *identifier;
+@property (retain) NSString *label;
+@end
+
+@interface ColumnBuilder : NSObject {
+    NSMutableString             *buffer;
+    NSMutableArray<NSNumber*>   *vals;
+    NSInteger                   minToConsider;
+    NSInteger                   minCount;
+    NSInteger                   headerWidth;
+}
+@property (retain) NSFont *font;
+@property (retain) NSString *identifier;
+@property (retain) NSString *label;
+@property (assign) NSInteger width;
+
+-(instancetype)initWithId:(NSString*)i font:(NSFont*)f NS_DESIGNATED_INITIALIZER;
+-(instancetype)init NS_UNAVAILABLE;
+
+-(void)add:(NSString *)s;
+-(ColumnResult*)resultsWithOffset:(NSInteger)pad;
+
+@end

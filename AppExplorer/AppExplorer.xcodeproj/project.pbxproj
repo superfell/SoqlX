@@ -62,6 +62,9 @@
 		F4A2B9032718DD1300C20A42 /* TStamp.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A2B8F12714E80800C20A42 /* TStamp.m */; };
 		F4A2B9052718DD2B00C20A42 /* ZKQueryResult+Display.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A2B8FE2718AF3600C20A42 /* ZKQueryResult+Display.m */; };
 		F4A2B908271A41AD00C20A42 /* SearchQueryResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C440C915DB50BC00590A1E /* SearchQueryResult.m */; };
+		F4A2B90B271B3A0D00C20A42 /* QueryResultTableTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A2B90A271B3A0D00C20A42 /* QueryResultTableTest.m */; };
+		F4A2B90E271B3B4C00C20A42 /* QueryResultTable.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CF71F30D4704EE001001F2 /* QueryResultTable.m */; };
+		F4A2B910271B3B6100C20A42 /* SObjectSortDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D8DC86256AD4E2002C9FC1 /* SObjectSortDescriptor.m */; };
 		F4A62E2F0D31AC6300D7EACA /* NSView_additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A62E2E0D31AC6300D7EACA /* NSView_additions.m */; };
 		F4AC556715996D8500F5CA45 /* zkApexClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F4AC555A15996D8500F5CA45 /* zkApexClient.m */; };
 		F4AC556815996D8500F5CA45 /* ZKCodeCoverageResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4AC555C15996D8500F5CA45 /* ZKCodeCoverageResult.m */; };
@@ -336,6 +339,7 @@
 		F4A2B8F12714E80800C20A42 /* TStamp.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TStamp.m; sourceTree = "<group>"; };
 		F4A2B8FD2718AF3500C20A42 /* ZKQueryResult+Display.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZKQueryResult+Display.h"; sourceTree = "<group>"; };
 		F4A2B8FE2718AF3600C20A42 /* ZKQueryResult+Display.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ZKQueryResult+Display.m"; sourceTree = "<group>"; };
+		F4A2B90A271B3A0D00C20A42 /* QueryResultTableTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QueryResultTableTest.m; sourceTree = "<group>"; };
 		F4A62E2D0D31AC6300D7EACA /* NSView_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSView_additions.h; sourceTree = "<group>"; };
 		F4A62E2E0D31AC6300D7EACA /* NSView_additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSView_additions.m; sourceTree = "<group>"; };
 		F4AC555915996D8500F5CA45 /* zkApexClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zkApexClient.h; path = ../apexforce/zkApexClient.h; sourceTree = "<group>"; };
@@ -792,12 +796,13 @@
 				F4F2E7262640633F005C49B9 /* where.txt */,
 				F4DF0B6A263902E300B3A1A9 /* funcs.txt */,
 				F4DE40642562079100FBA200 /* QueryColumnsTest.m */,
-				F4DE4053256205D300FBA200 /* Info.plist */,
+				F4A2B90A271B3A0D00C20A42 /* QueryResultTableTest.m */,
 				F4E0F2AC256F115E00446C2B /* SObjectTest.m */,
 				F4E0F2BB256F15A500446C2B /* QRWrapperTest.m */,
 				F48804DC2592BE57001D56F6 /* CaseInsensitiveKeyTest.m */,
 				F4C889D12624F272006D606A /* SoqlTokenizerTests.m */,
 				F4394F9B264981C000ABFA2B /* describes.xml */,
+				F4DE4053256205D300FBA200 /* Info.plist */,
 			);
 			path = SoqlXplorerTests;
 			sourceTree = "<group>";
@@ -1211,14 +1216,17 @@
 				F4E0F2B7256F123A00446C2B /* SObjectTest.m in Sources */,
 				F4DF0B612638BDA700B3A1A9 /* SoqlToken.m in Sources */,
 				F4BD5DDE264760A000ACBBAB /* DescribeExtras.m in Sources */,
+				F4A2B90E271B3B4C00C20A42 /* QueryResultTable.m in Sources */,
 				F4C889D22624F272006D606A /* SoqlTokenizerTests.m in Sources */,
 				F424A81E262B595C00AD4F42 /* SoqlTokenizer.m in Sources */,
 				F4A2B9052718DD2B00C20A42 /* ZKQueryResult+Display.m in Sources */,
 				F4E0F2C0256F183E00446C2B /* QueryResultCell.m in Sources */,
 				F4A2B9032718DD1300C20A42 /* TStamp.m in Sources */,
 				F4E0F2BC256F15A500446C2B /* QRWrapperTest.m in Sources */,
+				F4A2B910271B3B6100C20A42 /* SObjectSortDescriptor.m in Sources */,
 				F4BD5DE3264762F900ACBBAB /* Completion.m in Sources */,
 				F4E0F2BE256F17DF00446C2B /* EditableQueryResultWrapper.m in Sources */,
+				F4A2B90B271B3A0D00C20A42 /* QueryResultTableTest.m in Sources */,
 				F424A838262BCF1B00AD4F42 /* ColorizerStyle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

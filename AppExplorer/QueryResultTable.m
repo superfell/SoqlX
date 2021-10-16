@@ -33,36 +33,10 @@ const NSInteger MIN_WIDTH = 40;
 const NSInteger DEF_WIDTH = 100;
 const NSInteger DEF_ID_WIDTH = 165;
 
-@interface ColumnResult : NSObject
-@property (assign) NSInteger count;
-@property (assign) NSInteger max;
-@property (assign) NSInteger percentile80;
-@property (assign) NSInteger headerWidth;
-@property (assign) NSInteger width;
-@property (retain) NSString *identifier;
-@property (retain) NSString *label;
-@end
 
 @implementation ColumnResult
 @end
 
-@interface ColumnBuilder : NSObject {
-    NSMutableString             *buffer;
-    NSMutableArray<NSNumber*>   *vals;
-    NSInteger                   minToConsider;
-    NSInteger                   minCount;
-    NSInteger                   headerWidth;
-}
-@property (retain) NSFont *font;
-@property (retain) NSString *identifier;
-@property (retain) NSString *label;
-@property (assign) NSInteger width;
-
--(instancetype)initWithId:(NSString*)i font:(NSFont*)f;
--(void)add:(NSString *)s;
--(ColumnResult*)resultsWithOffset:(NSInteger)pad;
-
-@end
 
 @implementation ColumnBuilder
 
@@ -238,7 +212,7 @@ const NSInteger DEF_ID_WIDTH = 165;
     // We know there are no values for these columns in the rows before the new chunk, so we only
     // need to measure the new chunk, not the entire results.
     NSArray<ColumnResult*>* colResults = [self measureColumns:newColumns
-                                                      spacing:self.table.intercellSpacing.width
+                                                      spacing:self.table.intercellSpacing.width * 2
                                                      contents:qr];
     [tstamp mark:@"calc content widths"];
     // There are edge cases where an existing column goes away, (e.g. a related object was null and now has data)
@@ -258,11 +232,8 @@ const NSInteger DEF_ID_WIDTH = 165;
     }
     space = [self sizeColumnsToBestFit:colResults space:space];
     [tstamp mark:@"calc'd col widths"];
-    // Annoyingly we can't insert a new column where we want it, we have to add it to the end
-    // then move it. We work backwards otherwise the calculated indexes will be off once a column
-    // is added.
     NSInteger numSpecialColumns = wrapper.allSystemColumnIdentifiers.count;
-    [colResults enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(ColumnResult * _Nonnull col, NSUInteger idx, BOOL * _Nonnull stop) {
+    [colResults enumerateObjectsUsingBlock:^(ColumnResult * _Nonnull col, NSUInteger idx, BOOL * _Nonnull stop) {
         NSTableColumn *tc = [[NSTableColumn alloc] initWithIdentifier:col.identifier];
         [self setTableColumn:tc toIdentifier:col.identifier label:col.label width:col.width];
         [table addTableColumn:tc];
