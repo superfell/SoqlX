@@ -84,6 +84,7 @@ int DEFAULT_API_VERSION = 53;
     [self.savedLogins registerNib:[[NSNib alloc] initWithNibNamed:@"LoginHeaderRowViewItem" bundle:nil]
          forSupplementaryViewOfKind:NSCollectionElementKindSectionHeader
                      withIdentifier:@"h"];
+    self.savedLogins.selectable = YES;
     self.credDataSource = [[CredentialsDataSource alloc] initWithCreds:[Credential credentialsInMruOrder]];
     self.credDataSource.delegate = self;
     self.savedLogins.dataSource = self.credDataSource;
@@ -132,6 +133,10 @@ int DEFAULT_API_VERSION = 53;
     // This reloadData shouldn't be needed, but without it, the section header sometimes
     // get placed over the first item, not above it.
     [self.savedLogins reloadData];
+    if (self.credDataSource.items.count > 0) {
+        NSIndexPath *first = [NSIndexPath indexPathForItem:0 inSection:0];
+        [self.savedLogins setSelectionIndexPaths:[NSSet setWithObject:first]];
+    }
     [modalForWindow beginSheet:self.loginSheet completionHandler:nil];
 }
 

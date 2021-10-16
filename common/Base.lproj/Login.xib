@@ -65,11 +65,11 @@
                             <rect key="frame" x="0.0" y="0.0" width="323" height="137"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <collectionView id="3rR-I4-met">
+                                <collectionView id="3rR-I4-met" customClass="ZKCollectionView">
                                     <rect key="frame" x="0.0" y="0.0" width="323" height="137"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                                     <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="3" id="XsY-iQ-gAU">
-                                        <size key="itemSize" width="300" height="35"/>
+                                        <size key="itemSize" width="300" height="29"/>
                                         <size key="headerReferenceSize" width="300" height="25"/>
                                         <edgeInsets key="sectionInset" left="3" right="0.0" top="0.0" bottom="0.0"/>
                                     </collectionViewFlowLayout>

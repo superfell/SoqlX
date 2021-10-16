@@ -19,35 +19,8 @@
 // THE SOFTWARE.
 //
 
-#import "LoginRowViewItem.h"
-#import "credential.h"
-#import "Defaults.h"
 
-@interface LoginRowViewItem ()
--(IBAction)deleteItem:(id)sender;
--(IBAction)login:(id)sender;
-@property (retain) IBOutlet NSButton *button;
+#import <Cocoa/Cocoa.h>
 
-@end
-
-@implementation LoginRowViewItem
-
--(void)setSelected:(BOOL)selected {
-    self.button.keyEquivalentModifierMask = 0;
-    self.button.keyEquivalent = selected ? @"\r" : @"";
-    [super setSelected:selected];
-}
-
--(void)login:(id)sender {
-    if (self.delegate) {
-        [self.delegate credentialSelected:self.credential];
-    }
-}
-
--(void)deleteItem:(id)sender {
-    if (self.delegate) {
-        [self.delegate deleteCredential:self.credential];
-    }
-}
-
+@interface ZKCollectionView : NSCollectionView
 @end

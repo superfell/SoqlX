@@ -19,35 +19,24 @@
 // THE SOFTWARE.
 //
 
-#import "LoginRowViewItem.h"
-#import "credential.h"
-#import "Defaults.h"
 
-@interface LoginRowViewItem ()
--(IBAction)deleteItem:(id)sender;
--(IBAction)login:(id)sender;
-@property (retain) IBOutlet NSButton *button;
+#import "ZKCollectionView.h"
 
-@end
+@implementation ZKCollectionView
 
-@implementation LoginRowViewItem
-
--(void)setSelected:(BOOL)selected {
-    self.button.keyEquivalentModifierMask = 0;
-    self.button.keyEquivalent = selected ? @"\r" : @"";
-    [super setSelected:selected];
-}
-
--(void)login:(id)sender {
-    if (self.delegate) {
-        [self.delegate credentialSelected:self.credential];
+-(void)keyDown:(NSEvent*)event {
+    // For reasons that are not clear key presses for the enter key don't
+    // appear to get passed down to the view items, and so the button in the
+    // item never gets a chance to handle it.
+    // So futz with that ourselves.
+    if ([event.characters isEqualToString:@"\r"]) {
+        for (NSCollectionViewItem *i in self.visibleItems) {
+            if ([i.view performKeyEquivalent:event]) {
+                return;
+            }
+        }
     }
-}
-
--(void)deleteItem:(id)sender {
-    if (self.delegate) {
-        [self.delegate deleteCredential:self.credential];
-    }
+    [super keyDown:event];
 }
 
 @end
