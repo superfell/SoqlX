@@ -298,7 +298,6 @@ const NSInteger DEF_ID_WIDTH = 165;
 
     self.columns = [[QueryColumns alloc] initWithResult:qr];
     [tstamp mark:@"extracted cols from qr"];
-    // TODO: prevent re-ordering of delete/error column
     NSFont *font = [self tableCellFont];
     
     // Adding, removing, resizing NSTableView columns cause an expensive relayout calc to be triggered.

@@ -27,6 +27,12 @@
 
 @implementation EditableQueryResultWrapper
 
+static NSArray *systemColumnIds;
+
++(void)initialize {
+    systemColumnIds = @[DELETE_COLUMN_IDENTIFIER, ERROR_COLUMN_IDENTIFIER];
+}
+
 +(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
     NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
     if ([key isEqualToString:@"hasCheckedRows"])
@@ -58,7 +64,7 @@
 }
 
 -(NSArray *)allSystemColumnIdentifiers {
-    return @[DELETE_COLUMN_IDENTIFIER, ERROR_COLUMN_IDENTIFIER];
+    return systemColumnIds;
 }
 
 - (BOOL)hasCheckedRows {
@@ -172,6 +178,19 @@
     if ([v isKindOfClass:[ZKQueryResult class]])
         return imageCell;
     return [tableColumn dataCellForRow:row];
+}
+
+- (BOOL)tableView:(NSTableView *)tableView shouldReorderColumn:(NSInteger)columnIndex toColumn:(NSInteger)newColumnIndex {
+    // Don't allow the 2 special columns to be reordered out of the first 2 columns.
+    // Code elsewhere (particularly QueryResultTable) assume those columns are always first.
+    NSTableColumn *c = tableView.tableColumns[columnIndex];
+    if ([systemColumnIds containsObject:c.identifier]) {
+        return NO;
+    }
+    if (newColumnIndex >= 0 && newColumnIndex < systemColumnIds.count) {
+        return NO;
+    }
+    return YES;
 }
 
 // MARK:- NSControlTextEditingDelegate
