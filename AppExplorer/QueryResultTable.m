@@ -241,28 +241,6 @@ const NSInteger DEF_ID_WIDTH = 165;
                                                       spacing:self.table.intercellSpacing.width
                                                      contents:qr];
     [tstamp mark:@"calc content widths"];
-    CGFloat space = table.visibleRect.size.width;
-    for (NSTableColumn *c in table.tableColumns) {
-        if (!c.isHidden) {
-            space -= c.width;
-        }
-    }
-    space = [self sizeColumnsToBestFit:colResults space:space];
-    [tstamp mark:@"calc'd col widths"];
-    // Annoyingly we can't insert a new table where we want it, we have to add it to the end
-    // then move it. We work backwards otherwise the calculated indexes will be off once a column
-    // is added.
-    [colResults enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(ColumnResult * _Nonnull col, NSUInteger idx, BOOL * _Nonnull stop) {
-        NSTableColumn *tc = [[NSTableColumn alloc] initWithIdentifier:col.identifier];
-        [self setTableColumn:tc toIdentifier:col.identifier label:col.label width:col.width];
-        [table addTableColumn:tc];
-        NSInteger destColIdx = newColIndexes[idx].integerValue + 2;
-        NSInteger currColIdx = table.tableColumns.count-1;
-        NSLog(@"new column for %@ idx=%ld. currIdx=%ld target=%ld", col.identifier, idx, currColIdx, destColIdx);
-        if (destColIdx != currColIdx) {
-            [table moveColumn:currColIdx toColumn:destColIdx];
-        }
-    }];
     // There are edge cases where an existing column goes away, (e.g. a related object was null and now has data)
     // so deal with that.
     NSSet<NSString*>* newColSet = [NSSet setWithArray:qcols.names];
@@ -271,6 +249,30 @@ const NSInteger DEF_ID_WIDTH = 165;
             [table removeTableColumn:[table tableColumnWithIdentifier:oldCol]];
         }
     }
+    [tstamp mark:@"removed columns"];
+    CGFloat space = table.visibleRect.size.width;
+    for (NSTableColumn *c in table.tableColumns) {
+        if (!c.isHidden) {
+            space -= c.width;
+        }
+    }
+    space = [self sizeColumnsToBestFit:colResults space:space];
+    [tstamp mark:@"calc'd col widths"];
+    // Annoyingly we can't insert a new column where we want it, we have to add it to the end
+    // then move it. We work backwards otherwise the calculated indexes will be off once a column
+    // is added.
+    NSInteger numSpecialColumns = wrapper.allSystemColumnIdentifiers.count;
+    [colResults enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(ColumnResult * _Nonnull col, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSTableColumn *tc = [[NSTableColumn alloc] initWithIdentifier:col.identifier];
+        [self setTableColumn:tc toIdentifier:col.identifier label:col.label width:col.width];
+        [table addTableColumn:tc];
+        NSInteger destColIdx = newColIndexes[idx].integerValue + numSpecialColumns;
+        NSInteger currColIdx = table.tableColumns.count-1;
+        NSLog(@"new column for %@ idx=%ld. currIdx=%ld target=%ld", col.identifier, idx, currColIdx, destColIdx);
+        if (destColIdx != currColIdx) {
+            [table moveColumn:currColIdx toColumn:destColIdx];
+        }
+    }];
     [tstamp mark:@"added TV Columns"];
     [tstamp log];
     self.columns = qcols;
@@ -343,10 +345,11 @@ const NSInteger DEF_ID_WIDTH = 165;
     // Finally add/update the NSTableColumns in the table to reflect the calculated columns/sizes
     
     // remove any unwanted columns
-    while (table.tableColumns.count > 2 + cols.count) {
-        [table removeTableColumn:table.tableColumns[2]];
+    NSInteger numFixedColumns = wrapper.allSystemColumnIdentifiers.count;
+    while (table.tableColumns.count > numFixedColumns + cols.count) {
+        [table removeTableColumn:table.tableColumns[numFixedColumns]];
     }
-    NSInteger idx = 2;
+    NSInteger idx = numFixedColumns;
     for (ColumnResult *c in colResults) {
         NSTableColumn *dest;
         if (idx < table.tableColumns.count) {
