@@ -58,7 +58,8 @@
 
     Credential *c = self.items[indexPath.section][indexPath.item];
     LoginRowViewItem *i = [collectionView makeItemWithIdentifier:@"row" forIndexPath:indexPath];
-    i.credential = c;
+    i.value = c;
+    i.btnTitle = c.username;
     i.deletable = self.isEditing;
     i.delegate = self.delegate;
     return i;

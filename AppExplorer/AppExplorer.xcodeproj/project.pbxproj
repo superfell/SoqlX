@@ -45,8 +45,7 @@
 		F4805E0427063B1B005B1C24 /* LoginRowViewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = F4805E0227063B1B005B1C24 /* LoginRowViewItem.m */; };
 		F4805E0527063B1B005B1C24 /* LoginRowViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4805E0327063B1B005B1C24 /* LoginRowViewItem.xib */; };
 		F4805E0D27066606005B1C24 /* LoginTargetController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4805E0C27066606005B1C24 /* LoginTargetController.m */; };
-		F4805E1327066742005B1C24 /* LoginTargetViewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = F4805E1127066742005B1C24 /* LoginTargetViewItem.m */; };
-		F4805E1427066742005B1C24 /* LoginTargetViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4805E1227066742005B1C24 /* LoginTargetViewItem.xib */; };
+		F4805E1327066742005B1C24 /* LoginTargetItem.m in Sources */ = {isa = PBXBuildFile; fileRef = F4805E1127066742005B1C24 /* LoginTargetItem.m */; };
 		F48804CB2592ADE7001D56F6 /* Describer.m in Sources */ = {isa = PBXBuildFile; fileRef = F48804CA2592ADE7001D56F6 /* Describer.m */; };
 		F48804D92592BB33001D56F6 /* CaseInsensitiveStringKey.m in Sources */ = {isa = PBXBuildFile; fileRef = F48804D82592BB33001D56F6 /* CaseInsensitiveStringKey.m */; };
 		F48804DD2592BE57001D56F6 /* CaseInsensitiveKeyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F48804DC2592BE57001D56F6 /* CaseInsensitiveKeyTest.m */; };
@@ -316,9 +315,8 @@
 		F4805E0327063B1B005B1C24 /* LoginRowViewItem.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LoginRowViewItem.xib; sourceTree = "<group>"; };
 		F4805E0B27066606005B1C24 /* LoginTargetController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoginTargetController.h; sourceTree = "<group>"; };
 		F4805E0C27066606005B1C24 /* LoginTargetController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoginTargetController.m; sourceTree = "<group>"; };
-		F4805E1027066742005B1C24 /* LoginTargetViewItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoginTargetViewItem.h; sourceTree = "<group>"; };
-		F4805E1127066742005B1C24 /* LoginTargetViewItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoginTargetViewItem.m; sourceTree = "<group>"; };
-		F4805E1227066742005B1C24 /* LoginTargetViewItem.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LoginTargetViewItem.xib; sourceTree = "<group>"; };
+		F4805E1027066742005B1C24 /* LoginTargetItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoginTargetItem.h; sourceTree = "<group>"; };
+		F4805E1127066742005B1C24 /* LoginTargetItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoginTargetItem.m; sourceTree = "<group>"; };
 		F48804C92592ADE7001D56F6 /* Describer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Describer.h; sourceTree = "<group>"; };
 		F48804CA2592ADE7001D56F6 /* Describer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Describer.m; sourceTree = "<group>"; };
 		F48804D72592BB33001D56F6 /* CaseInsensitiveStringKey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CaseInsensitiveStringKey.h; sourceTree = "<group>"; };
@@ -729,9 +727,8 @@
 				F412DE1621B341D300D8889F /* SessionIdAuthInfo.m */,
 				F4805E0B27066606005B1C24 /* LoginTargetController.h */,
 				F4805E0C27066606005B1C24 /* LoginTargetController.m */,
-				F4805E1027066742005B1C24 /* LoginTargetViewItem.h */,
-				F4805E1127066742005B1C24 /* LoginTargetViewItem.m */,
-				F4805E1227066742005B1C24 /* LoginTargetViewItem.xib */,
+				F4805E1027066742005B1C24 /* LoginTargetItem.h */,
+				F4805E1127066742005B1C24 /* LoginTargetItem.m */,
 			);
 			name = Login;
 			sourceTree = "<group>";
@@ -1001,7 +998,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F4805E1427066742005B1C24 /* LoginTargetViewItem.xib in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				F4C8BF332197C5740000E312 /* Credits.rtf in Resources */,
 				F413C7260AACB9B4000A8CDC /* sf.icns in Resources */,
@@ -1139,7 +1135,7 @@
 				F4DD944B0AFEEC9400B0E3AC /* SchemaView.m in Sources */,
 				F424A81D262B595C00AD4F42 /* SoqlTokenizer.m in Sources */,
 				F48804D92592BB33001D56F6 /* CaseInsensitiveStringKey.m in Sources */,
-				F4805E1327066742005B1C24 /* LoginTargetViewItem.m in Sources */,
+				F4805E1327066742005B1C24 /* LoginTargetItem.m in Sources */,
 				F4DD94540AFEED9500B0E3AC /* SchemaController.m in Sources */,
 				F458CEB20AFF2442008A20A9 /* SObjectBox.m in Sources */,
 				F4805E0427063B1B005B1C24 /* LoginRowViewItem.m in Sources */,

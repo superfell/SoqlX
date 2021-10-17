@@ -23,17 +23,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class Credential;
+@class LoginRowViewItem;
 
 @protocol LoginRowViewItemDelegate<NSObject>
 @required
--(void)credentialSelected:(Credential*)c;
--(void)deleteCredential:(Credential*)c;
+-(void)loginRowViewItem:(LoginRowViewItem*)i clicked:(id)value;
+-(void)loginRowViewItem:(LoginRowViewItem*)i deleteClicked:(id)value;
 @end
 
-@interface LoginRowViewItem : NSCollectionViewItem
+@interface LoginRowViewItem<ObjectType> : NSCollectionViewItem
 
-@property (strong) Credential *credential;
+@property (retain) NSString *btnTitle;
+@property (retain) ObjectType value;
 @property (weak) NSObject<LoginRowViewItemDelegate> *delegate;
 @property (assign) BOOL deletable;
 

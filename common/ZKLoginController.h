@@ -35,7 +35,7 @@ extern int DEFAULT_API_VERSION;
 -(void)loginControllerLoginCancelled:(ZKLoginController *)controller;
 @end
 
-@interface ZKLoginController : NSObject<LoginTargetItemDelegate, LoginRowViewItemDelegate>
+@interface ZKLoginController : NSObject<LoginTargetControllerDelegate, LoginRowViewItemDelegate>
 +(NSString*)appClientId;
 
 -(void)showLoginSheet:(NSWindow *)modalForWindow;

@@ -19,7 +19,7 @@
 // THE SOFTWARE.
 //
 
-#import "LoginTargetViewItem.h"
+#import "LoginTargetItem.h"
 #import "credential.h"
 
 @implementation LoginTargetItem
@@ -32,25 +32,6 @@
 
 -(NSString*)description {
     return self.url.friendlyHostLabel;
-}
-
-@end
-
-@interface LoginTargetViewItem ()
-@property (strong) IBOutlet NSButton *button;
-@end
-
-@implementation LoginTargetViewItem
-
--(IBAction)onClick:(id)sender {
-    if (self.delegate) {
-        [self.delegate loginTargetSelected:self.target];
-    }
-}
--(IBAction)onDelete:(id)sender {
-    if (self.delegate) {
-        [self.delegate loginTargetDeleted:self.target];
-    }
 }
 
 @end

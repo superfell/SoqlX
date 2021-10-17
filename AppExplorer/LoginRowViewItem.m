@@ -24,8 +24,8 @@
 #import "Defaults.h"
 
 @interface LoginRowViewItem ()
+-(IBAction)click:(id)sender;
 -(IBAction)deleteItem:(id)sender;
--(IBAction)login:(id)sender;
 @property (retain) IBOutlet NSButton *button;
 
 @end
@@ -38,15 +38,15 @@
     [super setSelected:selected];
 }
 
--(void)login:(id)sender {
+-(void)click:(id)sender {
     if (self.delegate) {
-        [self.delegate credentialSelected:self.credential];
+        [self.delegate loginRowViewItem:self clicked:self.value];
     }
 }
 
 -(void)deleteItem:(id)sender {
     if (self.delegate) {
-        [self.delegate deleteCredential:self.credential];
+        [self.delegate loginRowViewItem:self deleteClicked:self.value];
     }
 }
 

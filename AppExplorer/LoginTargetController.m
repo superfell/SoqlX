@@ -50,7 +50,7 @@
 }
 
 -(void)awakeFromNib {
-    [self.targets registerNib:[[NSNib alloc] initWithNibNamed:@"LoginTargetViewItem" bundle:nil] forItemWithIdentifier:@"t"];
+    [self.targets registerNib:[[NSNib alloc] initWithNibNamed:@"LoginRowViewItem" bundle:nil] forItemWithIdentifier:@"t"];
     self.targets.dataSource = self;
     [self setPopupHeight];
 }
@@ -115,8 +115,11 @@
 -(nonnull NSCollectionViewItem *)collectionView:(nonnull NSCollectionView *)collectionView
              itemForRepresentedObjectAtIndexPath:(nonnull NSIndexPath *)indexPath {
 
-    LoginTargetViewItem *i = [collectionView makeItemWithIdentifier:@"t" forIndexPath:indexPath];
-    i.target = self.items[indexPath.item];
+    LoginRowViewItem *i = [collectionView makeItemWithIdentifier:@"t" forIndexPath:indexPath];
+    LoginTargetItem *target = self.items[indexPath.item];
+    i.value = target;
+    i.btnTitle = target.url.friendlyHostLabel;
+    i.deletable = target.deletable;
     i.delegate = self;
     return i;
 }
@@ -125,14 +128,14 @@
     return self.items.count;
 }
 
--(void)loginTargetDeleted:(nonnull LoginTargetItem *)item {
+-(void)loginRowViewItem:(LoginRowViewItem *)i deleteClicked:(LoginTargetItem*)item {
     self.items = [self.items filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"url != %@", item.url]];
     [self.targets reloadData];
     [self setPopupHeight];
     [self setDefaultsFromItems];
 }
 
--(void)loginTargetSelected:(nonnull LoginTargetItem *)item {
+-(void)loginRowViewItem:(LoginRowViewItem *)i clicked:(id)item {
     [self.delegate loginTargetSelected:item];
 }
 

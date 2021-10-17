@@ -28,8 +28,8 @@ DQ
 </string>
                     </buttonCell>
                     <connections>
-                        <action selector="login:" target="30h-ST-WnZ" id="sCs-WE-ZGZ"/>
-                        <binding destination="30h-ST-WnZ" name="title" keyPath="credential.username" id="byb-Fl-gKA"/>
+                        <action selector="click:" target="30h-ST-WnZ" id="feI-4f-NbZ"/>
+                        <binding destination="30h-ST-WnZ" name="title" keyPath="btnTitle" id="Uha-0b-Dfc"/>
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wPn-Ln-xpk">

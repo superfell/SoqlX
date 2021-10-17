@@ -101,14 +101,14 @@ int DEFAULT_API_VERSION = 53;
     [self.savedLogins reloadData];
 }
 
--(void)credentialSelected:(Credential*)c {
-    [self loginWithOAuthToken:c window:self.modalWindow];
+-(void)loginRowViewItem:(LoginRowViewItem*)i clicked:(id)cred {
+    [self loginWithOAuthToken:cred window:self.modalWindow];
 }
 
-- (void)deleteCredential:(nonnull Credential *)c {
-    [self.credDataSource removeItem:c];
+-(void)loginRowViewItem:(LoginRowViewItem*)i deleteClicked:(id)cred {
+    [self.credDataSource removeItem:cred];
     [self.savedLogins reloadData];
-    [c deleteEntry];
+    [cred deleteEntry];
 }
 
 -(void)loadNib {

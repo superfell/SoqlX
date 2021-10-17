@@ -31,20 +31,5 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@protocol LoginTargetItemDelegate <NSObject>
-@required
--(void)loginTargetSelected:(LoginTargetItem*)item;
--(void)loginTargetDeleted:(LoginTargetItem*)item;
-@end
-
-@interface LoginTargetViewItem : NSCollectionViewItem
-
-@property (weak) NSObject<LoginTargetItemDelegate> *delegate;
-@property (strong) LoginTargetItem *target;
-
--(IBAction)onClick:(id)sender;
--(IBAction)onDelete:(id)sender;
-
-@end
 
 NS_ASSUME_NONNULL_END
