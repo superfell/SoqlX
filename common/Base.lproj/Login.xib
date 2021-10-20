@@ -10,6 +10,7 @@
             <connections>
                 <outlet property="credsController" destination="9CP-15-oYM" id="A0W-yB-k6t"/>
                 <outlet property="loginSheet" destination="lpo-xH-vTX" id="px1-is-EtC"/>
+                <outlet property="state" destination="5fO-2t-xdJ" id="FOb-8I-Zwc"/>
                 <outlet property="tabView" destination="Cuu-Gy-qub" id="OM1-e8-Sb7"/>
                 <outlet property="targetController" destination="JHy-iV-NBO" id="A1m-Fm-kW3"/>
             </connections>
@@ -41,7 +42,7 @@
                     <progressIndicator verticalHuggingPriority="750" maxValue="100" doubleValue="22" displayedWhenStopped="NO" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="Om8-X4-spf">
                         <rect key="frame" x="20" y="46" width="346" height="20"/>
                         <connections>
-                            <binding destination="-2" name="animate" keyPath="busy" id="V7P-7q-OZA"/>
+                            <binding destination="5fO-2t-xdJ" name="animate" keyPath="busy" id="eTb-FQ-kFd"/>
                         </connections>
                     </progressIndicator>
                     <tabView verticalHuggingPriority="444" verticalCompressionResistancePriority="250" placeholderIntrinsicWidth="350" placeholderIntrinsicHeight="230" translatesAutoresizingMaskIntoConstraints="NO" id="Cuu-Gy-qub">
@@ -141,7 +142,7 @@
                                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                     <connections>
-                                                        <binding destination="JHy-iV-NBO" name="value" keyPath="populatedDomain" id="RyJ-EK-PYE"/>
+                                                        <binding destination="3mk-Mc-suC" name="value" keyPath="populatedDomain" id="FTE-iK-mPb"/>
                                                     </connections>
                                                 </textField>
                                                 <textField horizontalHuggingPriority="200" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nk4-yc-Yya">
@@ -159,7 +160,7 @@
                                                     </textFieldCell>
                                                     <connections>
                                                         <action selector="addNewUrl:" target="JHy-iV-NBO" id="0ql-h5-gfe"/>
-                                                        <binding destination="JHy-iV-NBO" name="value" keyPath="domain" id="4gH-e1-z66">
+                                                        <binding destination="3mk-Mc-suC" name="value" keyPath="domain" id="E4P-3P-pnw">
                                                             <dictionary key="options">
                                                                 <bool key="NSContinuouslyUpdatesValue" value="YES"/>
                                                             </dictionary>
@@ -225,7 +226,7 @@
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="-2" name="value" keyPath="statusText" id="Y5r-jM-IxK"/>
+                            <binding destination="5fO-2t-xdJ" name="value" keyPath="statusText" id="8cE-jV-Vlv"/>
                         </connections>
                     </textField>
                     <stackView distribution="equalSpacing" orientation="horizontal" alignment="firstBaseline" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9EX-6N-R4Y">
@@ -280,18 +281,21 @@ Gw
                 <outlet property="contentViewController" destination="PQK-UD-2uk" id="7oE-ng-BqG"/>
             </connections>
         </popover>
-        <customObject id="JHy-iV-NBO" customClass="LoginTargetController">
-            <connections>
-                <outlet property="addUrlView" destination="g0K-e3-zq2" id="7op-63-hrw"/>
-                <outlet property="editConstraint" destination="BG3-35-4PV" id="uXP-8z-dex"/>
-                <outlet property="stack" destination="3j4-Fx-cwN" id="9H2-ww-vdk"/>
-            </connections>
-        </customObject>
         <customObject id="9CP-15-oYM" customClass="CredentialsController">
             <connections>
                 <outlet property="stack" destination="oOu-Nu-sxK" id="YGz-nV-cFK"/>
             </connections>
         </customObject>
+        <customObject id="5fO-2t-xdJ" customClass="LoginControllerState"/>
+        <customObject id="JHy-iV-NBO" customClass="LoginTargetController">
+            <connections>
+                <outlet property="addUrlView" destination="g0K-e3-zq2" id="7op-63-hrw"/>
+                <outlet property="editConstraint" destination="BG3-35-4PV" id="uXP-8z-dex"/>
+                <outlet property="stack" destination="3j4-Fx-cwN" id="9H2-ww-vdk"/>
+                <outlet property="state" destination="3mk-Mc-suC" id="HxU-CL-Z76"/>
+            </connections>
+        </customObject>
+        <customObject id="3mk-Mc-suC" customClass="LoginTargetControllerState"/>
     </objects>
     <resources>
         <image name="NSAddTemplate" width="11" height="11"/>

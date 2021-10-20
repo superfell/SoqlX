@@ -31,6 +31,10 @@
 
 @implementation CredentialsController
 
+-(void)dealloc {
+    NSLog(@"CredentialsController dealloc");
+}
+
 -(void)reloadData {
     for (NSView *v in self.stack.arrangedSubviews) {
         [v removeFromSuperview];

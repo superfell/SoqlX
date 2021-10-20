@@ -28,11 +28,30 @@
 
 int DEFAULT_API_VERSION = 53;
 
+// Holds any state that the UI might want to have bindings to.
+// If a UI control has a binding to ZKLoginController directly
+// then this creates a retain cycle and the LoginController
+// instance never gets dealloc'd.
+// Instead we have the UI bind to this separate object to break
+// the retain cycle.
+@interface LoginControllerState : NSObject
+@property (strong) NSString *statusText;
+@property (assign) BOOL busy;
+@end
+@implementation LoginControllerState
+-(void)setIdle {
+    self.statusText = @"";
+    self.busy = NO;
+}
+-(void)setWorking:(NSString*)msg {
+    self.statusText = msg;
+    self.busy = true;
+}
+@end
+
 @interface ZKLoginController()
 
 // items in the UI using bindings read these and drive the UI
-@property (strong) NSString *statusText;
-@property (assign) BOOL busy;
 -(IBAction)showLoginHelp:(id)sender;
 
 @property (strong) NSWindow *modalWindow;
@@ -40,6 +59,7 @@ int DEFAULT_API_VERSION = 53;
 @property (strong) IBOutlet NSTabView *tabView;
 @property (strong) IBOutlet LoginTargetController *targetController;
 @property (strong) IBOutlet CredentialsController *credsController;
+@property (strong) IBOutlet LoginControllerState  *state;
 
 -(void)closeLoginUi;
 
@@ -99,8 +119,7 @@ int DEFAULT_API_VERSION = 53;
 }
 
 -(void)closeLoginUi {
-    self.busy = FALSE;
-    self.statusText = @"";
+    [self.state setIdle];
     if (self.modalWindow != nil) {
         [NSApp endSheet:self.loginSheet];
         [self.loginSheet orderOut:self];
@@ -151,7 +170,7 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
 
     // ask the OS to open browser to the URL
     [[NSWorkspace sharedWorkspace] openURL:url];
-    self.statusText = @"Complete the login/authorization in the browser";
+    self.state.statusText = @"Complete the login/authorization in the browser";
 }
 
 -(void)loginTargetDeleted:(NSURL *)item {
@@ -184,12 +203,11 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
     }
     // This call is used to validate that we were given a valid client, and that the auth info is usable.
     // This also ensures that the userInfo is cached, which subsequent code relies on.
-    self.busy = TRUE;
-    self.statusText = @"Verifying OAuth tokens";
+    [self.state setWorking:@"Verifying OAuth tokens"];
     [self oauthCurrentUserInfoWithDowngrade:c
                                   failBlock:^(NSError *result) {
-        self.busy = FALSE;
-        self.statusText = result.localizedDescription;
+        [self.state setIdle];
+        self.state.statusText = result.localizedDescription;
         [[NSAlert alertWithError:result] runModal];
 
     } completeBlock:^(ZKUserInfo *result) {
@@ -254,11 +272,10 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
     if (self.modalWindow == nil) {
         [self showLoginSheet:modalForWindow];
     }
-    [self setStatusText:@"Logging in from saved OAuth token"];
-    self.busy = TRUE;
+    [self.state setWorking:@"Logging in from saved OAuth token"];
     ZKFailWithErrorBlock failBlock = ^(NSError *err) {
-        self.statusText = [NSString stringWithFormat:@"Refresh token no longer valid: %@", err.localizedDescription];
-        self.busy = FALSE;
+        self.state.statusText = [NSString stringWithFormat:@"Refresh token no longer valid: %@", err.localizedDescription];
+        self.state.busy = FALSE;
     };
 
     ZKSforceClient *c = [self newClient:self.preferedApiVersion];

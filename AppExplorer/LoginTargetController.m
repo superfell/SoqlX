@@ -23,20 +23,26 @@
 #import "Defaults.h"
 #import "credential.h"
 
-@interface LoginTargetController()
-@property (retain) IBOutlet NSStackView *stack;
-@property (retain) IBOutlet NSView      *addUrlView;
-@property (retain) IBOutlet NSLayoutConstraint *editConstraint;
-
-@property (retain) NSMutableArray<NSURL*>*items;
-@property (retain) NSMutableArray<LoginRowViewItem*>*rows;
-
+// See note in ZKLoginController for why this exists, and is not just on
+// LoginTargetController directly.
+@interface LoginTargetControllerState : NSObject
 // for the add domain widget
 @property (retain) NSString *domain;
 @property (readonly) NSString *populatedDomain;
 @end
 
-@implementation LoginTargetController
+@interface LoginTargetController()
+@property (retain) IBOutlet NSStackView *stack;
+@property (retain) IBOutlet NSView      *addUrlView;
+@property (retain) IBOutlet NSLayoutConstraint *editConstraint;
+@property (retain) IBOutlet LoginTargetControllerState *state;
+
+@property (retain) NSMutableArray<NSURL*>*items;
+@property (retain) NSMutableArray<LoginRowViewItem*>*rows;
+
+@end
+
+@implementation LoginTargetControllerState
 
 +(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
     NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
@@ -45,6 +51,15 @@
     }
     return paths;
 }
+-(void)awakeFromNib {
+    self.domain = @"";
+}
+-(NSString*)populatedDomain {
+    return [NSString stringWithFormat:@"https://%@.my.salesforce.com", self.domain == nil ? @"" : self.domain];
+}
+@end
+
+@implementation LoginTargetController
 
 -(instancetype)init {
     self = [super init];
@@ -66,8 +81,11 @@
     return self;
 }
 
+-(void)dealloc {
+    NSLog(@"LoginTargetController dealloc");
+}
+
 -(void)awakeFromNib {
-    self.domain = @"";
     self.addUrlView.hidden = YES;
     self.editConstraint.priority = 1000;
 }
@@ -113,18 +131,14 @@
     }];
 }
 
--(NSString*)populatedDomain {
-    return [NSString stringWithFormat:@"https://%@.my.salesforce.com", self.domain == nil ? @"" : self.domain];
-}
-
 -(IBAction)addNewUrl:(id)sender {
     if (!self.isEditing) {
         // the text field submits when it gets hidden if it has focus
         // (guess it submits on loss of focus). So skip those.
         return;
     }
-    if (self.domain.length > 0) {
-        NSURL *url = [NSURL URLWithString:self.populatedDomain];
+    if (self.state.domain.length > 0) {
+        NSURL *url = [NSURL URLWithString:self.state.populatedDomain];
         NSUInteger existingIdx = [self.items indexOfObject:url];
         if (existingIdx != NSNotFound) {
             NSAlert *a = [[NSAlert alloc] init];
