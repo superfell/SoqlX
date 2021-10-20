@@ -27,7 +27,8 @@
 -(IBAction)click:(id)sender;
 -(IBAction)deleteItem:(id)sender;
 @property (retain) IBOutlet NSButton *button;
-
+@property (retain) IBOutlet NSLayoutConstraint *delWidthConstraint;
+@property (assign) BOOL isDeletable;
 @end
 
 @implementation LoginRowViewItem
@@ -37,6 +38,32 @@
     NSNib *rowNib = [[NSNib alloc] initWithNibNamed:@"LoginRowViewItem" bundle:nil];
     [rowNib instantiateWithOwner:self topLevelObjects:nil];
     return self;
+}
+
+-(void)dealloc {
+    NSLog(@"LoginRowViewItem dealloc");
+}
+
+-(void)awakeFromNib {
+    self.delWidthConstraint.constant = 0;
+    self.isDeletable = NO;
+}
+
+-(void)setTitle:(NSString*)t {
+    self.button.title = t;
+}
+-(NSString*)title {
+    return self.button.title;
+}
+
+-(void)setDeletable:(BOOL)deletable {
+    self.isDeletable = deletable;
+    self.delWidthConstraint.constant = deletable ? 24 : 0;
+    [self.view layoutSubtreeIfNeeded];
+}
+
+-(BOOL)deletable {
+    return self.isDeletable;
 }
 
 -(void)click:(id)sender {

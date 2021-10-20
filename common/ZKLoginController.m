@@ -60,6 +60,10 @@ int DEFAULT_API_VERSION = 53;
     return self;
 }
 
+-(void)dealloc {
+    NSLog(@"LoginController dealloc");
+}
+
 -(void)awakeFromNib {
     self.credsController.delegate = self;
     [self.credsController reloadData];

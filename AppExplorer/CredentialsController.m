@@ -50,7 +50,7 @@
         for (Credential *c in serverCreds) {
             LoginRowViewItem *vi = [[LoginRowViewItem alloc] init];
             vi.value = c;
-            vi.btnTitle = c.username;
+            vi.title = c.username;
             vi.delegate = self;
             [vi.view setContentHuggingPriority:NSLayoutPriorityDefaultHigh forOrientation:NSLayoutConstraintOrientationVertical];
             [vi.view setContentHuggingPriority:100 forOrientation:NSLayoutConstraintOrientationHorizontal];

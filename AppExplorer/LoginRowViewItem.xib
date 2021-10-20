@@ -9,16 +9,17 @@
         <customObject id="-2" userLabel="File's Owner" customClass="LoginRowViewItem">
             <connections>
                 <outlet property="button" destination="whE-rG-E9J" id="Hep-Cx-pfJ"/>
+                <outlet property="delWidthConstraint" destination="5G7-rM-tac" id="RTb-MM-UUU"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="Pf9-a9-vEc"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView translatesAutoresizingMaskIntoConstraints="NO" id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="300" height="25"/>
+            <rect key="frame" x="0.0" y="0.0" width="300" height="26"/>
             <subviews>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="whE-rG-E9J">
-                    <rect key="frame" x="0.0" y="-1" width="300" height="27"/>
+                    <rect key="frame" x="0.0" y="2" width="268" height="22"/>
                     <buttonCell key="cell" type="smallSquare" title="Button" bezelStyle="smallSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="LlW-v7-dP9">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
@@ -28,13 +29,12 @@ CA
                     </buttonCell>
                     <connections>
                         <action selector="click:" target="-2" id="3gV-AZ-JHw"/>
-                        <binding destination="-2" name="title" keyPath="btnTitle" id="DQZ-XQ-61W"/>
                     </connections>
                 </button>
-                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wPn-Ln-xpk">
-                    <rect key="frame" x="274" y="1" width="24" height="24"/>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wPn-Ln-xpk" userLabel="del">
+                    <rect key="frame" x="276" y="1" width="24" height="24"/>
                     <constraints>
-                        <constraint firstAttribute="width" secondItem="wPn-Ln-xpk" secondAttribute="height" multiplier="1:1" id="9mV-C8-WIb"/>
+                        <constraint firstAttribute="width" constant="24" id="5G7-rM-tac"/>
                         <constraint firstAttribute="height" constant="24" id="fE9-m2-AZu"/>
                     </constraints>
                     <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="delete" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="fLu-xx-ZTi">
@@ -43,23 +43,17 @@ CA
                     </buttonCell>
                     <connections>
                         <action selector="deleteItem:" target="-2" id="LfC-7v-ReV"/>
-                        <binding destination="-2" name="hidden" keyPath="deletable" id="mB3-D0-J9m">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">NSNegateBoolean</string>
-                            </dictionary>
-                        </binding>
                     </connections>
                 </button>
             </subviews>
             <constraints>
-                <constraint firstAttribute="height" constant="25" id="9TE-Fv-Vtr"/>
-                <constraint firstItem="whE-rG-E9J" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="Bss-5x-64x"/>
-                <constraint firstAttribute="trailing" secondItem="whE-rG-E9J" secondAttribute="trailing" id="ChS-kY-a3N"/>
+                <constraint firstAttribute="height" constant="26" id="9TE-Fv-Vtr"/>
+                <constraint firstItem="wPn-Ln-xpk" firstAttribute="leading" secondItem="whE-rG-E9J" secondAttribute="trailing" constant="8" symbolic="YES" id="ChS-kY-a3N"/>
+                <constraint firstItem="wPn-Ln-xpk" firstAttribute="centerY" secondItem="Hz6-mo-xeY" secondAttribute="centerY" id="Coc-Mw-r4M"/>
                 <constraint firstItem="whE-rG-E9J" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="FLK-bK-gfh"/>
-                <constraint firstAttribute="bottom" secondItem="whE-rG-E9J" secondAttribute="bottom" id="JYn-ei-ztv"/>
                 <constraint firstAttribute="width" constant="300" id="QAz-6R-Uer"/>
-                <constraint firstItem="wPn-Ln-xpk" firstAttribute="centerY" secondItem="Hz6-mo-xeY" secondAttribute="centerY" id="fga-cy-dgA"/>
-                <constraint firstAttribute="trailing" secondItem="wPn-Ln-xpk" secondAttribute="trailing" constant="2" id="r6P-l7-Fcy"/>
+                <constraint firstItem="whE-rG-E9J" firstAttribute="centerY" secondItem="Hz6-mo-xeY" secondAttribute="centerY" id="dBP-TZ-aAA"/>
+                <constraint firstAttribute="trailing" secondItem="wPn-Ln-xpk" secondAttribute="trailing" id="r6P-l7-Fcy"/>
             </constraints>
             <point key="canvasLocation" x="-240.5" y="128.5"/>
         </customView>

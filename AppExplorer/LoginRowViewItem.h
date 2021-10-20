@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LoginRowViewItem<ObjectType> : NSObject
 
-@property (retain) NSString *btnTitle;
+@property (retain) NSString *title;
 @property (retain) ObjectType value;
 @property (weak) NSObject<LoginRowViewItemDelegate> *delegate;
 @property (assign) BOOL deletable;

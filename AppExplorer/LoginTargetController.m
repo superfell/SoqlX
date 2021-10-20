@@ -28,8 +28,8 @@
 @property (retain) IBOutlet NSView      *addUrlView;
 @property (retain) IBOutlet NSLayoutConstraint *editConstraint;
 
-@property (retain) NSArray<NSURL*>*items;
-@property (retain) NSArray<LoginRowViewItem*>*rows;
+@property (retain) NSMutableArray<NSURL*>*items;
+@property (retain) NSMutableArray<LoginRowViewItem*>*rows;
 
 // for the add domain widget
 @property (retain) NSString *domain;
@@ -67,8 +67,18 @@
 }
 
 -(void)awakeFromNib {
-    self.addUrlView.hidden = YES;
     self.domain = @"";
+    self.addUrlView.hidden = YES;
+    self.editConstraint.priority = 1000;
+}
+
+-(LoginRowViewItem*)makeItem:(NSURL*)url {
+    LoginRowViewItem<NSURL*> *vi = [[LoginRowViewItem alloc] init];
+    vi.value = url;
+    vi.title = url.friendlyHostLabel;
+    vi.delegate = self;
+    vi.deletable = self.isEditing && (!url.isStandardEndpoint);
+    return vi;
 }
 
 -(void)reloadData {
@@ -77,15 +87,10 @@
     }
     NSMutableArray *rows = [NSMutableArray arrayWithCapacity:self.items.count];
     for (NSURL *url in self.items) {
-        LoginRowViewItem<NSURL*> *vi = [[LoginRowViewItem alloc] init];
-        vi.value = url;
-        vi.btnTitle = url.friendlyHostLabel;
-        vi.delegate = self;
-        vi.deletable = self.isEditing && (!url.isStandardEndpoint);
+        LoginRowViewItem<NSURL*> *vi = [self makeItem:url];
         [self.stack addArrangedSubview:vi.view];
         [rows addObject:vi];
     }
-    self.editConstraint.priority = 1000;
     self.rows = rows;
 }
 
@@ -96,11 +101,16 @@
 
 -(IBAction)toggleEditing:(id)sender {
     self.isEditing = !self.isEditing;
-    for (LoginRowViewItem<NSURL*>* row in self.rows) {
-        row.deletable = self.isEditing && (!row.value.isStandardEndpoint);
-    }
-    self.addUrlView.hidden = !self.isEditing;
-    self.editConstraint.priority = self.isEditing ? 333 : 1000;
+    [NSAnimationContext runAnimationGroup:^(NSAnimationContext * _Nonnull ctx) {
+        ctx.duration = 0.25;
+        ctx.allowsImplicitAnimation = YES;
+        for (LoginRowViewItem<NSURL*>* row in self.rows) {
+            row.deletable = self.isEditing && (!row.value.isStandardEndpoint);
+        }
+        self.addUrlView.hidden = !self.isEditing;
+        self.editConstraint.priority = self.isEditing ? 333 : 1000;
+        [self.addUrlView.superview layoutSubtreeIfNeeded];
+    }];
 }
 
 -(NSString*)populatedDomain {
@@ -108,6 +118,11 @@
 }
 
 -(IBAction)addNewUrl:(id)sender {
+    if (!self.isEditing) {
+        // the text field submits when it gets hidden if it has focus
+        // (guess it submits on loss of focus). So skip those.
+        return;
+    }
     if (self.domain.length > 0) {
         NSURL *url = [NSURL URLWithString:self.populatedDomain];
         NSUInteger existingIdx = [self.items indexOfObject:url];
@@ -119,9 +134,12 @@
             [a runModal];
             return;
         }
-        self.items = [self.items arrayByAddingObject:url];
+        [self.items addObject:url];
         [self setDefaultsFromItems];
-        [self reloadData];
+        LoginRowViewItem*row = [self makeItem:url];
+        NSLog(@"created new row %@ %@ %p", row.class, row, row);
+        [self.stack addArrangedSubview:row.view];
+        [self.rows addObject:row];
     } else {
         NSAlert *a = [[NSAlert alloc] init];
         a.alertStyle = NSAlertStyleWarning;
@@ -132,11 +150,18 @@
 }
 
 -(void)loginRowViewItem:(LoginRowViewItem *)i deleteClicked:(NSURL*)item {
-    NSMutableArray<NSURL*>* items = self.items.mutableCopy;
-    [items removeObject:item];
-    self.items = items.copy;
+    [self.items removeObject:item];
     [self setDefaultsFromItems];
-    [self reloadData];
+    NSUInteger rowIdx = [self.rows indexOfObjectPassingTest:^BOOL(LoginRowViewItem * _Nonnull r, NSUInteger idx, BOOL * _Nonnull stop) {
+        return [r.value isEqual:item];
+    }];
+    if (rowIdx != NSNotFound) {
+        // This will animate the view out of the stack.
+        self.rows[rowIdx].view.hidden = YES;
+        [self.rows removeObjectAtIndex:rowIdx];
+    } else {
+        NSLog(@"server %@ deleted, but not found in rows", item.friendlyHostLabel);
+    }
 }
 
 -(void)loginRowViewItem:(LoginRowViewItem *)i clicked:(NSURL*)item {
