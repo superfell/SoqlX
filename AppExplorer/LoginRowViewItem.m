@@ -32,10 +32,11 @@
 
 @implementation LoginRowViewItem
 
--(void)setSelected:(BOOL)selected {
-    self.button.keyEquivalentModifierMask = 0;
-    self.button.keyEquivalent = selected ? @"\r" : @"";
-    [super setSelected:selected];
+-(instancetype)init {
+    self = [super init];
+    NSNib *rowNib = [[NSNib alloc] initWithNibNamed:@"LoginRowViewItem" bundle:nil];
+    [rowNib instantiateWithOwner:self topLevelObjects:nil];
+    return self;
 }
 
 -(void)click:(id)sender {

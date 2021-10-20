@@ -18,18 +18,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#import <Cocoa/Cocoa.h>
+
+
+#import <Foundation/Foundation.h>
+#import "LoginRowViewItem.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface LoginTargetItem : NSObject
+@interface CredentialsController : NSObject<LoginRowViewItemDelegate>
+@property (weak) NSObject<LoginRowViewItemDelegate> *delegate;
+@property (readonly) BOOL hasSavedCredentials;
+@property (assign) BOOL isEditing;
 
-+(instancetype)itemWithUrl:(NSURL*)u;
-
-@property (strong) NSURL    *url;
-@property (assign) BOOL     deletable;
-
+-(IBAction)toggleEditing:(id)sender;
+-(void)reloadData;
 @end
-
 
 NS_ASSUME_NONNULL_END

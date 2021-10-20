@@ -22,8 +22,9 @@
 #import "ZKLoginController.h"
 #import <ZKSforce/ZKSforce.h>
 #import "credential.h"
-#import "CredentialsDataSource.h"
+#import "CredentialsController.h"
 #import "Defaults.h"
+#import "NSArray+Partition.h"
 
 int DEFAULT_API_VERSION = 53;
 
@@ -32,39 +33,19 @@ int DEFAULT_API_VERSION = 53;
 // items in the UI using bindings read these and drive the UI
 @property (strong) NSString *statusText;
 @property (assign) BOOL busy;
-@property (readonly) BOOL hasSavedCredentials;
-@property (assign) BOOL isEditing;
--(NSString*)sheetHeaderText;
--(NSString*)welcomeText;
--(IBAction)toggleEditing:(id)sender;
 -(IBAction)showLoginHelp:(id)sender;
-
 
 @property (strong) NSWindow *modalWindow;
 @property (strong) IBOutlet NSWindow *loginSheet;
-@property (strong) IBOutlet NSCollectionView *savedLogins;
-@property (strong) IBOutlet NSPopover *loginDest;
-@property (strong) IBOutlet NSButton *loginButton;
+@property (strong) IBOutlet NSTabView *tabView;
 @property (strong) IBOutlet LoginTargetController *targetController;
--(IBAction)startOAuthLogin:(id)sender;
+@property (strong) IBOutlet CredentialsController *credsController;
+
 -(void)closeLoginUi;
-
-
-@property (strong) Credential *selectedCredential;
-@property (strong) CredentialsDataSource *credDataSource;
 
 @end
 
 @implementation ZKLoginController
-
-+(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
-    NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
-    if ([key isEqualToString:@"hasSavedCredentials"]
-        || [key isEqualToString:@"sheetHeaderText"]) {
-        return [paths setByAddingObject:@"credDataSource"];
-    }
-    return paths;
-}
 
 +(NSString*)appClientId {
     NSDictionary *plist = [[NSBundle mainBundle] infoDictionary];
@@ -80,25 +61,15 @@ int DEFAULT_API_VERSION = 53;
 }
 
 -(void)awakeFromNib {
-    [self.savedLogins registerNib:[[NSNib alloc] initWithNibNamed:@"LoginRowViewItem" bundle:nil] forItemWithIdentifier:@"row"];
-    [self.savedLogins registerNib:[[NSNib alloc] initWithNibNamed:@"LoginHeaderRowViewItem" bundle:nil]
-         forSupplementaryViewOfKind:NSCollectionElementKindSectionHeader
-                     withIdentifier:@"h"];
-    self.savedLogins.selectable = YES;
-    self.credDataSource = [[CredentialsDataSource alloc] initWithCreds:[Credential credentialsInMruOrder]];
-    self.credDataSource.delegate = self;
-    self.savedLogins.dataSource = self.credDataSource;
+    self.credsController.delegate = self;
+    [self.credsController reloadData];
     self.targetController.delegate = self;
-}
-
--(BOOL)hasSavedCredentials {
-    return self.credDataSource.items.count > 0;
-}
-
--(IBAction)toggleEditing:(id)sender {
-    self.isEditing = !self.isEditing;
-    self.credDataSource.isEditing = self.isEditing;
-    [self.savedLogins reloadData];
+    [self.targetController reloadData];
+    if (self.credsController.hasSavedCredentials) {
+        [self.tabView selectTabViewItemWithIdentifier:@"Saved"];
+    } else {
+        [self.tabView selectTabViewItemWithIdentifier:@"New"];
+    }
 }
 
 -(void)loginRowViewItem:(LoginRowViewItem*)i clicked:(id)cred {
@@ -106,9 +77,6 @@ int DEFAULT_API_VERSION = 53;
 }
 
 -(void)loginRowViewItem:(LoginRowViewItem*)i deleteClicked:(id)cred {
-    [self.credDataSource removeItem:cred];
-    [self.savedLogins reloadData];
-    [cred deleteEntry];
 }
 
 -(void)loadNib {
@@ -123,20 +91,6 @@ int DEFAULT_API_VERSION = 53;
 - (void)showLoginSheet:(NSWindow *)modalForWindow {
     [self loadNib];
     self.modalWindow = modalForWindow;
-    // TODO: can auto layout handle this now?
-    NSSize fr = self.loginSheet.contentView.frame.size;
-    NSSize visSize = self.savedLogins.frame.size;
-    NSSize allItems = self.savedLogins.collectionViewLayout.collectionViewContentSize;
-    CGFloat newHeight = MAX(260.0, fr.height - visSize.height + allItems.height);
-    [self.loginSheet setContentSize:NSMakeSize(fr.width, newHeight)];
- 
-    // This reloadData shouldn't be needed, but without it, the section header sometimes
-    // get placed over the first item, not above it.
-    [self.savedLogins reloadData];
-    if (self.credDataSource.items.count > 0) {
-        NSIndexPath *first = [NSIndexPath indexPathForItem:0 inSection:0];
-        [self.savedLogins setSelectionIndexPaths:[NSSet setWithObject:first]];
-    }
     [modalForWindow beginSheet:self.loginSheet completionHandler:nil];
 }
 
@@ -181,12 +135,7 @@ int DEFAULT_API_VERSION = 53;
 
 static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoHQhmqzBxALj8UBnhjzntUVXdcdZFXATXCdevs";
 
--(IBAction)startOAuthLogin:(id)sender {
-    NSRect btnRect = self.loginButton.bounds;
-    [self.loginDest showRelativeToRect:btnRect ofView:self.loginButton preferredEdge:NSRectEdgeMaxX];
-}
-
--(void)loginTargetSelected:(LoginTargetItem*)item {
+-(void)loginTargetSelected:(NSURL *)item {
     NSString *cb = @"soqlx://oauth/";
     // build the URL to the oauth page with our client_id & callback URL set.
     NSCharacterSet *urlcs = [NSCharacterSet URLQueryAllowedCharacterSet];
@@ -194,16 +143,14 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
                        [OAUTH_CID stringByAddingPercentEncodingWithAllowedCharacters:urlcs],
                        [cb stringByAddingPercentEncodingWithAllowedCharacters:urlcs],
                        [self.controllerId stringByAddingPercentEncodingWithAllowedCharacters:urlcs]];
-    NSURL *url = [NSURL URLWithString:path relativeToURL:item.url];
+    NSURL *url = [NSURL URLWithString:path relativeToURL:item];
 
     // ask the OS to open browser to the URL
     [[NSWorkspace sharedWorkspace] openURL:url];
     self.statusText = @"Complete the login/authorization in the browser";
-    // close the login target popup
-    [self.loginDest performClose:self];
 }
 
--(void)loginTargetDeleted:(nonnull LoginTargetItem *)item {
+-(void)loginTargetDeleted:(NSURL *)item {
     // we don't care
 }
 
@@ -326,19 +273,9 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
     }];
 }
 
--(NSString*)welcomeText {
-    return NSLocalizedString(@"WelcomeText", @"text shown in the login sheet when there's no saved credentials");
-}
-
 -(IBAction)showLoginHelp:(id)sender {
     NSString *help = [NSBundle mainBundle].infoDictionary[@"ZKHelpLoginUrl"];
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:help]];
-}
-
--(NSString*)sheetHeaderText {
-    return self.hasSavedCredentials ?
-        NSLocalizedString(@"SheetHeaderLogins", @"show on the login sheet when there are saved logins") :
-        NSLocalizedString(@"SheetHeaderWelcome", @"shown on the login sheet when there are no saved logins");
 }
 
 @end

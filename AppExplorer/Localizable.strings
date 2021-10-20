@@ -1,5 +1,5 @@
 /* text shown in the login sheet when there's no saved credentials */
-"WelcomeText" = "Click the 'New Login' button below to start the login/authorization process.";
+"WelcomeText" = "Click one of server buttons below to start the login/authorization process.";
 
 /* text shown in the login sheet title based on if there are saved logins or not */
 "SheetHeaderLogins" = "Saved Logins";

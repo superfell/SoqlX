@@ -31,12 +31,14 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)loginRowViewItem:(LoginRowViewItem*)i deleteClicked:(id)value;
 @end
 
-@interface LoginRowViewItem<ObjectType> : NSCollectionViewItem
+@interface LoginRowViewItem<ObjectType> : NSObject
 
 @property (retain) NSString *btnTitle;
 @property (retain) ObjectType value;
 @property (weak) NSObject<LoginRowViewItemDelegate> *delegate;
 @property (assign) BOOL deletable;
+
+@property (retain) IBOutlet NSView *view;
 
 @end
 

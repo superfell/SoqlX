@@ -13,7 +13,6 @@
 		DFE42AEE94210F1BB1E1DFCD /* Pods_SoqlXplorerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D5A96B45D611A7235D41491 /* Pods_SoqlXplorerTests.framework */; };
 		F406D29A27080424008A0CCC /* NSArray+Partition.m in Sources */ = {isa = PBXBuildFile; fileRef = F406D29927080424008A0CCC /* NSArray+Partition.m */; };
 		F406D2A92708083D008A0CCC /* LoginHeaderRowViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = F406D2A72708083D008A0CCC /* LoginHeaderRowViewItem.xib */; };
-		F406D2AE27081C0D008A0CCC /* CredentialsDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = F406D2AD27081C0D008A0CCC /* CredentialsDataSource.m */; };
 		F412575D0B098593001622AC /* WeightedSObject.m in Sources */ = {isa = PBXBuildFile; fileRef = F412575B0B098593001622AC /* WeightedSObject.m */; };
 		F412DE1721B341D300D8889F /* SessionIdAuthInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F412DE1621B341D300D8889F /* SessionIdAuthInfo.m */; };
 		F413C6540AACABD5000A8CDC /* DataSources.m in Sources */ = {isa = PBXBuildFile; fileRef = F413C6530AACABD5000A8CDC /* DataSources.m */; };
@@ -45,7 +44,6 @@
 		F4805E0427063B1B005B1C24 /* LoginRowViewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = F4805E0227063B1B005B1C24 /* LoginRowViewItem.m */; };
 		F4805E0527063B1B005B1C24 /* LoginRowViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4805E0327063B1B005B1C24 /* LoginRowViewItem.xib */; };
 		F4805E0D27066606005B1C24 /* LoginTargetController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4805E0C27066606005B1C24 /* LoginTargetController.m */; };
-		F4805E1327066742005B1C24 /* LoginTargetItem.m in Sources */ = {isa = PBXBuildFile; fileRef = F4805E1127066742005B1C24 /* LoginTargetItem.m */; };
 		F48804CB2592ADE7001D56F6 /* Describer.m in Sources */ = {isa = PBXBuildFile; fileRef = F48804CA2592ADE7001D56F6 /* Describer.m */; };
 		F48804D92592BB33001D56F6 /* CaseInsensitiveStringKey.m in Sources */ = {isa = PBXBuildFile; fileRef = F48804D82592BB33001D56F6 /* CaseInsensitiveStringKey.m */; };
 		F48804DD2592BE57001D56F6 /* CaseInsensitiveKeyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F48804DC2592BE57001D56F6 /* CaseInsensitiveKeyTest.m */; };
@@ -64,7 +62,7 @@
 		F4A2B90B271B3A0D00C20A42 /* QueryResultTableTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A2B90A271B3A0D00C20A42 /* QueryResultTableTest.m */; };
 		F4A2B90E271B3B4C00C20A42 /* QueryResultTable.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CF71F30D4704EE001001F2 /* QueryResultTable.m */; };
 		F4A2B910271B3B6100C20A42 /* SObjectSortDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D8DC86256AD4E2002C9FC1 /* SObjectSortDescriptor.m */; };
-		F4A2B932271B930F00C20A42 /* ZKCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A2B931271B930E00C20A42 /* ZKCollectionView.m */; };
+		F4A2B962271F334700C20A42 /* CredentialsController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A2B961271F334700C20A42 /* CredentialsController.m */; };
 		F4A62E2F0D31AC6300D7EACA /* NSView_additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F4A62E2E0D31AC6300D7EACA /* NSView_additions.m */; };
 		F4AC556715996D8500F5CA45 /* zkApexClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F4AC555A15996D8500F5CA45 /* zkApexClient.m */; };
 		F4AC556815996D8500F5CA45 /* ZKCodeCoverageResult.m in Sources */ = {isa = PBXBuildFile; fileRef = F4AC555C15996D8500F5CA45 /* ZKCodeCoverageResult.m */; };
@@ -272,8 +270,6 @@
 		F406D29827080424008A0CCC /* NSArray+Partition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSArray+Partition.h"; sourceTree = "<group>"; };
 		F406D29927080424008A0CCC /* NSArray+Partition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSArray+Partition.m"; sourceTree = "<group>"; };
 		F406D2A72708083D008A0CCC /* LoginHeaderRowViewItem.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LoginHeaderRowViewItem.xib; sourceTree = "<group>"; };
-		F406D2AC27081C0D008A0CCC /* CredentialsDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CredentialsDataSource.h; sourceTree = "<group>"; };
-		F406D2AD27081C0D008A0CCC /* CredentialsDataSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CredentialsDataSource.m; sourceTree = "<group>"; };
 		F4119DAC237BCED0003E3134 /* SoqlXplorer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SoqlXplorer.entitlements; sourceTree = "<group>"; };
 		F412575A0B098593001622AC /* WeightedSObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WeightedSObject.h; sourceTree = "<group>"; };
 		F412575B0B098593001622AC /* WeightedSObject.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WeightedSObject.m; sourceTree = "<group>"; };
@@ -315,8 +311,6 @@
 		F4805E0327063B1B005B1C24 /* LoginRowViewItem.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LoginRowViewItem.xib; sourceTree = "<group>"; };
 		F4805E0B27066606005B1C24 /* LoginTargetController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoginTargetController.h; sourceTree = "<group>"; };
 		F4805E0C27066606005B1C24 /* LoginTargetController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoginTargetController.m; sourceTree = "<group>"; };
-		F4805E1027066742005B1C24 /* LoginTargetItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoginTargetItem.h; sourceTree = "<group>"; };
-		F4805E1127066742005B1C24 /* LoginTargetItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoginTargetItem.m; sourceTree = "<group>"; };
 		F48804C92592ADE7001D56F6 /* Describer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Describer.h; sourceTree = "<group>"; };
 		F48804CA2592ADE7001D56F6 /* Describer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Describer.m; sourceTree = "<group>"; };
 		F48804D72592BB33001D56F6 /* CaseInsensitiveStringKey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CaseInsensitiveStringKey.h; sourceTree = "<group>"; };
@@ -339,8 +333,8 @@
 		F4A2B8FD2718AF3500C20A42 /* ZKQueryResult+Display.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZKQueryResult+Display.h"; sourceTree = "<group>"; };
 		F4A2B8FE2718AF3600C20A42 /* ZKQueryResult+Display.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ZKQueryResult+Display.m"; sourceTree = "<group>"; };
 		F4A2B90A271B3A0D00C20A42 /* QueryResultTableTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QueryResultTableTest.m; sourceTree = "<group>"; };
-		F4A2B930271B930E00C20A42 /* ZKCollectionView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZKCollectionView.h; sourceTree = "<group>"; };
-		F4A2B931271B930E00C20A42 /* ZKCollectionView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZKCollectionView.m; sourceTree = "<group>"; };
+		F4A2B960271F334700C20A42 /* CredentialsController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CredentialsController.h; sourceTree = "<group>"; };
+		F4A2B961271F334700C20A42 /* CredentialsController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CredentialsController.m; sourceTree = "<group>"; };
 		F4A62E2D0D31AC6300D7EACA /* NSView_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSView_additions.h; sourceTree = "<group>"; };
 		F4A62E2E0D31AC6300D7EACA /* NSView_additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSView_additions.m; sourceTree = "<group>"; };
 		F4AC555915996D8500F5CA45 /* zkApexClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zkApexClient.h; path = ../apexforce/zkApexClient.h; sourceTree = "<group>"; };
@@ -710,11 +704,9 @@
 			children = (
 				F4CD3DAA0B85701100084479 /* ZKLoginController.h */,
 				F4CD3DAB0B85701100084479 /* ZKLoginController.m */,
-				F4A2B930271B930E00C20A42 /* ZKCollectionView.h */,
-				F4A2B931271B930E00C20A42 /* ZKCollectionView.m */,
+				F4A2B960271F334700C20A42 /* CredentialsController.h */,
+				F4A2B961271F334700C20A42 /* CredentialsController.m */,
 				F4F0D5D2270A719B00C53B0C /* Login.xib */,
-				F406D2AC27081C0D008A0CCC /* CredentialsDataSource.h */,
-				F406D2AD27081C0D008A0CCC /* CredentialsDataSource.m */,
 				F4805E0127063B1B005B1C24 /* LoginRowViewItem.h */,
 				F4805E0227063B1B005B1C24 /* LoginRowViewItem.m */,
 				F4805E0327063B1B005B1C24 /* LoginRowViewItem.xib */,
@@ -727,8 +719,6 @@
 				F412DE1621B341D300D8889F /* SessionIdAuthInfo.m */,
 				F4805E0B27066606005B1C24 /* LoginTargetController.h */,
 				F4805E0C27066606005B1C24 /* LoginTargetController.m */,
-				F4805E1027066742005B1C24 /* LoginTargetItem.h */,
-				F4805E1127066742005B1C24 /* LoginTargetItem.m */,
 			);
 			name = Login;
 			sourceTree = "<group>";
@@ -1135,11 +1125,11 @@
 				F4DD944B0AFEEC9400B0E3AC /* SchemaView.m in Sources */,
 				F424A81D262B595C00AD4F42 /* SoqlTokenizer.m in Sources */,
 				F48804D92592BB33001D56F6 /* CaseInsensitiveStringKey.m in Sources */,
-				F4805E1327066742005B1C24 /* LoginTargetItem.m in Sources */,
 				F4DD94540AFEED9500B0E3AC /* SchemaController.m in Sources */,
 				F458CEB20AFF2442008A20A9 /* SObjectBox.m in Sources */,
 				F4805E0427063B1B005B1C24 /* LoginRowViewItem.m in Sources */,
 				F4805E0D27066606005B1C24 /* LoginTargetController.m in Sources */,
+				F4A2B962271F334700C20A42 /* CredentialsController.m in Sources */,
 				F412575D0B098593001622AC /* WeightedSObject.m in Sources */,
 				F4CD511B0B0C342100345D9E /* PlusMinusWidget.m in Sources */,
 				F4CD51200B0C350300345D9E /* FieldImportance.m in Sources */,
@@ -1166,7 +1156,6 @@
 				F4FAFB660F68CAFD00ECC9BB /* HighlightTextFieldCell.m in Sources */,
 				F4BF72A70F79E58C0089F459 /* NSWindow_additions.m in Sources */,
 				F48804CB2592ADE7001D56F6 /* Describer.m in Sources */,
-				F406D2AE27081C0D008A0CCC /* CredentialsDataSource.m in Sources */,
 				F4A2B8FF2718AF3600C20A42 /* ZKQueryResult+Display.m in Sources */,
 				F4B461FF0F79EB850099C434 /* FieldResizer.m in Sources */,
 				F494FA470F7EFE22001216EC /* RRCausticColorMatcher.m in Sources */,
@@ -1192,7 +1181,6 @@
 				F4D7836B15D8814C00D00BB9 /* ZKDescribe_Reporting.m in Sources */,
 				F4805DE326FD4D9F005B1C24 /* OAuthMenuManager.m in Sources */,
 				F412DE1721B341D300D8889F /* SessionIdAuthInfo.m in Sources */,
-				F4A2B932271B930F00C20A42 /* ZKCollectionView.m in Sources */,
 				F4C440CA15DB50BC00590A1E /* SearchQueryResult.m in Sources */,
 				F4CD2AB71B76881500BDD68D /* NSTableView_additions.m in Sources */,
 				F4E8BB10184EC7A6000E43B5 /* ZKDescribeThemeItem+ZKFindResource.m in Sources */,
