@@ -34,19 +34,43 @@ int DEFAULT_API_VERSION = 53;
 // instance never gets dealloc'd.
 // Instead we have the UI bind to this separate object to break
 // the retain cycle.
-@interface LoginControllerState : NSObject
+
+@interface LoginControllerState : NSObject {
+    NSString *text;
+}
 @property (strong) NSString *statusText;
 @property (assign) BOOL busy;
+@property (weak) IBOutlet NSLayoutConstraint *statusHeightConstraint;
 @end
+
 @implementation LoginControllerState
+
+-(void)showHideStatus {
+    [NSAnimationContext runAnimationGroup:^(NSAnimationContext * _Nonnull ctx) {
+        ctx.duration = 0.25;
+        ctx.allowsImplicitAnimation = YES;
+        BOOL show = self.busy || text.length > 0;
+        self.statusHeightConstraint.constant = show ? 64 : 0;
+    }];
+}
+
+-(void)setStatusText:(NSString *)statusText {
+    text = statusText;
+    [self showHideStatus];
+}
+-(NSString*)statusText {
+    return text;
+}
 -(void)setIdle {
-    self.statusText = @"";
     self.busy = NO;
+    self.statusText = @"";
 }
+
 -(void)setWorking:(NSString*)msg {
-    self.statusText = msg;
     self.busy = true;
+    self.statusText = msg;
 }
+
 @end
 
 @interface ZKLoginController()
@@ -94,6 +118,7 @@ int DEFAULT_API_VERSION = 53;
     } else {
         [self.tabView selectTabViewItemWithIdentifier:@"New"];
     }
+    [self.state showHideStatus];
 }
 
 -(void)loginRowViewItem:(LoginRowViewItem*)i clicked:(id)cred {

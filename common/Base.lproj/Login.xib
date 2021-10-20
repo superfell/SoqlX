@@ -21,10 +21,10 @@
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="lpo-xH-vTX" userLabel="OAuth">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="283" y="305" width="410" height="361"/>
+            <rect key="contentRect" x="283" y="305" width="386" height="468"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" verticalHuggingPriority="255" verticalCompressionResistancePriority="444" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="888-mM-JRU">
-                <rect key="frame" x="0.0" y="0.0" width="386" height="361"/>
+                <rect key="frame" x="0.0" y="0.0" width="386" height="367"/>
                 <subviews>
                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="asF-Da-Ocp">
                         <rect key="frame" x="18" y="16" width="25" height="25"/>
@@ -39,14 +39,43 @@
                             <action selector="showLoginHelp:" target="-2" id="Ckt-za-75y"/>
                         </connections>
                     </button>
-                    <progressIndicator verticalHuggingPriority="750" maxValue="100" doubleValue="22" displayedWhenStopped="NO" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="Om8-X4-spf">
-                        <rect key="frame" x="20" y="46" width="346" height="20"/>
-                        <connections>
-                            <binding destination="5fO-2t-xdJ" name="animate" keyPath="busy" id="eTb-FQ-kFd"/>
-                        </connections>
-                    </progressIndicator>
+                    <customView placeholderIntrinsicWidth="346" placeholderIntrinsicHeight="64" translatesAutoresizingMaskIntoConstraints="NO" id="cm6-tq-oq6" userLabel="Status Container">
+                        <rect key="frame" x="20" y="53" width="346" height="64"/>
+                        <subviews>
+                            <progressIndicator verticalHuggingPriority="750" maxValue="100" doubleValue="22" displayedWhenStopped="NO" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="Om8-X4-spf">
+                                <rect key="frame" x="0.0" y="-1" width="346" height="20"/>
+                                <connections>
+                                    <binding destination="5fO-2t-xdJ" name="animate" keyPath="busy" id="eTb-FQ-kFd"/>
+                                </connections>
+                            </progressIndicator>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bva-Er-Nym" userLabel="Feedback Label">
+                                <rect key="frame" x="-2" y="26" width="350" height="38"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" priority="900" constant="38" id="h84-Jj-LPM"/>
+                                </constraints>
+                                <textFieldCell key="cell" alignment="center" title="Label" id="m63-d4-Fzy">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <binding destination="5fO-2t-xdJ" name="value" keyPath="statusText" id="8cE-jV-Vlv"/>
+                                </connections>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="Om8-X4-spf" firstAttribute="leading" secondItem="cm6-tq-oq6" secondAttribute="leading" id="3vv-lx-FkQ"/>
+                            <constraint firstAttribute="trailing" secondItem="bva-Er-Nym" secondAttribute="trailing" id="5JT-EX-RjN"/>
+                            <constraint firstAttribute="bottom" secondItem="Om8-X4-spf" secondAttribute="bottom" id="6cR-RS-fmj"/>
+                            <constraint firstAttribute="trailing" secondItem="Om8-X4-spf" secondAttribute="trailing" id="Uxj-jO-1JJ"/>
+                            <constraint firstItem="Om8-X4-spf" firstAttribute="top" secondItem="bva-Er-Nym" secondAttribute="bottom" priority="111" constant="8" symbolic="YES" id="Z6r-zp-g5L"/>
+                            <constraint firstItem="bva-Er-Nym" firstAttribute="leading" secondItem="cm6-tq-oq6" secondAttribute="leading" id="eOd-Gi-D8Q"/>
+                            <constraint firstItem="bva-Er-Nym" firstAttribute="top" secondItem="cm6-tq-oq6" secondAttribute="top" id="jou-HX-dyC"/>
+                            <constraint firstAttribute="height" constant="64" id="zug-7K-Yc6"/>
+                        </constraints>
+                    </customView>
                     <tabView verticalHuggingPriority="444" verticalCompressionResistancePriority="250" placeholderIntrinsicWidth="350" placeholderIntrinsicHeight="230" translatesAutoresizingMaskIntoConstraints="NO" id="Cuu-Gy-qub">
-                        <rect key="frame" x="13" y="109" width="360" height="246"/>
+                        <rect key="frame" x="13" y="115" width="360" height="246"/>
                         <constraints>
                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="nO1-8u-LQm"/>
                         </constraints>
@@ -215,20 +244,6 @@
                             </tabViewItem>
                         </tabViewItems>
                     </tabView>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bva-Er-Nym" userLabel="Feedback Label">
-                        <rect key="frame" x="18" y="73" width="350" height="38"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="38" id="h84-Jj-LPM"/>
-                        </constraints>
-                        <textFieldCell key="cell" alignment="center" title="Label" id="m63-d4-Fzy">
-                            <font key="font" metaFont="system"/>
-                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                        <connections>
-                            <binding destination="5fO-2t-xdJ" name="value" keyPath="statusText" id="8cE-jV-Vlv"/>
-                        </connections>
-                    </textField>
                     <stackView distribution="equalSpacing" orientation="horizontal" alignment="firstBaseline" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9EX-6N-R4Y">
                         <rect key="frame" x="296" y="20" width="70" height="21"/>
                         <subviews>
@@ -256,24 +271,21 @@ Gw
                 </subviews>
                 <constraints>
                     <constraint firstItem="9EX-6N-R4Y" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="asF-Da-Ocp" secondAttribute="trailing" constant="12" id="67V-dn-tGA"/>
-                    <constraint firstItem="bva-Er-Nym" firstAttribute="top" secondItem="Cuu-Gy-qub" secondAttribute="bottom" constant="8" symbolic="YES" id="6Ab-KS-Utb"/>
-                    <constraint firstItem="bva-Er-Nym" firstAttribute="leading" secondItem="888-mM-JRU" secondAttribute="leading" constant="20" symbolic="YES" id="7CB-gB-nGo"/>
-                    <constraint firstItem="Om8-X4-spf" firstAttribute="top" secondItem="bva-Er-Nym" secondAttribute="bottom" constant="8" symbolic="YES" id="Gak-HN-0yM"/>
-                    <constraint firstItem="Om8-X4-spf" firstAttribute="leading" secondItem="888-mM-JRU" secondAttribute="leading" constant="20" symbolic="YES" id="H9j-PP-A17"/>
-                    <constraint firstItem="asF-Da-Ocp" firstAttribute="top" secondItem="Om8-X4-spf" secondAttribute="bottom" constant="6" id="IPr-PQ-Slo"/>
                     <constraint firstAttribute="bottom" secondItem="9EX-6N-R4Y" secondAttribute="bottom" constant="20" symbolic="YES" id="KUI-Sw-10l"/>
-                    <constraint firstAttribute="trailing" secondItem="bva-Er-Nym" secondAttribute="trailing" constant="20" symbolic="YES" id="M3O-2k-BC2"/>
+                    <constraint firstAttribute="trailing" secondItem="cm6-tq-oq6" secondAttribute="trailing" constant="20" symbolic="YES" id="QRH-UP-pdr"/>
+                    <constraint firstItem="asF-Da-Ocp" firstAttribute="top" secondItem="cm6-tq-oq6" secondAttribute="bottom" constant="12" symbolic="YES" id="TCc-Vx-se3"/>
                     <constraint firstAttribute="bottom" secondItem="asF-Da-Ocp" secondAttribute="bottom" constant="20" symbolic="YES" id="UPM-Zo-SW8"/>
-                    <constraint firstAttribute="trailing" secondItem="Om8-X4-spf" secondAttribute="trailing" constant="20" symbolic="YES" id="a4i-aO-P5h"/>
                     <constraint firstItem="asF-Da-Ocp" firstAttribute="leading" secondItem="888-mM-JRU" secondAttribute="leading" constant="20" symbolic="YES" id="beq-iQ-KkE"/>
                     <constraint firstItem="Cuu-Gy-qub" firstAttribute="top" secondItem="888-mM-JRU" secondAttribute="top" constant="12" symbolic="YES" id="fbZ-zZ-lOf"/>
                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="hCc-cS-hXW"/>
                     <constraint firstAttribute="trailing" secondItem="Cuu-Gy-qub" secondAttribute="trailing" constant="20" symbolic="YES" id="iR1-uT-mpd"/>
+                    <constraint firstItem="cm6-tq-oq6" firstAttribute="leading" secondItem="888-mM-JRU" secondAttribute="leading" constant="20" symbolic="YES" id="psP-PO-BuP"/>
                     <constraint firstAttribute="trailing" secondItem="9EX-6N-R4Y" secondAttribute="trailing" constant="20" symbolic="YES" id="vsx-cv-b8j"/>
+                    <constraint firstItem="cm6-tq-oq6" firstAttribute="top" secondItem="Cuu-Gy-qub" secondAttribute="bottom" constant="8" symbolic="YES" id="yNG-L5-Rik"/>
                     <constraint firstItem="Cuu-Gy-qub" firstAttribute="leading" secondItem="888-mM-JRU" secondAttribute="leading" constant="20" symbolic="YES" id="ycV-aH-fue"/>
                 </constraints>
             </view>
-            <point key="canvasLocation" x="-448" y="-303.5"/>
+            <point key="canvasLocation" x="-448" y="-70"/>
         </window>
         <viewController id="PQK-UD-2uk" userLabel="Popover View Controller"/>
         <popover behavior="t" id="A62-aq-VwG">
@@ -286,7 +298,11 @@ Gw
                 <outlet property="stack" destination="oOu-Nu-sxK" id="YGz-nV-cFK"/>
             </connections>
         </customObject>
-        <customObject id="5fO-2t-xdJ" customClass="LoginControllerState"/>
+        <customObject id="5fO-2t-xdJ" customClass="LoginControllerState">
+            <connections>
+                <outlet property="statusHeightConstraint" destination="zug-7K-Yc6" id="oJn-g9-18k"/>
+            </connections>
+        </customObject>
         <customObject id="JHy-iV-NBO" customClass="LoginTargetController">
             <connections>
                 <outlet property="addUrlView" destination="g0K-e3-zq2" id="7op-63-hrw"/>
