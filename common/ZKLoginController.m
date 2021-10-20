@@ -65,7 +65,10 @@ int DEFAULT_API_VERSION = 53;
     self.busy = NO;
     self.statusText = @"";
 }
-
+-(void)setError:(NSString*)msg {
+    self.busy = NO;
+    self.statusText = msg;
+}
 -(void)setWorking:(NSString*)msg {
     self.busy = true;
     self.statusText = msg;
@@ -75,9 +78,6 @@ int DEFAULT_API_VERSION = 53;
 
 @interface ZKLoginController()
 
-// items in the UI using bindings read these and drive the UI
--(IBAction)showLoginHelp:(id)sender;
-
 @property (strong) NSWindow *modalWindow;
 @property (strong) IBOutlet NSWindow *loginSheet;
 @property (strong) IBOutlet NSTabView *tabView;
@@ -85,6 +85,7 @@ int DEFAULT_API_VERSION = 53;
 @property (strong) IBOutlet CredentialsController *credsController;
 @property (strong) IBOutlet LoginControllerState  *state;
 
+-(IBAction)showLoginHelp:(id)sender;
 -(void)closeLoginUi;
 
 @end
@@ -231,8 +232,7 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
     [self.state setWorking:@"Verifying OAuth tokens"];
     [self oauthCurrentUserInfoWithDowngrade:c
                                   failBlock:^(NSError *result) {
-        [self.state setIdle];
-        self.state.statusText = result.localizedDescription;
+        [self.state setError:result.localizedDescription];
         [[NSAlert alertWithError:result] runModal];
 
     } completeBlock:^(ZKUserInfo *result) {
@@ -252,7 +252,7 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
             }
         }
         // no keychain entry, ask user if they want one.
-        [self showAlertSheetWithMessageText:@"Create Keychain entry with access token?"
+        [self showAlertSheetWithMessageText:@"Create Keychain entry with access token? This'll let you skip the login UI next time."
                     defaultButton:@"Create Keychain Entry"
                     altButton:@"No thanks"
                     completionHandler:^(NSModalResponse returnCode) {
@@ -299,8 +299,7 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
     }
     [self.state setWorking:@"Logging in from saved OAuth token"];
     ZKFailWithErrorBlock failBlock = ^(NSError *err) {
-        self.state.statusText = [NSString stringWithFormat:@"Refresh token no longer valid: %@", err.localizedDescription];
-        self.state.busy = FALSE;
+        [self.state setError:[NSString stringWithFormat:@"Refresh token no longer valid: %@", err.localizedDescription]];
     };
 
     ZKSforceClient *c = [self newClient:self.preferedApiVersion];
