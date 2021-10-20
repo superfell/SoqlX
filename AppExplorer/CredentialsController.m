@@ -56,6 +56,7 @@
             vi.value = c;
             vi.title = c.username;
             vi.delegate = self;
+            vi.deletable = self.isEditing;
             [vi.view setContentHuggingPriority:NSLayoutPriorityDefaultHigh forOrientation:NSLayoutConstraintOrientationVertical];
             [vi.view setContentHuggingPriority:100 forOrientation:NSLayoutConstraintOrientationHorizontal];
             [self.stack addArrangedSubview:vi.view];
