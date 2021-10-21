@@ -24,21 +24,57 @@
 #import "Defaults.h"
 
 @interface LoginRowViewItem ()
+-(IBAction)click:(id)sender;
 -(IBAction)deleteItem:(id)sender;
--(IBAction)login:(id)sender;
+@property (retain) IBOutlet NSButton *button;
+@property (retain) IBOutlet NSLayoutConstraint *delWidthConstraint;
+@property (assign) BOOL isDeletable;
 @end
 
 @implementation LoginRowViewItem
 
--(void)login:(id)sender {
+-(instancetype)init {
+    self = [super init];
+    NSNib *rowNib = [[NSNib alloc] initWithNibNamed:@"LoginRowViewItem" bundle:nil];
+    [rowNib instantiateWithOwner:self topLevelObjects:nil];
+    return self;
+}
+
+-(void)dealloc {
+    NSLog(@"LoginRowViewItem dealloc");
+}
+
+-(void)awakeFromNib {
+    self.delWidthConstraint.constant = 0;
+    self.isDeletable = NO;
+}
+
+-(void)setTitle:(NSString*)t {
+    self.button.title = t;
+}
+-(NSString*)title {
+    return self.button.title;
+}
+
+-(void)setDeletable:(BOOL)deletable {
+    self.isDeletable = deletable;
+    self.delWidthConstraint.constant = deletable ? 24 : 0;
+    [self.view layoutSubtreeIfNeeded];
+}
+
+-(BOOL)deletable {
+    return self.isDeletable;
+}
+
+-(void)click:(id)sender {
     if (self.delegate) {
-        [self.delegate credentialSelected:self.credential];
+        [self.delegate loginRowViewItem:self clicked:self.value];
     }
 }
 
 -(void)deleteItem:(id)sender {
     if (self.delegate) {
-        [self.delegate deleteCredential:self.credential];
+        [self.delegate loginRowViewItem:self deleteClicked:self.value];
     }
 }
 

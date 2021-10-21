@@ -122,6 +122,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:PREF_SOQL_SYNTAX_HIGHLIGHTING];
     [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:PREF_SOQL_UPPERCASE_KEYWORDS];
+    NSLog(@"Explorer dealloc");
 }
 
 - (void)windowWillClose:(NSNotification *)notification {
@@ -187,6 +188,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
 }
 
 -(void)loginControllerLoginCancelled:(ZKLoginController *)controller {
+    self.loginController = nil;
     [myWindow close];
 }
 

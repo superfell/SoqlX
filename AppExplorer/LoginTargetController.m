@@ -23,17 +23,49 @@
 #import "Defaults.h"
 #import "credential.h"
 
+// See note in ZKLoginController for why this exists, and is not just on
+// LoginTargetController directly.
+@interface LoginTargetControllerState : NSObject
+// for the add domain widget
+@property (retain) NSString *domain;
+@property (readonly) NSString *populatedDomain;
+@end
+
 @interface LoginTargetController()
-@property (strong) NSArray<LoginTargetItem*>*items;
+@property (retain) IBOutlet NSStackView *stack;
+@property (retain) IBOutlet NSView      *addUrlView;
+@property (retain) IBOutlet NSLayoutConstraint *editConstraint;
+@property (retain) IBOutlet LoginTargetControllerState *state;
+
+@property (retain) NSMutableArray<NSURL*>*items;
+@property (retain) NSMutableArray<LoginRowViewItem*>*rows;
+
+@end
+
+@implementation LoginTargetControllerState
+
++(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
+    NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
+    if ([key isEqualToString:@"populatedDomain"]) {
+        return [paths setByAddingObject:@"domain"];
+    }
+    return paths;
+}
+-(void)awakeFromNib {
+    self.domain = @"";
+}
+-(NSString*)populatedDomain {
+    return [NSString stringWithFormat:@"https://%@.my.salesforce.com", self.domain == nil ? @"" : self.domain];
+}
 @end
 
 @implementation LoginTargetController
 
 -(instancetype)init {
     self = [super init];
-    NSMutableArray *items = [NSMutableArray arrayWithObjects:
-                         [LoginTargetItem itemWithUrl:[NSURL URLWithString:LOGIN_LOGIN]],
-                         [LoginTargetItem itemWithUrl:[NSURL URLWithString:LOGIN_TEST]],
+    NSMutableArray<NSURL*> *items = [NSMutableArray arrayWithObjects:
+                         [NSURL URLWithString:LOGIN_LOGIN],
+                         [NSURL URLWithString:LOGIN_TEST],
                          nil];
     NSArray *servers = [[NSUserDefaults standardUserDefaults] arrayForKey:DEF_SERVERS];
     for (NSString *s in servers) {
@@ -42,54 +74,73 @@
             ([s caseInsensitiveCompare:LOGIN_TEST] == NSOrderedSame)) {
             continue;
         }
-        LoginTargetItem *i = [LoginTargetItem itemWithUrl:[NSURL URLWithString:s]];
-        [items addObject:i];
+        NSURL *url = [NSURL URLWithString:s];
+        [items addObject:url];
     }
     self.items = items;
     return self;
 }
 
--(void)awakeFromNib {
-    [self.targets registerNib:[[NSNib alloc] initWithNibNamed:@"LoginTargetViewItem" bundle:nil] forItemWithIdentifier:@"t"];
-    self.targets.dataSource = self;
-    [self setPopupHeight];
+-(void)dealloc {
+    NSLog(@"LoginTargetController dealloc");
 }
 
--(void)setPopupHeight {
-    NSRect f = self.containerView.frame;
-    NSSize vis = self.targets.frame.size;
-    NSSize all = self.targets.collectionViewLayout.collectionViewContentSize;
-    NSRect new = f;
-    new.size.height = f.size.height - vis.height + all.height;
-    self.containerView.frame = new;
-    // TODO, no doubt I'll be made to regret this at some point.
-    [[self.containerView.window valueForKey:@"_popover"] setContentSize:new.size];
+-(void)awakeFromNib {
+    self.addUrlView.hidden = YES;
+    self.editConstraint.priority = 1000;
+}
+
+-(LoginRowViewItem*)makeItem:(NSURL*)url {
+    LoginRowViewItem<NSURL*> *vi = [[LoginRowViewItem alloc] init];
+    vi.value = url;
+    vi.title = url.friendlyHostLabel;
+    vi.delegate = self;
+    vi.deletable = self.isEditing && (!url.isStandardEndpoint);
+    return vi;
+}
+
+-(void)reloadData {
+    for (NSView *v in self.stack.arrangedSubviews) {
+        [v removeFromSuperview];
+    }
+    NSMutableArray *rows = [NSMutableArray arrayWithCapacity:self.items.count];
+    for (NSURL *url in self.items) {
+        LoginRowViewItem<NSURL*> *vi = [self makeItem:url];
+        [self.stack addArrangedSubview:vi.view];
+        [rows addObject:vi];
+    }
+    self.rows = rows;
 }
 
 -(void)setDefaultsFromItems {
-    NSArray *servers = [self.items valueForKeyPath:@"url.absoluteString"];
+    NSArray *servers = [self.items valueForKey:@"absoluteString"];
     [[NSUserDefaults standardUserDefaults] setObject:servers forKey:DEF_SERVERS];
 }
 
 -(IBAction)toggleEditing:(id)sender {
     self.isEditing = !self.isEditing;
-    if (!self.isEditing) {
-        for (LoginTargetItem *i in self.items) {
-            i.deletable = FALSE;
+    [NSAnimationContext runAnimationGroup:^(NSAnimationContext * _Nonnull ctx) {
+        ctx.duration = 0.25;
+        ctx.allowsImplicitAnimation = YES;
+        for (LoginRowViewItem<NSURL*>* row in self.rows) {
+            row.deletable = self.isEditing && (!row.value.isStandardEndpoint);
         }
-    } else {
-        for (LoginTargetItem *i in self.items) {
-            i.deletable = !i.url.isStandardEndpoint;
-        }
-    }
+        self.addUrlView.hidden = !self.isEditing;
+        self.editConstraint.priority = self.isEditing ? 333 : 1000;
+        [self.addUrlView.superview layoutSubtreeIfNeeded];
+    }];
 }
 
 -(IBAction)addNewUrl:(id)sender {
-    NSString *u = self.url.stringValue;
-    if (u.length > 0) {
-        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://%@.my.salesforce.com", u]];
-        NSArray *existing = [self.items filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"url=%@", url]];
-        if (existing.count > 0) {
+    if (!self.isEditing) {
+        // the text field submits when it gets hidden if it has focus
+        // (guess it submits on loss of focus). So skip those.
+        return;
+    }
+    if (self.state.domain.length > 0) {
+        NSURL *url = [NSURL URLWithString:self.state.populatedDomain];
+        NSUInteger existingIdx = [self.items indexOfObject:url];
+        if (existingIdx != NSNotFound) {
             NSAlert *a = [[NSAlert alloc] init];
             a.alertStyle = NSAlertStyleWarning;
             a.messageText = @"Already Exists";
@@ -97,12 +148,12 @@
             [a runModal];
             return;
         }
-        LoginTargetItem *i = [LoginTargetItem itemWithUrl:url];
-        i.deletable = TRUE;
-        self.items = [self.items arrayByAddingObject:i];
+        [self.items addObject:url];
         [self setDefaultsFromItems];
-        [self.targets reloadData];
-        [self setPopupHeight];
+        LoginRowViewItem*row = [self makeItem:url];
+        NSLog(@"created new row %@ %@ %p", row.class, row, row);
+        [self.stack addArrangedSubview:row.view];
+        [self.rows addObject:row];
     } else {
         NSAlert *a = [[NSAlert alloc] init];
         a.alertStyle = NSAlertStyleWarning;
@@ -112,27 +163,22 @@
     }
 }
 
--(nonnull NSCollectionViewItem *)collectionView:(nonnull NSCollectionView *)collectionView
-             itemForRepresentedObjectAtIndexPath:(nonnull NSIndexPath *)indexPath {
-
-    LoginTargetViewItem *i = [collectionView makeItemWithIdentifier:@"t" forIndexPath:indexPath];
-    i.target = self.items[indexPath.item];
-    i.delegate = self;
-    return i;
-}
-
--(NSInteger)collectionView:(nonnull NSCollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return self.items.count;
-}
-
--(void)loginTargetDeleted:(nonnull LoginTargetItem *)item {
-    self.items = [self.items filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"url != %@", item.url]];
-    [self.targets reloadData];
-    [self setPopupHeight];
+-(void)loginRowViewItem:(LoginRowViewItem *)i deleteClicked:(NSURL*)item {
+    [self.items removeObject:item];
     [self setDefaultsFromItems];
+    NSUInteger rowIdx = [self.rows indexOfObjectPassingTest:^BOOL(LoginRowViewItem * _Nonnull r, NSUInteger idx, BOOL * _Nonnull stop) {
+        return [r.value isEqual:item];
+    }];
+    if (rowIdx != NSNotFound) {
+        // This will animate the view out of the stack.
+        self.rows[rowIdx].view.hidden = YES;
+        [self.rows removeObjectAtIndex:rowIdx];
+    } else {
+        NSLog(@"server %@ deleted, but not found in rows", item.friendlyHostLabel);
+    }
 }
 
--(void)loginTargetSelected:(nonnull LoginTargetItem *)item {
+-(void)loginRowViewItem:(LoginRowViewItem *)i clicked:(NSURL*)item {
     [self.delegate loginTargetSelected:item];
 }
 

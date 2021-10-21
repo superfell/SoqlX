@@ -59,6 +59,7 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
+      enableGPUValidationMode = "1"
       allowLocationSimulation = "YES">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
@@ -72,8 +73,13 @@
       </BuildableProductRunnable>
       <AdditionalOptions>
          <AdditionalOption
-            key = "NSZombieEnabled"
-            value = "YES"
+            key = "MallocStackLogging"
+            value = ""
+            isEnabled = "YES">
+         </AdditionalOption>
+         <AdditionalOption
+            key = "PrefersMallocStackLoggingLite"
+            value = ""
             isEnabled = "YES">
          </AdditionalOption>
       </AdditionalOptions>

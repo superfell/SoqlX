@@ -22,49 +22,75 @@
 #import "ZKLoginController.h"
 #import <ZKSforce/ZKSforce.h>
 #import "credential.h"
-#import "CredentialsDataSource.h"
+#import "CredentialsController.h"
 #import "Defaults.h"
+#import "NSArray+Partition.h"
 
 int DEFAULT_API_VERSION = 53;
 
-@interface ZKLoginController()
+// Holds any state that the UI might want to have bindings to.
+// If a UI control has a binding to ZKLoginController directly
+// then this creates a retain cycle and the LoginController
+// instance never gets dealloc'd.
+// Instead we have the UI bind to this separate object to break
+// the retain cycle.
 
-// items in the UI using bindings read these and drive the UI
+@interface LoginControllerState : NSObject {
+    NSString *text;
+}
 @property (strong) NSString *statusText;
 @property (assign) BOOL busy;
-@property (readonly) BOOL hasSavedCredentials;
-@property (assign) BOOL isEditing;
--(NSString*)sheetHeaderText;
--(NSString*)welcomeText;
--(IBAction)toggleEditing:(id)sender;
--(IBAction)showLoginHelp:(id)sender;
+@property (weak) IBOutlet NSLayoutConstraint *statusHeightConstraint;
+@end
 
+@implementation LoginControllerState
+
+-(void)showHideStatus {
+    [NSAnimationContext runAnimationGroup:^(NSAnimationContext * _Nonnull ctx) {
+        ctx.duration = 0.25;
+        ctx.allowsImplicitAnimation = YES;
+        BOOL show = self.busy || text.length > 0;
+        self.statusHeightConstraint.constant = show ? 64 : 0;
+    }];
+}
+
+-(void)setStatusText:(NSString *)statusText {
+    text = statusText;
+    [self showHideStatus];
+}
+-(NSString*)statusText {
+    return text;
+}
+-(void)setIdle {
+    self.busy = NO;
+    self.statusText = @"";
+}
+-(void)setError:(NSString*)msg {
+    self.busy = NO;
+    self.statusText = msg;
+}
+-(void)setWorking:(NSString*)msg {
+    self.busy = true;
+    self.statusText = msg;
+}
+
+@end
+
+@interface ZKLoginController()
 
 @property (strong) NSWindow *modalWindow;
 @property (strong) IBOutlet NSWindow *loginSheet;
-@property (strong) IBOutlet NSCollectionView *savedLogins;
-@property (strong) IBOutlet NSPopover *loginDest;
-@property (strong) IBOutlet NSButton *loginButton;
+@property (strong) IBOutlet NSTabView *tabView;
 @property (strong) IBOutlet LoginTargetController *targetController;
--(IBAction)startOAuthLogin:(id)sender;
+@property (strong) IBOutlet CredentialsController *credsController;
+@property (strong) IBOutlet LoginControllerState  *state;
+
+-(IBAction)showLoginHelp:(id)sender;
 -(void)closeLoginUi;
-
-
-@property (strong) Credential *selectedCredential;
-@property (strong) CredentialsDataSource *credDataSource;
 
 @end
 
 @implementation ZKLoginController
-
-+(NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
-    NSSet *paths = [super keyPathsForValuesAffectingValueForKey:key];
-    if ([key isEqualToString:@"hasSavedCredentials"]
-        || [key isEqualToString:@"sheetHeaderText"]) {
-        return [paths setByAddingObject:@"credDataSource"];
-    }
-    return paths;
-}
 
 +(NSString*)appClientId {
     NSDictionary *plist = [[NSBundle mainBundle] infoDictionary];
@@ -79,35 +105,28 @@ int DEFAULT_API_VERSION = 53;
     return self;
 }
 
+-(void)dealloc {
+    NSLog(@"LoginController dealloc");
+}
+
 -(void)awakeFromNib {
-    [self.savedLogins registerNib:[[NSNib alloc] initWithNibNamed:@"LoginRowViewItem" bundle:nil] forItemWithIdentifier:@"row"];
-    [self.savedLogins registerNib:[[NSNib alloc] initWithNibNamed:@"LoginHeaderRowViewItem" bundle:nil]
-         forSupplementaryViewOfKind:NSCollectionElementKindSectionHeader
-                     withIdentifier:@"h"];
-    self.credDataSource = [[CredentialsDataSource alloc] initWithCreds:[Credential credentialsInMruOrder]];
-    self.credDataSource.delegate = self;
-    self.savedLogins.dataSource = self.credDataSource;
+    self.credsController.delegate = self;
+    [self.credsController reloadData];
     self.targetController.delegate = self;
+    [self.targetController reloadData];
+    if (self.credsController.hasSavedCredentials) {
+        [self.tabView selectTabViewItemWithIdentifier:@"Saved"];
+    } else {
+        [self.tabView selectTabViewItemWithIdentifier:@"New"];
+    }
+    [self.state showHideStatus];
 }
 
--(BOOL)hasSavedCredentials {
-    return self.credDataSource.items.count > 0;
+-(void)loginRowViewItem:(LoginRowViewItem*)i clicked:(id)cred {
+    [self loginWithOAuthToken:cred window:self.modalWindow];
 }
 
--(IBAction)toggleEditing:(id)sender {
-    self.isEditing = !self.isEditing;
-    self.credDataSource.isEditing = self.isEditing;
-    [self.savedLogins reloadData];
-}
-
--(void)credentialSelected:(Credential*)c {
-    [self loginWithOAuthToken:c window:self.modalWindow];
-}
-
-- (void)deleteCredential:(nonnull Credential *)c {
-    [self.credDataSource removeItem:c];
-    [self.savedLogins reloadData];
-    [c deleteEntry];
+-(void)loginRowViewItem:(LoginRowViewItem*)i deleteClicked:(id)cred {
 }
 
 -(void)loadNib {
@@ -122,22 +141,11 @@ int DEFAULT_API_VERSION = 53;
 - (void)showLoginSheet:(NSWindow *)modalForWindow {
     [self loadNib];
     self.modalWindow = modalForWindow;
-    // TODO: can auto layout handle this now?
-    NSSize fr = self.loginSheet.contentView.frame.size;
-    NSSize visSize = self.savedLogins.frame.size;
-    NSSize allItems = self.savedLogins.collectionViewLayout.collectionViewContentSize;
-    CGFloat newHeight = MAX(260.0, fr.height - visSize.height + allItems.height);
-    [self.loginSheet setContentSize:NSMakeSize(fr.width, newHeight)];
- 
-    // This reloadData shouldn't be needed, but without it, the section header sometimes
-    // get placed over the first item, not above it.
-    [self.savedLogins reloadData];
     [modalForWindow beginSheet:self.loginSheet completionHandler:nil];
 }
 
 -(void)closeLoginUi {
-    self.busy = FALSE;
-    self.statusText = @"";
+    [self.state setIdle];
     if (self.modalWindow != nil) {
         [NSApp endSheet:self.loginSheet];
         [self.loginSheet orderOut:self];
@@ -176,12 +184,7 @@ int DEFAULT_API_VERSION = 53;
 
 static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoHQhmqzBxALj8UBnhjzntUVXdcdZFXATXCdevs";
 
--(IBAction)startOAuthLogin:(id)sender {
-    NSRect btnRect = self.loginButton.bounds;
-    [self.loginDest showRelativeToRect:btnRect ofView:self.loginButton preferredEdge:NSRectEdgeMaxX];
-}
-
--(void)loginTargetSelected:(LoginTargetItem*)item {
+-(void)loginTargetSelected:(NSURL *)item {
     NSString *cb = @"soqlx://oauth/";
     // build the URL to the oauth page with our client_id & callback URL set.
     NSCharacterSet *urlcs = [NSCharacterSet URLQueryAllowedCharacterSet];
@@ -189,16 +192,14 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
                        [OAUTH_CID stringByAddingPercentEncodingWithAllowedCharacters:urlcs],
                        [cb stringByAddingPercentEncodingWithAllowedCharacters:urlcs],
                        [self.controllerId stringByAddingPercentEncodingWithAllowedCharacters:urlcs]];
-    NSURL *url = [NSURL URLWithString:path relativeToURL:item.url];
+    NSURL *url = [NSURL URLWithString:path relativeToURL:item];
 
     // ask the OS to open browser to the URL
     [[NSWorkspace sharedWorkspace] openURL:url];
-    self.statusText = @"Complete the login/authorization in the browser";
-    // close the login target popup
-    [self.loginDest performClose:self];
+    self.state.statusText = @"Complete the login/authorization in the browser";
 }
 
--(void)loginTargetDeleted:(nonnull LoginTargetItem *)item {
+-(void)loginTargetDeleted:(NSURL *)item {
     // we don't care
 }
 
@@ -228,12 +229,10 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
     }
     // This call is used to validate that we were given a valid client, and that the auth info is usable.
     // This also ensures that the userInfo is cached, which subsequent code relies on.
-    self.busy = TRUE;
-    self.statusText = @"Verifying OAuth tokens";
+    [self.state setWorking:@"Verifying OAuth tokens"];
     [self oauthCurrentUserInfoWithDowngrade:c
                                   failBlock:^(NSError *result) {
-        self.busy = FALSE;
-        self.statusText = result.localizedDescription;
+        [self.state setError:result.localizedDescription];
         [[NSAlert alertWithError:result] runModal];
 
     } completeBlock:^(ZKUserInfo *result) {
@@ -253,7 +252,7 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
             }
         }
         // no keychain entry, ask user if they want one.
-        [self showAlertSheetWithMessageText:@"Create Keychain entry with access token?"
+        [self showAlertSheetWithMessageText:@"Create Keychain entry with access token? This'll let you skip the login UI next time."
                     defaultButton:@"Create Keychain Entry"
                     altButton:@"No thanks"
                     completionHandler:^(NSModalResponse returnCode) {
@@ -298,11 +297,9 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
     if (self.modalWindow == nil) {
         [self showLoginSheet:modalForWindow];
     }
-    [self setStatusText:@"Logging in from saved OAuth token"];
-    self.busy = TRUE;
+    [self.state setWorking:@"Logging in from saved OAuth token"];
     ZKFailWithErrorBlock failBlock = ^(NSError *err) {
-        self.statusText = [NSString stringWithFormat:@"Refresh token no longer valid: %@", err.localizedDescription];
-        self.busy = FALSE;
+        [self.state setError:[NSString stringWithFormat:@"Refresh token no longer valid: %@", err.localizedDescription]];
     };
 
     ZKSforceClient *c = [self newClient:self.preferedApiVersion];
@@ -321,19 +318,9 @@ static NSString *OAUTH_CID = @"3MVG99OxTyEMCQ3hP1_9.Mh8dFxOk8gk6hPvwEgSzSxOs3HoH
     }];
 }
 
--(NSString*)welcomeText {
-    return NSLocalizedString(@"WelcomeText", @"text shown in the login sheet when there's no saved credentials");
-}
-
 -(IBAction)showLoginHelp:(id)sender {
     NSString *help = [NSBundle mainBundle].infoDictionary[@"ZKHelpLoginUrl"];
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:help]];
-}
-
--(NSString*)sheetHeaderText {
-    return self.hasSavedCredentials ?
-        NSLocalizedString(@"SheetHeaderLogins", @"show on the login sheet when there are saved logins") :
-        NSLocalizedString(@"SheetHeaderWelcome", @"shown on the login sheet when there are no saved logins");
 }
 
 @end

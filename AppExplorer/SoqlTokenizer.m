@@ -19,7 +19,6 @@
 // THE SOFTWARE.
 //
 
-#import <objc/runtime.h>
 #import "SoqlTokenizer.h"
 #import "DataSources.h"
 #import "CaseInsensitiveStringKey.h"
@@ -188,13 +187,12 @@ typedef NSMutableDictionary<NSString *, Completion*> CompletionBySObject;
 }
 
 -(Tokens*)parseAndResolve:(NSString*)soql {
-    uint64_t start = mach_absolute_time();
+    TStamp *tstamp = [TStamp start];
     [self scanWithParser:soql];
-    uint64_t parsed = mach_absolute_time();
+    [tstamp mark:@"parsed"];
     [self resolveTokens:self.tokens];
-    uint64_t resolved = mach_absolute_time();
-    NSLog(@"parsed %ld tokens, parse %.3fms resolve %.3fms", (long)self.tokens.count, (parsed-start) * ticksToMilliseconds, (resolved-parsed) * ticksToMilliseconds);
-    //NSLog(@"resolved tokens\n%@\n", self.tokens);
+    [tstamp mark:@"resolved"];
+    [tstamp log];
     return self.tokens;
 }
 

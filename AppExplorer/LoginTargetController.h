@@ -20,17 +20,19 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "LoginTargetViewItem.h"
+#import "LoginRowViewItem.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface LoginTargetController : NSObject<NSCollectionViewDataSource,LoginTargetItemDelegate>
+@protocol LoginTargetControllerDelegate
+-(void)loginTargetSelected:(NSURL*)target;
+@end
 
-@property (weak) NSObject<LoginTargetItemDelegate> *delegate;
-@property (strong) IBOutlet NSCollectionView *targets;
-@property (strong) IBOutlet NSView *containerView;
-@property (strong) IBOutlet NSTextField *url;
+@interface LoginTargetController : NSObject<LoginRowViewItemDelegate>
 
+@property (weak) NSObject<LoginTargetControllerDelegate> *delegate;
+
+-(void)reloadData;
 -(IBAction)addNewUrl:(id)sender;
 -(IBAction)toggleEditing:(id)sender;
 
