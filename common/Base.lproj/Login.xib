@@ -119,7 +119,7 @@
                                     </constraints>
                                 </view>
                             </tabViewItem>
-                            <tabViewItem label="New" identifier="New" id="lGG-Mq-9pO">
+                            <tabViewItem label="New Login" identifier="New" id="lGG-Mq-9pO">
                                 <view key="view" horizontalHuggingPriority="555" verticalHuggingPriority="555" verticalCompressionResistancePriority="1" placeholderIntrinsicWidth="300" placeholderIntrinsicHeight="50" id="Xor-Za-ZEG">
                                     <rect key="frame" x="10" y="33" width="340" height="200"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
