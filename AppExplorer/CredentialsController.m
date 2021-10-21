@@ -69,9 +69,13 @@
 
 -(void)toggleEditing:(id)sender {
     self.isEditing = !self.isEditing;
-    for (LoginRowViewItem *i in self.rows) {
-        i.deletable = self.isEditing;
-    }
+    [NSAnimationContext runAnimationGroup:^(NSAnimationContext * _Nonnull ctx) {
+        ctx.duration = 0.25;
+        ctx.allowsImplicitAnimation = YES;
+        for (LoginRowViewItem *i in self.rows) {
+            i.deletable = self.isEditing;
+        }
+    }];
 }
 
 -(void)loginRowViewItem:(nonnull LoginRowViewItem *)i clicked:(Credential*)value {
