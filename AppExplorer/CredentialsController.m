@@ -75,6 +75,7 @@
         for (LoginRowViewItem *i in self.rows) {
             i.deletable = self.isEditing;
         }
+        [self.stack layoutSubtreeIfNeeded];
     }];
 }
 

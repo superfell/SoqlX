@@ -35,7 +35,7 @@ CA
                     <rect key="frame" x="276" y="1" width="24" height="24"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="24" id="5G7-rM-tac"/>
-                        <constraint firstAttribute="height" constant="24" id="fE9-m2-AZu"/>
+                        <constraint firstAttribute="width" secondItem="wPn-Ln-xpk" secondAttribute="height" id="Xhy-wR-cFZ"/>
                     </constraints>
                     <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="delete" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="fLu-xx-ZTi">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
