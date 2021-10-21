@@ -26,7 +26,7 @@
             <view key="contentView" verticalHuggingPriority="255" verticalCompressionResistancePriority="444" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="888-mM-JRU">
                 <rect key="frame" x="0.0" y="0.0" width="386" height="367"/>
                 <subviews>
-                    <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="asF-Da-Ocp">
+                    <button identifier="helpButton" horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="asF-Da-Ocp">
                         <rect key="frame" x="18" y="16" width="25" height="25"/>
                         <constraints>
                             <constraint firstAttribute="width" secondItem="asF-Da-Ocp" secondAttribute="height" multiplier="1:1" id="yYC-eY-Ias"/>
@@ -39,7 +39,7 @@
                             <action selector="showLoginHelp:" target="-2" id="Ckt-za-75y"/>
                         </connections>
                     </button>
-                    <customView placeholderIntrinsicWidth="346" placeholderIntrinsicHeight="64" translatesAutoresizingMaskIntoConstraints="NO" id="cm6-tq-oq6" userLabel="Status Container">
+                    <customView identifier="statusView" placeholderIntrinsicWidth="346" placeholderIntrinsicHeight="64" translatesAutoresizingMaskIntoConstraints="NO" id="cm6-tq-oq6" userLabel="Status Container">
                         <rect key="frame" x="20" y="53" width="346" height="64"/>
                         <subviews>
                             <progressIndicator verticalHuggingPriority="750" maxValue="100" doubleValue="22" displayedWhenStopped="NO" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="Om8-X4-spf">
@@ -48,7 +48,7 @@
                                     <binding destination="5fO-2t-xdJ" name="animate" keyPath="busy" id="eTb-FQ-kFd"/>
                                 </connections>
                             </progressIndicator>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bva-Er-Nym" userLabel="Feedback Label">
+                            <textField identifier="statusText" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bva-Er-Nym" userLabel="Feedback Label">
                                 <rect key="frame" x="-2" y="26" width="350" height="38"/>
                                 <constraints>
                                     <constraint firstAttribute="height" priority="900" constant="38" id="h84-Jj-LPM"/>
@@ -74,7 +74,7 @@
                             <constraint firstAttribute="height" constant="64" id="zug-7K-Yc6"/>
                         </constraints>
                     </customView>
-                    <tabView verticalHuggingPriority="444" verticalCompressionResistancePriority="250" placeholderIntrinsicWidth="350" placeholderIntrinsicHeight="230" translatesAutoresizingMaskIntoConstraints="NO" id="Cuu-Gy-qub">
+                    <tabView identifier="tabView" verticalHuggingPriority="444" verticalCompressionResistancePriority="250" placeholderIntrinsicWidth="350" placeholderIntrinsicHeight="230" translatesAutoresizingMaskIntoConstraints="NO" id="Cuu-Gy-qub">
                         <rect key="frame" x="13" y="115" width="360" height="246"/>
                         <constraints>
                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="nO1-8u-LQm"/>
@@ -124,7 +124,7 @@
                                     <rect key="frame" x="10" y="33" width="340" height="200"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="SWv-7D-Ok7" userLabel="instructions">
+                                        <textField identifier="instructions" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="SWv-7D-Ok7" userLabel="instructions">
                                             <rect key="frame" x="18" y="168" width="304" height="32"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="300" id="Pvq-IK-B8V"/>
@@ -136,7 +136,7 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
-                                        <stackView distribution="fill" orientation="vertical" alignment="centerX" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" verticalHuggingPriority="251" verticalCompressionResistancePriority="2" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3j4-Fx-cwN">
+                                        <stackView identifier="ServersStack" distribution="fill" orientation="vertical" alignment="centerX" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" verticalHuggingPriority="251" verticalCompressionResistancePriority="2" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3j4-Fx-cwN">
                                             <rect key="frame" x="20" y="150" width="300" height="10"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="Jol-xU-4pO"/>
@@ -152,7 +152,7 @@
                                                 <action selector="toggleEditing:" target="JHy-iV-NBO" id="8jr-qr-u1X"/>
                                             </connections>
                                         </button>
-                                        <customView horizontalHuggingPriority="10" translatesAutoresizingMaskIntoConstraints="NO" id="g0K-e3-zq2" userLabel="AddUrlView">
+                                        <customView identifier="addUrlVIew" horizontalHuggingPriority="10" translatesAutoresizingMaskIntoConstraints="NO" id="g0K-e3-zq2" userLabel="AddUrlView">
                                             <rect key="frame" x="20" y="20" width="300" height="69"/>
                                             <subviews>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ihk-7s-l1f">
@@ -165,7 +165,7 @@
                                                 </textField>
                                                 <textField horizontalHuggingPriority="10" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sUj-sS-4fW">
                                                     <rect key="frame" x="-2" y="0.0" width="209" height="16"/>
-                                                    <textFieldCell key="cell" lineBreakMode="clipping" title="https://domain.my.salesforce.com" id="agD-iB-Y88">
+                                                    <textFieldCell key="cell" lineBreakMode="clipping" title="https://domain.my.salesforce.com" placeholderString="populatedDomain" id="agD-iB-Y88">
                                                         <font key="font" metaFont="system"/>
                                                         <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -196,7 +196,7 @@
                                                         </binding>
                                                     </connections>
                                                 </textField>
-                                                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mEx-bA-bo2">
+                                                <button identifier="addUrlBtn" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mEx-bA-bo2">
                                                     <rect key="frame" x="287" y="-1" width="13" height="18"/>
                                                     <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSAddTemplate" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sx2-tj-NGx">
                                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -229,10 +229,10 @@
                                         <constraint firstItem="SWv-7D-Ok7" firstAttribute="leading" secondItem="Xor-Za-ZEG" secondAttribute="leading" constant="20" symbolic="YES" id="6fy-WM-5Lk"/>
                                         <constraint firstAttribute="trailing" secondItem="g0K-e3-zq2" secondAttribute="trailing" constant="20" symbolic="YES" id="7i0-O5-lGc"/>
                                         <constraint firstItem="9hf-5v-Ee3" firstAttribute="top" secondItem="3j4-Fx-cwN" secondAttribute="bottom" constant="20" symbolic="YES" id="ALO-NA-TBn"/>
-                                        <constraint firstAttribute="bottom" secondItem="9hf-5v-Ee3" secondAttribute="bottom" priority="333" constant="20" symbolic="YES" id="BG3-35-4PV"/>
+                                        <constraint firstAttribute="bottom" secondItem="9hf-5v-Ee3" secondAttribute="bottom" priority="333" constant="20" symbolic="YES" identifier="editToBottom" id="BG3-35-4PV"/>
                                         <constraint firstAttribute="trailing" secondItem="3j4-Fx-cwN" secondAttribute="trailing" constant="20" symbolic="YES" id="D1B-uz-udn"/>
                                         <constraint firstAttribute="bottom" secondItem="g0K-e3-zq2" secondAttribute="bottom" constant="20" symbolic="YES" id="HYD-oB-szl"/>
-                                        <constraint firstItem="g0K-e3-zq2" firstAttribute="top" secondItem="9hf-5v-Ee3" secondAttribute="bottom" priority="999" constant="20" symbolic="YES" id="JcD-vm-PHX"/>
+                                        <constraint firstItem="g0K-e3-zq2" firstAttribute="top" secondItem="9hf-5v-Ee3" secondAttribute="bottom" priority="900" constant="20" symbolic="YES" identifier="editToAddUrl" id="JcD-vm-PHX"/>
                                         <constraint firstAttribute="trailing" secondItem="9hf-5v-Ee3" secondAttribute="trailing" constant="20" symbolic="YES" id="Kmx-kR-Pzd"/>
                                         <constraint firstItem="g0K-e3-zq2" firstAttribute="leading" secondItem="Xor-Za-ZEG" secondAttribute="leading" constant="20" symbolic="YES" id="P96-rI-hqf"/>
                                         <constraint firstItem="SWv-7D-Ok7" firstAttribute="top" secondItem="Xor-Za-ZEG" secondAttribute="top" id="Y6C-Kk-gcM"/>

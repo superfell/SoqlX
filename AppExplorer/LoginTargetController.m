@@ -87,7 +87,7 @@
 
 -(void)awakeFromNib {
     self.addUrlView.hidden = YES;
-    self.editConstraint.priority = 1000;
+    self.editConstraint.priority = 999;
 }
 
 -(LoginRowViewItem*)makeItem:(NSURL*)url {
@@ -126,8 +126,8 @@
             row.deletable = self.isEditing && (!row.value.isStandardEndpoint);
         }
         self.addUrlView.hidden = !self.isEditing;
-        self.editConstraint.priority = self.isEditing ? 333 : 1000;
-        [self.addUrlView.superview layoutSubtreeIfNeeded];
+        self.editConstraint.priority = self.isEditing ? 333 : 999;
+        [self.stack.superview layoutSubtreeIfNeeded];
     }];
 }
 
