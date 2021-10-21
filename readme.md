@@ -7,6 +7,11 @@ write and run SOQL queries, make edits to data, and to run Apex code.
 ![schema viewer](https://www.pocketsoap.com/osx/soqlx/help/schema.png)
 
 
+## Download
+
+You can download the builds of the latest version of SoqlX from its [homepage](https://superfell.com/osx/soqlx/)
+
+  
 ## Build
 
 ZKSforce and Sparkle are managed via [Cocoa Pods](https://cocoapods.org), you'll need to run `pod install` once you've cloned
