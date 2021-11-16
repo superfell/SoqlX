@@ -71,11 +71,15 @@
     for (NSString *s in servers) {
         if (([s caseInsensitiveCompare:LOGIN_WWW] == NSOrderedSame) ||
             ([s caseInsensitiveCompare:LOGIN_LOGIN] == NSOrderedSame) ||
-            ([s caseInsensitiveCompare:LOGIN_TEST] == NSOrderedSame)) {
+            ([s caseInsensitiveCompare:LOGIN_TEST] == NSOrderedSame) || s == nil) {
             continue;
         }
         NSURL *url = [NSURL URLWithString:s];
-        [items addObject:url];
+        if (url == nil) {
+            NSLog(@"Skipping server '%@' which isn't a valid url", s);
+        } else {
+            [items addObject:url];
+        }
     }
     self.items = items;
     return self;
