@@ -114,6 +114,10 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
                                                 forKeyPath:PREF_SOQL_UPPERCASE_KEYWORDS
                                                 options:0
                                                context:nil];
+    [[NSUserDefaults standardUserDefaults] addObserver:self
+                                                forKeyPath:PREF_SOQL_POPUP_COMPLETIONS
+                                                options:0
+                                               context:nil];
 }
 
 - (void)dealloc {
@@ -122,6 +126,7 @@ static NSString *KEYPATH_WINDOW_VISIBLE = @"windowVisible";
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:PREF_SOQL_SYNTAX_HIGHLIGHTING];
     [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:PREF_SOQL_UPPERCASE_KEYWORDS];
+    [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:PREF_SOQL_POPUP_COMPLETIONS];
     NSLog(@"Explorer dealloc");
 }
 

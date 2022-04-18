@@ -803,9 +803,12 @@ typedef NSMutableDictionary<NSString *, Completion*> CompletionBySObject;
 -(void)applyTokens:(Tokens*)tokens {
     ColorizerStyle *style = [ColorizerStyle styles];
     NSTextStorage *txt = self.view.textStorage;
-    BOOL toUpper = [[NSUserDefaults standardUserDefaults] boolForKey:PREF_SOQL_UPPERCASE_KEYWORDS];
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    BOOL toUpper = [def boolForKey:PREF_SOQL_UPPERCASE_KEYWORDS];
+    BOOL completionsEnabled = [def boolForKey:PREF_SOQL_POPUP_COMPLETIONS];
+    
     for (Token *t in tokens.tokens) {
-        if (t.completions.count > 0) {
+        if (completionsEnabled && t.completions.count > 0) {
             [txt addAttribute:KeyCompletions value:t.completions range:t.loc];
         }
         switch (t.type) {

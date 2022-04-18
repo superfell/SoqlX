@@ -46,6 +46,9 @@ extern NSString *PREF_FILTER_EMPY_PROPS;
 // enable the syntax highlighter in the SOQL editor
 extern NSString *PREF_SOQL_SYNTAX_HIGHLIGHTING;
 
+// enables the popup field completions in the SOQL editor
+extern NSString *PREF_SOQL_POPUP_COMPLETIONS;
+
 // Automatically upper case keywords in the SOQL editor
 extern NSString *PREF_SOQL_UPPERCASE_KEYWORDS;
 
