@@ -26,7 +26,7 @@
 #import "Defaults.h"
 #import "NSArray+Partition.h"
 
-int DEFAULT_API_VERSION = 53;
+int DEFAULT_API_VERSION = 54;
 
 // Holds any state that the UI might want to have bindings to.
 // If a UI control has a binding to ZKLoginController directly
