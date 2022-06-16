@@ -30,6 +30,7 @@
 #import "DescribeExtras.h"
 #import "Prefs.h"
 #import "TStamp.h"
+#import "Completions.h"
 
 typedef NSMutableDictionary<CaseInsensitiveStringKey*,ZKDescribeSObject*> AliasMap;
 
@@ -126,6 +127,9 @@ typedef NSMutableDictionary<NSString *, Completion*> CompletionBySObject;
 @property (strong,nonatomic) SoqlParser *soqlParser;
 @property (strong,nonatomic) FnCompletionsCache *fnCompletionsCache;
 @property (assign,nonatomic) BOOL coloredLastTime;
+@property (strong,nonatomic) CompletionLocations *completions;
+@property (strong,nonatomic) Completion *typeOf;
+@property (strong,nonatomic) NSMutableDictionary<NSString*, NSArray<Completion*>*>* fieldCompletionsOfSObject;
 @end
 
 
@@ -135,6 +139,11 @@ typedef NSMutableDictionary<NSString *, Completion*> CompletionBySObject;
     self = [super init];
     self.soqlParser = [SoqlParser new];
     self.fnCompletionsCache = [FnCompletionsCache new];
+    self.completions = [CompletionLocations new];
+    self.fieldCompletionsOfSObject = [NSMutableDictionary new];
+    self.typeOf = [Completion txt:@"TYPEOF" type:TTTypeOf];
+    self.typeOf.finalInsertionText = @"TYPEOF Relation WHEN ObjectType THEN id END";
+    self.typeOf.onFinalInsert = [self moveSelection:-28];
     return self;
 }
 
@@ -222,13 +231,14 @@ typedef NSMutableDictionary<NSString *, Completion*> CompletionBySObject;
     [txt removeAttribute:NSToolTipAttributeName range:all];
     [txt removeAttribute:NSCursorAttributeName range:all];
     [txt removeAttribute:NSUnderlineStyleAttributeName range:all];
-    [txt removeAttribute:KeyCompletions range:all];
+    [self.completions clear];
 }
 
 -(void)resolveTokens:(Tokens*)tokens {
     // This is the 2nd pass that deals with resolving field/object/rel/alias/func tokens.
     // To make dealing with some items that span many tokens, we'll collect them up and
     // put then as child values instead. e.g. nested select, typeof
+    [self.fieldCompletionsOfSObject removeAllObjects];
     for (NSInteger idx = 0; idx < tokens.count; idx++) {
         Token *t = tokens.tokens[idx];
         if (t.type == TTChildSelect || t.type == TTSemiJoinSelect || t.type == TTTypeOf) {
@@ -581,9 +591,22 @@ typedef NSMutableDictionary<NSString *, Completion*> CompletionBySObject;
 -(void)addFieldCompletionsFor:(ZKDescribeSObject*)obj to:(Token*)t ctx:(Context*)ctx {
     TokenType allowedTypes = ctx.filter.restrictCompletionsToType;
     if (allowedTypes & (TTField|TTFieldPath)) {
-        for (ZKDescribeField *field in obj.fields) {
-            if (ctx.filter.fieldCompletionsFilter == nil || [ctx.filter.fieldCompletionsFilter evaluateWithObject:field]) {
-                [t.completions addObject:[field completion]];
+        if (ctx.filter.fieldCompletionsFilter == nil && obj != nil) {
+            NSArray<Completion*>* cached = self.fieldCompletionsOfSObject[obj.name];
+            if (cached == nil) {
+                NSMutableArray *f = [NSMutableArray arrayWithCapacity:obj.fields.count];
+                for (ZKDescribeField *field in obj.fields) {
+                    [f addObject:field.completion];
+                }
+                self.fieldCompletionsOfSObject[obj.name] = f;
+                cached = f;
+            }
+            [t.completions addObjectsFromArray:cached];
+        } else {
+            for (ZKDescribeField *field in obj.fields) {
+                if ([ctx.filter.fieldCompletionsFilter evaluateWithObject:field]) {
+                    [t.completions addObject:field.completion];
+                }
             }
         }
     }
@@ -591,10 +614,7 @@ typedef NSMutableDictionary<NSString *, Completion*> CompletionBySObject;
         [t.completions addObjectsFromArray:[obj parentRelCompletions]];
     }
     if (allowedTypes & TTTypeOf) {
-        Completion *c = [Completion txt:@"TYPEOF" type:TTTypeOf];
-        c.finalInsertionText = @"TYPEOF Relation WHEN ObjectType THEN id END";
-        c.onFinalInsert = [self moveSelection:-28];
-        [t.completions addObject:c];
+        [t.completions addObject:self.typeOf];
     }
     if (((allowedTypes & TTFunc) != 0) && obj != nil) {
         for (SoqlFunction *f in [SoqlFunction functionsFilteredBy:ctx.filter.fnCompletionsFilter]) {
@@ -809,7 +829,7 @@ typedef NSMutableDictionary<NSString *, Completion*> CompletionBySObject;
     
     for (Token *t in tokens.tokens) {
         if (completionsEnabled && t.completions.count > 0) {
-            [txt addAttribute:KeyCompletions value:t.completions range:t.loc];
+            [self.completions add:t.completions at:t.loc];
         }
         switch (t.type) {
             case TTFieldPath:
@@ -892,11 +912,8 @@ typedef NSMutableDictionary<NSString *, Completion*> CompletionBySObject;
     NSLog(@"textView completions: for range %lu-%lu '%@' textLength:%ld", charRange.location, charRange.length,
           [textView.string substringWithRange:charRange], textView.textStorage.length);
 
-    __block NSArray<NSString *>* completions = nil;
-    [textView.textStorage enumerateAttribute:KeyCompletions inRange:charRange options:0 usingBlock:^(id  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
-        completions = value;
-    }];
-    if (completions != nil) {
+    NSArray<Completion*>* completions = [self.completions completionsInRange:charRange];
+    if (completions.count > 0) {
         NSLog(@"found %lu completions", (unsigned long)completions.count);
         return [completions sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];;
     }

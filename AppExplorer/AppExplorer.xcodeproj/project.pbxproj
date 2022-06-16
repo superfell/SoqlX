@@ -38,6 +38,8 @@
 		F45C7EDD0B5FDA5200F93DD7 /* SchemaProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = F45C7EDB0B5FDA5200F93DD7 /* SchemaProtocol.m */; };
 		F45C7EEB0B5FDB5F00F93DD7 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F45C7EEA0B5FDB5F00F93DD7 /* WebKit.framework */; };
 		F45DDFDD0AABBA6100ED0BA0 /* Explorer.m in Sources */ = {isa = PBXBuildFile; fileRef = F45DDFDB0AABBA6100ED0BA0 /* Explorer.m */; };
+		F46070AF285BD78700EB7F5C /* Completions.m in Sources */ = {isa = PBXBuildFile; fileRef = F46070AE285BD78700EB7F5C /* Completions.m */; };
+		F46070B0285BD78700EB7F5C /* Completions.m in Sources */ = {isa = PBXBuildFile; fileRef = F46070AE285BD78700EB7F5C /* Completions.m */; };
 		F46D91070B33DFC800913AD2 /* StandAloneTableHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F46D91010B33DFC800913AD2 /* StandAloneTableHeaderView.m */; };
 		F4805DE326FD4D9F005B1C24 /* OAuthMenuManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F4805DE226FD4D9F005B1C24 /* OAuthMenuManager.m */; };
 		F4805E0427063B1B005B1C24 /* LoginRowViewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = F4805E0227063B1B005B1C24 /* LoginRowViewItem.m */; };
@@ -300,6 +302,8 @@
 		F45C7EEA0B5FDB5F00F93DD7 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
 		F45DDFDB0AABBA6100ED0BA0 /* Explorer.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = Explorer.m; sourceTree = "<group>"; };
 		F45DDFDC0AABBA6100ED0BA0 /* Explorer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Explorer.h; sourceTree = "<group>"; };
+		F46070AD285BD78700EB7F5C /* Completions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Completions.h; sourceTree = "<group>"; };
+		F46070AE285BD78700EB7F5C /* Completions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Completions.m; sourceTree = "<group>"; };
 		F46D91000B33DFC800913AD2 /* StandAloneTableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = StandAloneTableHeaderView.h; path = ../common/StandAloneTableHeaderView.h; sourceTree = SOURCE_ROOT; };
 		F46D91010B33DFC800913AD2 /* StandAloneTableHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = StandAloneTableHeaderView.m; path = ../common/StandAloneTableHeaderView.m; sourceTree = SOURCE_ROOT; };
 		F4805DE126FD4D9F005B1C24 /* OAuthMenuManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OAuthMenuManager.h; sourceTree = "<group>"; };
@@ -813,6 +817,8 @@
 				F424A836262BCF1B00AD4F42 /* ColorizerStyle.m */,
 				F4BD5DDB264760A000ACBBAB /* DescribeExtras.h */,
 				F4BD5DDC264760A000ACBBAB /* DescribeExtras.m */,
+				F46070AD285BD78700EB7F5C /* Completions.h */,
+				F46070AE285BD78700EB7F5C /* Completions.m */,
 			);
 			name = SoqlSyntax;
 			sourceTree = "<group>";
@@ -1127,6 +1133,7 @@
 				F4805E0D27066606005B1C24 /* LoginTargetController.m in Sources */,
 				F4A2B962271F334700C20A42 /* CredentialsController.m in Sources */,
 				F412575D0B098593001622AC /* WeightedSObject.m in Sources */,
+				F46070AF285BD78700EB7F5C /* Completions.m in Sources */,
 				F4CD511B0B0C342100345D9E /* PlusMinusWidget.m in Sources */,
 				F4CD51200B0C350300345D9E /* FieldImportance.m in Sources */,
 				F46D91070B33DFC800913AD2 /* StandAloneTableHeaderView.m in Sources */,
@@ -1193,6 +1200,7 @@
 				F4DF0B5F2638BDA100B3A1A9 /* SoqlFunction.m in Sources */,
 				F4408FF02562F4C1005E8BB7 /* QueryColumns.m in Sources */,
 				F4BD5DD926470C8800ACBBAB /* Prefs.m in Sources */,
+				F46070B0285BD78700EB7F5C /* Completions.m in Sources */,
 				F48804DD2592BE57001D56F6 /* CaseInsensitiveKeyTest.m in Sources */,
 				F4DF0B632638BDB300B3A1A9 /* SoqlParser.m in Sources */,
 				F4A2B908271A41AD00C20A42 /* SearchQueryResult.m in Sources */,
