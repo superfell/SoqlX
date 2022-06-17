@@ -461,8 +461,8 @@
                             <action selector="showFontPrefs:" target="1677" id="WhR-9k-dJ6"/>
                         </connections>
                     </button>
-                    <popUpButton verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="L8r-v1-FRe">
-                        <rect key="frame" x="17" y="144" width="117" height="25"/>
+                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="L8r-v1-FRe">
+                        <rect key="frame" x="17" y="149" width="117" height="25"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="lessThanOrEqual" priority="555" constant="110" id="aym-4L-dYP"/>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="bfd-hu-eq1"/>
@@ -486,8 +486,8 @@
                             </binding>
                         </connections>
                     </popUpButton>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UE6-jo-hRU">
-                        <rect key="frame" x="136" y="151" width="281" height="16"/>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UE6-jo-hRU">
+                        <rect key="frame" x="136" y="156" width="281" height="16"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="Max number of recent queries to keep" id="06p-b1-oSX">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -523,8 +523,8 @@ Gw
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YVj-Mk-ptI">
-                        <rect key="frame" x="18" y="123" width="399" height="17"/>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YVj-Mk-ptI">
+                        <rect key="frame" x="18" y="128" width="399" height="17"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="Apex" id="Bgh-kX-OCX">
                             <font key="font" metaFont="systemBold" size="14"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -549,8 +549,8 @@ Gw
                             </binding>
                         </connections>
                     </button>
-                    <button misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="y1g-0n-s0U">
-                        <rect key="frame" x="18" y="98" width="397" height="18"/>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="y1g-0n-s0U">
+                        <rect key="frame" x="18" y="103" width="397" height="18"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="283" id="m5n-JM-cET"/>
                         </constraints>
@@ -566,12 +566,12 @@ Gw
                             </binding>
                         </connections>
                     </button>
-                    <button ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kcg-QY-3Si">
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="kcg-QY-3Si">
                         <rect key="frame" x="18" y="214" width="397" height="18"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="283" id="Dzo-mj-AyT"/>
                         </constraints>
-                        <buttonCell key="cell" type="check" title="Enable Completions popups" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="gSk-qc-yqO">
+                        <buttonCell key="cell" type="check" title="Enable completions popups" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="gSk-qc-yqO">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
@@ -586,6 +586,7 @@ Gw
                     </button>
                 </subviews>
                 <constraints>
+                    <constraint firstAttribute="trailing" secondItem="kcg-QY-3Si" secondAttribute="trailing" constant="20" symbolic="YES" id="0wI-Tn-qaT"/>
                     <constraint firstItem="SmT-9M-V0o" firstAttribute="top" secondItem="kcg-QY-3Si" secondAttribute="bottom" constant="6" symbolic="YES" id="1Xq-HC-0Oo"/>
                     <constraint firstAttribute="trailing" secondItem="YDz-10-l7r" secondAttribute="trailing" constant="20" symbolic="YES" id="308-tM-JHq"/>
                     <constraint firstAttribute="trailing" secondItem="a72-vu-tIW" secondAttribute="trailing" constant="20" symbolic="YES" id="3aG-yk-Skg"/>
@@ -633,6 +634,7 @@ Gw
                     <constraint firstItem="R0v-P7-kcC" firstAttribute="leading" secondItem="1692" secondAttribute="leading" id="ptE-mD-5xD"/>
                     <constraint firstItem="snb-S8-oRC" firstAttribute="top" secondItem="sdA-fY-fqy" secondAttribute="bottom" constant="6" symbolic="YES" id="qdk-5X-OiU"/>
                     <constraint firstItem="1692" firstAttribute="trailing" secondItem="sdA-fY-fqy" secondAttribute="trailing" id="ru5-Hi-8K1"/>
+                    <constraint firstItem="kcg-QY-3Si" firstAttribute="leading" secondItem="R0v-P7-kcC" secondAttribute="leading" id="skk-03-QhB"/>
                     <constraint firstItem="kcg-QY-3Si" firstAttribute="top" secondItem="R0v-P7-kcC" secondAttribute="bottom" constant="6" symbolic="YES" id="tJh-hd-NFW"/>
                     <constraint firstItem="YDz-10-l7r" firstAttribute="top" secondItem="a72-vu-tIW" secondAttribute="bottom" constant="8" symbolic="YES" id="u4Y-IJ-m9m"/>
                     <constraint firstItem="SmT-9M-V0o" firstAttribute="top" secondItem="kcg-QY-3Si" secondAttribute="bottom" constant="6" symbolic="YES" id="uRq-fZ-lmM"/>
