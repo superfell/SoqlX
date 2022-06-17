@@ -515,11 +515,7 @@ ZKResultMapper toToken(TokenType type) {
                                name:@"identifier"
                                 min:0];
     ZKBaseParser *ident = [self onMatch:[self seq:@[identHead, identTail]] perform:^ZKParserResult *(ZKParserResult *r) {
-        if (![r childIsNull:1]) {
-            r.val = [NSString stringWithFormat:@"%@%@", [[r child:0] val], [[r child:1] val]];
-        } else {
-            r.val = [[r child:0] val];
-        }
+        r.val = [r.userContext[KeySoqlText] substringWithRange:r.loc];
         return r;
     }];
     ident.debugName = @"ident";
