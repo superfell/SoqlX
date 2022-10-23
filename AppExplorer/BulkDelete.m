@@ -28,7 +28,7 @@
 @interface BulkDelete ()
 -(NSArray<ZKSObject*>*)extractRows:(EditableQueryResultWrapper *)dataSource;
 -(void)deleteInChunks:(NSArray<ZKSObject*>*)rows start:(NSUInteger)start chunk:(NSUInteger)chunkSize;
--(void)deletesFinished:(NSArray<ZKSObject*>*)rows;
+-(void)deletesFinished:(NSArray<ZKSObject*>*)rows withError:(NSError*)err;
 
 @property ProgressController  *progress;
 @property ZKSforceClient      *client;
@@ -71,18 +71,17 @@
 
 -(void)deleteInChunks:(NSArray<ZKSObject*>*)rows start:(NSUInteger)start chunk:(NSUInteger)chunkSize {
     NSUInteger end = MIN(start+chunkSize, rows.count);
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSString *l = [NSString stringWithFormat:@"Deleting %ld of %ld rows", (unsigned long)end, rows.count];
-        self.progress.progressLabel = l;
-    });
+    NSString *l = [NSString stringWithFormat:@"Deleting %ld of %ld rows", (unsigned long)end, rows.count];
+    self.progress.progressLabel = l;
     NSArray *ids = [[rows subarrayWithRange:NSMakeRange(start, end-start)] valueForKey:@"id"];
     [self.client delete:ids failBlock:^(NSError *result) {
         [[NSAlert alertWithError:result] runModal];
+        [self deletesFinished:rows withError:result];
     } completeBlock:^(NSArray *res) {
         [self.results addObjectsFromArray:res];
         if (end == rows.count) {
             // all done, lets wrap up
-            [self performSelectorOnMainThread:@selector(deletesFinished:) withObject:rows waitUntilDone:NO];
+            [self deletesFinished:rows withError:nil];
         } else {
             [self deleteInChunks:rows start:end chunk:chunkSize];
         }
@@ -90,18 +89,22 @@
 }
 
 
--(void)deletesFinished:(NSArray<ZKSObject*>*)rows {
+-(void)deletesFinished:(NSArray<ZKSObject*>*)rows withError:(NSError*)err {
     // save errors to table
     [self.table.wrapper clearErrors];
     NSMutableSet<NSString*> *successIds = [NSMutableSet setWithCapacity:rows.count];
     for (NSUInteger idx = 0; idx < rows.count; idx++) {
-        ZKSaveResult *sr = self.results[idx];
         ZKSObject *so = rows[idx];
-        if (sr.success) {
-            [successIds addObject:so.id];
-            so.checked = NO;
+        if (idx < self.results.count) {
+            ZKSaveResult *sr = self.results[idx];
+            if (sr.success) {
+                [successIds addObject:so.id];
+                so.checked = NO;
+            } else {
+                so.errorMsg = sr.description;
+            }
         } else {
-            so.errorMsg = sr.description;
+            so.errorMsg = err.localizedDescription;
         }
     }
     [self.table removeRowsWithIds:successIds];
