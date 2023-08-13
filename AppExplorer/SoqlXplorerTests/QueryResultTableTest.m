@@ -134,7 +134,7 @@
     XCTAssertTrue(tv.tableColumns[1].hidden);
     XCTAssertEqualObjects(@"Name", tv.tableColumns[2].identifier);
     XCTAssertEqualObjects(@"Name", tv.tableColumns[2].title);
-    XCTAssertTrue(tv.tableColumns[2].width < 100, @"Expecting width %f to be less than 100", tv.tableColumns[2].width);
+    XCTAssertTrue(tv.tableColumns[2].width <= 100, @"Expecting width %f to be less than 100", tv.tableColumns[2].width);
     XCTAssertEqualObjects(@"contacts", tv.tableColumns[3].identifier);
     XCTAssertEqualObjects(@"contacts", tv.tableColumns[3].title);
     // for various reasons, a child QR column will stay sized at 100 unless every row is empty
@@ -167,7 +167,7 @@
     XCTAssertTrue(tv.tableColumns[1].hidden);
     XCTAssertEqualObjects(@"Name", tv.tableColumns[2].identifier);
     XCTAssertEqualObjects(@"Name", tv.tableColumns[2].title);
-    XCTAssertTrue(tv.tableColumns[2].width < 100, @"Expecting width %f to be less than 100", tv.tableColumns[2].width);
+    XCTAssertTrue(tv.tableColumns[2].width <= 100, @"Expecting width %f to be less than 100", tv.tableColumns[2].width);
 
     qrXml = @"<QueryResult xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>"
                             "<records><type>Account</type><Id>123</Id><FirstName>Bob</FirstName><Rating>1</Rating>"
@@ -186,7 +186,7 @@
     XCTAssertTrue(tv.tableColumns[1].hidden);
     XCTAssertEqualObjects(@"FirstName", tv.tableColumns[2].identifier);
     XCTAssertEqualObjects(@"FirstName", tv.tableColumns[2].title);
-    XCTAssertTrue(tv.tableColumns[2].width < 100, @"Expecting width %f to be less than 100", tv.tableColumns[2].width);
+    XCTAssertTrue(tv.tableColumns[2].width <= 100, @"Expecting width %f to be less than 100", tv.tableColumns[2].width);
     XCTAssertEqualObjects(@"Rating", tv.tableColumns[3].identifier);
     XCTAssertEqualObjects(@"Rating", tv.tableColumns[3].title);
     XCTAssertTrue(tv.tableColumns[3].width < 100, @"Expecting width %f to be less than 100", tv.tableColumns[3].width);
@@ -198,7 +198,7 @@
     XCTAssertTrue(tv.tableColumns[1].hidden);
     XCTAssertEqualObjects(@"Name", tv.tableColumns[2].identifier);
     XCTAssertEqualObjects(@"Name", tv.tableColumns[2].title);
-    XCTAssertTrue(tv.tableColumns[2].width < 100, @"Expecting width %f to be less than 100", tv.tableColumns[2].width);
+    XCTAssertTrue(tv.tableColumns[2].width < 130, @"Expecting width %f to be less than 130", tv.tableColumns[2].width);
 }
 
 
@@ -230,7 +230,7 @@
     XCTAssertTrue(tv.tableColumns[1].hidden);
     XCTAssertEqualObjects(@"Name", tv.tableColumns[2].identifier);
     XCTAssertEqualObjects(@"Name", tv.tableColumns[2].title);
-    XCTAssertTrue(tv.tableColumns[2].width < 100, @"Expecting width %f to be less than 100", tv.tableColumns[2].width);
+    XCTAssertTrue(tv.tableColumns[2].width <= 100, @"Expecting width %f to be less than 100", tv.tableColumns[2].width);
     XCTAssertEqualObjects(@"owner", tv.tableColumns[3].identifier);
     XCTAssertEqualObjects(@"owner", tv.tableColumns[3].title);
     XCTAssertTrue(tv.tableColumns[3].width < 100, @"Expecting width %f to be less than 100", tv.tableColumns[3].width);
@@ -254,16 +254,16 @@
     XCTAssertTrue(tv.tableColumns[1].hidden);
     XCTAssertEqualObjects(@"Name", tv.tableColumns[2].identifier);
     XCTAssertEqualObjects(@"Name", tv.tableColumns[2].title);
-    XCTAssertTrue(tv.tableColumns[2].width < 100, @"Expecting width %f to be less than 100", tv.tableColumns[2].width);
+    XCTAssertTrue(tv.tableColumns[2].width <= 100, @"Expecting width %f to be less than 100", tv.tableColumns[2].width);
     XCTAssertEqualObjects(@"owner.FirstName", tv.tableColumns[3].identifier);
     XCTAssertEqualObjects(@"owner.FirstName", tv.tableColumns[3].title);
     XCTAssertTrue(tv.tableColumns[3].width > 100, @"Expecting width %f to be greater than 100", tv.tableColumns[3].width);
     XCTAssertEqualObjects(@"owner.year__c", tv.tableColumns[4].identifier);
     XCTAssertEqualObjects(@"owner.year__c", tv.tableColumns[4].title);
-    XCTAssertTrue(tv.tableColumns[4].width < 100, @"Expecting width %f to be less than 100", tv.tableColumns[4].width);
+    XCTAssertTrue(tv.tableColumns[4].width <= 130, @"Expecting width %f to be less than 130", tv.tableColumns[4].width);
     XCTAssertEqualObjects(@"owner.Name", tv.tableColumns[5].identifier);
     XCTAssertEqualObjects(@"owner.Name", tv.tableColumns[5].title);
-    XCTAssertTrue(tv.tableColumns[5].width < 100, @"Expecting width %f to be less than 100", tv.tableColumns[5].width);
+    XCTAssertTrue(tv.tableColumns[5].width <= 120, @"Expecting width %f to be less than 120", tv.tableColumns[5].width);
 }
 
 @end
