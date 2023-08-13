@@ -146,7 +146,10 @@
             }
             NSObject *v = [qr valueForFieldPath:fieldPath row:row];
             NSString *s = nil;
-            if ([v isKindOfClass:[NSString class]]) {
+            if (v == nil && [fieldPath isEqualToString:TYPE_COLUMN_IDENTIFIER]) {
+                ZKSObject * r = qr.records[row];
+                s = r.type;
+            } else if ([v isKindOfClass:[NSString class]]) {
                 s = (NSString *)v;
             } else if ([v isKindOfClass:[NSNumber class]]) {
                 s = ((NSNumber *)v).stringValue;
